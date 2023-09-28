@@ -1,0 +1,1125 @@
+STOCHASTIC NEURAL NETWORKS
+Depart.of Math. Siciences Memphis State University. Depto. de Matemáticas y Est. Universidad Nacional
+Abstract. Artificial neural networks are brain-like models of parallel computations and cognitive phenomena. We sample some basic results about neural networks as they relate to stochastic and statistical processes. Given the explosive amount of material, only models bearing a stochastic component in the function or analysis are presented, such as Hopfield and feedforward nets, Boltanan machines and some recurrent networks. Basic algorithms for learning such as backpropagation and gradient descent are sketched. A handful of applications (associative memories, pattem recognition, time series forecast) aredescribed. Finally, some current trends in the field are discussed.
+
+
+
+
+1. Introduction.
+      Artificial neural networks are brain-like models of par^
+allel computations and cognitive phenomena. They were intro-
+duced in the seminal paper by McCulloch and Fitts (1943), in
+
+
+1 Partially supported by NSF grant DCR-901985.
+2 The author acknowledges support while on leave from the
+  Universidad Nacional de Colombia visiting Memphis State
+  University.
+
+26
+
+
+the 1940% as ways of inq>lementating logical gatea with ab-
+stractions of real neurona, and again in the 1960's by Ro-
+senblatt 0962), Grossberg (1988), Kohonen (1984), Early negativo
+results by Minsky and Papert (1986), and the   unavailability
+of massively parallel machines to riin realistic simulations
+of the power of the model discouraged researchers from ac-
+tively pursing further study of their capabilities and ap-
+plications. Although several of today's main figures in the
+field (Grossberg, Kohonen, Marr) remained attracted to the
+idea, it wasn't until the piíblication of Hopfield's land-
+marks (1982),1986 that the time was right for a rebirth into
+a third period of activity, this time with every indication
+to stay for good. Today, artificial neural networks are not
+only revolutionizing fundamental ideas in computer science
+and informatics, but they are becoming fundamental tools in
+fields as diverse as electrical engineering, optimization,
+medical diagnosis, image processing, robotics, machine learn
+ing, time series prediction, artificial intelligence, cog-
+nitive science, neurophysiology, and even music and poetry.
+
+      The Iast few years have seen an explosive growth of
+activity and pubiications in the field of neural networks.
+It is estlmated that the neural network literature contains
+over 10.000 papers as of now (June 1991). IJCNN (The Inter-
+national Joint Conference on Neural Networks), the       major
+conference in neural networks in North America, by itsel pub^
+lishes about 2,000 pages of recent research every year, not
+to mention many other pubiications in specialized joumals.
+The Iast four years have seen the formation of least five
+major neural network societies, at least five new journals
+devoted entirely to the subject, and major conferences with
+
+                                                                27
+
+
+over 3,000 attendees in America, Asia and Europa. Therefore
+we feel justified in so drastically oversimplifying and se-
+lecting the material in the foliowing aections. These fig-
+ures should also give the reader an idea of how short    this
+paper falla of being even a modest survey. It is intended as
+a motivation for statisticians and probabilists   for    the
+study of neural nets and their applications to and from the
+viewpoint of their fields of interest.
+
+      Since their beginning, statistics and probability have
+played an increasingly important role in neural networks ,
+either in the form of stochastic components or as analytical
+tools. The literature in stochastic networks, however, is
+fragmented and inaccessible, largely due to the fact that
+they are   still in the research stage. A neural network may
+be stochastic ín two rather different ways.
+
+      First, the networks itself may update cells randomly.
+Second, probabilistic and statistical tools are being used
+in the analysis of a deterministic network. The purpose of
+this article is to give an elementary exposition of the most
+prominent models, results and applications of both types of
+stochastic neural networks. No proofs, not even formal state
+ments are given, although many references are given to    the
+literature where exact details can be found.
+
+
+
+
+2. Deflnltions.
+      In this section we describe the deterministic models
+prior to the introduction of the stochastic model. There are
+many varieties of networks, but the ones introduced here are
+
+28
+
+
+building prototypes for virtually every conceivable network.
+
+        Neural networks are artificial models of biological
+brains, and the basic inspiration of their desing foilows
+closely their anatomical structure. A biological brain                 is
+essentially made up of neurons interconnected in very com-
+plex spacio-temporal patterns, the exact significance                 of
+which is unknown. Thus an artificial neural net consists of
+basic components called neurons, an abstraction of the biol
+ogical entity herein simply referred to as a c e l l or u n l t .
+A cell is characterized by a set of a c t i v a t l o n values from
+a set     and an activatlon iunctlon i : A •*• A. Activatlon
+functions are also called t r a n S i e r i u n d i o n S . The activatlon
+is a full description of the state of a cell at any instant
+of time. It can be either a discreto valué (e.g.                binary,
+from the set 6 :- {0,1}) or a continuous quaitity (usually a
+valué from the set of real numbers R). Cells change acti-
+vation values in time according to their activation func-
+tions, which take as argumente weighted sums of few values
+of other cells, called neighboring cells. The pattern cf inter
+connections among the cells, usually referred to as a r c h l -
+t e c t u r e or t o p o l o g y of the network, is determined by a di-
+rected graph (digraph). The vértices of the digraph corre-
+spond to the units of the net and an are (oriented edge) in
+dicates a l i n k or c o n n e c t l o n among the corresponding cells.
+Every are is weighted by the analogue of a s y n a p t l c s t r e n g t h ,
+a valué of the same nature as the activations of the cells.
+Weigjhted ares play a role analogous to that of the axons
+and dendrites of real neurons. Links with positive real-val
+ued \reights are called e x d t a t o r j y and negatively weighted
+links are called I n h l b l t o r y . Throughout, we will only con-
+sider time flowing discretely. Important networks based on
+
+                                                                                  29
+
+
+continuous      time with continuous updates govemed by differ-
+ential equations have been developed, and they will be simima
+rily described in section 5.
+
+        For the sake of future reference we record this disciis
+sion in the foliowing definition.
+
+DEFINITION 2.1. An activatlon set A ls any set with an ad-
+dltlve-rmltlptlcatlve structure, An activatlon iunctlon ls a
+seli-map i:A -»• A that ilxes O, I.e. iiO) - 0. A neural net-
+work ls a triple N = <V,A,{iy}> conslstlng oi a digraph V,
+an activatlon set A and a iamlly o i activatlon iunctlons i . ,
+one ior each vértex I ln V. The global dynamlcs oi N ls de-
+ilned by equatlons ll) below.
+
+        Examples of neural networks are presented in detail in
+the foliowing subsections. Very commonly, examples have bi-
+nary activation values, and threshold and sigmoid functions
+for activations functions. Usually all cells are of the same
+type (discrete or continuous activations), and, correspond-
+ingly, networks are classif ied as d l S c r e t e or c o n t l n u o u s .
+Sometimes networks are also classified by the type of inter-
+connection digraph. For instance, if this digraph consists of
+layers of disconnected cells, each layer communicating only
+to cells in the next layer, it is called a ieedion/jord                  (or
+l a y e r e d ) net. If the diagraph contains cycles, it is called
+a r e c u r r e n t net. If it is a complete graph, i.e. all           cells
+are interconnected, it is called a i u l l y r e c u r r e n t net.
+
+       More important than the anatomy of a network is its ev-
+olution in time. Typically, a network operetas as foilows. A
+cell I reads the activation valué of              all units / having          a
+
+30
+
+
+link into it and makes a weighted sum that integrates                      all
+these inputs into a single sum, the net-input of cells 1 . It
+then applies its characteristic activation function to find
+a new activation valué. If this actíon is taken simultaneois
+ly by all cells, the update is called p a r a l l e l . Other conmion
+update modes are a s y n c h r o n o u s p a r a l l e l i a l l cells update,
+maybe at different times), S e q u e n t i a l (one cell updates at a
+time according to a given s c h e d u l e , e.g. in a fixed cyclic
+order), b l o c k s e q u e n t i a l (like the sequential update but with
+cells partitioned into blocks and the whole block updating
+all at once), s t o c h a s t l c (if the cells update randomly accord^
+ing to a certain distribution). Stochastic nets will be con^
+sidered more in detail in the foliowing sections.
+
+            In order to understand the behavior of a net as awhole
+it is convenient to consider the so-called global activation
+of the network. an assignment X:V ->• A of activations to each
+cell .¿ of a neural network is called a t o t a l S t a t e or c o n i l
+g u r a t l o n . A confíguratíon is a snap-shot of the state of the
+cells at a given instant of time. For example, O and 1 are
+configurations consisting of a O and a 1 at every cell, re-
+spectively. The set of all configurations is denoted C. The
+local dynamics of a neural network induces a global map given
+by
+                                T : C ^ C                                   (1)
+
+                     T i x ) ^ :- i ^ i l ««^yXy(t));                      (2)
+for all cells 1 .
+
+                                                                    31
+
+
+2.1. Feedforward nets.
+
+       The simplest example of a feedforward net is the p e r -
+c e p t r o n . Hístorically the first neural (as opposed to Mc-
+Culloch & Pits's neuronal) model, it was introduced by Ro-
+senblatt (1962)in the late 1950's. The perceptron is a con-
+tinuous net with a single layer of disconnected I n p u t cells,
+each of which has a link to an o u t p u t cell. The activation
+function   is a threshold function 6 determined by a valué fa
+of the tjrpe
+
+                           íl if u^fa
+                 e(u) ' <
+                           lo else.
+
+       A particular case of this function is the two valuad
+signum sgn where fa - 0.
+
+       This makes a perceptron very analogous to a single
+brain cell: if the net-input is above a certain valué fa, the
+cell   goes into a firing state (activation 1), else it re-
+mains idle (valué 0). The net result is a global dynamics of
+the type
+
+                   T i x ) ^ ' Oil W^jXj)                     (3)
+
+Perceptrons were originally used for pattem recognition.
+The celia in the input layers are      actually arranged as a
+rectangular array of sensors to which the inputs X • are fed.
+With the appropriate weights loaded to tye Bynapaea, it can
+provide binary decisions and classify input' patterns        into
+two categories corresponding to the binary states of the oi^
+put neuron. For example, if the objects to be categorized
+are determined by the values of three basic parameters Xj^,
+
+32
+
+                                          3
+X^í^o' ^^^y *^® represented by points in R . These objects
+are t l m o r l y s e p a r a b l e if one can find a plañe ir of equation
+Wj^X+WjíZ+W^z = fa ín E       that separatas them in the          sense
+that all points in one category are below TT and the others
+are above it. In this case they are naturally clustered in
+two categories. A perceptron can thus be designed to auto-
+mate the process of recognizing objects. The input cells r é -
+ceive the characteristic parameters of an object and are con
+nected with weights W. to the output cell which has thres-
+hold fa.
+
+       Despite some other interesting applications, percep-
+trons have long been known to have a limited recognition a-
+bility. For instance, one cannot design a perceptron with
+appropriate real-valued weights to compute an XOR of two bi-
+nary input values. Mathematical proofs and argumente by Mins^
+ky and Papert 0-986) of these an other negativa f acts back in
+the 1960% dissuaded contemporary researchers from studying
+feedforward networks with hidden layers in the 1960% and
+197Cfs.
+
+       If one allows so-called hidden u n l t S , however, they
+can conq>ute logical functions. It is eaay to verify that the
+foliowing 2-layer network would do XORs. Feedforward nets
+can have, in general, an arbitrary number of layers. It can
+be proved that each additional layer provides, in fact, ad-
+ditional computational power.
+
+                                                                33
+
+
+
+
+                        Figure 1
+                   A perceptron for XOR
+
+
+      The update mode of a feedforward net is block sequen-
+tial, with blocks in a layer simultaneously updated succes-
+sively starting from the input layers toward the output (tar^
+get) layer.
+
+      Feedforward nets are now very popular mainly due to the
+fact that a nice training algorithm, baclq>ropagation, exists
+to successfuly train a network to find "by itself" a suitable
+set of weights for a given task, if such a set exists at all.
+Interesting feedforward nets of recent use have    so far in-
+cluded most of the nets used in applications. However, recur-
+rent nets are necessary for other applications.
+
+
+
+2.2. Hopfield nets.
+      Hopfield nets are very useful examples of discrete re-
+current nets. They were popularizad by Hopfield, a neurobio-
+logist and physicist, in a couple of widely read papers (hop-
+field, 1982, 1986) that have been very influential in retum-
+ing the attention of researchers to the untapped   potential
+of neural net models after the perceptron's demise.
+
+      As with the perceptron, the activation functions of the
+Hopfield model are threshold functions. The weights are also
+
+34
+
+
+real numbers. The activation values are binary values, say
+0,1 (or equivalently, ±1 via the change of variable x -»• 2x-l)t
+The basic difference lies in the connections and the update
+mode. A hopfield network is fully connected and symmetric, i.
+e, every are l j has an opposite are j l with the same weight.
+Originally, Hopfield used the network as an associative mem-
+ory, as described below in section 4.1. In this case cells
+are updated at random with the only requirement that            each
+cell be updated, on the average, once every n (the number of
+cells) updates.
+
+       In the case of a feedforward net it is easy to decide
+when the network     has obtained an answer as a result of its
+computation. One simply looks at the ouput cells after            t
+iterations, the number of hidden layers in the net. In            the
+case of a fully recurrent network it is no longer clear idiat
+to observe where. Associative memories require retrieval of
+                             k
+certain binary patterns v        associated with an initial con-
+              k
+figuration u      of the network. The most natural for the net
+to return v is to initialize its cells to the values indi-
+cated by the binary vector u, and then repeatedly update the
+network in some predetermined fashion until a fixed point is
+reached. Thus the net has found an ^uilibrium state v ,
+which is then regarded as the retrieved memory. The success
+of the method, of course, lies in i l n d i n g suitable weights
+and in g u a r a n t e e i n g somehow that, under iteration, the stable
+states arrived at from a pattern u truly corresponds to the
+desired associated     valué v , These problems will be examina
+ed in section 4.1 together with the efficiency of networks
+in performing this task.
+
+                                                                          35
+
+
+2.3. Stochastlc neural networks.
+       The randomness in a Hopfield net lies in the uniform
+choice of cells in an update. Selected cells are updatedwith
+certainty. In a network with stochastic units, the transfer
+function ls actually a probability distribution, a sigmoid
+function
+
+
+                           1 +e
+
+The networks is usually binary. The new activation of the
+unit is +1 with probability <í («^^¿^yg^^) " ^ ^ l ' ^ t j ^ l ^ *"^ "^
+otherwise, of course with the complementary probability. The
+update schedule can be randomized over all cells (recurrent
+nets) or just over particular cells in a layer (feedforward
+nets). Some of the units may be designated as input, others
+as output, and the rest as hidden units. Sometimes a so-cal-
+led b i a s factor is introduced in equation (4), which multi-
+plies the net-input before appiying the transfer function.
+
+
+
+       The main motivation of a stochastic neural net is to
+provide a mechanism to implement a given probability distri-
+bution. Like the Hopfield network, one may want only certain
+output patteims occur with a certain distribution, despite
+the fact that the input patterns are fed randomly with, say,
+a uniform distribution. As with Hopfield network, the basic
+probiem is to find a set of weights and a transfer function
+that allow the network      to reach the desire equilibrium
+states with hlgh probabilities, while others are reached
+with very low probability.
+
+                                                                              ^^
+
+36
+
+
+2.4. Boitzmann machines.
+
+       This model was originally introduced by Hinton and Sej^
+nowski (Vol.1, 1986),as a continuous model of biological brains.
+It represente a departure from other models in two aspects.
+First, the updates are now made, though randomly, not as a
+function of local changes in neighboring cells, but rather as
+a function of g l o b a l features of the entire network. Second,
+the distribution of updates varíes according to a decreasing
+parameter T called the t & n p e r a t u r e o í the network. The model
+was inspired by the physical process of metallurgical anneal^
+ing and introduced for optimization of real-valued functions.
+
+       Currently, the most common Boitzmann machine is basi-
+cally a discrete and recurrent Hopfield network with hidden
+units stochastically updated. The weights ttf. • on links                lj
+                                                  A,J
+between cells I and / are real-valued and symmetric, Wj • -
+                                                               A,J
+V3-J. The update requires a random ninnber generator and             a
+temperature parameter. Initially, the temperature parameter
+is set to a high valué. An u p d a t e unit overseeing the entire
+network is in charge of the updating schedule. The overall
+goal of the update is to minimize a global quantity H called
+the energy of the network; for instance,
+                    Hix) : ' - \ l W^y x^ x..
+
+      For an update, a cell is randomly chosen and a random
+valué C is obtained from the unit interval with a uniform
+probability distribution; the update actually changes the
+activation of a cell (from -1 to +1 or vice versa) in case
+the energy of the new confíguratíon actually decreases (i.e.
+the change in energy is negativa). However, if only this type
+of update is perforined, the distribution of energy over con^
+
+                                                                       37
+
+
+figuration space may lead the net into local mínima        of H
+which are not global mínima, it is thus necessatry to intro-
+duce a n n e a l i n g updates, where the energy is actually allowed
+to increase, more rarely as time (temperature) progresses
+(decreases). The activation of a cell is thus switched         in
+valué if Atí ^ O and given by
+
+
+
+
+i.e. if the mean energy at temperature r exceeds the random
+parameter ^.
+
+      The foregoing examples are among the most important and
+useful neural networks. By themselves, they have little to of^
+fer. The most interesting and remarkable properties of neural
+networks derive from their designer's ability to bypass         the
+entire process of a n a l y s l s and programming so characteristic
+of ordinary applications in artificial intelligence and sym-
+bolic computation. We consider this aspect in the foliowing
+section.
+
+
+
+
+3. Learning, generalizatlon and degradation.
+
+      Learning in natural and artificial systems refere         to
+the change in internal states of a system in order to cope
+with and adapt to changing conditions in the environment.
+Learning has long been considered one of the fundamental
+traite of living organisms. Orthodox AI (Artificial Intelli
+gence) created programa performing high^level tasks          that
+when executed by humana appeared to be proof of intelligent
+behavior (chess-players, ping-pong playera, even         medical
+diagnosers like MfCIN, expert systems, etc.). The perform-
+
+38
+
+
+anee of these products is optimized by careful adjustements
+of key parameters obtained through analysis and experimenta-
+tion with the programa, not typically by t h e programS them-
+S e l v e S . There are of course interactive programa         that can
+change these parameters by themselves on the run, but the
+nature of the changes requires a fixed framework that has to
+be entirely known t o t h e deslgner in advance.
+
+       The internal state of a neural net consist not only of
+the entire patrern of activation of all cells (simetimes cal-
+led a short-term memory), but more importantly, of the set of
+weights assigned to the .connections (the long-term memory).
+What the network     'knows' is expressed in thestrength of the syn-
+aptic connecions and the activations of its cells. Thus, tomake a net
+work learn just requires to find a way to change its weights.
+To make it learn a significant task, say compute an XOR, re-
+quires finding the appropiate weights starting from a state
+of total 'ignorance' (i.e. from an initial set              of random
+weights and configuration). This may appear difficult               to a^
+chieve by a network itself. The remarkable fact, however,
+is that there exists a number of learning algorithms to mod^
+ify the weights of a network in succesive stages so they
+converge often to the appropriate values for a given task.
+
+       There are various types of learning. The simplest is
+S u p e r v l s e d l e a m i n g . The task is represented by a number of
+                          fe fe
+input/output pairs (x , y ) called exemplars or just data. A
+network learning phase for a neural net goes as foilows.
+
+
+       1. The weights of the network are initially set tosome
+predetermined values (say O, or small random values);
+
+       2. The first X      ls damped on the input nodes. The net
+
+                                                                39
+
+
+is then updated according to the current weigjits \mtil some
+activations z are read at the ouput nodes according to some
+criterion (e.g. in a feedforward net, right after the out-
+put layer is updated);
+
+      3. usually this output z differs from what it ou^t
+to be, i.e. y . A predetermined calculation is made (by    a
+teacher or supervisor) that will determine what changes are
+to be made to the weights to 'correct' the erronous output;
+
+      4. steps 1-4 are repeated for all remaining exampiars.
+
+      Viewing a net as a vector of weights, a point in some
+high dimensional space, a learning algorithm provides a tra-
+jectory in weight-space. Given a particular task, one    can
+associate with a specific set of weights some measure of peJí
+iormance (or error off the target). The goal of the algo-
+rithm is, ideally, to take the net to a global máximum    of
+performance (or equivalently, a global mínimum of the number
+of errors).
+
+      A good learning algorithm will, under a wide variety
+of inputs and initial conditions, make the net's    set of
+weights converge to the appropiate values given sufficiently
+many exemplars. The goodness of the algoritm depends onthree
+main factors: how many exemplars are necessary, how general
+are the convergence conditions, and the speed and computa-
+tional expense of updating weights. Establishing the conve£
+gence to appropriate weights is the most diffictilt part in
+designing a leaming algorithm.
+
+      The various learning algorithms are distinguished in
+terms of the precise output criterion and the method to up-
+
+40
+
+
+date weights. There are three basic types: S u p e r v l s e d learor-
+ing, r e i n i o r c m e n t learning, and s e l i - o r g a n l z e d leaming.
+
+
+        In supervised leaming, a teacher (or critic, in rein
+forcement leaming) provides immediate feedback and weigihts
+are corrected in proportion to the magnitude of the deviation
+of the net's responso from the 'correct' responso. Usually
+one asstmies that the right set of weights exists, it is a
+matter of zeroing in on them using exemplars, i.e. pairs of
+desired inputs-outputs. For example, with a set of linearly
+separable data, one can start with zero weights for p e r c e p -
+                                            k fe
+t r o n l e a m i n g , For each pairs X , y , have the net output
+its valué z , then change the weight from input cell j to
+the output cell I á l a Rosenblatt, i.e. by
+
+        new   oíd  ,       oíd      k   k b
+       W.. - Wy. + tMy; ' Wyj + r\iyy Zy)Xy                                  (5)
+         ^J       A,¡        ^J       A.J          A,   A,   A,
+
+
+where n í s a so-called l e o i m l n g - r a t e . This perceptron l e a r n
+Ing r u l e i s very s a t i s f y i n g because Misdcy and Papert proved
+                                                 fe
+a theorem s t a t i n g t h a t i f the data X a r e l i n e a r l y separable,
+then the weights Wj. converge t o a net t h a t produces the de-
+                  A,J
+sired outputs from arbitrary initial weights. These results,
+however, only apply to perceptrons. The absense of aimilar
+strategies to effect weights changes in more conplicated,
+even just feedforward nets with hidden units, was originally
+an obstada for the advent of neural networks.
+        The reason béhind the fascinatíon for feedforward neu-
+ral networks is b a c k p r o p a g a t l o n , the most basic 'general-
+purpose* leaming algorithm. As such, it has been reinvented
+several times (Bryson & Ho 1969; Werbos 1974; Parker 1985;
+
+                                                                                           41
+
+
+Rumelhart, McLelland & Williamfi 1986). It is, in a way, a
+generalization of perceptron leaming. The error function is
+ustially the square error
+
+
+
+                                       i,fe        ^ ^
+
+where W^ denotes the vector of weigths into cell 1 . Proceed-r
+ing backwards from the output layer, for each output cell I
+the weights from the previous layer Wj. are updated in the
+                                                       A.J
+opposite direction of the gradient of the error function by
+
+             neiÁ) oíd        ae
+            % '""lj ^'^ij'^-'^Wrj                                              (6)
+(which a l s o dependes         on w e i g h t s    feeding       into     cells j
+at the      previous         level).      This g r a d i e n t     makes       sense
+for a d i f f e r e n t i a b l e   transfer        function,        which       is
+usually     a lo gis t i c      function       a p p r o x i m a t i n g the t h r e s -
+h i l d function a t node I ,         After        a l l weigth    changes f o r
+a l l c e l l s i n a l l the hidden layers a r e determined, the faocfe-
+ward epoch of the process i s completed for the given p a t t e m
+ b h
+X , y . In the i o n a a r d p h a s e , all weights are updated. The
+whole process is then repeated for all remaining patterns.
+As the reader may suspect, this is a far more complicated and
+computationally expensive process, one that does not always
+necessarily converge to the rig^t weights, even if they exist.
+Much effort has gone into analyzing convergence conditions
+and generalizing the method to work for recurrent networks,
+which tend to work better for a nuoiber of problems such as
+pattem completion, atereoscopic visión, and robot manipul-
+ators. The reader is referred to Hertz, Krogih and Palmer ,
+(1991), for analysis and generaliza tions of the algorithm. Note
+
+42
+
+
+that the nature of the leaming makes it suitable for     dis-
+crete and continuous networks.
+
+      There are other varíations of the supervised learning
+paradigm. Important exaoq>les are, Hebbian learning (like in
+biology, weigiht changes are proportional to the correlation
+between firing of pre and post-synaptic units), reinforcement
+leaming (only a 'right' or 'wrong', not the 'correct' valué,
+are known for weight change), conq)etitive leaming (only one
+cell will fire at a time), gradient descent/ascent, and máx-
+imum likelihood estimation. The reader can find up-to-date
+references on these methods in Buntine (1991) and White 0.989),
+along with a coherent general exposition of bayesi£in back-
+propagation in White (1989).
+
+      In unsupervised leaming there is no teacher. The net-
+work must discover on its own córrelations in order to cate-
+gorize the data and produce outputs that exhibit a degree of
+self-organization. This is possible only where Information
+is encoded as redundant data. For instance, the output may
+end up reflecting deviation from the average pattern (along
+one or several dimensions, like in principal component anal-
+ysis), the propotype of a cluster with similar features, a
+trimmed-up encoding of the input (redundancy washed away),
+a feature extracted from the data, or a combination of some
+or all of these features. Unsupervised learning is useful
+with many^hidden layer feedforward networks where backpropa-
+gation is very slow and expensive, as a follow-up to super-
+vised learning to allow for adaptation of the network. Ihere
+are two basic types of learning rules, depending on how many
+cells are allowed to fire at the time. The exact description
+
+                                                                            43
+
+
+of these       rules is too technical for this paper to de-
+scribe. The reader can find additional detail and references
+in Hertz, Krogh and Palmer (1991).
+
+       Once a network has been tr«áned it offers an advantage
+that gives it an edge over many traditional models. Its weights
+are 'set up', so to spe£Üc, to respond in a coherent, reason-
+able way to u n i o r e s e e n exemplars. This feature is called gen-
+e r a l i z a t l o n . As more and more exemplars are presented, con-
+tinued learning may, on the other hand, lead to degradation
+of the leamed responsos to accomodate new patterns. Some neu
+ral models, such as Carpenter & Grossberg's ART models have
+the ability to retain previously learned models, a desirable
+feature in many applications,(Grossberg 1988). This degrada-
+tion is not to be confused with so-called g r a c e i u l d e g r a d a -
+t i o n , i.e. the ability of the network to        return meaningful
+(but some^at degradad) answers even if some of its cells or
+synaptic links have becomes faulty or nonoperational.
+
+
+
+
+4. Appllcations.
+
+       In this section we present a selection of some of the
+most notable tises of neural networte to date.
+
+
+4.1. Associative memories.
+
+       As mentioned before, associative memories are systems
+in which pairs of patterns iu*',v*') are associated in such a
+way that, when presented a pattem u that reseodiles ( with
+high probability) u ^ , the system retrieves pattern \/^ (with
+
+44
+
+
+high probability). If u   - v,   the memory is a u t o a s s o c i a t l v e ,
+otherwise it Is heteroassociatlve,
+
+      Neural nets can be used to implement associative memo-
+rieS;. What is required is that the vectora to be stored                be
+fixed points (stable states), which means that the connection
+weigihts must be chosen so as to satisfy the equation
+
+                      rM.'iiy.jx.)'x.,
+for all cells 1 . In addition, the stable states must have an
+"attracting property", that is, if an input pattem is suf-
+ficiently similar to (e.g. a small Hamming distance away
+from) the stable state, it will end up in the stable               state
+after succesive transitions, or at least in a state "near"
+the stable one^ "^. The former implies that an associative
+memory has an error correction property: if the nunber                of
+errors of a given vector is such that the vector lies within
+an "appropriate" distance from a memory (stable vector), then
+total or partial error correction is obtained according                 to
+whether the vector reaches the memory or a state cióse to it
+after iterations of the system. Thus associative memories
+are very useful in recognition and reconstruction of images
+and in information retrieval when only a partial or degener-
+ate input ia given.
+
+      For a fixed network with n cells and discrete activa-
+tions only finitely many memories can be stored in the net-
+work because there are only finitely loany fixed points of the
+
+(i) Here ."neamess" is usually measured in terms of the Ham-
+ming distance, where the distémce between two vectora is the
+number of different components.
+
+                                                                       45
+
+
+network dynamics. The patterns of activation that evolve into
+the same fixed points X are the possible corrupted input a x ¿
+nals that admit error-correction. They form the basin of at-
+traction of X. There is therefore a trade-off between the num
+ber of memories to be stored and the robustness with          which
+they can be retrieved. Memory will fade as the number of ve£
+tors to be memorized increases. For instance, some fixed
+points will not correspond to an actiial pattem (a s p u r l o u s
+memory)i or a memory given as an initial condltion will con-
+verge to a different fixed point (the pattern is u n s t o b t e ) .
+The natural question arises as to how many vectors can be
+stably recalled with high probability for a given network on
+n   cells.
+
+       The first answer to this question was provided by Hop-
+field (1982)L It has been confirmed experimentally that when m
+memories are stored in n cells and m xa kept below 0.15n ,
+spurious and unstable recall is very rare. Exact analytic re
+sults were later obtained by McEliece and coworkers (1987) for
+random errors. If m < n/4 log n then with very high probabil-
+ity all the memories will be stable. For n/41ogn< ni< n/21og n
+stillmost memories will be stable with high probability.         The
+question remains whether stable memories can attract all vec-
+tora with a positive radios pn (in Hamming distance),            for
+some p > 0. Komlos and Paturi (1988) further established con^
+vergence in at most Oilog log n) steps as well as the existence
+of a poaitive radius of attraction for m < n/4 logn. They also
+established the existence of exponentially many states which
+are stable, although in a weaker sense defined in terms of
+energy. Exact descriptions of these results are beyond           the
+acope of this survey - Komlos and Paturi (1988).
+
+46
+
+
+        The associative memory probiem can be regarded               as       a
+particular case of a more general probiem dealt with in the
+next section.
+
+
+4 . 2 . Pattern c l a s s i f l e r s .
+        Classification is a fundamental idea in many áreas,
+particulary leaming. It usually involves the partition                    of
+objects in question in a number of categories, usually fin-
+ite. The probiem of p a t t e m c l a S S l i l c a t l o n consists in de-
+termining, with a mínimum probability of error, to which of
+a finite number of possible categories an input pattern be-
+longs. This probiem is central to áreas such as artificial
+intelligence, machine visión, image processing, speech pro-
+cessing, automatic malling systems, and many others.
+
+        Traditional classifiers usually perform by finding the
+input with "máximum acore" obtained in matching with an ex-
+emplar from the given category. In most cases these classi-
+fiers rely on strong assumptions made on the distribution
+of the input patterns so as to estímate the parameters that
+stay fixed during the process. The categorization of data is
+usually performed in such a way that the output will be cías
+sified as "high" upon input of a pattem if it is cióse                    to
+the corresponding exemplar in the category. Ihe aim is                  to
+perform the task correctly even if a particular pattem is
+slig^tly distorted. For instance, pattern classifiers can be
+used as associative memories ^ e r e the stable vectors ormem
+oríes correspond to the categories of the network.
+
+       Neural networks are widely used in pattern classifi-
+cation. The advantage of neural networks is that, in con-
+trast to statistical methods, they are adaptive, non-para-
+
+                                                                                47
+
+
+metric and more flexible in the specification of underlying
+distributions.
+
+        The simplest pattem classifier is the perceptron men-
+tioned in subsection 2.1. It decides if an input is above or
+below an hyperplane (in our case a line) forming two regions
+or categories separated by a decisión boundary. If the data
+is not separable and their density functions overiap, the d£
+cisión boundaries may oscillate. Approxlmate solutions can be
+found by considering the l e a s t mean Square approach. This pr£
+cedure minimizes the mean square error between the desired
+and the actual output of the perceptron. Weights are correc_t
+ed according to the difference between the two patterns. The
+procedure works with other neural networks as well. By mini-
+mizing the probability of error classification, the network
+acts a b a y e s i a n c l a S S l i l e r . The question now is whether   or
+not the network approaches an optimal decisión. Specht 1990
+provea that if the sigmoid activation function, commonly used
+forfaocfep r o p a g a t l o n , xa replaced by an exponential function,
+virtually an optimal Bayesian classification is obtained.
+
+       Another exanq>le is the W l n n e r - t a k e - a l l network. It con
+sists of an input layer of cells connected to a fully inter-
+connected aet of binary cells. Weights are set up so that on
+ly one of the output units, called the WlnneA, can fire                    at
+any time. It is \isually the unit with the largast net input.
+
+       The Hamming n e t , like several other networks, imple-
+ments a classical algorithm. The output of the network is the
+vector nearest in Hamming distance to the input vector. The
+result is obtained by actually implementing in neural prim-
+itives the optimum mínimum e r r o r c l a s s l i l e r . algorithm, used
+
+48
+
+
+to solve some problems in Communications when binary signáis
+are sent through memoryless channels. The Hamming net consists
+of two subnets, a feedforward net and a winner-take-all net,
+each containing two layers. The conocetions are as foilows:
+In the lower net, input node j connects to next layer node I
+with weight W. •; node I xa this layer connects to a corres-
+              A.J
+ponding node I xa the first layer of the upper net with weight
+1; node j connects to node in the same layer with weight u.- •;
+                                                                 A,j
+node j in this layer connect to output nodefewith weight v , - .
+The net effect of these two layers is as foilows. The first
+subnet finds the difference between the number of elementos
+of the input pattern and the Hamming distance to the exemplar
+for each class. The winner-take all subnet then selecta the
+máximum valué yielding the corresponding class of the input
+vector.
+      The reader is referred to Lippmann (1987), for a more de-
+tailed study of patt:em classifiers.
+
+4.3. Time serles.
+      A t i m e s e r i e s is a sequence of observations ordered in
+time. The series is continuóos or d i s c r e t e depending     on
+whether the observations are made continuously or at discre
+te times. An example of a discrete series is the valué of the
+stock of a certain company through time. The objectives in
+time series analysis include obtaining simple descriptivo m ^
+sures (if possible) of the main properties by plotting the
+data, validating empirically prior knowledge on its structure,
+and, most importantly, predicting as saccurately as possible
+future values of the series.
+
+                                                                     49
+
+
+         If the future behavior of a time series can be exactly
+predicted based on some knowledge of the past, then the time
+series is deterministic and no further study is required.
+Otherwise, it is a statistical time series. The series        can
+be univariate or multivariate depending on whether the obser
+vations are taken on a single valué or simultaneously on se-
+veral values. A time series can be seen as a realization of
+a stochastic process. Unlike many processes handled by sta-
+tistical theory, however, the special feature about time se-
+ries as a random process is that observations are not inde-
+pendet and the temporal order is quite important. Time series
+apply to many fields. Iftich of the behavior encountered       in
+social sciences, natural sciences, biology, physics and other
+Sciences can be modeled in the form of time series. The ap-
+parently chaotic nature of data in áreas such as economy and
+history has given an increasing interest to time series ana-
+lysis.
+
+       Given observations X, .X-,... ,X^, up to time t , we wish
+to predict the valué at time ^++1»• •• «^í-a».» •*• a positive in-
+teger. One of the fundamental problems is the selection of a
+mathematical model to represent the process. Once the form of
+the model is found, it is a matter of using known values        of
+the series to determine the unknown parameters in the model.
+For example, one of the most general techniques, the Box-Jen
+kins method assumes that there is a linear relationship be-
+tween a number of consecutivo terms of the series,          of the
+form
+
+              V i ' ^o'^í + '^iVi +• • •+ V í - p -^ "'^'
+where W^ is some random noise. Other models include ARMA, ARI^
+
+50
+
+
+MA, etc. Most of these methods in time series forecasting
+rely on linear relationships among the variables.
+
+      Yet, most of the data obtained from the real world are
+nonlinear. Neural Networks offer an alternative model     for
+time series forecast. There are several reasons why they may
+be better models. First, they are nonlinear models. Second,
+learning algorithms like backpropagation, if successful, will
+"discover" the best possible set of weights to fit the given
+data without previous knowledge even of their form. Third,
+they do not inq>ose in advance too particular a restriction
+on the relationship between the various parameters represent
+ed in the hidden layers of the net. They   are adaptive   in
+the sense that the models change with the structure of the
+data if a training algorithms is in place.
+
+      A feedforward network may be used to predict future
+values for a time series as foilows(Hehrotra, Mohán and Ran
+ka 1990). The Iast n terms of the series can be used as input
+for the cells in the input layer. (The- valué of n requires
+judicious choice). The output layer will contain the valué
+predicted by the network for the next term of the series.
+!nii8 predicted valué can be either ignored (one-lag predic-
+tion) or used for further training (multi-lag prediction).
+This method has been used for prediction of sun-spots, Oíela.-
+rotra. Mohán and Ranka 1990). Initial aegments of the known
+series can thus be used for training set for the network.
+The remaining values can be used to verify the goodness of
+the network. If the actual valuea of the series are known
+after some time (for instance in the case of sun-spots) they
+can be used for continued training. The network thus becomes
+an adaptive predictor of a series in which the parameters of
+
+                                                                                51
+
+
+the series are themselves changing with time. The probiem now
+reduces to determining the most suitable valué of n and                 the
+architecture of the network that will provide more accurate
+predictions that traditional models.
+
+        Stochastic recurrent networks have also been used               to
+predict future values of a multivariate series. For exan^le,
+in Kehagias, CL991) they have been applied to series whose val
+ues can be expressed over a finite alphabet, e.g. quantized
+speech waveforms. It is assumed that an unknown netrwork is
+producing the values of the series. The problems of p r e d i c -
+t i o n and c l a S S l i l c a t l o n are then formulated as foilows. Given
+outputs y » . . . , y   at the present time, and the inputs X
+ .t+l
+X    up to the immediate future, predict the máximum likeli-
+hood estimation of the ouput y   . In formulas, using the co-
+rresponding capital for the corresponding random variables,
+one wants a valué for y    that maximizes the function ^ A y )
+given by the conditional probability
+
+ probíY^'^^ ' y \ y K . . y ^ ' {/^../; X^..X*+^ - x^..x^^b
+                                                                t+l
+In the classification probiem, given the same but X                   , one
+asks for the networks ^f. out of a number of candidatos                 N.,..
+.., Ny that has máximum posterior probability of producing
+ 1       t
+y ,-..,{/.
+
+        Although experimental results show succesful prediction
+of future values, in the sense that            they were closer to exact
+values than the ones obtained with the Box-Jenkins method,
+there is not underlying theory that will support these re-
+sults. A first step in this direction can be found in Keha-
+gias a991).
+
+52
+
+
+4.4. Computational models of physics.
+        Discrete neural networks as given in d e f i n i t i o n 2 . 1 .
+a r e a generalization of a model, c e l l u l a r autómata, i n t r o -
+                               (2)
+duced by John von Neumann            as discrete computational ver-
+sions of partial differential equations in the 1950's. Since
+then, cellular autómata have developed into a very active
+field of research, mainly by physicists and computer scien-
+tist CToffoli and Margolus 1987, Wolfram 1987). A cellular au
+tomaton can be defined as a neural network in which the un-
+derlying graph is homogeneous (it looks the same from every
+node) and all cells apply the same rule. Typical examples
+are the points of integer coordinates in real             euclidean
+spaces connected in the usual grid manner by horizontal and
+vertical edges. Other examples are regular trees, and, more
+generally, Cayley graphs of arbitrary finitely generated
+groups. With binary states, common rules are the sum modulo
+2 of a subset of the states of neighboring cells. Conway's
+game of LIFE is probably the most popular example of a cel-
+lular automaton.
+
+       Cellular autómata provide Simply defined d i S c r e t e mod^
+els of a wide variety of natural and complex phenomena hith
+erto thought to be undescribable by simple classical contin
+uous or discrete systems. Examples include the Greenberg-
+Hasting models for the Belusov-Zhabotinsky reaction, the di^
+gital BBM (billiard hall) model for conservativo mechanics,
+the HPP-GAS, Ttt-GAS, and FHP-GAS models of fluid dynamics
+for the Navier-Stokes equation, Ising systems, spin glasses.
+
+
+(2) S. Ulam's seems to have made crucial suggestions on the
+    type of model.
+
+                                                                       53
+
+
+voting models of cooperativa phenomena, and myriad other cel^
+lular autómata rulés currently under research. They have even
+been used as a primer example of artificial life and related
+issues (l.angton 1991). The reader i» reperred to Gutowitz (1990).
+Toffoli and Margolus (1987) and Wolfram,, 0.987)^ for a detailed
+description of applications of cellular autómata. Generally
+speaking, they can be regarded as imaginary miniatura uni-
+verses where the local rules play th» roles of p h y s i c a l lo-
+cal laws and clusters of pixels in temporally stable config-
+urations behmre like objets in that universo.
+
+        Most common cellular autómata models have been deter-
+ministic. They are closely related to deterministic neural
+networks          (Gutowitz 1990pp.431-440)for precise relation-
+ships between the two models). However, some recent models
+have been proposed concerning probabilistic models and In-
+herently probabilistic phenomena such as quantum mechanical
+effects and even the entire universe itself (Gutowitz 1990).
+For exemple, the d e t e r m i n i s t i c   2-dimensional model of
+sum modulo 2 has been found to possess quantitative pro2.
+erties akin to quantum mechanical properties in Vichniac,
+0-984). Richard Feynman (1982) considera very seriously the idea
+that the evolution of our physical universe may be governed
+by local rules of a cellular automaton type with stochastic
+spatiotemporal update depending not only on the            immediate
+past, but also on the immediate future. Rujan (L987)has fur-
+thered this consideration to full blown models of quantum
+mechanics. Other probabilistic cellular autómata rules have
+been examined in Bramson and Griffeath C990).
+
+54
+
+
+
+5. Other applications.
+
+      The foregoing sections have barely touched upon the va£
+ious neural models and their applications. They have empha-
+sized discrete models. Continuous models have been studied,
+mainly by Grossberg (1988), Kohonen (1984) and Fukushima. The ART
+(Adaptive Resonance Theory) models of Grossberg and his col-
+laborators have as activation values real numbers and     the
+local evolution is governed by differential equations. They
+have been used with great success in many áreas suchas a pat-
+tern classification, adaptive resonance and neural modeling
+of brain functions.
+
+      Neural modeling is an interesting overiap with medici-
+ne and neurophysiology. Neural nets can be used as experimen^
+tal full models of nervous systems of primitive organisms
+(includingtraining and adaptation), models of parts of     the
+human brain (hyppocampus, cortical áreas, eye movement con-
+trol mechanisms, language functions, etc.), models of learn
+ing and behavior, and so forth.
+
+      Industry has found a great deal of applications     for
+neural network as well. We mention just a couple. A neural-
+net based systems has been designed and successfully out-
+performs other system   for airport security in detection of
+plástic explosivos. Neural-based pattern recognizers are in
+use to identity handwritten characters and zip codes for aia
+tomatic sorting of mail in the postal service. This type of
+control system is beginning to find its way into homes     in
+appliances, electronic devices, etc. Large companies     have
+been founded in Europe, North America and Japan for research
+and development of an industry projected to have a volume of
+
+                                                                    55
+
+
+eperations in the multibillion dollar range by 1993.
+
+      Neural models have also been found of interest as sta-
+tistical tools, as indicates above. As their properties be-
+comes better known, they are likely to become        important
+tools in applied statistics as well. In turn, probability
+and statistics can be used to analyze the difficult probiem
+of the longterm behavior of dynamics and leaming by neural
+nets (White 1989). This interrelation is likely to increase
+as the interest in neural nets shifts from experimentation
+to a more systematic and analytical stage of development.
+
+
+REFERENCES
+D.H. Ackley, G.E. Hinton and T.J. Sejnowski, (1985) A learning algorithm for Boltzman Machines, Cognitive Science 9, 147-169.
+R. Alien and J. Alspector, (1990) Learning of stable states in Stochastic Asymmetric Networks, IEEE Transactions on Neural Networks, 1:2, 233-238.
+W.L. Buntine, (1991) Bayesian Back-Propagation, avaible as (Stanford U. Tr. from the neuroprose archive via ftp).
+R. Feynman, (1982) Simulating physics with computer, In;t. J. Theor. Physics 21:6/7, 467-488.
+H. Gutowitz, ed. (1990) Cellular autómata: theory and experiment. Proc. 3rd Workshop, Physica D 45:1-3.
+M. Bramson and D. Griffearth, (1990) Flux and fixation in cyclic particle systems, TR. U. of Wisconsin, preprint.
+S. Grossberg, (1988) Competitive Learning: From Interactive Activation to Adaptive Resonance, D. Waltz & J. A. Feldman (Eds.) Connectlonlst Models and their Applications, Ablex.
+J. Hertz, A. Krogh, and R. Palmer, (1991) Introduction the theory of neural computation, Santa Fe instituto studies in the science of complexity, Addison-Wesley.
+J.J. Hopfield, (1982) Neural networks and physical systems with emergent collective computational abilities, Proc. Mat. Acad. Science 79, 2554-8.
+J.J. Hopfield, (1986) Computing with neural circuits: a model, Science 233, 625-33.
+A. Kehagias, (1991) Stochastic recurrent networks: Prediction and classification of time series, TR, Brown University.
+T. Kohonen, (1984) Self organization and associative memory, New York, Springer Verlag.
+T. Kohonen, (1988) An Introduction to Neural Computing, Neural Networks Vol. 1, 3-16.
+J. Komlos and R. Paturi, (1988) Convergence results in an associative memory model, Neural Networks, Vol. 1, 239-250.
+M. Langton, ed. (1989) "Artificial Life", Proc. first conference, MIT Press, Cambridge, MA, See also Proc. 2nd conference, (1991) Santa Fe Instituto series on complexity, Addison-Wesley.
+M. Li, K. Mehrotra, C.K. Mohán, and S. Ranka, (1990) Forecasting sunpots numbers using neural networks, Proc. IEEE Symp. on Intetligent Control. Sep.
+R.P. Lippmann, (1987) An Introduction to computing with neural nets, IEEE ASSP magazine, April. (1988) Reprinted in Vemuri, 36-54.
+W.S. McCulloch & W. Pitts, <1943) A logical calculus of the ideas immanent in nervoiis activity, Bull. Math. Biophys. 5, 115-33.
+R.J. Me Elieee, E.C. Posner, £.R. Rodendc and S.S. Venkatesh, (1987) The capacity of the hopfield associative memory, IEEE Trans. on Information Theory, 33, 461-482.
+J.L. McClelland and D.E. Rumelhart (Eds.) (1986) Parallel Distributed Processing, MIT Press, Cambridge, MA, Vols. 1,2.
+M. Minsky and S. Papert, (1986) Perceptrons, MIT Press, Cambridge, MA, Vols. 1,2.
+F. Patrick, (1990) Computational Complexity issues in Neural Associative Memories, Department of Computer Science, University of Helsinki, report C. 40.
+F. Rosenblatt, (1962) Principles of neurodynamics, New York, Spartan.
+P. Rujan, (1987) Cellular Autómata and Statistical Mechanical models, J. Statistical PhysicS 49, 139-232.
+D.E. Rumelhart, G. Hinton and R.J. Williams, (1986) Learning Internal Representations by Error Fropagation, in McClelland and Rumelhart, 318-362.
+T.J. Sejnowski and C R . Rosehberg, (1987) Parallel Networks that the Learn to Pronounce English Text, Complex Systems, Vol. l, 145-68.
+D.F. Specht, (1990) Probabilistic Neural Networks, Neural Networks, Vol. 3, 109-118.
+T. Toffoli and N. Margolus, (1987) Cellular Autómata Machines, MIT Press, Cambridge, MA.
+V. Vemuri, (1988) Artificial neural networks, theoretical concepts, The Computer Society Press.
+G. Vichniac, (1984) "Simulating Physics with Cellular Autómata", Physics 10D, p.96. Reprinted in Cellular Autómata, Proceedings of the Los Alamos Conference, North Holland, Amsterdam.
+H. White, (1989) Learning in artificial neural networks, a statistical perspective, Discussion paper 89-49. Economics, U. of California, San Diego.
+H. White, (1989) Some asymptotic results for learning in single hidden-layer feedforward neural models, J.Amer. Stat. Ass. 1003-1013.
+S. Wolfram, (1987) Theory and Applications of Cellular Automata, World Publishing Co., Singapore.
+

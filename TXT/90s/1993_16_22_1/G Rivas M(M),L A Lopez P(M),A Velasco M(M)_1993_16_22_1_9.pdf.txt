@@ -1,0 +1,579 @@
+REGRESIÓN NO LINEAL
+Universidad Nalcional de Colombia
+INTRODUCCIÓN
+En el presente artículo se pretende dar una visión general de lo que es la regresión no lineal, para ésto, se tratan aspectos tales como: la no linealidad de un modelo, la forma de saber si un modelo es lineal o no, ¿cuándo usar la regresión no lineal?, también se discute la forma de estimar los parámetros en este tipo de modelos, así como sus propiedades asintóticas y la construcción asintótica de intervalos de confianza y pruebas de hipótesis. En la parte final se da una aplicación con datos reales, para el ajuste de un modelo no lineal haciendo uso del procedimiento NLIN del paquete SAS.
+
+
+                               2.   MODELOS N O LINEALES
+
+2 . 1 . I n t r o d u c c i ó n . Un modelo se puede definir como una ecuación o conjunto de
+ecuaciones que describen el comportamiento de algún sistema, por ejemplo, el trabajo
+de un reactor químico o el crecimiento de un animztl. La teoría estadística dedicada
+a los modelos lineales en los parámetros es muy amplia, debido en gran parte a sus
+múltiples aplicaciones y a la fácil interpretación de los resultados obtenidos de este
+tipo de análisis. Sin embargo, hay fenómenos observables que no pueden ser explicados
+por modelos lineales, por ejemplo, el desarrollo de una teoría en la química o la física,
+en tales situaciones un modelo no lineal en los parámetros se puede ajustar mejor.
+   Hoy en día es más viable, gracias al progresivo avance de los computadores, la
+aplicación de modelos no lineales en fenómenos donde el conjunto de parámetros no
+puede expresarse en forma lineal.
+
+                                                                       Typeset by AMS-TÍÍK
+
+
+                                                89
+
+90             GUILLERMO RIVAS, LUIS A. LÓPEZ Y ANTONIO VELASCO
+
+   En matemática los fenómenos observables pueden ser como una ecuación de la
+forma:
+
+(1)                                     Y = f{6,0 + ,
+
+donde y es el valor medido de una o más respuestas (las variables dependientes), e es
+el error experimental asociado con esta medida, y f{9, Q es una función que contiene
+p parámetros 6 i , . . . ,9p (notado por 6) y k variables C i , . . . , Ct •
+  Si en Y se asocia una sola respuesta, por ejemplo, la concentración de producto de
+una reacción química de primer orden, la función / puede ser de la forma
+
+                                f(e,C) = 9 i [ l - e x p { - 9 2 Q ,
+
+donde C, indica el tiempo una vez que la reacción ha comenzado.Un segundo ejem-
+plo, hace referencia al crecimiento de plantas u organismos el cual frecuentemente se
+representa por un modelo logístico de la forma
+
+                                                       9i
+                                f{9,0 = l-\-92expi-930
+
+donde C de nuevo representa el tiempo una vez que el crecimiento de la planta u
+organismo ha empezado.
+
+2.2 S u p u e s t o s s o b r e los e r r o r e s . A partir del modelo ( 1 ) si se supone: e» ~
+N{0,<T^) para « = 1               n; con <T^ desconocida y constante; €„ y €» independientes
+para u ^ s; u , s = l , . . . , n ;una forma de validar estos supuestos es haciendo un
+análisis de los residuales, los cuales en su forma más general son obtenidos por:
+
+                             r u = V u - f(9Xu)        u = l,...,n.
+
+Estos n valores se representan gráficamente contra los valores de predicción.
+
+2.3 Defínición d e N o linealidad. En esta sección, vamos a describir un proced-
+imiento que permite diferenciar un modelo lineal de uno no lineal en los parámetros.
+Un modelo lineal se puede escribir en la forma
+
+
+(2)                                  fi9X) = Í2^i9iiO
+                                                 »=i
+
+para alguna función gi que depende sólo de los valores de C pero no de los valores de
+6 (parámetros). Los modelos que no se pueden escribir de esta forma son no lineales
+
+                               REGRESIÓN NO LINEAL                                    91
+
+en los parámetros o simplemente no lineales. Nótese que la linealidad o no linealidad
+del modelo se determina por la forma en que entran los parámetros al modelo y no
+por la forma en que entran las variables Ci > • • • > Ct • Asi por ejemplo, una ecuación
+cuadrática en C
+
+(3)                            M C ) = ^ i + Í 2 C + «3C'
+
+puede expresarse linealmente como en ( 2 ) haciendo </i(C) = li <?2(C) = C y í/síC) = C^>
+en tanto que en el modelo
+
+(4)                              f { 9 , 0 = 9iexp{-920
+
+no puede hacerse esta representación. Una forma sencilla de ver si un modelo es lineal
+o no, es examinando las derivadas de / con respecto a cada uno de los parámetros
+9i. Si df/d9i no depende de ninguno de los elementos de 9 = ( 9 i , . . .,9p)^ ,él modelo
+es lineal en 0,; y si además es lineal en todos los p petrámetros el modelo se dice
+lineal en los parámetros o simplemente lineal.Algunos modelos no lineales, mediante
+una apropiada transformación pueden describirse como en la ecuación (2), así por
+ejemplo el modeloy caso (4) mediante la transformación logaritmo puede representarse
+como en (2). Las transformaciones para linealizar, sin embargo, tienen el efecto de
+transformar también los errores t alterando asi la relación entre f y c. Generalmente
+los supuestos sobre e para el modelo original no tienen las mismas propiedades después
+de la transformación. Es bueno verificar la validez de los supuestos después de ajustar
+el modelo o usar modelos lineales generalizados en el análisis.
+
+                              3. REGRESIÓN N O LINEAL
+
+3.1 Motivación. La regresión no lineal se usa cuando se quieren estimar los pará-
+metros de un modelo no lineal que relaciona una respuesta Y con algunas variables
+control o predictoras (Ci,« = 1 , . . . , ib). Esto es
+
+                           Yu=f(9,Cu)-heu       tl = ! , . . . , «
+
+Los modelos no lineales se originan cuando un investigador obtiene, por el desarrollo
+de una teoría o por otra situación, una relación funcional en la que los parámetros
+son no lineales. Un ejemplo es la función de Michaelis-Menten [7], la cual relaciona la
+tasa inicial o velocidad, de una reacción enzimática con la concentración de substrato
+C por medio de la ecuación
+
+92            GUILLERMO RIVAS, LUIS A. LÓPEZ Y ANTONIO VELASCO
+
+Este modelo es no lineal porque de acuerdo a 2.3 al obtener las derivadeis
+
+                          d¿^_£_.                df ^             9iC
+                          d9i     Í2 + C'       992             (^2 + C)^
+
+son función de al menos uno de los parámetros. Al tomar el recíproco de la función
+de Michaelis-Menten se tiene el modelo
+
+
+                                  )-m^i)^k
+el cual es lineal en los parámetros al hacer A = j - y ;32 = ^ . Se podría por con-
+siguiente estimar /?i y 02 usando regresión lineal de los datos recíprocos de velocidad
+sobre los recíprocos de substrato y luego estimar 9 = {9i,92)^.
+
+3.2 E t a p a s Básicas e n el Análisis d e Regresión N o Lineal. En seguida, se
+presenta una síntesis de las etapas básicas en el análisis de la regresión no lineal:
+   1. Con los datos obtenidos de Y y Cu y con la función de respuesta f{9, C), encontrar
+estimaciones iniciales para el vector de parámetros, o sea, obtener ^o-
+   2. Usando la información de 1., obtener las estimaciones mínimos cuadrados para
+9 y producir un resumen de estadísticas por aproximación lineal.
+   3. Mirar si el modelo ajustado es adecuado, si Icis estimaciones de los parámetros
+son significativas examinando por ejemplo los residuales y las estimaciones de los
+parámetros como en regresión lineal.
+
+                          4.    ESTIMACIÓN DE PARÁMETROS
+
+  Supongamos que se tienen n observaciones {Vu,Cu}C=i disponibles para ajustar el
+modelo de la forma
+
+(5)                        y u = / ( C u , ^ ) + f«     u=l,...,n
+
+donde
+
+                                   Cu = (Clu. • • - . C t u )
+
+                                    9 = i9i,...,9„)'^
+                                     € = (€i,...,e„)'^
+
+
+es decir, un modelo con p parámetros y k variables independientes. Bajo los supuestos
+de normahdad e independencia de los errores, de la forma e ~ A^(0, Itr^) donde O es un
+
+                                 REGRESIÓN NO LINEAL                                     93
+
+
+vector de ceros e 7 es la matriz identidad ambos con tamaños apropiados. Definimos
+la suma de cuadrados del error para el modelo no lineal como:
+
+                                            n
+
+(6)                             S{9) = ^ [ y u - f { C u , 9 ) ] '
+                                           u= l
+
+
+Note que como y„ y Cu son observaciones fijas, la suma de cuadrados es una función
+de 9. Denotaremos por 9, una estimación mínimos cuadrados de 9, esto es, un valor de
+9 que minimiza S{9). Se puede mostrar que, si f ~ N{0, I<r^), la estimación mínimos
+cuadrados de 9 es también la estimación de máxima verosimilitud de 9. Debido al
+hecho que la función de verosimilitud para este problema se puede escribir como
+
+
+                           L(^,<r^) = ( 2 ^ < r ^ ) - T e x p ( - | ^ )
+
+
+de modo que si a"^ es conocida, maximizar L con respecto a 9, es equivalente a
+minimizar S{9) con respecto a 9. Al diferenciar (6) con respecto a 9, se obtienen p
+ecuaciones normales de la forma
+
+
+(7)             ^{Yu-fiCuJ)}\\df{Cu,e)
+                                 d9i
+                                                             = 0,    1=1   w
+                u=i                    L
+
+Al resolver este sistema se obtiene la solución para í.Recordemos que si / es lineal
+entonces -gf- para i = 1 , . . . ,p es una función de los Cu independiente de 9.
+
+                           5.   ESTIMACIÓN DE PARÁMETROS.
+
+   La estimación de parámetros en un modelo no lineal como se anoto anteriormente
+lleva implícito el uso de métodos numéricos, en esta sección se presentarán dos al-
+goritmos de estimación, los cuales se encuentran implementados en el procedimiento
+NLIN del SAS; estos son:
+      1. Método de Gauss-Newton (Método de linealización).
+      2. Método de Marquardt
+
+5.1. M é t o d o d e G a u s s - N e w t o n . Este método usa los resultados de los mínimos
+cuadrados lineales en varias etapas; se supone que el modelo postulado es de la forma
+dada en la ecuación (5). Sean ^lo, •.. ,9po los valores iniciales para los parámetros
+9 i , . . .,9p, los cuales se pueden conjeturar inteligentemente o estimar con anterioridad
+basados en cualquier información disponible para este propósito; al expandir en serie
+
+94             GUILLERMO RIVAS, LUIS A. LÓPEZ Y ANTONIO VELASCO
+
+de Taylor la función f{Cu,9) alrededor del punto ^o donde 9o = {9io,. • .,9po)^ y
+llevando en consideración sólo la primera derivada, (aproximación de primer orden).
+
+                                                        a/(Cu,í)
+(8)              f{<u,9) = f{Cu,9o) + t l                                    {9i - 9io).
+                                                 i= l               9=ío,
+
+
+Haciendo f° = /(Cu,9Q)-, ^ = 9 Í - 9 Í O \ F¡1 = 2 % - ^                    entonces (5) es aproximado
+por la forma
+
+
+(9)                       > ' « - / ° = É / ? ? / ° u + íu     u=l,...,n
+                                          i= l
+
+en otras palabras es lineal para el orden de aproximación seleccionado, y entonces se
+pueden estimar los parámetros /Sf, i = l , . . . , p , aplicando la teoría de los mínimos
+cuadrados lineales.
+   Escribiendo, /o = {/°„ }, de orden n x p; 6o = [b°] , de orden P x l y Y — f° =
+[Vi - /i°], de orden P x 1, el estimador de /?° = (/?J,..., /3°) está dado por
+
+                                ho={FjFo)-'F^{Y-f).
+
+El vector 6o por consiguiente minimizará la suma de cuadrados
+
+
+                        SS{9) = Y, >-«-/(Cu, Í 0 ) - ¿ / ? ? / ? „
+                                   u= l                            •= 1
+
+
+con respecto a los /?°, i = 1,...,p, donde /?° = 9Í—9ÍO. Si se escribe 6° = Sji — Í.Q; en-
+tonces los 9ii, i = 1 , . . . ,p, se pueden pensar como las mejores estimaciones revisadas
+áe9.
+   Luego se colocan los valores ^¿1, las estimaciones revisadas, en los mismos lugares
+que fueron ubicados los í?¡o y se sigue el mismo procedimiento descrito anteriormente
+pero reemplazando todos los ceros por unos. Esto nos llevará a otro conjunto de
+estimaciones revisadas 6¡2, y asi sucesivamente.En forma de vector podemos escribir,
+
+                    9j+i = 9 j + bj
+                                                 ,-1
+                    9j+i = 9j -f { F l F j f F f ( y - f i )              j = 0,1,...
+
+donde
+            ^i = { ^ . . } '    /'• = ( / í . - - - . / ¿ )   y      0j={9ij,...,9pj)
+
+                               REGRESIÓN NO LINEAL                                    95
+
+
+Este proceso iterativo se repite hasta que la solución converja, esto es, hasta que en
+las iteraciones sucesivas, j , {j -\- 1), se satisfaga
+                            9i(j+i)--9ij
+                                            <6,   i=l,...,p,
+                                 6ii
+donde 6 es alguna cantidad positiva pequeña dada con anterioridad. En cada etapa
+del procedimiento iterativo, se calcula S{9j) pata ver si hay alguna reducción en la
+suma de cuadrados.
+5.2. M é t o d o de M a r q u a r d t (1963). Este método realiza una interpolación ópti-
+ma entre el método de linealización y el método del gradiente (o steepest-descent), la
+aproximeición está basada en lá máxima vecindad donde la aproximación de Taylor
+de primer orden da una adecuada representación del modelo no lineal.En contraste
+al método de linealización, el método del gradiente calcula el vector de correcciones 6
+a partir del vector de estimaciones iniciales en la dirección del gradiente negativo de
+S{9). Así,
+                              _        (dS{9)        dSi9)Y
+                            "'-        V " a r ' - ' dép )
+el subíndice g, indica que es el vector corrección dado por el método del gradiente.El
+problema del método del gradiente es que converge muy lentamente después de unas
+pocas iteraciones. Tanto con este método como con el método de linealización es
+necesario controlar cuidadosamente el tamaño del paso una vez establecida la dijrección
+del vector corrección; el control consiste en tomar una fracción A, O < A < 1, del vector
+corrección en lugar de tomar A = 1.
+
+5.3. Análisis cualitativo del p r o b l e m a . En vista de las deficiencias de los
+métodos de linealización y del gradiente, es bueno revisar los principios fundamen-
+tales involucrados. Primero, cualquier método apropiado debe resultar en un vector
+corrección cuya dirección esté dentro de 90" del gradiente negativo de S{9). De
+lo contrario, los valores de S(9) pueden aumentar en lugar de disminuir en puntos
+ubicados a lo largo del vector corrección. Segundo, debido a la forma alargada de
+la superficie S{9) en la mayoría de los problemas, b¡ (vector corrección hallado por
+el método de linealización) está generalmente casi a 90° de 6,. "Realmente hemos
+encontrado que este ángulo, digamos 7, para una variedad de problemas cae en el
+rango 80° < 7 < 90°", (Marquardt (1963). Para una explicación más detallada del
+algoritmo ver (Marquardt (1963)).
+   Teniendo en cuenta estas consideraciones, Marquardt produce un método para
+interpolar los vectores 6^ y 6;, para obtener un tamaño de paso apropiado. El vector
+
+96                 GUILLERMO RIVAS, LUIS A. LÓPEZ Y ANTONIO VELASCO
+
+corrección descrito por él es el siguiente
+
+                          bM = {F^Fo -f Xdiag{F¡Fo))-'Fj{Y - f°)
+
+Note que cuando A —^ O, la dirección se aproxima a la del método de linealización.
+Cuando A —• oo, la dirección se aproxima a la del gradiente.
+
+
+     6.   PROPIEDADES ESTADÍSTICAS DE LOS ESTIMADORES MÍNIMOS CUADRADOS
+
+   Para establecer propiedades estadísticas de los estimadores en muestras grandes,
+esto es, propiedades que se tienen sólo asintóticamente, es necesario que se cumplan
+ciertas condiciones de regularidad dadas por Gallant (1975, 1986). que se resumen en
+las siguientes etapas.
+     - Los vectores Cu, w = l,---,fi, se deben comportar apropiadamente cuando
+n —• oo. Este comportamiento se obtiene cuando las componentes Cíu,' = 1 , . . . , fc, de
+Cu se seleccionan por muestreo aleatorio de una distribución con momento de primer
+orden finito o por replicación de un conjunto fijo de puntos.
+     - La función de respuesta f(C,9) debe ser continua en sus argumentos (C,^), asi
+como también sus primeras y segundas derivadas, es decir,            ^y ' y   g^ g'.   continuas
+en(C,^).
+   - El /íni„_oo^X)C=i[/(Cu>^) ~ /(Cu,^*)]^ tiene un mínimo único en 9* (vector
+p-dimensional de parámetros desconocidos).
+     - El limn^oo^F^{9*)F{9') es no singular.
+     Bajo las anteriores condiciones se tienen leis siguientes propiedades asintóticas de
+los estimadores (Gallíint 1986, Chaves et al 1984)
+          1. 9 es consistente para 9.
+          2. á^ = - ^ ^ es consistente para cr^.
+          3. í ~ ANp{9,(T^C) {ANp-. Asintóticamente Normal p-variada) donde C =
+             iF'^F)-K
+          4. ^ ^ ^ x H n - p ) .
+          5. 9 y &^ son asintóticamente independientes.
+          6. L a m a t r i z C = [F'^i9)F{9)]-^ = ( F ^ F ) ' ^ se puede estimar por C = [F'^{9)F{9)]-K
+Un intervalo del 95% de confianza para 9i se puede encontrar a partir del valor crítico
+í 025 de una variable t con n — p grados de libertad EISÍ:
+
+
+                                         9i ±t.025V^'Cii.
+
+                                 REGRESIÓN NO LINEAL                                       97
+
+
+Similarmente, la hipótesis Ho • 9i = 9io se puede probar al nivel de significancia a,
+comparando
+                                         \9i-9io\
+                                   \U\ =     7X7
+                                          v^<r'C|
+con |<a/2| y rechazando Ho cuando |í,| > |ía/2|; ^a denota el í-ésimo elemento de la
+diagonal de C.
+   Nota: Por la propiedad asintótica (3.) se tiene que Var{9i) = ff^ca y C O V ( 9 Í , 9 J ) =
+(T^Cij-, de donde se sigue que
+
+                             Var(9i)        Cov(9i,9j)       ., .
+                      cu =      j — y Cij =      5-^i- para t ^ j
+
+de aquí se pueden estimar los componentes de C usando el cuadrado medio residual á"^,
+los errores estándar de los estimadores y la matriz de correlaciones de los estimstdores.
+Esta información es dada por el paquete SAS (Chaves 1984; Velasquez at al 1986).
+
+6.1 P r u e b a s d e hipótesis. Sea la hipótesis de interés:
+
+                              Ho : r = To vs      /f i : r ^ ro
+
+donde T es algún subvector del vector de parámetros 9. Es decir el vector 9 se ha
+particionado de la forma 9^ = (p^ , T ^ ) donde r es el subvector g x 1 de parámetros
+de interés y p es el subvector r x 1 de parámetros restantes. Note que p = q -\-r. Se
+distinguen tres estadísticas de prueba en este caso:
+  -La del cociente de verosimiUtud (T)
+   -La prueba basada en la normalidad asintótica del estimador mínimos cuadrados
+   -La prueba de Wald.
+   -La estadística de prueba del cociente de verosimiUtud T, es el cociente entre el
+estimador de máxima verosimilitud de la varianza para el modelo reducido por la
+hipóteis nula, digamos ¿r^ y el estimador de máxima verosimilitud de la varianza
+para el modelo completo, notado como antes por &^ . Es decir, ff^ es el estimador
+de la varieinza del modelo Yu = f{Cu,(P^<'''o)) + ^u que tiene como parámetros los
+componentes de p ya que TQ son conocidos bajo Ho y ¿'^ resulta de estimar el modelo
+completo y„ = /(Cu, ^) + fu • Así, péira calcular el cociente
+
+
+                                          T='-
+
+se hace necesario estimar dos modelos; el modelo reducido por la hipóteis nula y el
+modelo completo; esto hace que la aplicación de esta prueba sea un poco costosa y
+
+98            GUILLERMO RIVAS, LUIS A. LÓPEZ Y ANTONIO VELASCO
+
+difícil de realizar. La hipótesis Ho : T = TQ se rechaza cuando T es mayor que un
+valor crítico c, donde P{t > c\Ho) = a. El valor c, se puede aproximar por:
+
+                                   c « 1 -I- - ^ F a
+                                            n-p
+donde Fa es el punto crítico or-superior de una distribución F con grados de libertad
+del numerador q y del denominador n — p.
+   -Como se vio anteriormente, 9 ~ ANp{9,a^C), con a'^C estimado por a'^C. En-
+tonces, una estadística de prueba para la hipótesis Ho : T = TQ vs. Hi : T ^ TO, es la
+siguiente:
+                             g ^ {r-To)'^C2^{f-ro)
+                                             qd"^
+donde ¿"22 es la submatriz de C obtenida eliminando las primeras r filas y columnas
+y f es el vector que resulta de eliminar las primeréis r filas de 9; 9^ = {¡F, f^). La
+hipótesis se rechaza cuando S > 6, donde P{S > d\Ho) = a. En la práctica d se
+aproxima por d ¡a Fa donde Fo, es como antes.
+   -La prueba de Wald: supongamos que se quiere probar
+                          Ho : h{9) = O vs.     Hi : hi9) 7^ O
+donde h{9) es una función continua y diferenciable de W —* IR* (g < p), con jacobiano
+
+                                    H{9) = ^ h { 9 )
+
+de orden q x p . Cuando H{9) se evalúa en 9 = 9 escribimos H = H{9). La estadística
+de Wald para probar HQ está dada (Cháves,1982 y Gallant, 1986) por:
+                                    h'^ié){HCH^)-'h{9)
+                             W =
+                                            q&^
+La regla de decisión para este caso es: rechazar h{9) = O, s\ W > Fa con Fa como
+antes.
+
+                              7.   EJEMPLO ILUSTRATIVO
+
+   Para mostrar una aplicación de los resultados teóricos, se usaron los datos obtenidos
+por Yesmith Santos en la elaboración de su tesis de magister en Ingeniería Química,
+U. Nal. de Colombia (1992). El estudio consistió en medir en una reacción química,
+la concentración de un substrato en un deteminado instante del tiempo. Las variables
+estudiadas fueron: concentración de un substrato en un determinado tiempo, notada
+por Y y tiempo t en el cual se hizo la observación. Se obtuvieron un total de 10
+observaciones. De lo anterior se tiene que el número de variables independientes es
+k = 1, el tiempo, y n = 10. Los datos observados aparecen en la tabla siguiente:
+
+                                REGRESIÓN NO LINEAL                                   99
+
+                          Tabla de datos.
+                               u            Y                t
+                               1          0.002             0.5
+                               2          0.005             1.0
+                               3          0.008             1.5
+                               4          0.023             2.0
+                               5          0.029             2.5
+                               6          0.026             3.0
+                               7          0.019             3.5
+                               8          0.014             4.0
+                               9          0.010             4.5
+                              10          0.007             5.0
+
+                             IDENTIFICACIÓN DEL MODELO
+
+   Un análisis gráfico inicial permite concluir claramente que estas dos variables no
+están asociadas linealmente, ya que al comenzar la reacción química y hasta el tiempo
+t = 22.5 min. hay un incremento en la concentración de substrato Y, pero a par-
+tir de este punto y hasta el final de las observaciones, empieza a disminuir dicha
+concentración. Lo anterior sugiere un modelo de la forma:
+
+                          y„ = í i í * ' exp(-e3<u)    u = 1 , . . . 10
+
+donde 9 = (^1,^21^3)'^ es el vector de parámetros a estimar; de aquí, p = 3. Nótese
+que este modelo es intrínsecamente lineal puesto que al utilizar la transformación
+logaritmo natural ( ln ) se tiene
+
+                              ln y„ = ln fli -1- 92 ln t„ - flatu
+
+el cual es lineal en los parámetros 00 = l ^ 9 i , 0i = 92 y 02 = —AS-
+
+                               ESTIMACIÓN DEL MODELO
+
+   Para el presente caso, como el modelo es linealizable, se utilizó regresión lineal para
+encontrar las estimaciones de los parámetros /?o > A y y^2 y a partir de éstas los valores
+iniciales del vector 9 fueron: 9o = (0.02494;3.17171; 1.24044)^".
+   Ya con el vector de estimaciones iniciales se puede usar el procedimiento NLIN
+del paquete SAS, para estimar los parámetros del modelo. El paquete realiza la
+estimación de los parámetros utilizando el algoritmo de Gauss-Newton, ya que se le
+están dando las derivadas parciales de la función de respuesta con respecto a cada
+uno de los parámetros y no se está utizando la opción METHOD (ver programa). El
+programa para el ajuste del modelo en cuestión es:
+
+100                      GUILLERMO RIVAS, LUIS A. LÓPEZ Y ANTONIO VELASCO
+
+DATA ILUSTRi
+INFILE 'A:dato8.pm';
+INPUT T Y;
+PROC NLIN ITER=50 CONVERGENCE=1.0E-13;
+     PARMS T1=0.02494 T2=3.17171 T3=l.24044,  (EttiniAcioDci inici&let de los p«r».inctroa)
+     MODEL Y=T1*T**T2*EXP(-T3*T);             (Modelo ft CBtiniftT )
+           DER.T1=T**T2*EXP(-T3*T);
+           DER.T2=Tl*LOG(T)*T**T2*EXP(-T3*T); (D.ti..d». p^iciu.i co» i«tp«<:to . e.d. p.timoro)
+           DER.T3=-T1»T**(T2-H)*EXP(-T3*T),
+           OUTPUT OUT=SALIDA P=YHAT RESIDUAL=RES;
+RUN;
+
+     La salida de resultados aparece a continuación:
+     Non-Linear Least Squares Summary Statistics Dependent Variable Y
+Source                        DF                   Sum of Squares         Mean Square
+
+Regression                    3                    0.00281313659          0.00093771220
+
+Residual                      7                    0.00003186341          0.00000455192
+
+U n c o r r e c t e d Total   10                   0.00284500000
+
+(Corrected Total)             9                    0.00080010000
+
+Parameter                     Estimate             Asymptotic                 Asymptotic 95%
+
+                                                   Std. E r r o r             Confidence Interval
+
+                                                                          Lower                Upper
+
+         Tl                   0.032860700          0.00529487530          0.0203402090         0.0453811912
+
+         T2                   6.715867384          0.86085322118          4.6802566386         8.7514781298
+
+         T3                   2.532755590          0.31146501112          1.7962519590         3.2692592218
+
+
+   De los resultados obtenidos al ejecutar el programa, se tiene que después de diez it-
+eraciones el vector de estimaciones queda dado por:^ = (0.032861,6.715867,2.532756)'^,
+con S{9) = 0.0000319. Por consiguiente, el modelo ajustado queda:
+
+                                   yu = 0.033<^^'^exp(2.533íu)              u = 1,...,10
+
+Las estimaciones de las varianzas son:
+
+                                                   0.000032
+                                            &^ =                    = 0.00000455
+
+
+               var{9i) = (0.00529)2 = 0.000028;                     var{92) = (0.86085)^ = 0.741063
+
+                                         var(93) = (0.31147)2 ^ 0.097014
+
+Nota: aquí var{9i), i = 1,2,3; denota las respectivas estimaciones de Var{9i) La
+matriz C se puede estimar de la siguiente manera:
+
+                                    REGRESIÓN NO LINEAL                                          101
+
+
+
+
+                 ¿„ = ü f ^        = 6.1538,      ¿22 = ^ ^ ^      = 162870.989
+
+
+              ¿33 = 1     ^      = 21321.7582,     ci2 = ^ ^ % M = 9.070583,
+
+
+               ^ £ £ Í K M 3 ) ^ 180.086436,       ¿23 = ^ ^ % ^ = 58004.12481
+
+Supongamos que se desea probar la hipótesis H o . 9 i = ^ vs. Hi : 9i ^ O, al nivel de
+significancia a = 5%, mediante la prueba de Wald.
+   En este caso, h(9) = 9i y por consiguiente h{9) = §1 = 0.0329; el jeicobiano para
+este ejemplo queda
+                         -    _ dh{9) _ dh{9i) _
+                              iilx3 -   - Q ^ -   -Qfffr- -   (1,0,0).
+
+Así el valor de la estadística de prueba de Wald es:
+
+                                    6.154        9.071      180.086
+           (0.0329) U l , 0,0]      9.071     162870.989 58004.125                 \    (0.0329)
+                                   180.086     58004.125 21321.758
+   Wo =
+                                             1 X (0.00000455)
+          0.00017589
+                     = 38.657
+          0.00000455
+
+ahora bien, ^05(1,7) = 5.59. Como Wo > 85.59, se recahaza HQ.
+
+                                 VERIFICACIÓN DE SUPUESTO
+
+   Como se dijo anteriormente, en el momento de ajustar un modelo, lineal o no, se
+hacen algunos supuestos sobre los errores e. Es bueno, una vez ajustado el modelo
+verificar la validez de tales supuestos. Con la ayuda del computador se hicieron las
+respectivas pruebas de homogeneidad de varianzas, promedio igual a cero, normalidad
+e independencia obteniéndose resultados satisfactorios; es decir, ningún supuesto deja
+de cumplirse.
+
+                                        BIBLIOGRAFÍA
+Burguete, H. P. (1982)., El Uso de la Metodología Científica y la Estadistica, con Especial, Referencia a los Modelos no Lineales, en las Ciencias Económicas., Conferencia Centro de Economía, C. P. Chapingo México.
+Chaves, C.B., Una prueba de Walel en regresión. Tesis Colegio de Postgrado, México.
+Chaves, C. B., Burguete, H. F . e Infante, G. S. (1984)., Metodología Estadística en Modelos de Regresión no Lineal, Comunicaciones en Estadística y Cómputo 3(1)., Centro de Estadística y Cálculo, C. P. Chapingo, México.
+Draper, N. R. and Smith, H. (1981)., Applied Regression Analysis 2nd ed, vol. 10., John Wiley & Sons, New York.
+Gallant, A. R. (1975), Nonlinear Regresión, The American Statistician 29(2), 73-81.
+Gallant, A. R. (1986), Nonlinear Regression, vol. 1, John Wiley & Sons, New York.
+Marquardt, D. W. (1963), An algorithm for least squares estimation of nonlinear parameters, Journal of The Society For Industrial and Applied Mathematics 2, 431,441.
+Michaelis, L. and Menten, M. L. (1913)., Biochemische Zeit 49, 333-339.
+SAS. (1979)., User's guide, SAS Institute,, Raleigh, N.C.
+Velasquez, V. C. y Escarpetta G. J. (1986)., Algunos Aspectos Teóricos y Aplicaaciones de la Regresión no Lineal. Tesis de Estadísticos, Universidad Nacional de Colombia, Santafé de Bogotá D.C.
+
