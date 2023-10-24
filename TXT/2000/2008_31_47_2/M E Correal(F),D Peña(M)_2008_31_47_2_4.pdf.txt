@@ -1,0 +1,550 @@
+Modelo factorial dinámico threshold
+Universidad de los Andes;Universidad Carlos III de Madrid
+Resumen
+En este artículo se introduce el modelo factorial dinámico threshold, el cual permite analizar sistemas de series temporales que presenten comportamientos no lineales del tipo umbral. Se propone un método de estimación que combina el algoritmo EM con un procedimiento de búsqueda directa utilizando los algoritmos del filtro y de suavización de Kalman. El procedimiento estima factores comunes con comportamientos que cambian de régimen de acuerdo con una variable umbral.
+Palabras clave: series de tiempo no lineales, análisis factorial, modelo threshold, algoritmo EM , filtro de Kalman.
+Introducción
+En este artículo se presenta un procedimiento para estimar factores comunes
+en series temporales que presenten comportamientos no lineales del tipo threshold.
+Tanto los procesos multivariados como la no linealidad comprenden desarrollos
+metodológicos de especial interés dentro del estudio de series de tiempo. Uno de los
+modelos no lineales para series de tiempo más difundido es el modelo autorregresivo
+umbral, T AR (Threshold AutoRegressive), propuesto inicialmente por Tong & Lim
+(1980). Este modelo está representado mediante diferentes procesos autorregresivos
+que se activan cuando determinada variable sobrepasa un valor umbral. El análisis
+de los modelos T AR en el caso multivariado es más reciente. Tsay (1998) es tal
+vez el primero en proponer un procedimiento de estimación y una prueba de no
+linealidad para el caso vectorial. La inferencia estadística en los modelos thresh-
+old ha sido estudiada entre otros por Hansen (1997, 2000), Gonzalo & Pitarakis
+(2002) y, para el caso multivariado, por Tsay (1998). Al igual que en los modelos
+vectoriales V ARM A (Vector AutoRegressive-MovingAverage), en los modelos T AR
+multivariados existen múltiples estructuras con características similares y no existe
+una solución simple para la identificación de los parámetros. La proliferación de
+parámetros puede ser tan alta como para hacer la estimación intratable en la
+práctica. Un modelo factorial no solamente reduce la dimensión del sistema, sino
+que permite dejar al descubierto componentes comunes al conjunto de variables
+que explican las interrelaciones existentes entre ellas. El modelo factorial dinámico
+de Peña & Box (1987) representa las variables observadas mediante una suma de
+dos componentes latentes ortogonales: una común a todas las variables, descrita
+por un proceso ARM A (AutoRegressive-MovingAverage) de dimensión reducida;
+y otra específica a cada variable particular, que no está correlacionada con la
+componente común. Este modelo inicialmente formulado para series estacionarias
+ha sido generalizado a series no estacionarias en Peña & Poncela (2004, 2006);
+recientemente se han presentado técnicas para su identificación en Hu & Chou
+(2004). Este modelo debe distinguirse del modelo factorial dinámico utilizado por
+Stock & Watson (2002) y Forni et al. (2005), en el cual se asume que el número
+de variables o la dimensión del sistema tiende a infinito. La presencia o ausencia
+de este supuesto es determinante en los procesos de identificación y estimación.
+En el modelo factorial que se define en este trabajo no se hace este supuesto. El
+objetivo de este trabajo es extender el modelo factorial dinámico de Peña y Box
+para permitir tener en cuenta efectos no lineales del tipo umbral.
+    El modelo factorial dinámico threshold se define en la segunda sección del do-
+cumento y sus propiedades se analizan en la tercera. En la cuarta se presenta el
+método de estimación. La estrategia consiste en realizar la estimación secuencial-
+mente por concentración de la función de verosimilitud, combinando el algoritmo
+EM (Expectation-Maximization) con un método de búsqueda directa. En la quinta
+sección, la metodología se aplica a un sistema de caudales de ríos colombianos en el
+cual hay dos regímenes que se activan mediante la variable del Índice de Oscilación
+del Sur.
+
+
+2. Formulación del modelo
+Definición 1. Sea Zt una serie temporal k-dimensional, Zt = (z1t , z2t , . . . , zkt )′
+con media cero. Diremos que Zt se representa mediante un modelo factorial di-
+námico threshold con c regímenes de órdenes p1 , p2 , . . . , pc y variable umbral wt ,
+
+                                     Revista Colombiana de Estadística 31 (2008) 183–192
+
+Modelo factorial dinámico threshold                                                    185
+
+si      
+        Zt = Λft + ut ;
+              pj
+              P   (j)                                                                  (1)
+        ft =    φi ft−i + Υ(j) at ,     si wt−d ∈ (γj−1 , γj ],   j = 1, . . . , c.
+               i=1
+
+donde wt es una variable aleatoria unidimensional observable y estacionaria, ft
+es un vector aleatorio r-dimensional no observable con media cero, ut es ruido
+blanco k-dimensional con matriz de varianza-covarianza Σu diagonal y definida
+positiva, at es un ruido blanco r-dimensional con matriz de varianza-covarianza la
+identidad Ir y tales que ut sea independiente de ft−h para h ≥ 0, at independiente
+de ft−h para h ≥ 1, {wt }, {ut } y {at } independientes entre sí. Los parámetros del
+modelo son los denominados parámetros umbral: −∞ = γ0 < γ1 < · · · < γc−1 <
+γc = −∞, el entero positivo d, rezago de la variable umbral, la matriz de carga
+Λ, de dimensión (k × r) que debe ser tal que rango(Λ) = r y Λ′ Λ = Ir , Ir matriz
+identidad de orden r, y los parámetros que determinan la dinámica del factor,
+  (j)
+φi , Υ(j) j = 1, . . . , c, matrices de dimensión (r × r), con Υ(j) diagonal y definida
+positiva.
+
+    El modelo propuesto detecta componentes comunes no lineales que puedan ser
+representadas por modelos umbral y que involucren la dinámica propia del sistema.
+La idea general es representar el vector temporal mediante la suma de dos com-
+ponentes latentes ortogonales: una común a las componentes del vector, descrita
+por un proceso vectorial autorregresivo threshold T AR, de dimensión menor, y
+otra específica a cada componente particular. La variable umbral w puede ser una
+de las componentes estacionarias del vector observado, zjt , j ≤ k, o una variable
+exógena estacionaria que afecte el estado del sistema, o una combinación de las
+componentes de Zt . Esta combinación debe ser estacionaria.
+    Mediante este modelo pueden salir a relucir características significativas en un
+régimen y no en el otro. El proceso formulado para los factores permite tener en
+consideración autorregresiones con órdenes diferentes en los regímenes. La serie de
+los factores es generada por procesos diferentes en diferentes instantes de tiempo;
+su cambio es consecuencia de un estado del sistema que se mantiene hasta que
+determinada variable sobrepasa un valor umbral.
+
+
+3. Propiedades del modelo
+3.1. Identificación
+    El modelo propuesto hereda los problemas de identificación presentes en el
+modelo factorial estático debido a la no observabilidad de f . La imposición de una
+estructura T AR con c regímenes para los factores no evita la no identificación de
+los parámetros. Efectivamente, si ft es un T AR r-dimensional con c regímenes de
+órdenes p1 , . . . , pc y variable umbral wt , entonces para cualquier matriz (r × r)
+no singular C, el vector ft∗ = Cft será también un T AR r-dimensional para la
+misma variable umbral, el mismo número de regímenes c y los mismos órdenes
+
+                                       Revista Colombiana de Estadística 31 (2008) 183–192
+
+186                                                                   María Elsa Correal & Daniel Peña
+
+autorregresivos dentro de cada régimen. Específicamente, ft∗ se expresa como
+                    pj
+                    X      ∗(j) ∗
+            ft∗ =         φi   ft−i + Υ∗(j) at ,         si wt−d ∈ (γj−1 , γj ], j = 1, . . . , c
+                    i=1
+
+            ∗(j)           (j)
+donde φi   = Cφi C −1 y Υ∗(j) = CΥ(j) . Dicho de otra forma, para cualquier
+matriz C no singular, los conjuntos
+                      n                                                                     o
+                           (1)
+                       Λ, φ1 , . . . , φ(c)
+                                        pc , Υ
+                                               (1)
+                                                   , . . . , Υ(c) , Σu , d, γ1 , . . . , γc
+y         n                                                                                       o
+                     (1)
+           ΛC −1 , Cφ1 C −1 , . . . , Cφ(c)
+                                        pc C
+                                             −1
+                                                , CΥ(1) , . . . , CΥ(c) , Σu , d, γ1 , . . . , γc
+no pueden distinguirse a partir de las observaciones.
+Proposición 1. Las restricciones Λ′ Λ = Ir y Υ(j) matriz diagonal y positiva
+definida para j = 1, . . . , c, eliminan esta fuente de indeterminación.
+
+Demostración. En efecto, si Λ y Λ∗ = ΛC −1 satisfacen la primera restric-
+ción, Λ′ Λ = Ir y (Λ∗ )′ Λ∗ = (C −1 )′ C −1 = Ir , entonces C será matriz ortogo-
+nal. Además, si Υ(j) y Υ∗(j) = CΥ(j) satisfacen la segunda restricción, entonces
+C = Υ∗(j) (Υ(j) )−1 y, por tanto, C es diagonal. Puesto que la única matriz ortogo-
+nal y diagonal es la matriz identidad, se concluye que C = Ir .
+
+    Vale la pena mencionar que la representación T AR de los factores en el modelo
+                                                            Ppj
+                                                                 (j)        (j)
+factorial dinámico threshold (1) puede escribirse como ft =     φi ft−i + at con
+                                                                                     i=1
+    (j)
+at = Υ(j) at . Puede verse entonces que la matriz de varianza covarianza de at
+puede restringirse a la identidad sin pérdida de generalidad.
+
+
+3.2. Estructura para las matrices de covarianza rezagadas
+    Las matrices de covarianza para diferentes rezagos contienen información acerca
+de la dinámica de las interrelaciones entre las diferentes componentes del proceso.
+Sean ΓZ (h) = E(Zt−h Z′t ), Γf (h) = E(ft−h ft′ ) y Σu (h) = E(ut−h u′t ) para h =
+0, 1, 2, . . . las matrices de covarianza rezagadas de Z, f y u respectivamente.
+Proposición 2. Si Zt se representa mediante un modelo autorregresivo threshold,
+
+                               rango(ΓZ (h)) = r,             para h = 1, 2, . . .
+
+Demostración. En efecto, si ft es estacionario de segundo orden, Zt también lo
+es, y puesto que Zt = Λft + ut , y ut es ruido blanco,
+
+                               ΓZ (h) = ΛΓf (h)Λ′ ,           para h = 1, 2, . . .
+
+   Esta propiedad es muy útil en la etapa de identificación del número de factores
+comunes.
+
+                                                 Revista Colombiana de Estadística 31 (2008) 183–192
+
+Modelo factorial dinámico threshold                                                                 187
+
+3.3. Modelo de rezagos distribuidos por regímenes
+
+Proposición 3. Zt puede expresarse como un modelo de rezagos distribuidos por
+regímenes
+
+                   pj
+                   X      (j)       (j)
+            Zt =         Λi ft−i + εt ,        si wt−d ∈ (γj−1 , γj ],     j = 1, . . . , c
+                   i=1
+
+
+                                   (j)
+donde los espacios nulos de Λi            comparten un subespacio común de dimensión
+(k − r).
+
+
+
+Demostración. En efecto, remplazando la segunda ecuación de (1) en la pri-
+                       (j)      (j)
+mera se obtiene Λi = Λφi ; por tanto, si M es una matriz k × (k − r) cu-
+                                                      (j)
+yas columnas generan el espacio nulo de Λ′ , M ′ Λi = 0 para i = 1, . . . , pj ,
+                                            (j)
+                    embargo,
+j = 1, . . . , c. Sin        lasmatrices
+                                          Λi no necesariamente tienen rango com-
+                   (j)               (j)
+pleto y rango Λi          = rango φi       .
+                                                                                              (j)
+    El ruido asociado al modelo expresado en rezagos distribuidos es εt =
+ΛΥ(j) at + ut , y su matriz de covarianza, no necesariamente diagonal, viene dada
+por
+                          Ψε(j) = ΛD(j) Λ′ + Ψu ,           j = 1, . . . , c
+
+con D(j) = Υ(j) Υ(j) matriz diagonal.
+
+
+
+4. Estimación
+
+    Se propone estimar los parámetros del modelo por máxima verosimilitud me-
+diante un algoritmo que combina el principio del algoritmo EM con un método de
+búsqueda directa. El procedimiento maximiza el logaritmo          de la función de verosi-
+                                                                  (1)
+militud Lw Z de forma  secuencial, primero     sobre ψ1 =    Λ, Φ     , Φ(2) , Υ(1) , Υ(2) , Σu
+y luego sobre ψ2 = {d, γ}. Para d y γ fijos, el máximo sobre ψ1 se obtiene mediante
+un algoritmo EM . La utilización del algoritmo EM en el contexto de factores diná-
+micos fue propuesta inicialmente por Shumway & Stoffer (1982) y Watson & Engle
+(1983) y ha sido utilizada posteriormente por Wu et al. (1996) y Peña & Poncela
+(2006), entre otros. En la segunda etapa, por búsqueda directa se encuentran los
+valores db y γ
+             b que maximicen Lw                                                       ¯ ¯
+                                Z . La búsqueda se realiza para d ∈ {1, . . . , d}, d una
+cota para el retardo y γ ∈ {γ1 , . . . , γL }, conjunto formado por los cuantiles mues-
+trales de la variable umbral escogidos de forma tal que en cada régimen se tengan
+suficientes observaciones para estimar adecuadamente los parámetros asociados.
+Siendo así las cosas, se tendrán que realizar d¯L veces el procedimiento EM .
+
+                                           Revista Colombiana de Estadística 31 (2008) 183–192
+
+188                                                                   María Elsa Correal & Daniel Peña
+
+    Para d y γ fijos, el logaritmo de la función de verosimilitud de los datos com-
+         Z,f (ψ1 ; ψ2 ), puede separarse por una función indicadora:
+pletos, Lw
+
+
+                                                 T
+                               T              1X
+  Lw
+   Z,f (ψ1 ; ψ2 ) = cte −         log |Σu | −       (Zt − Λft )′ Σ−1
+                                                                  u (Zt − Λft )
+                                2             2 t=1
+                             1X                       1X
+                           −        log Υ(1) Υ(1) −          log Υ(2) Υ(2)
+                             2                        2
+                               t∈I1                     t∈I2
+                   1       X                     ′           −1                 
+               −                  ft+1 − ϕ(1) Xt Υ(1) Υ(1)         ft+1 − ϕ(1) Xt
+                   2
+                       t∈I1 (d,γ)
+                                    1     X                           ′               −1                     
+                              −                      ft+1 − ϕ(2) Xt        Υ(2) Υ(2)          ft+1 − ϕ(2) Xt
+                                    2
+                                        t∈I2 (d,γ)
+
+                                                            
+donde I1 (d, γ) = t ∈ {1, . . . , T }/wt−d < γ , I2 (d, γ) =h t ∈ {1, . . . , T }/w
+                                                                                 i t−d ≥
+                                                                                 (i)    (i)          (i)
+                 ′
+γ , Xt = (ft′ , ft−1            ′
+                     , . . . , ft−p+1 )′ vector rp × 1, y ϕ(i) = φ1 φ2                         · · · φp    matriz
+r × rp, para i = 1, 2.
+                                                      (k)
+    Utilizando la solución de la k-ésima iteración, ψe1 , la evaluación del paso E
+del algoritmo
+                                                                                       
+                       (k)
+              Q ψ1 ; ψe1     = Eψe (k) LW
+                                        Z,f (ψ1 ; ψ2 ) Z1 , . . . , ZT , w1 , . . . , wT                       (2)
+                                            1
+
+
+
+se obtiene involucrando los algoritmos del filtro de Kalman y de suavización de
+intervalo fijo aplicados a una representación espacio-estado del modelo. Como re-
+sultado de este paso, se obtienen las sucesiones X b (k) , P (k) , M (k) , t = 1, . . . , T ,
+                                                     t|T    t|T     t|T
+donde
+
+                                                             
+       b (k) = E e (k) Xt Z1 , . . . , ZT , w1 , . . . , wT
+       X t|T    ψ1
+                      h                                                                     i
+         (k)
+       Pt|T = Eψe (k) Xt − X  b t|T Xt − X        b t|T ′ Z1 , . . . , ZT , w1 , . . . , wT
+                  1
+                      h                                                                           i
+         (k)
+       Mt|T = Eψe (k) Xt+1 − X     b t+1|T Xt − X         b t|T ′ Z1 , . . . , ZT , w1 , . . . , wT
+                       1
+
+
+
+                                                                    
+   Teniendo en cuenta que ft = St′ Xt para S ′ = Ir | 0r | · · · | 0r , también se
+obtienen las sucesiones
+
+          (k)                                                  
+         b
+         ft|T = Eψe (k) ft Z1 , . . . , ZT , w1 , . . . , wT = S ′ X b (k)
+                      1
+                                                                       t|T
+                                                                                        
+                            ′                                      ′     (k)        b (k)′ S
+                                                                              b (k) X
+                Eψe (k) ft ft Z1 , . . . , ZT , w1 , . . . , wT = S Pt|T + X    t|T   t|T
+                   1
+                                                                                          
+                                                                          (k)        b (k)′
+                                                                               b (k) X
+           Eψe (k) ft+1 X′t Z1 , . . . , ZT , w1 , . . . , wT = S ′ Mt|T + X     t|T t|T
+               1
+
+
+
+
+                                                     Revista Colombiana de Estadística 31 (2008) 183–192
+
+Modelo factorial dinámico threshold                                                                                        189
+                                                                             
+                                                                          (k)
+    En la k-ésima iteración del paso M del algoritmo se maximiza Q ψ1 ; ψe1     con
+respecto a ψ1 . Se mostrará a continuación que la solución viene dada por
+               T
+                            ! T                  !−1
+              X        (k)′
+                              X (k) (k)′
+  e
+  Λ(k+1) =          b
+                  Zt f          bf fb    +P  (k)
+                             t|T                    t|T t|T
+                  t=1                        t=1
+                      T 
+                                                                                                                       !
+                      X                                  ′
+ e (k+1) = 1
+ Σ                            e (k+1)b
+                         Zt − Λ
+                                      (k)      e (k+1)b
+                                     ft|T Zt − Λ
+                                                       (k)
+                                                      ft|T + Λe (k+1) P (k) Λ
+                                                                            e′
+   v                                                                          (k+1)
+           T          t=1
+                                                          !                                    !−1
+   (j)
+                  X (k)                                        X (k) (k)′
+  e(k+1) =
+  ϕ                b      b t(k)′ + V (k)
+                   ft+1|T X                                     ft+1|T b
+                                                                b                (k)
+                                                                       ft+1|T + Wj                    ,         j = 1, 2
+                                     j
+                 t∈Ij                                          t∈Ij
+
+ e (j) =
+ Υ (k+1)
+                                                                                                                           !
+    1     X  (k)      (j)
+                                   ′                        
+             b
+             ft+1|T − ϕ      b (k)
+                      e(k+1) X t
+                                       b (k)
+                                        ft+1|T − ϕ
+                                                  (j)   b (k)
+                                                 e(k+1) X t
+                                                                         (k) (j)
+                                                                 e(k+1) Wj ϕ
+                                                                +ϕ
+                                                                  (j)
+                                                                            e(k+1)
+    Tj
+          t∈Ij
+
+                                                                                                    (k)          (k)
+donde Tj número de casos en el régimen j y las matrices P (k) , Vj                                        y Wj         están
+dadas por
+                      T
+                      X                                       X                              X
+                                   (k)              (k)                   (k)      (k)                    (k)
+          P (k) =            S ′ Pt|T S,           Vj     =          S ′ Mt|T ,   Wj     =          S ′ Pt|T S
+                       t=1                                    t∈Ij                           t∈Ij
+                                        
+para S ′ = Ir | 0r | · · · | 0r .
+    En efecto, el término que involucra a Λ en (2) es
+                      T
+                                                                                                          !
+                      X                      ′                       
+             E               Zt − Λft             Σ−1
+                                                   u      Zt − Λft Z1 , . . . , ZT , w1 , . . . , wT
+                      t=1
+que es igual a
+             T 
+                                                                             !
+             X                                                           
+                           (k)          (k)′        (k)  (k)′       (k)
+   traza Σ−1
+          u               ft|T Z′t − Ztb
+                Zt Z′t − Λb                        ft|T b
+                                       ft|T Λ′ + Λ b    ft|T + S ′ Pt|T S Λ′
+                      t=1
+y, por tanto,
+                           XT                    XT                        
+                 ∂Q              b (k)′              b(k) (k)′        (k)
+                    = −Σ−1
+                        u      Z f
+                                t t|T   + Σ −1
+                                            u  Λ     ft|T b
+                                                          ft|T + S ′ Pt|T S
+                 ∂Λ        t=1                   t=1
+
+   Igualando a cero este sistema de derivadas parciales, se obtiene el resultado
+     e (k+1) .
+para Λ
+                                                                                         
+                  e (k+1) , la parte de E LW (ψ1 ; ψ2 ) Z1 , . . . , ZT , w1 , . . . , wT que
+   Ahora, fijando Λ                        Z,f
+involucra a Σu puede escribirse como
+   T            1
+     log |Σu | − ×
+   2            2
+      "       T 
+                                                                                 #
+            X                                      ′                        
+         −1             e (k+1)b(k)      e (k+1)b(k)               (k)
+                                                        e (k+1) S P S Λ
+                                                                 ′     e (k+1)
+traza Σu           Zt − Λ      ft|T Zt − Λ      ft|T + Λ           t|T
+                t=1
+
+
+
+                                                          Revista Colombiana de Estadística 31 (2008) 183–192
+
+190                                                          María Elsa Correal & Daniel Peña
+
+                                   eu    (k+1)
+y entonces vale el resultado para Σ      .
+                       (j)    e (j)
+   El resultado para ϕe      yΥ
+                         (k+1)        se prueba de forma similar. En este caso, apa-
+                                     (k+1)
+                                        (k)            (k)
+rece E(ft+1 Xt ), que involucra a V           = S ′ Mt|T . Más detalles pueden consultarse
+en Correal (2007).
+   El algoritmo proporciona también el estimador óptimo de los factores:
+                                                                           
+                         b
+                         ft|T = E ft | Z1 , . . . , ZT , w1 , . . . , wT
+
+
+5. Aplicación
+   El modelo y el método de estimación se aplican a un vector de dimensión 5 con-
+formado por los caudales de los ríos colombianos Calima, Cauca, Grande, Ovejas y
+Prado, que pertenecen a la cuenca del Magdalena. Los datos históricos disponibles
+abarcan un periodo de 36 años y corresponden al periodo comprendido entre enero
+de 1955 y diciembre de 1990, para un total de 432 observaciones mensuales.
+    El procedimiento se realizó en tres etapas resumidas a continuación. Los re-
+sultados detallados pueden consultarse en Correal (2007). En la primera se probó
+la hipótesis de que los caudales presentan un comportamiento no lineal del tipo
+threshold con variable umbral Índice de Oscilación del Sur, IOS, variable atmos-
+férica relacionada con el evento climático del fenómeno de El Niño. La hipótesis se
+contrastó mediante el test propuesto por Tsay (1989). Este se basa en autorregre-
+siones reordenadas de acuerdo con la variable umbral wt−d . El test se aplicó para
+los retardos d = 1, 2, . . . , 12 y para los datos zit = (1 − θB 12 )−1 (1 − B 12 ) log cit ,
+i = 1, . . . , 5; cit caudal del i−ésimo río en el instante t. De los nueve ríos conside-
+rados originalmente, los cinco utilizados en esta aplicación dieron significativos.
+    En la segunda etapa, se procedió a identificar el número de factores comunes.
+Para esto se realizaron dos pruebas, ambas basadas en los vectores propios de
+las matrices de autocovarianza rezagadas observadas ΓZ (k) = E(Zt−k Zt′ ), y cu-
+yos detalles pueden consultarse en Peña & Poncela (2006) y Hu & Chou (2004).
+Los resultados de estas pruebas llevaron a plantear un modelo con dos factores
+comunes.
+   En la tercera etapa se implementó el algoritmo para estimar los parámetros del
+modelo. El algoritmo de búsqueda se realizó sobre el par de conjuntos {1, 2, . . . , 12}
+para d y {−2.6, −2.5, . . . , 2.3} para γ, con lo que el algoritmo EM se corrió 60
+veces.
+   El estimador del valor umbral fue γ   b = −2.3. Puesto que los episodios del
+fenómeno de El Niño se presentan acompañados de valores negativos del Índice de
+Oscilación al Sur, el régimen 1 puede asociarse a una de las fases del fenómeno.
+El resultado para el rezago fue db = 1 y la estimación para la matriz de carga del
+modelo factorial dinámico threshold es
+                                                                              ′
+                   b=        0.29  0.54  0.34  0.47  0.52
+                   Λ
+                             0.94 −0.05 −0.06 −0.23 −0.22
+
+                                          Revista Colombiana de Estadística 31 (2008) 183–192
+
+Modelo factorial dinámico threshold                                                  191
+
+La estimación de la matriz de varianzas de los términos específicos es Σ       bu =
+diag(0.016, 0.006, 0.032, 0.040, 0.201), y el modelo estimado para el factor es
+                                      
+            f1t     0.70     0.00 f1,t−1    a1t
+                 =                        +              si IOSt−1 < −2.3
+            f2t     0.00     0.55 f2,t−1    a2t
+                                      
+            f1t     0.78     0.00 f1,t−1    a
+                 =                        + 1t           si IOSt−1 ≥ −2.3
+            f2t     0.00     0.67 f2,t−1    a2t
+                                              
+            (1)                              (2)
+donde cov at        = diag(0.30, 0.08), cov at              =   diag(0.27, 0.04) para
+               ′                 ′
+ (1)   (1) (1)        (2)   (2) (2)
+at = a1t , a2t     y at = a1t , a2t .
+
+
+6. Conclusiones
+    El modelo presentado en este trabajo permite analizar sistemas de series tem-
+porales que presenten efectos no lineales del tipo threshold. El modelo puede inter-
+pretarse o bien como una reparametrización del modelo T AR vectorial, que reduce
+significativamente el número de parámetros, o bien como una extensión del modelo
+de Peña y Box que permite tener en cuenta efectos no lineales. El vector de los
+factores comunes se representa mediante diferentes procesos autorregresivos que
+se activan cuando determinada variable sobrepasa un valor umbral. Los diferen-
+tes regímenes pueden relacionarse con los estados de una economía o con estados
+propios de la naturaleza, como el caso que se estudia en la aplicación, donde los
+estados están asociados a la presencia o ausencia del fenómeno de El Niño.
+
+
+Agradecimientos
+   Este artículo es producto del trabajo de tesis del primer autor (Correal 2007)
+para obtener el título de doctor en Estadística de la Universidad Nacional de
+Colombia.
+Referencias
+Correal, M. E. (2007), Modelo factorial dinámico con efectos umbral, Tesis doctoral, Departamento de Estadística, Facultad de Ciencias, Universidad Nacional de Colombia.
+Forni, M., Hallin, M., Lippi, M. & Reichlin, L. (2005), ‘The Generalized Dynamic Factor Model: One-Sided Estimation and Forecasting’, Journal of the American Statistical Association 100, 830–840.
+Gonzalo, J. & Pitarakis, J. Y. (2002), ‘Estimation and Model Selection Based Inference in Single and Multiple Threshold Models’, Journal of Econometrics 110, 319–352.
+Hansen, B. E. (1997), ‘Inference in TAR Models’, Studies in Nonlinear Dynamics and Econometrics 2, 1–14.
+Hansen, B. E. (2000), ‘Sample Splitting and Threshold Estimation’, Econometrica 68, 575–603.
+Hu, Y. P. & Chou, R. J. (2004), ‘On the Peña-Box Model’, Journal of Time Series Analysis 25, 811–830.
+Peña, D. & Box, G. E. P. (1987), ‘Identifying a Simplifying Structure in Time Series’, Journal of the American Statistical Association 82, 836–843.
+Peña, D. & Poncela, P. (2004), ‘Forecasting with Nonstationary Dynamic Factor Models’, Journal of Econometrics 119, 291–321.
+Peña, D. & Poncela, P. (2006), ‘Nonstationary Dynamic Factor Models’, Journal of Statistical Planning and Inference 136, 1237–1257.
+Shumway, R. H. & Stoffer, D. S. (1982), ‘An Approach to Time Series Smoothing and Forecasting Using the EM Algorithm’, Journal of Time Series Analysis 3, 253–264.
+Stock, J. H. & Watson, M. W. (2002), ‘Forecasting Using Principal Components From a Large Number of Predictors’, Journal of the American Statistical Association 97, 1167–1179.
+Tong, H. & Lim, K. S. (1980), ‘Threshold Autoregression, Limit Cycles and Cyclical Data’, Journal of The Royal Statistics Society Ser. B(4), 245–292.
+Tsay, R. S. (1989), ‘Outliers, Level Shifts and Variance Changes in Time Series’,Journal of Forecasting 7, 1–20.
+Tsay, R. S. (1998), ‘Testing and Modeling Multivariate Threshold Models’, Journal of the American Statistical Association 93, 1188–1202.
+Watson, M. W. & Engle, R. F. (1983), ‘Alternative Algorithms for the Estimation of Dynamic Factor, Mimic and Varying Coefficient Regression Models’,Journal of Econometrics 23, 385–400.
+Wu, L. S., Pai, J. S. & Hosking, J. R. M. (1996), ‘An Algorithm for Estimating Parameters of State-Space Models’, Statistics & Probability Letters 28, 99–106.

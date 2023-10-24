@@ -1,0 +1,1819 @@
+                         Revista Colombiana de Estadística - Applied Statistics
+                                      January 2022, volume 45, issue 1, pp. 161–191
+                                           http://doi.org/10.15446/rce.v45n1.94553
+
+
+
+
+ Causal Mediation for Survival Data: A Unifying
+              Approach via GLM
+Mediación causal para datos de supervivencia: un enfoque uniﬁcador a
+                          través de GLM
+
+                   Marcelo M. Taddeo a , Leila D. Amorim b
+
+ Departmento de Estatística, Instituto de Matemática e Estatística, Universidade
+                      Federal da Bahia, Salvador, Brazil
+
+
+
+
+                                      Abstract
+         Mediation analysis has been receiving much attention from the scientiﬁc
+     community in the last years, mainly due to its ability to disentangle causal
+     pathways from exposures to outcomes. Particularly, causal mediation
+     analysis for time-to-event outcomes has been widely discussed using
+     accelerated failures times, Cox and Aalen models, with continuous or binary
+     mediator. We derive general expressions for the Natural Direct Eﬀect and
+     Natural Indirect Eﬀect for the time-to-event outcome when the mediator is
+     modeled using generalized linear models, which includes existing procedures
+     as particular cases. We also deﬁne a responsiveness measure to assess the
+     variations in continuous exposures in the presence of mediation. We consider
+     a community-based prospective cohort study that investigates the mediation
+     of hepatitis B in the relationship between hepatitis C and liver cancer.
+     We ﬁt diﬀerent models as well as distinct distributions and link functions
+     associated to the mediator. We also notice that estimation of NDE and NIE
+     using diﬀerent models leads to non-contradictory conclusions despite their
+     eﬀect scales. The survival models provide a compelling framework that is
+     appropriate to answer many research questions involving causal mediation
+     analysis. The extensions through GLMs for the mediator may encompass
+     a broad ﬁeld of medical research, allowing the often necessary control for
+     confounding.
+     Key words: causal inference; generalized linear models; mediation; survival
+     analysis.
+
+                                      Resumen
+  a Ph.D. E-mail: marcelo.magalhaes@ufba.br
+  b Ph.D. E-mail: leiladen@ufba.br
+
+
+
+
+                                          161
+
+162                                              Marcelo M. Taddeo & Leila D. Amorim
+
+
+          El análisis de mediación ha recibido mucha atención en los últimos años,
+      principalmente debido a su capacidad para desenredar las vías causales.
+      Particularmente, mediación causal para el tiempo hasta el evento se ha
+      discutido ampliamente utilizando tiempos de falla acelerados, modelos de
+      Cox y Aalen, con mediador continuo o binario. Derivamos expresiones
+      generales para el efecto directo natural y el efecto indirecto natural para el
+      el tiempo hasta el evento cuando el mediador se modela utilizando modelos
+      lineales generalizados, que incluyen procedimientos existentes como casos
+      particulares. Deﬁnimos una medida para evaluar variaciones en exposiciones
+      continuas en presencia de mediación. Consideramos un estudio de cohorte
+      prospectivo que investiga la mediación de la hepatitis B en la relación entre
+      la hepatitis C y el cáncer de hígado. Encajamos diferentes modelos, así
+      como distintas distribuciones y funciones de enlace. Todos los enfoques
+      dan como resultado evaluaciones consistentes de los eﬀectos considerando
+      sus correspondientes escalas. Los modelos de supervivencia proporcionan
+      un marco convincente apropiado para responder a muchas preguntas de
+      investigación que involucran mediación causal. Las extensiones a través de
+      GLM para el mediador pueden abarcar un amplio campo de investigación
+      médica, lo que permite el control necesario para los factores de confusión.
+      Palabras clave: análisis de supervivencia; inferencia causal; mediación;
+      modelos lineales generalizados.
+
+
+
+
+1. Introduction
+
+    Mediation analysis in the context of causal inference has been receiving
+much attention from the scientiﬁc community in the last years, especially in
+Epidemiology and Social Sciences, see Imai et al. (2010) and VanderWeele (2016).
+This is due to its ability to disentangle causal pathways from exposures/treatments
+to outcomes of interest, which results in a greater understanding of the underlying
+mechanism. In short, a mediator may be deﬁned as a variable M “between”
+the exposure A and the outcome T , so that the eﬀect of A on T splits into two
+parts: one transmitted directly from the exposure to the outcome and another
+transmitted indirectly through the mediator. Mediation models were initially
+proposed for continuous outcomes and mediators in cross sectional studies, see
+Baron & Kenny (1986) and MacKinnon (2008). Particularly, in the speciﬁc
+context of causal inference, formal deﬁnitions of decomposed eﬀects into direct
+(without mediation) and indirect (with mediation) eﬀects are found in Pearl
+(2001) and their estimation is discussed in Tchetgen Tchetgen & Shpitser (2012)
+among others. However, more recent advances have extended them to more
+complex models including survival outcomes, see Fulcher et al. (2017), Iacobucci
+(2012), Lange & Hansen (2011), Loyes et al. (2013), VanderWeele & Vansteelandt
+(2010), VanderWeele (2011) Vansteelandt et al. (2019); and allowing, among other
+features, multiple mediators, see Daniel et al. (2015), Fasanelli et al. (2019), Huang
+& Yang (2017); or time-dependent treatments and/or mediators, see Aalen et al.
+(2012), Aalen et al. (2020), Didelez (2019) and Lin et al. (2017).
+
+                   Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                     163
+
+    Causal mediation analysis for survival outcomes has been widely discussed
+under accelerated failure times (AFT), Cox proportional hazards and Aalen
+additive hazards models, with or without an interaction between exposure and
+mediator, see Lange & Hansen (2011) and VanderWeele (2015). The usual
+approach assumes a binary exposure A and a linear or logistic regression model
+for the mediator M , see VanderWeele (2011) and VanderWeele (2015). Thus,
+there are still limitations when M does not follow linear or logistic models. In
+this paper, M is assumed to follow a generalized linear model (GLM), which
+includes the linear and logistic approaches as particular cases. We illustrate the
+proposed methodology by considering a community-based prospective cohort study
+to investigate the mediation of hepatitis B in the relatioship between hepatitis C
+and liver cancer. A mediation model for this data, based on the standard linear
+model, was proposed by Huang & Yang (2017) based on the existing scientiﬁc
+evidence. We reevaluate the mediation model considering distinct distributions
+and link functions for the mediator, jointly with varying models for the survival
+outcome (AFT, Cox and Aalen).
+    The article is organized as follows: in section 2 we present a brief review of
+causal mediation analysis for survival data. In section 3, we formally show general
+expressions for the Natural Direct Eﬀect (NDE) and Natural Indirect Eﬀect (NIE)
+for survival outcomes using AFT, Cox and Aalen models. We also specify the
+expressions for NDE and NIE for particular distributions. In section 4, we deﬁne
+responsiveness measures for the promptness of the outcome for changes in the
+continuous treatment levels. We apply this methodology for the mediation analysis
+of the liver cancer data to illustrate model speciﬁcation and causal interpretation
+in section 5. Finally, methodology challenges and advances are discussed in section
+6.
+
+
+2. Mediation for Survival Data
+2.1. Framework and Notation
+    Let T be the time to event and denote by Ta the potential response
+corresponding to treatment a, i.e. the time to event it would be observed if
+the treatment had been set at level a (regardless of the actual value of A). For
+binary treatments, we have T (the actual outcome), Ta and Ta∗ (the potential
+outcomes had A been set equal to a and a∗ , respectively). At the unit level,
+the causal eﬀect would ideally be assessed, for each unit u, by the diﬀerence
+Ta (u) − Ta∗ (u). Since one of them is necessarily counterfactual, it is impossible
+to evaluate the causal eﬀect by such diﬀerence. The solution usually adopted
+considers the expected diﬀerences E[Ta − Ta∗ ] or E[Ta − Ta∗ |x], where x is a vector
+of covariates representing the confounding between A and T .
+    In mediation analysis, the idea is to decompose the treatment eﬀect into two
+parts corresponding to the paths A −→ T and A −→ M −→ T . In doing so,
+it is usual to consider the potential responses TaMa∗ , where possibly diﬀerent
+treatments (a and a∗ ) are allowed to directly aﬀect the response and the mediator.
+
+                   Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+164                                              Marcelo M. Taddeo & Leila D. Amorim
+
+
+The eﬀect associated to the ﬁrst path is called Natural Direct Eﬀect and the one
+associated to the second path, Natural Indirect Eﬀect. In the diﬀerence scale, they
+are respectively deﬁned as
+
+            NDE = E[TaMa∗ − Ta∗ Ma∗ ]      and NIE = E[TaMa − TaMa∗ ].                 (1)
+
+Assuming the so-called composition assumption (VanderWeele & Vansteelandt,
+2009): Ta = TaMa , referred to as (A0), we can write the Total Eﬀect as
+TE ≡ E[Ta − Ta∗ ] = E[TaMa − Ta∗ Ma∗ ] = NIE + NDE, regardless of the functional
+relation between the variables involved. Historically, before this counterfactual
+notation, there were two traditional approaches to estimate indirect eﬀects known
+as “diﬀerence method” (considering two models for the outcome: with and without
+the mediator) and “product method” (deﬁned by the product of the models’
+coeﬃcients). They converge for the same results when the outcome and the
+mediator are continuous and a linear model is used, see Baron & Kenny (1986)
+and MacKinnon & Dwyer (1993). However, they diverge in many other situations,
+such as when analyzing binary outcomes or using the Cox model, see MacKinnon
+(2008) and VanderWeele (2015). Therefore, the validity of such approach (not
+based in counterfactual arguments) depends on the chosen model (MacKinnon
+et al., 1995). Unlike them, the counterfactual approach is a solution to the problem
+of establishing consistent deﬁnitions for direct, indirect and total eﬀects.
+
+
+2.2. Survival Models
+    For time-to-event data, the total eﬀect can be decomposed in terms of natural
+direct and indirect eﬀects through diﬀerent scales depending on the chosen model,
+see VanderWeele (2011) and VanderWeele (2015). Throughout this paper we will
+focus on the following three models (Kalbﬂeisch & Prentice, 2002):
+
+  1. the accelerated failure time (AFT) model, in which
+
+                      log T = β0 + β1 a + β2 m + β3 am + β4⊤ x + γε,
+
+      with ε following an extreme value distribution and γ > 0, the scale
+      parameter for the Weibull distribution. In this case, the natural direct and
+      indirect eﬀects are given by NDEaft = log E[TaMa∗ |x] − log E[Ta∗ Ma∗ |x] and
+      NIEaft = log E[TaMa |x] − log E[TaMa∗ |x].
+
+  2. the Aalen additive hazards model (Aalen et al., 2008), in which
+
+             λT (t|a, m, x) = β0 (t) + β1 (t)a + β2 (t)m + β3 (t)am + β4 (t)⊤ x,       (2)
+
+      whose coeﬃcients are typically time-dependent. In this case,
+
+                      NDEAalen (t|x) = λTaMa∗ (t|x) − λTa∗ Ma∗ (t|x)
+
+      and
+                       NIEAalen (t|x) = λTaMa (t|x) − λTaMa∗ (t|x).
+
+                   Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                       165
+
+      Another way to report these (time-dependent) eﬀects is through their cumu-
+                                                        Rt
+      lative versions, which are given by CIEAalen (t) = 0 NIEAalen (s)ds , CDEAalen (t) =
+      Rt                                        Rt
+       0
+         NDEAalen (s)ds and CEAalen (t) = 0 TEAalen (s)ds = CIEAalen (t) +
+      CDEAalen (t).
+
+   3. the Cox proportional hazards model, where
+                                           
+                λT (t|a, m, x) = λo (t) exp β1 a + β2 m + β3 am + β4⊤ x ,
+
+      and λo (·) is an unspeciﬁed baseline hazard function. Here,
+
+                     NDECox (t|x) = log λTaMa∗ (t|x) − log λTa∗ Ma∗ (t|x)
+
+      and
+                      NIECox (t|x) = log λTaMa (t|x) − log λTaMa∗ (t|x).
+
+    Accordingly, the exponentiated NDE and NIE stand for the ratio of expected
+counterfactual survival times in the AFT model and the counterfactual hazard
+ratio in the Cox model. Choosing any model is always related to diﬀerent issues.
+For instance, the results of the Cox model are very easily interpreted. The Aalen
+model is particularly useful when the assumption of the proportionality of risks is
+not met. In addition, its coeﬃcients may be time varying, which makes it more
+ﬂexible than the standard Cox model. On the other hand, fully parametric models,
+such as the AFT model, are more eﬃcient than semiparametric approaches when
+correctly speciﬁed.
+   An important aspect of causal inference is the determination of the necessary
+assumptions for identiﬁcation of the eﬀects of interest as well as their expressions in
+terms of the parameters of the models. It is well known that such assumptions are
+more stringent in the presence of mediators. Following Lange & Hansen (2011), we
+have the assumptions of no unmeasured counfounding between (A1) exposure and
+outcome: A ⊥ ⊥ Tam |x, (A2) mediator and outcome: M ⊥            ⊥ Tam |a, x, (A3) exposure
+and mediator: A ⊥  ⊥ Ma |x; and the identiﬁability condition (A4) Ma∗ ⊥             ⊥ Tam |x.
+Under these conditions and the composition assumption (A0) together with the
+Aalen additive model (without the interaction term) and a Normal mediator,
+we have TEAalen = [β2 (t)ζ1 (a − a∗ )] + β1 (t)(a − a∗ ) = NIEAalen + NDEAalen .
+Similarly, but allowing interaction (β3 am), VanderWeele (2011) determined the
+identiﬁcation formulas for the AFT and Cox models. For instance, NDECox =
+exp{(β1 + β3 (ζ0 + ζ1 a∗ + ζ2⊤ x + β2 σ 2 ))(a − a∗ ) + 0.5β32 σ 2 (a2 − a∗2 )} and NIECox =
+exp{(β2 + β3 a)ζ1 (a − a∗ )}. Similar expressions are found for the AFT model
+even when M is dichotomous. We refer the interested reader to VanderWeele &
+Vansteelandt (2010) or VanderWeele (2015) for more details.
+    In any case, the mediator is usually assumed to be either conditionally Normal
+with mean E[M |a, x] = ζ0 + ζ1 a + ζ2⊤ x and variance Var(M |a, x) = σ 2 , or binary
+and described by a logistic model. The aim of this article is to unify these
+approaches and, in addition, to allow the mediator to follow other distributions
+from the Exponential family, such as Poisson (if M is a count) and Gamma (if M
+is asymmetric, nonnegative and continuous).
+
+                    Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+166                                                        Marcelo M. Taddeo & Leila D. Amorim
+
+
+3. Generalized Linear Models for Mediators
+3.1. Notation for GLM
+    To represent the NDE and NIE for a wider class of mediators, assume that the
+mediator M takes value on M and let ν be a sigma-ﬁnite measure over A, a σ-ﬁeld
+over M, such that M ∼ PM (·|a, x), with PM ≪ ν, and let its density be given by
+              dν (m|a, x) = exp {[θm − b(θ)]/ϕ + c(m; ϕ)}, so that, conditionally on
+f (m|a, x) = dP
+a and x, the distribution of M belongs to the Exponential family. Here, ϕ stands
+for the scale parameter and θ = θ(a, x). The conditional mean of M given a and x,
+denoted by µ = µ(a, x), can be written as µ = g −1 (η) = g −1 (ζ0 +ζ1 a+ζ2⊤ x), where
+g is a suitable link function. In particular, θ(a, x) = (g ◦ b′ )−1 (ζ0 + ζ1 a + ζ2⊤ x) and,
+when using canonical links, θ(a, x) = η. In the next three subsections, we describe
+the formulas of NDE and NIE under these conditions and assuming the time to
+event (T ) to follow the AFT, Aalen and Cox models, respectively. We assume a
+binary treatment such that A = a or A = a∗ and, for the sake of simplicity, we
+simply write θ(x) ≡ θ(a, x) and θ(a∗ , x) ≡ θ∗ (x).
+
+
+3.2. Causal Eﬀects in the Accelerated Failure Time Model
+      Under conditions (A0) – (A4) and the accelerated failure time model, we have
+                                                                                             
+                                                     b [θ ∗ (x) + (β2 + β3 a)ϕ] − b (θ ∗ (x))
+      E[TaMa∗ |x] = E [eγε ] exp β0 + β1 a + β4⊤ x +                                            .     (3)
+                                                                        ϕ
+
+The proof is in the appendix A1. Now, it follows directly from (3) that
+                  b [θ(x) + (β2 + β3 a)ϕ] − b [θ ∗ (x) + (β2 + β3 a)ϕ] − [b (θ(x)) − b (θ ∗ (x))]
+      NIEAFT =
+                                                        ϕ
+                                                                                                  ,   (4)
+
+and
+                                   1
+       NDEAFT = β1 (a − a∗ ) +       {b [θ ∗ (x) + (β2 + β3 a)ϕ] − b [θ ∗ (x) + (β2 + β3 a∗ )ϕ]}.     (5)
+                                   ϕ
+
+Dependence on x can be removed by considering E[TaMa∗ ] = EX [E[TaMa∗ |X]].
+However, the expressions of the NIE and NDE become complicated, as terms in
+(3) do not cancel out.
+                                                            2             2
+    Using the Normal distribution with g(µ) = µ,    ϕ = σ and b(θ) = θ /2, we get
+NIEAFT = (β2 +β3 a)ζ1 (a−a∗ ) and NDEAFT = β1 + β3 (β2 σ 2 + θ∗ (x)) (a−a∗ )+
+0.5σ 2 β32 (a2 − a∗2 ), as in VanderWeele (2015). Using the Gamma distribution with
+parameterization f (m) = (ν/µ)ν mν−1 e−νm/µ /Γ(ν), the most usual link functions
+are (i) the reciprocal link g(µ) = 1/µ, for which θ(a, x) = −ζ0 −ζ1 a−ζ2⊤ x; (ii) the
+logarithmic link g(µ) = log µ, for which θ(a, x) = − exp(−ζ0 −ζ1 a−ζ2⊤ x) and (iii)
+the identity link g(µ) = µ, for which θ(a, x) = −(ζ0 + ζ1 a + ζ2⊤ x)−1 . In any case,
+ϕ = ν −1 and b(θ) = − log(−θ), so that NIEAFT = ν{log[(β2 + β3 a)/θ∗ (x) + ν] −
+log[(β2 + β3 a)/θ(x) + ν]} and NDEAFT = β1 (a − a∗ ) + ν{log[(β2 + β3 a∗ )/θ∗ (x) +
+ν]−log[(β2 +β3 a)/θ∗ (x)+ν]}. Expressions for Binomial and Poisson distributions
+are in the Web Appendix B.
+
+                        Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                                    167
+
+3.3. Causal Eﬀects in the Additive Aalen Model
+   From the Aalen’s framework and assumptions (A0) – (A4),
+                                              ⊤
+                                                                                 
+ λTaMa∗ (t) = β0 (t) + β1 (t)a + EX
+                                  t,a,a∗ β4 (t) X + (β2 (t) + β3 (t)a)µt,a,a∗ (X) , (6)
+
+
+where µt,a,a∗ (x) = Eϕ(B2 (t)+B3 (t)a)+θ∗ (x) M and EX  t,a,a∗ [h(X)] is the expectation
+of h(X) with respect to
+                                                                                
+                            ⊤      b [θ∗ (x) + (B2 (t) + B3 (t)a)ϕ] − b [θ∗ (x)]
+    qt,a,a∗ (x) ∝ exp B4 (t) x +                                                   , (7)
+                                                         ϕ
+
+where qt,a,a∗ = dQt,a,a∗ /dPX and ∝ means equality except for a proportionality
+constant. Proofs are found in Appendix A2. Notice that in the absence of
+interaction the measure Qt,a,a∗ does not depend on a, so that dQt,a,a∗ (x) ≡
+dQt,a∗ (x). From (6), we have
+
+                                              t,a,a∗ [µt,a,a (X) − µt,a,a∗ (X)],
+                NIEAalen = (β2 (t) + β3 (t)a)EX                                                       (8)
+
+and
+                     NDEAalen = β1 (t)(a − a∗ ) + E(t; a, a∗ ) − E(t; a∗ , a∗ ).                      (9)
+                 ∗                 ⊤
+with E(t; a, a ) = EXt,a,a∗ [β4 (t) X + (β2 (t) + β3 (t)a)µt,a,a∗ (X)]. In particular, if
+there is no interaction, then NDEAalen = β1 (t)(a − a∗ ), regardless of the mediator
+type.
+   For the sake of illustration we will ignore the interaction term between A
+and M just to keep formulas simpler. Using the Normal distribution, we get
+from (8) the standard formula NIEAalen = β2 (t)ζ1 (a − a∗ ), whereas using the
+                                                                             ∗   −1
+Gamma distribution, it follows that NIEAalen = β2 (t)EX      ∗ [(B2 (t)/ν+θ (X))    −
+                                        h      ∗
+                                                         iν
+                                                       t,a,a
+                                                                       ⊤
+                 −1                           θ (x)
+(B2 (t)/ν + θ(X)) ], where qt,a,a∗ (x) ∝ B2 (t)/ν+θ∗ (x) e    B  4 (t)   x
+                                                                           .
+
+
+3.4. Causal Eﬀects in the Proportional Hazard Rate (Cox)
+     Model
+   If the conditions (A0)-(A4) hold and the event is relatively rare, so that the
+cummulative baseline hazard Λo (t) is approximatelly equal to zero for all t ≥ 0,
+as pointed out in VanderWeele (2011), then
+                                                                                         
+                                                 b [θ ∗ (x) + (β2 + β3 a)ϕ] − b [θ ∗ (x)]
+        λTaM ∗ (t|x) ≈ λo (t) exp β1 a + β4⊤ x +                                            .        (10)
+            a                                                       ϕ
+
+The proof is in the Appendix A3. Hence,
+                 b [θ(x) + (β2 + β3 a)ϕ] − b [θ ∗ (x) + (β2 + β3 a)ϕ] − (b [θ(x)] − b [θ ∗ (x)])
+   NIECox ≈
+                                                       ϕ
+                                                                                                 ,   (11)
+
+and
+                                  1 ∗
+      NDECox ≈ β1 (a − a∗ ) +       b [θ (x) + (β2 + β3 a)ϕ] − b [θ ∗ (x) + (β2 + β3 a∗ )ϕ] .        (12)
+                                  ϕ
+
+
+                         Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+168                                                          Marcelo M. Taddeo & Leila D. Amorim
+
+
+Though in diﬀerent scales, the mathematical expressions for NDECox and NIECox
+are very similar to the corresponding expressions for NDEaft and NIEaft for
+rare events, no matter what is the mediator distribution in the Exponential
+Family. If there is no interaction between A and M , then NDECox = β1 (a − a∗ )
+regardless of the mediator type. For settings with common outcomes and with
+Normal/binary mediator, a weighting approach using the proportional hazards
+model was described by Lange et al. (2012) and VanderWeele (2015).
+
+
+3.5. Variance Assessment of the Direct and Indirect Eﬀects
+    Let ζ = (ζ0 , ζ1 , ζ2 )⊤ and Zi = (Ai , X ⊤    ⊤
+                                                i ) , where i = 1, ..., n denotes the
+sample units. If ζb is the maximum likelihood estimator (MLE) of ζ and assuming
+independence among units, then it is well known that ζb is asymptotically Normal
+with mean ζ and variance Σζ = ϕ(Z ⊤ W Z)−1 , where Z is the design matrix
+whose ith column is Z i and W = diag(w1 , . . . , wn ), with wi = 1/[b′′ (θi )ηi2 ] and
+θi = θ(ai , xi ). We also let Σϕ be the (asymptotic) variance of the estimator ϕb
+of ϕ. On the other hand, under the AFT and Cox models, βb is asymptotically
+Normal with mean β and variance Σβ = n−1 Σ(β, τ ). Here βb is the estimator of
+β = (β0 , β1 , β2 , β3 , β4 )⊤ obtained by maximum likelihood in the AFT model and
+maximum partial likelihood in the Cox model. The elements τ and Σ(β, τ ) denote,
+respectively, the monitoring period and asymptotic variance. For details on Σ, we
+refer the reader to Kalbﬂeisch & Prentice (2002), pages 172 to 181. Following
+the arguments in VanderWeele (2015), p. 467, and using the facts that the above
+estimators are (i) asymptotically unbiased and (ii) ζb and ϕb are orthogonal, we
+have for large n that the covariance matrix associated to β, ζ and ϕ is given by
+                                                                 
+                                          Σβ            0       0
+                                      Σ= 0             Σζ      0 .
+                                           0                   Σϕ
+
+Hence, using the Delta method we are able to ﬁnd the corresponding (asymptotic)
+variance of each eﬀect. For example, for NIEAFT , the variance is given by
+(∇NIEAFT )⊤ Σ∇NIEAFT , where ∇NIEAFT stands for the gradient of NIEAFT with
+respect to (β, ζ, ϕ), which is given by
+
+  ∇NIEAFT
+                                                                                                             
+                                                         0
+                                                                                                             
+                                                        0                                                    
+                                                                                                             
+                            ′                                 ′   ∗                                          
+                      ϕ (b [θ(x) + (β2 + β3 a)ϕ] − b [θ (x) + (β2 + β3 a)ϕ])                                 
+                                                                                                             
+                          ′                                 ′    ∗
+                      ϕ (b [θ(x) + (β2 + β3 a)ϕ] − b [θ (x) + (β2 + β3 a)ϕ]) a                                
+                                                                                                             
+   1                                                                                                         
+  =                                                     0                                                    
+   ϕ
+    
+                                                                                                              
+                                                                                                              
+         b ′ [θ(x) + (β    +  β   a)ϕ] − b ′ [θ ∗ (x) + (β      +  β   a)ϕ] − [b ′ (θ(x)) − b ′ (θ ∗ (x))]   
+                        2       3                          2         3                                       
+     ′                                 ′   ∗                              ∗      ′               ′   ∗     ∗ 
+     b [θ(x) + (β2 + β3 a)ϕ]a − b [θ (x) + (β2 + β3 a)ϕ]a − [b (θ(x))a − b (θ (x))a ] 
+                                                                                                             
+     {b′ [θ(x) + (β + β a)ϕ] − b′ [θ ∗ (x) + (β + β a)ϕ] − [b′ (θ(x)) − b′ (θ ∗ (x))]} x 
+                      2       3                           2        3                                         
+         −NIEAFT + {b′ [θ(x) + (β2 + β3 a)ϕ] − b′ [θ ∗ (x) + (β2 + β3 a)ϕ]} (β2 + β3 a)
+
+
+                        Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                     169
+
+when considering canonical links. The gradients associated to the other direct and
+indirect eﬀects for the AFT and Cox models are similarly evaluated.
+   Finally, we note that the Delta method will deliver good estimates only if the
+sample size is large enough. Otherwise, one can use the bootstrap approach as
+done in the application section. Particularly, such approach is also feasible for the
+Aalen model.
+
+
+3.6. Simulation Study
+    We conducted a simulation study to assess the eﬀect of misspeciﬁcation in
+the mediation model (wrong choice of the GLM for M ) on the NIE estimation.
+For each subject, i, we generated data relative to (Ti , Mi , Ai ), where T denotes
+the survival time generated by the Cox-exponential model as in Bender et al.
+(2005), such that λ(t) = λ0 (t) exp(β1 A + β2 M ), A ∼ Bernoulli(0.5) and the linear
+                                                          ′
+predictor for M is given by ζ0 + ζ1 A, with ζ = (ζ0 , ζ1 ) varying according to the
+underlying mediator distribution used in the data generation process. Speciﬁcally,
+we assumed the distributions Normal, Gamma, Poisson and Bernoulli. Finally, we
+considered sample sizes equal to n = 200 and n = 500 and percentages of censoring
+equal to 0% and 25%. To assess the eﬀect of model misspeciﬁcation, we estimated
+the NIE and NDE using AFT, Cox and Aalen survival models always assuming a
+GLM with Normal distribution for the mediation model as the standard approach
+(regardless the true distribution). To perform this assessment we generated 2,000
+samples under each conﬁguration.
+    In Table 1, we present average and standard errors (in parentheses) for the NIE
+estimates for the settings aforementioned. The true NIE is given by NIEDistribution
+as deﬁned in Sections 3.2, 3.3 and 3.4, respectively, for AFT, Aalen and Cox
+models. Notice that the by ﬁtting a Normal GLM for the mediator, we are
+misspecifying it when the true underlying distributions for M are Gamma, Poisson
+and Bernoulli. The results show that the estimates when using the correctly
+speciﬁed Normal-GLM are quite close to the true NIE, with improved results for
+larger sample sizes (n = 500) and no censoring. The estimates deviate from the
+true NIE values when using other GLMs in all survival models. For instance, the
+estimates for the AFT model and underlying Gamma distribution are 1.56 and
+1.57, respectively, for the settings with 25% censoring and sample sizes 200 and
+500, while the true NIE should be 0.90.
+    The departures are also veriﬁed under the Bernoulli distribution for the
+mediator, particularly for smaller sample size (n = 200) and using the Aalen
+model, when the estimates varied betwen -0.11 and -0.12, but the true estimate
+should be -0,08. Due to the small NIE estimates when using the Poisson model
+(and moreover the use of three decimals for presenting them), the results are hard
+to interpret for all survival models.
+    To help us to assess the departures from the true NIE under misspeciﬁcation of
+the GLM for the mediator, we present relative bias (%) for the NIE in Table 2. The
+results were remarkably interesting, clearly pointing out the increased magnitude
+of the biases when ignoring the proper GLM for the mediator. We can verify in
+
+                   Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+170                                                    Marcelo M. Taddeo & Leila D. Amorim
+
+Table 1: Average NIE estimates and standard errors (in parentheses) using the GLM-
+         Normal for modeling the mediator under diﬀerent survival and underlying
+         (true) mediator models.
+   Underlying                                         Survival Models
+   Mediator                       AFT                        Cox                     Aalen
+   Model                    n = 200 n = 500           n = 200   n = 500         n = 200  n = 500
+   Normal
+   (ζo = 100, ζ1 = 10)
+   0% censoring               0.51            0.50     -0.52            -0.50    -0.024      -0.023
+                             (0.73)          (0.45)   (0.75)           (0.45)   (0.035)     (0.021)
+   25% censoring              0.52            0.48     -0.55            -0.51    -0.020      -0.020
+                             (0.79)          (0.48)   (0.85)           (0.51)   (0.034)     (0.020)
+   NIEGauss                           0,50                     -0,50                   -0.022
+   Gamma
+   (ζo = 0.5, ζ1 = 3.0)
+   0% censoring               1.56            1.57     -1.58            -1.58    -0.37            -0.22
+                             (0.19)          (0.12)   (0.26)           (0.16)   (0.27)           (0.16)
+   25% censoring              1.56            1.57     -1.68            -1.66    -0.34            -0.19
+                             (0.20)          (0.13)   (0.31)           (0.18)   (0.24)           (0.14)
+   NIEGamma                           0.90                     -0.90                     -4.46
+   Poisson
+   (ζo = 0.02, ζ1 = 0.06)
+   0% censoring               0.003      0.0030        -0.003      -0.0030       -0.02       -0.026
+                             (0.013)    (0.0069)      (0.013)     (0.0069)      (0.11)      (0.058)
+   25% censoring              0.002      0.0031        -0.002      -0.0033       -0.02       -0.024
+                             (0.014)    (0.0070)      (0.015)     (0.0074)      (0.11)      (0.054)
+   NIEPoisson                       0.003                    -0.003                    -0.024
+   Bernoulli
+   (ζo = 0.02, ζ1 = 0.90)
+   0% censoring                0.012       0.011     -0.012      -0.011     -0.12        -0.10
+                              (0.034)     (0.020)   (0.035)     (0.021)    (0.33)       (0.20)
+   25% censoring               0.012       0.010     -0.013      -0.010     -0.11        -0.08
+                              (0.037)     (0.023)   (0.039)     (0.024)    (0.32)       (0.19)
+   NIEBernoulli                      0.011                 -0.011                 -0.08
+   (NIEDistribution : true natural indirect eﬀect when considering the actual underlying
+   distribution for the mediator.)
+
+
+
+
+our settings that the relative bias varies from 15.02% to over 87.17% when the
+underlying mediator is, respectively, Poisson and Gamma for the analyses using
+Cox models with n = 200. There is a substantial reduction on the relative bias for
+NIE estimation when sample size increases to 500, particularly for the Poisson and
+Bernoulli mediator distributions. For the Gamma GLM mediator, on the other
+hand, the relative bias does not change substantially with the increase in sample
+size for all survival models.
+   We also compared the AIC for the two models ﬁtted for the mediator: the
+GLM for the underlying mediator model (TRUE) and the Gaussian model, i.e.,
+under misspeciﬁcation of the mediation model. In all cases, the AIC for the
+correct (TRUE underlying model) was lower than that obtained by ﬁtting the
+Gaussian GLM, indicating that the criterion correctly indicates the proper model
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                         171
+
+Table 2: Relative bias for NIE using the GLM-Normal to model the mediator under
+         diﬀerent survival and underlying (true) mediator models
+   Underlying                                    Survival Models
+   Mediator                       AFT                  Cox                   Aalen
+   Model                    n = 200 n = 500      n = 200  n = 500      n = 200   n = 500
+   Normal
+   (ζo = 100, ζ1 = 10)
+   0% censoring             2.49%      -0.74%     -3.37%    0.21%      -11.26%    -6.15%
+   25% censoring            4.06%      -3.04%    -10.82%    -2.28%      -0.71%     6.94%
+   Gamma
+   (ζo = 0.5, ζ1 = 3.0)
+   0% censoring             73.68%    74.74%     -76.07%    -76.30%      91.61%   95.10%
+   25% censoring            74.32%    75.03%     -87.17%    -85.16%      92.32%   95.67%
+   Poisson
+   (ζo = 0.02, ζ1 = 0.06)
+   0% censoring             -16.29%    -1.74%    15.02%     -0.56%       13.70%   -8.09%
+   25% censoring            -20.07%   0.0079%    15.58%     -6.53%       26.77%    1.25%
+   Bernoulli
+   (ζo = 0.02, ζ1 = 0.90)
+   0% censoring             14.21%     3.90%     -16.65%    -3.80%     -44.61%    -25.20%
+   25% censoring            13.57%     -6.05%    -20.61%     2.29%     -27.89%     -1.07%
+
+
+
+
+for the mediator (Table 3). For instance, the AIC was equal to 649.06 and 682.85,
+respectively, for the GLMs with Bernoulli and Normal distributed mediator when
+its underlying (TRUE) distribution was Bernoulli.
+
+
+
+         Table 3: Average AIC for the mediator models using diﬀerent GLMs
+                     Underlying                       Sample Size
+                     Mediator Model               n = 200     n = 500
+                     Gamma
+                     True Gamma GLM              1,192.27       2,988.86
+                     Misspeciﬁed Normal GLM      1,741.38       4,439.75
+                     Poisson
+                     True Poisson GLM             536,60        1,336.03
+                     Misspeciﬁed Normal GLM       581.24        1,446.77
+                     Bernoulli
+                     True Bernoulli GLM           261.75        649.06
+                     Misspeciﬁed Normal GLM       276.38        682.85
+
+
+
+
+    In summary, we showed that there might be substancial bias when ignoring the
+proper GLM for the mediator whatever the survival model (Aalen, Cox or AFT
+model) for NIE estimation is. Though not presented here, the impact on the NDE
+estimation is much smaller when using the GLM-Normal mediator model since its
+estimation does not depend on the GLM parameters associated to the mediator.
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+172                                                            Marcelo M. Taddeo & Leila D. Amorim
+
+
+4. Responsiveness Measure for Continuous
+   Treatments
+     Although it is usual to consider binary exposures and their causal contrast,
+it might be interesting to consider an alternative metric to describe the eﬀect of
+small changes in a continuous exposure in the presence of mediation. Therefore, in
+this section we propose a measure that captures the responsiveness of the outcome,
+in diﬀerent scales, to changes in the underlying (continuous) exposure level when
+mediation is present. More precisely, we look at the responsiveness, or derivative,
+of the potential responses due to small changes in the treatment level. It is worth
+mentioning that this is a local measure and, therefore, as will become clearer later,
+it is related to some pre-speciﬁed level of treatment. Although we consider, as in
+Section 3, three diﬀerent scales, we will state the main deﬁnitions by using the
+expected time to event. Modiﬁcations to other scales should be trivial. Therefore,
+we deﬁne the total responsiveness at a∗ (TR) as
+             ∂                                           E[T(a∗ +h)Ma∗ +h |x] − E[Ta∗ Ma∗ |x]
+   TR =         {E[TaMa |x] − E[Ta∗ Ma∗ |x]}       = lim                                      ,
+             ∂a                              a=a ∗   h→0                  h
+
+and the natural direct responsiveness at a∗ (NDR) as
+              ∂                                            E[T(a∗ +h)Ma∗ |x] − E[Ta∗ Ma∗ |x]
+   NDR =         {E[TaMa∗ |x] − E[Ta∗ Ma∗ |x]}       = lim                                   .
+              ∂a                               a=a ∗   h→0                 h
+
+Note that for the direct responsiveness, the treatment assigned to the mediator
+remains ﬁxed at its “natural” level a∗ . The natural indirect responsiveness at a∗
+(NIR), in turn, is simply deﬁned in terms of TR and NDR as NIR = TR − NDR,
+i.e. the natural indirect responsiveness is the part of the total responsiveness that
+is not explained by the natural direct eﬀect. However, if TR and NDR exist, then
+NIR = limh→0 {E[T(a∗ +h)Ma∗ +h |x] − E[T(a∗ +h)Ma∗ |x]}/h, so that
+
+                                            ∂
+                             NIR =             {E[TaMa |x] − E[TaMa∗ |x]}      .
+                                            ∂a                            a=a∗
+
+As before, our goal is to study the identiﬁcation of these measures in cases where
+the mediator’s conditional distribution belongs to the Exponential Family.
+
+
+4.1. Responsiveness Measures in the Accelerated Failure
+     Rate Model
+   We already know that if (A0)–(A4) are satisﬁed, then E[TaMa |x] is identiﬁed
+by formula (3). Based on it and taking derivatives with respect to a, we get
+                   "                                                                                   #
+                            (θ ′ (a∗ , x) + β3 ϕ)Eθ(a∗ ,x)+(β2 +β3 a∗ )ϕ M − θ ′ (a∗ , x)Eθ(a∗ ,x) M
+      TRAFT = β1 +
+                                                               ϕ                                           (13)
+                   × E[T   a ∗ Ma∗   |x],
+         ′     ∗
+where θ (a , x) = ∂a θ(a∗ , x). One particular issue that arises when using the
+identiﬁcation formula (3) is the calculation of the expectation Eeγε , which depends
+
+                           Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                       173
+
+on the particular distribution associated to log T . It is usual to choose ε so that
+it follows an extreme value distribution. This is done by assuming T to follow the
+Weibull distribution, see Kalbﬂeisch & Prentice (2002), p. 33. In this particular
+case, Eeγε = Γ(1 + γ). Similarly, we get
+                                                         
+              NDRAFT = β1 + β3 Eθ(a∗ ,x)+(β2 +β3 a∗ )ϕ M E[Ta∗ Ma∗ |x],
+
+and hence
+                                                                      
+      NIRAFT = ϕ−1 θ′ (a∗ , x) Eθ(a∗ ,x)+(β2 +β3 a∗ )ϕ M − Eθ(a∗ ,x) M E[Ta∗ Ma∗ |x].
+
+In particular, if there is no interaction between A and M in the survival model,
+then the direct responsiveness simpliﬁes to β1 E[Ta∗ Ma∗ |x]. The same arguments
+would lead us to the responsiveness formulas associated to the Cox model, whose
+results are quite similar, except for the scale. In fact, by comparing the expressions
+(3) and (10), respectively, associated to E[TaMa∗ |x] and λaMa∗ (t), we see that both
+share the same structure (just with E[eγε ] in place of λo (t) and vice versa). Hence,
+by mimicking the argument in the lines above, we get
+                                                                                          
+                    (θ′ (a∗ , x) + β3 ϕ)Eθ(a∗ ,x)+(β2 +β3 a∗ )ϕ M − θ′ (a∗ , x)Eθ(a∗ ,x) M
+  TRCox = β1 +
+                                                      ϕ
+              × λa∗ Ma∗ (t).
+
+Notice that, in addition to the diﬀerence in scale, the responsiveness under the
+Cox model is also time dependent, i.e. TRCox = TRCox (t). The corresponding
+direct and indirect responsiveness follow the same steps.
+   For the sake of illustration we only consider models without the interaction
+term. If M is Gaussian, then
+                                 
+        NDRAFT = E [eγε ] β1 exp β0 + β1 a∗ + β2 θ∗ (x) + β4⊤ x + 0.5σ 2 β22
+
+and NIRAFT = θ′ (a∗ , x)[(β2 θ(a∗ , x) + 0.5σ 2 β22 )/β1 ]NDRAFT . On the other hand,
+if M follows a Gamma distribution, then
+                                                                               
+                                                                   θ(a∗ , x)
+      NDRAFT = β1 E [eγε ] exp β0 + β1 a∗ + β4⊤ x + ν log
+                                                              β2 /ν + θ(a∗ , x)
+and
+                 NIRAFT = λ′ (a∗ , x)β2 /{β1 [β2 /ν + θ(a∗ , x)]}NDRaft ,
+with λ(a∗ , x) = log θ(a∗ , x). For speciﬁc links we have: λ′ (a∗ , x) = −ζ1 for the log
+link, λ′ (a∗ , x) = −ζ1 /θ(a∗ , x) for the reciprocal link, and λ′ (a∗ , x) = ζ1 θ(a∗ , x)
+for the identity link function.
+
+
+4.2. Responsiveness Measures in the Additive Aalen Model
+   By deﬁnition, the responsiveness associated with the Aalen model is deﬁned in
+terms of the potential hazard functions λTaMa and λTaMa∗ . Unfortunately, in this
+particular case, the general expressions of total, direct and indirect sensitivities are
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+174                                             Marcelo M. Taddeo & Leila D. Amorim
+
+
+cumbersome and can be found in the Appendix C, formulas (A2), (A3) and (A4).
+In the following lines, however, we present the respective formulas for the simpler
+case in which there is no interaction between exposure and mediator in the survival
+model. As usual, the absence of interaction between A and M dramatically
+simpliﬁes the direct responsiveness, which is given simply by NDRAalen = β1 (t).
+The total responsiveness, in turn, is given by T RAalen = β1 (t) + Ξ2 + Ξ3 , with
+
+  • Ξ2 = ϕ−1 β2 (t)EX      ′ ∗
+                     t,a∗ θ (a , X)VarϕB2 (t)+θ(a∗ ,X) M ;
+                                                          
+  • Ξ3 = ϕ−1 EX            ⊤                                   ∗
+              t,a∗ β4 (t) X + β2 (t)EϕB2 (t)+θ(a∗ ,X) M ψ1,t (a , X);
+
+and ψ1,t as deﬁned in Appendix B. Finally, the indirect responsiveness is derived
+from NDRAalen and T RAalen , so that NIRAalen = Ξ2 +Ξ3 (with Ξ2 and Ξ3 as given
+above).
+    For the sake of illustration, we consider once again the Normal and Gamma
+distributed mediator without interaction between A and M in the survival (Aalen)
+                                                  ′ ∗
+model. In the Gaussian case, Ξ2 = β2 (t)EX  t,a∗ θ (a , X) and
+                     h                                                         i
+    Ξ3 = B2 (t)EX
+                t,a∗   β4 (t)⊤ X + β2 (t)θ(a∗ , X) θ′ (a∗ , X) − EX     ′ ∗
+                                                                  t,a∗ θ (a , X)
+
+
+More speciﬁcally, if θ(a, x) = ζ0 + ζ1 a + ζ2⊤ x, then NIRAalen = ζ1 β2 (t) and
+T RAalen = β1 (t) + ζ1 β2 (t). For a Gamma mediator and no confounding, on the
+other hand, we have NIRAalen = [θ′ (a∗ )/(B2 (t)/ν + θ(a∗ ))2 ]β2 (t), which can be
+specialized for diﬀerent link functions by changing the function θ.
+
+
+4.3. Simulation Study
+    As in Section 3.6, we conducted a simulation study to assess the eﬀect of
+misspeciﬁcation in the mediation model (wrong choice of the GLM for M ), but
+now regarding the NDR and NIR estimation. We adopted the same procedure,
+so that, for each subject we sampled (Ti , Mi , Ai ), with T denoting the survival
+time generated by the Cox-exponential model as in Bender et al. (2005) and
+λ(t) = λ0 (t) exp(β1 A + β2 M ), with β1 = 3.5, β2 = −0.09 and λ(t) ≡ 11. The
+treatment A was sampled from a Bernoulli(0.5) and the linear predictor for M
+was assumed to be ζ0 + ζ1 A, with ζ0 = 0, ζ1 = −1 and scale parameter equal
+to 1, associated to the Gamma distribution. The resulting direct and indirect
+responsiveness are illustrated in Figures 1 and 2 (dashed lines). They represent
+a situation in which an increase in treatment levels implies a direct decrease in
+the response variable, particularly in the vicinity of zero (i.e. small increases in
+treatment levels starting from zero result in greater changes than small increases
+in these levels in already treated individuals). On the other hand, the treatment
+has an indirect positive eﬀect on the response, though such impact is reduced for
+higher doses. To illustrate the method, we estimated both NDR and NIR using
+the AFT model by assuming the Gamma (correctly speciﬁed) and the Gaussian
+(misspeciﬁed) distributions for the mediator as well as sample sizes 200 and 500
+and percentages of censoring equal to 0% and 25%. To perform this assessment
+we generated 2,000 samples under each conﬁguration.
+
+                  Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                                                                                    175
+
+
+
+
+                                                                                                2.5
+                   0
+                   −60 −50 −40 −30 −20 −10
+
+
+
+
+                                                                                                1.5
+                                                                                         NIR
+     NDR
+
+
+
+
+                                                                                                0.5
+                                                                                                −0.5
+                                                                                                        0.0    0.2     0.4        0.6    0.8    1.0
+                                                                                                                      Treatment level
+                                             0.0   0.2    0.4        0.6   0.8   1.0
+                                                         Treatment level
+                                                                                               (b) NIR, n = 200, 0% censoring
+          (a) NDR, n = 200, 0% censoring
+           0
+           −60 −50 −40 −30 −20 −10
+
+
+
+
+                                                                                             2.5
+    NDR
+
+
+
+
+                                                                                             1.5
+                                                                                       NIR
+                                                                                             0.5
+                                                                                             −0.5
+                                             0.0   0.2   0.4        0.6    0.8   1.0
+                                                                                                       0.0    0.2    0.4        0.6     0.8    1.0
+                                                         Treatment level
+                                                                                                                     Treatment level
+
+     (c) NDR, n = 200, 25% censoring
+                                                                                             (d) NIR, n = 200, 25% censoring
+Figure 1: NDR and NIR estimates based on the AFT model with Gamma mediators
+          (log link). The dashed lines stand for the true (rescaled) eﬀects, the middle
+          solid lines stand for the median responsivenesses and the lower and upper
+          solid lines for the 2.5% and 97.5% quantiles.
+
+
+
+
+    Figure 1 presents the estimates of the direct and indirect responsiveness by
+assuming the true underlying GLM Gamma model and samples of size 200. Figures
+1a and 1b stand for estimates based on samples with no censoring, while Figures
+1c and 1d are about the samples with 25% censoring. Simulations indicate that
+estimates under no censoring are unbiased, though estimates based on censored
+samples may present some bias. Indeed, by looking at Figures 1a and 1b, it is
+almost impossible to identify the true curve (dashed lines in all ﬁgures). However,
+in all cases, the true curve is between the lower and upper bands based on the 2.5%
+and 97.5% quantiles of the simulated estimates at each point of the grid. Similar
+results were found for sample size 500, with smaller variability, as expected.
+
+    We also considered the cases where estimation was based on the (misspeciﬁed)
+Gaussian distribution with its canonical link (identity). The results are in Figure
+2 (n = 500). As noted in Figures 2a and 2c, the direct responsiveness does not
+seem to be very aﬀected. In fact the estimates here are not very diﬀerent as
+those obtained by using the true Gamma distribution. This is quite reasonable
+for the NDR, since it is less dependent on the mediator than the NIR. On the
+other hand, regardless of sample size, NIR estimates are highly biased (Figures
+2b and 2d). Such estimates may even go towards to the wrong direction. In
+fact, at any treatment level, NIR estimates based on the Gaussian distribution
+are negative (indicating a decrease in the response variable as the treatment level
+
+                                                         Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+176                                                                              Marcelo M. Taddeo & Leila D. Amorim
+
+
+
+
+            0
+
+
+
+
+                                                                                       2
+            −60 −50 −40 −30 −20 −10
+
+
+
+
+                                                                                       1
+                                                                                       0
+                                                                                       −1
+      NDR
+
+
+
+
+                                                                                 NIR
+                                                                                       −2
+                                                                                       −3
+                                                                                       −4
+                                                                                       −5
+                                      0.0   0.2   0.4        0.6    0.8   1.0               0.0   0.2   0.4        0.6    0.8   1.0
+                                                  Treatment level                                       Treatment level
+
+
+            (a) NDR, n = 500, 0% censoring                                             (b) NIR, n = 500, 0% censoring
+            0
+
+
+
+
+                                                                                       2
+            −60 −50 −40 −30 −20 −10
+
+
+
+
+                                                                                       1
+                                                                                       0
+                                                                                       −1
+      NDR
+
+
+
+
+                                                                                 NIR
+                                                                                       −2
+                                                                                       −3
+                                                                                       −4
+                                                                                       −5
+                                      0.0   0.2   0.4        0.6    0.8   1.0               0.0   0.2   0.4        0.6    0.8   1.0
+                                                  Treatment level                                       Treatment level
+
+
+            (c) NDR, n = 500, 25% censoring                                            (d) NIR, n = 500, 25% censoring
+Figure 2: NDR and NIR estimates based on the AFT model with Gaussian mediators
+          (identity link) and sample size 500. The dashed lines stand for the true
+          (rescaled) eﬀects, the middle solid lines stand for the median responsivenesses
+          and the lower and upper solid lines for the 2.5% and 97.5% quantiles.
+
+
+
+increases), while the true values are positive (which means an increase in response
+by increasing the level of treatment in that neighborhood).
+
+
+5. Application
+    To illustrate the new approaches, we reexamine the mediation model for the
+incidence of liver cancer (Figure 3), which was proposed by Huang & Yang (2017).
+We use data from a subset of individuals (n = 2, 878) who participated in a
+community-based prospective cohort study in Taiwan conducted from 1991 to
+1992, see Huang et al. (2011), in which the viral load of hepatitis C (HCV) was
+measured at baseline, the viral load of hepatitis B (HBV) was measured during
+the follow-up, and the incidence of liver cancer (T ) was recorded prospectively.
+We are interested in assessing the eﬀect of HCV (A) directly on the liver incidence
+(hepatocellular carcinoma) and its eﬀect mediated through HBV (M ). The
+analyses were adjusted by measured confounders (X): age group (30-39, 40-49, 50-
+59, ≥ 60 years), gender (female/male), alcohol consumption and cigarette smoking
+(no/yes). Viral loads of HBV and HCV were natural log transformed prior to
+analyses. For the initial analyses, we dichotomize HCV (detected if > 0/non
+detected otherwise).
+
+                                                   Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                      177
+
+                                            X
+
+
+
+                                          HBV
+
+                                                               Liver
+                      HCV
+                                                              cancer
+
+Figure 3: Causal mediation diagram for the relationship between HCV viral load and
+          occurrence of liver cancer
+
+
+    We used total time scale for the survival analyses, such that the entry time was
+deﬁned as the time of measuring HCV (at baseline) and the occurrence of liver
+cancer was assessed by data linkage of the national cancer registry and national
+death certiﬁcation proﬁles from study entry to December 31, 2008 (end of the
+study). The event was also veriﬁed by medical records. Individuals who were
+not diagnosed of liver cancer until the end of the study or those who died from
+other causes were censored. The number of patients with liver cancer diagnosis
+was 188 (6.53%). Hence, the event is rare and suitable to be evaluated using Cox
+proportional hazards model. We compare the results for ﬁtting AFT, Cox and
+Aalen models using GLMs, considering diﬀerent link functions, for the mediator
+(HBV) at follow-up. To model the mediator HBV viral load, we considered the
+Normal distribution with identity link function and the Gamma distribution with
+the logarithm and reciprocal link functions. Conﬁdence intervals for causal eﬀects
+are obtained via bootstrap method for all survival models. We assumed that there
+were no unmeasured confounders of the relationship between HCV and time to
+liver cancer (A1), HBV and time to liver cancer (A2), and HCV and HBV (A3).
+The composition (A0) and identiﬁability assumptions (A4) are also required for
+any causal claims based on these analyses. All analyses were conducted in R
+(version 3.5.3).
+
+
+5.1. Causal Eﬀects for HCV
+   Results using the three mediation models revealed similar patterns under
+diﬀerent eﬀect scales. As indicated in Table 4, the NDE estimate by using the Cox
+model suggest that the detection of HCV viral load at baseline directly increases
+the risk of liver cancer (HR = 3.26, 95%CI = [1.75, 6.06])
+
+Table 4: Estimated Natural Direct Eﬀect (NDE) of hepatitis C detection on liver cancer
+         incidence using diﬀerent models. Taiwan.1991-2008.
+          Models                  Estimate                    95%CI
+          AFT (⋆)                   -0.58                  (-0.90; -0.27)
+          Cox model (HR)(⋆⋆)        3.26                    (1.75; 6.06)
+          Aalen model (⋆⋆⋆)         7.39                   (1.42; 13.29)
+          (⋆) Scale: Diﬀerence in mean survival time, (⋆⋆) Scale: HR=hazard ratio,
+          (⋆⋆⋆) Scale: Diﬀerence in hazard (per 1000 person-year)
+
+
+
+
+                    Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+178                                                 Marcelo M. Taddeo & Leila D. Amorim
+
+
+   On the other hand, NDE estimates by using the AFT and Aalen models
+indicate, respectively, a reduction of 56% (exp(−0.58)) in the expected time to
+diagnosis and a diﬀerence in the hazard of 7.39 (per 1000 person-years) of liver
+cancer for those with detected HBC viral load at baseline compared to non detects.
+
+Table 5: Estimated Natural Indirect Eﬀects (NIE) of hepatitis C detection on liver
+         cancer incidence mediated through follow-up hepatitis B viral load using
+         distinct models. Taiwan.1991-2008.
+                                 GLM for Mediator (distribution / link function)
+                             Normal                            Gamma(a) ,(b)
+      Time-to-event          Identity                   Log                  Inverse
+      model            Estimate (95% CI)        Estimate (95%CI)      Estimate (95%CI)
+      AFT (⋆)            0.23 (0.12; 0.35)        0.21 (0.12; 0.29)     0.22 (0.13; 0.31)
+      Cox (HR)(⋆⋆)       0.63 (0.49; 0.79)        0.47 (0.33; 0.64)     0.45 (0.32; 0.63)
+      Aalen(⋆⋆⋆)        -2.03 (-3.14;-1.02)     -2.07 (-2.97; -1.20)  -2.11 (-2.99; -1.19)
+      (⋆) Scale: Diﬀerence in mean survival time, (⋆⋆) Scale: HR=hazard ratio
+      (⋆⋆⋆) Scale: Diﬀerence in hazard (per 1000 person-year)
+      (a) AFT, Cox and Aalen estimates conditional on X, here computed for X = 0,
+      (b) NIE in Aalen model is time-dependent, approximation is shown.
+
+
+
+    Table 5 presents estimates of NIE using diﬀerent models for the mediator
+(varying both distribution of the mediator and link function). All models indicate
+a statistically signiﬁcant mediation through follow-up HBV viral load, such that
+the NIE points out that the HCV viral load increases the mean time of liver cancer
+diagnosis, decreasing the hazard ratio and the diﬀerence in hazard, according to
+the distinct scales of the corresponding models. Residual analysis using the linear
+mediator model shows a poor ﬁt (see Figure 1 in the Appendix D). Smallest AIC
+was obtained using the Gamma distribution with almost no diﬀerence between
+the link functions. It is important to highlight that the estimates for NIE under
+AFT, Cox and Aalen models are conditional on the covariates (X) when using the
+Gamma distribution. To illustrate these results, we present the NIE estimates for
+30-39 females, no smokers and no drinkers (reference groups for all covariates) in
+Table 5. We can compute these estimates for any covariate pattern of our interest.
+For instance, the NIE estimates using AFT model and the Gamma distribution are
+0.18 (log link) and 0.17 (inverse link) for ≥ 60 years, males, smokers and drinkers.
+The estimates for the corresponding Cox models are 0.55 and 0.58.
+    The NIE for the Aalen model using the Gamma distribution, on the other hand,
+is time-dependent. However, for our current application |θ(·)| is much larger than
+B2 (t). We have that max(B̂2 (t)) ≈ 0.15, with θ̂(a, x = 0) varying between -0.28
+and -0.22 and ν̂ = 6.11, so that the NIE can be approximated by
+                                                                       
+                                       1                     1
+             NIE = β2 Et x
+                                                  −
+                             θ(a∗ , x) + B2 (t)/ν    θ(a, x) + B2 (t)/ν
+                                                
+                                1            1
+                  ≈ β2 Ex              −           ,
+                             θ(a∗ , x) θ(a, x)
+
+which does not depend on time. The NIE estimates using Aalen model and
+Gamma distribution indicate a diﬀerence in hazard (per 1000 person-year) of
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                                           179
+
+−2.07 (CI0.95 = [−2.97, −1.20]) and −2.11 (CI0.95 = [−2.99, −1.19]) for 30-39
+females, no smokers and no drinkers (reference groups for all covariates) using,
+respectively, log and inverse link functions. Results can be obtained for diﬀerent
+covariate patterns.
+    Alternatively, we also considered the log HCV viral load in its original scale
+as described in Huang & Yang (2017), so that it is a continuous variable instead
+of a binary one as before. The estimated eﬀects have the same direction as those
+shown in Tables 4 and 5. In short, by increasing the log HCV viral level in one
+unit, the estimated natural direct eﬀect on the mean survival time is NDEAFT =
+−0.09 (95%CI = [−0.14, −0.04]); on the hazard ratio is exp(NDECox ) = 1.20
+(95%CI = [1.08, 1.33]); and on the diﬀerence in the hazard is NDEAalen = 1.20
+(per 1000 person-years) 95%CI = [0.17, 1.33]. On the other hand, NIE does
+not change substantially when considering diﬀerent mediator models (varying
+distribution and link functions). For instance, the largest diﬀerence was veriﬁed
+for the Cox model, with NIE varying from HR = 0.85, 95%CI = [0.76, 0.92] to
+HR = 0.93, 95%CI = [0.89, 0.96] under, respectively, the Gamma (inverse link)
+and Gaussian distributions. Residual analysis for these mediator models were very
+similar as those presented in Appendix D.
+
+
+5.2. Responsiveness Measures for HCV
+    To illustrate the responsiveness measure for continuous exposure, we consider
+the natural log transformed viral load of HCV. Figure 4 presents the natural
+direct and indirect responsiveness for the AFT model using diﬀerent mediator
+models. Though the NDRaft is not very sensitive to the mediation modeling, the
+                                                               8
+         −6
+
+
+
+
+                                                               6
+         −8
+         −10
+   NDS
+
+
+
+
+                                                         NIS
+                                                               4
+         −12
+
+
+
+
+                                                               2
+         −14
+
+
+
+
+                                                               0
+
+
+
+
+               0   5            10             15   20             0   5            10             15   20
+                       log of HCV viral load                               log of HCV viral load
+
+
+
+         (a) Natural direct responsiveness               (b) Natural indirect responsiveness
+Figure 4: Responsiveness measures of the liver cancer in terms of the log HCV viral
+          load using AFT model with Normal (dotted line) and Gamma distributions
+          (logarithm link: solid line; inverse link: dashed line) for the mediator.
+
+
+NIRaft estimates indicate a larger responsiveness to treatment when considering
+the Gamma distribution. Small increases in the hepatitis C viral load directly
+imply a greater reduction in the expected time until the diagnosis of liver cancer
+when the viral load is relatively low. On the other hand, it is noted that, indirectly,
+the hepatitis B viral load (mediator) behaves in a protective way. However, such
+
+                          Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+180                                              Marcelo M. Taddeo & Leila D. Amorim
+
+
+a protective eﬀect becomes less relevant as the viral load of hepatitis C increases.
+The responsiveness measures associated to the Aalen model depend both on HCV
+values and time (Figure 5). However, the eﬀect of time on the hazard function
+is not as relevant as the eﬀect of the HCV, as depicted in Figures 3(a) and 3(b).
+Regarding the log HCV viral load, the higher its value the faster the indirect eﬀect
+on the hazard of diagnosis of liver cancer. Since we are assuming the coeﬃcients
+in the Aaalen model are constant in time, NDRAalen is invariant with respect to
+time and HCV viral load, so that NDRAalen = NDEAalen .
+
+
+
+
+         (a) Gamma with log link                 (b) Gamma model with inverse link
+
+Figure 5: Responsiveness measures of liver cancer hazard in terms of the log HCV viral
+          load using Aalen model and a Gamma mediator with diﬀerent link functions
+
+
+
+
+6. Conclusions
+    This article presents formulas for GLM mediation when a time-to-event
+outcome is of interest and the AFT, Cox or Aalen models are used. Under the
+Aalen additive and Cox models, the eﬀects are characterized, respectively, on the
+hazard diﬀerence and on the log hazard ratio scales. At the same time, AFT
+examine the eﬀect on the mean survival time diﬀerence. Therefore, the eﬀects
+estimated using AFT models are in the opposite direction compared to the other
+two models (Cox and Aalen), conveying complementary information when both
+are properly applied. We derive general expressions to the direct and indirect
+eﬀects when the mediation process can be described by a GLM. Particularly, we
+allow interaction between exposure and mediator in all models. For concreteness,
+we focused on particular distributions for the mediator: Gaussian, Gamma,
+Binomial and Poisson, but related formulas can be readily extended to other
+distributions. Even though causal mediation estimators for survival models are
+available when the mediator is continuous (Normal distributed) or binary, to
+our knowledge, not much has been proposed for mediators of diﬀerent nature
+to handle time-to-event data. For instance, Albert & Nelson (2011) consider
+
+                   Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                    181
+
+in another context, not including censored data, the use of GLM for mediation
+analysis. Tchetgen Tchetgen (2013), on the other hand, describes a inverse odds
+ratio-weighted approach for eﬀect decomposition in GLMs with a nonlinear link
+function, including mediation analysis using the Cox proportional hazards model.
+    We successfully illustrate our approach by analyzing the incidence of liver
+cancer in a community-based prospective cohort study in Taiwan. The analysis
+showed that the HCV viral load directly aﬀects liver cancer increasing its risk, but
+indirectly, via HBV viral load, has an opposite eﬀect. The use of diﬀerent eﬀect
+scales to investigate the impact of HCV viral load (continuous or categorized)
+on liver cancer and mediator models for HBV viral load yielded consistent
+assessments. The data are fully anonymised and were made publicly available
+by Huang & Yang (2017), so that the interested reader may follow the link therein
+to download the data. This empirical example demonstrates the ﬂexibility of
+our framework and its potential for studying mediation eﬀects, linking theoretical
+knowledge and empirical evidence to reﬁne the scientiﬁc theories for complex
+relationships. In fact, mediation models oﬀer a more detailed view of the
+underlying mechanism and, hence, a more comprehensive understanding of the
+phenomena. Further reﬁnements related to the application by considering diﬀerent
+mediation arrangements are topics for subsequent research. Indeed, our data
+analysis using deviance residuals indicates the need for more sensitive models in
+order to capture asymmetry and heteroskedastic errors. For example, the modeling
+of the dispersion parameter, as in Smyth (1989), though not related to mediation
+analysis, could be considered as an alternative to be developed in this framework.
+    The proposed approach has a number of strenghts. Survival models provide a
+compelling framework for many research questions, and extensions via inclusion of
+GLMs for the mediator may encompass a broad ﬁeld of applied research, allowing
+the often necessary control for confounding. In fact, a major limitation related
+to existing statistical theory and software tools for causal mediation analysis
+with survival outcomes is the conﬁnement to continuous or binary mediators, see
+Huang & Yang (2017), Pratschke et al. (2016) and VanderWeele (2015). We
+provided a rigorous methodological justiﬁcation of our approach, focusing on the
+identiﬁcation of the direct and indirect natural eﬀects and oﬀering analytical
+expressions under the presence of GLM mediation. In particular, it is worth
+noticing that the additive hazard model naturally embodies the possible time
+dependence of the corresponding coeﬃcients, yielding additional ﬂexibility. We
+also have proposed responsiveness measures capable of assessing the local impact
+of small changes in the level of (continuous) treatment by both direct and indirect
+pathways. In particular, this allows us to assess the most critical levels of
+treatment (in terms of impact on the outcome) in the sense of identifying the
+regions in which small changes in exposure imply larger variations in the outcome.
+Estimation of the model’s parameters for our approach may be performed using
+standard statistical packages. We use R (version 3.5.3) to conduct the simulation
+studies and the data analyses. The R code for our data analysis is provided at
+https://github.com/lamorim-br/Mediation_survival-HBV.git.
+   Nevertheless, it is important to mention some limitations to the proposed
+analytical framework. Firstly, assumptions regarding the survival part must
+
+                  Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+182                                                Marcelo M. Taddeo & Leila D. Amorim
+
+
+be carefully assessed according to the chosen survival model. For instance,
+the proportionality of the hazards under the Cox model should be evaluated.
+Besides that, the expressions for Cox models only apply under the rare-outcome
+assumption. Nevertheless, a weighting approach to handle common outcomes
+is described by VanderWeele (2015) and might be likewise extended to this
+general framework. Lange et al. (2012) also consider weighting each observation
+using a generalized marginal structural model, allowing the use of diﬀerent link
+functions for the outcome (e.g., logistic model), and extended this framework
+for Cox and Aalen models. The assumptions for the GLM part should also be
+adressed accordingly. Secondly, the identiﬁcation of the estimators are valid
+under stringent assumptions (A0)–(A4), which should be addressed to make
+causal claims. It is essential to highlight that we assumed the usual conditions
+of no unmeasured confoundness between exposure and outcome (A1), mediator
+and outcome (A2), and exposure and mediator (A3). The identiﬁcation and
+measurement of confounders are required to draw defensible causal claims from
+non-experimental data, which depends on previous empirical evidence and solid
+knowledge of the theoretical mechanism. The theoretical and computational
+assessment of the eﬃciency and statistical consistency regarding the estimators
+of the natural direct and indirect eﬀects is still a subject for future studies.
+    The development of approaches for causal mediation analysis for time-to-event
+outcomes is an active area of methodological research. We have discussed in
+this paper a particular case for mediation analysis for survival data when the
+mediator is measured somewhere between the exposure and outcome and may be
+described by means of a GLM model. Future extensions of our approach include
+mediation analysis for time-to-event data with multiple GLM mediators, which
+could allow estimation of path-speciﬁc eﬀects through diﬀerent mediators. Indeed,
+Miles et al. (2020) proposed a semiparametric procedure to assess path-speciﬁc
+eﬀects in a diﬀerent context, which points to further developments in the survival
+framework. We assumed no missing data and accurately measured variables, so
+that further developments may account for missing data and measurement errors.
+Additionaly, in many settings mediation analysis involves multiple mediators, time-
+varying causal eﬀects, and time-varying exposures and mediators, see Didelez
+(2019), Fasanelli et al. (2019), Robins et al. (2000) and Vansteelandt et al. (2019).
+Extensions of our approach to circumstances involving multiple and time-varying
+mediators/confounders could be considered as well.
+
+
+
+
+Acknowledgements
+
+      LDA was partly supported by a FIOTEC Fellowship (IGM-009-FEX-17).
+
+
+                                                                          
+                   Received: March 2021 — Accepted: December 2021
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                     183
+
+References
+Aalen, O. O., Borgan, O. & Gjessing, H. K. (2008), Survival and Event History
+ Analysis: A Process Point of View, Springer, New York.
+Aalen, O., Røysland, K. & Gran, J. (2012), ‘Causality, mediation and time:
+ a dynamic viewpoint’, Journal of the Royal Statistical Society - Series A
+ 175(4), 831–861.
+Aalen, O., Stensrud, M., Didelez, V., Daniel, R., Røysland, K. & Strohmaier, S.
+ (2020), ‘Time-dependent mediators in survival analysis: Modeling direct and
+ indirect eﬀects with the additive hazards model’, Biometrical Journal 62, 532–
+ 549.
+Albert, J. & Nelson, S. (2011), ‘Generalized Causal Mediation Analysis’,
+  Biometrics 67, 1028–1038.
+Baron, R. M. & Kenny, D. A. (1986), ‘The moderator–mediator variable
+  distinction in social psychological research: Conceptual, strategic and statistical
+  considerations’, Journal of Personality and Social Psychology 51, 1173–1182.
+Bender, R., Augustin, T. & Blettner, M. (2005), ‘Generating survival times to
+  simulate Cox proportional hazards models’, Statistics in Medicine 24, 1713–
+  1723.
+Daniel, R., Stavola, B., Cousens, S. & Vansteelandt, S. (2015), ‘Causal mediation
+ analysis with multiple mediators’, Biometrics 71, 13–14.
+Didelez, V. (2019), ‘Deﬁning causal mediation with a longitudinal mediator and a
+  survival outcome’, Lifetime Data Analysis 25, 593–610.
+Fasanelli, F., Giraudo, M., Ricceri, F., Valeri, L. & Zugna, D. (2019), ‘Marginal
+  Time-Dependent Causal Eﬀects in Mediation Analysis With Survival Data’,
+  American Journal of Epidemiology 188(5), 967–974.
+Fulcher, I., Tchetgen Tchetgen, E. & Williams, P. (2017), ‘Mediation Analysis
+  for Censored Survival Data Under an Accelerated Failure Time Model’,
+  Epidemiology 28(5), 660–666.
+Huang, Y.-T., Jen, C.-L., Yang, H.-I., Lee, M.-H., Lu, S.-N., Iloeje, U. &
+ Chen, C.-J. (2011), ‘Lifetime risk and sex diﬀerence of hepatocellular carcinoma
+ among patients with chronic hepatitis B and C’, Journal of Clinical Oncology
+ 29(27), 3643–3650.
+Huang, Y.-T. & Yang, H.-I. (2017), ‘Causal mediation analysis of survival
+ outcomes with multiple mediators’, Epidemiology 28(3), 370–378.
+Iacobucci, D. (2012), ‘Mediation analysis and categorical variables: the ﬁnal
+  frontier’, Journal of Consumer Psychology 22, 582–594.
+Imai, K., Keele, L. & Tingley, D. (2010), ‘A general approach to causal mediation
+  analysis’, Psychological Methods 15, 309–334.
+
+                   Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+184                                             Marcelo M. Taddeo & Leila D. Amorim
+
+
+Kalbﬂeisch, J. D. & Prentice, R. L. (2002), The Statistical Analysis of Failure
+ Time Data, 2 edn, Wiley, Hoboken, N.J.
+
+Lange, T. & Hansen, J. (2011), ‘Direct and indirect eﬀects in a survival contex’,
+  Epidemiology 22, 575–581.
+
+Lange, T., Vansteelandt, S. & Bekaert, M. (2012), ‘A simple uniﬁed approach
+  for estimating natural direct and indirect eﬀects’, American Journal of
+  Epidemiology 176, 190–195.
+
+Lin, S.-H., Young, J., Logan, R. & VanderWeele, T. (2017), ‘Mediation
+  analysis with a survival outcome with time-varying exposures, mediators and
+  confounders’, Statistics in Medicine 36, 4153–4166.
+
+Loyes, T., Moerkerke, B., De Smet, O., Byusse, A., S. & J. Vansteelandt, S. (2013),
+  ‘Flexible mediation analysis in the presence of nonlinear relations: beyond the
+  mediation formula’, Multivariate Behavioral Research 48(6), 871–894.
+
+MacKinnon, D. (2008), Introduction to statistical mediation analysis, Taylor and
+ Francis, New York.
+
+MacKinnon, D. P. & Dwyer, J. H. (1993), ‘Estimating mediated eﬀects in
+ prevention studies’, Evaluation Review 17, 144–158.
+
+MacKinnon, D., Warsi, G. & Dwyer, J. (1995), ‘A simulation study of mediated
+ eﬀect measures’, Multivariate Behavioral Research 30, 41–62.
+
+Miles, C., Shpitser, I., Kanki, P., Meloni, S. & Tchetgen Tchetgen, E. (2020), ‘On
+ semiparametric estimation of apath-speciﬁc eﬀect in the presence of mediator-
+ outcome confounding’, Biometrika 107(1), 159–172.
+
+Pearl, J. (2001), ‘Direct and indirect eﬀects’, Proceedings of the 17th Annual
+  Conference on Uncertainty in Artiﬁcial Intelligence (UAI-01) pp. 411–442.
+
+Pratschke, J., Haase, T., Comber, H., Sharp, L., Cancela, M. & Johnson, H.
+  (2016), ‘Mechanisms and mediation in survival analysis: towards an integrated
+  analytical framework’, BMC Medical Research Methodology pp. 16–27.
+
+Robins, J., Hernán, M. & Brumback, B. (2000), ‘Marginal structural models and
+  causal inference in epidemiology’, Epidemiology 11, 550–560.
+
+Smyth, G. (1989), ‘Generalized linear models with varying dispersion’, Journal of
+  the Royal Statistical Society: Series B 51(1), 47–60.
+
+Tchetgen Tchetgen, E. (2013), ‘Inverse odds ratio-weighted estimation for causal
+  mediation analysis’, Statistics in Medicine 32, 4567–4580.
+
+Tchetgen Tchetgen, E. & Shpitser, I. (2012), ‘Semiparametric theory for causal
+  mediation analysis: eﬃciency bounds, multiple robustness and sensitivity
+  analysis’, Annals of statistics 40(3), 1816–1845.
+
+                  Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                    185
+
+VanderWeele, T. (2011), ‘Causal mediation analysis with survival data’,
+  Epidemiology 22(4), 582–585.
+VanderWeele, T. (2015), Explanation in Causal Inference: Methods for Mediation
+  and Interaction, Oxford University Press, New York.
+VanderWeele, T. (2016), ‘Mediation Analysis: a Practitioner’s Guide’, Annual
+  Review of Public Health 37, 17–32.
+VanderWeele, T. & Vansteelandt, S. (2009), ‘Conceptual issues concerning
+  mediation, interventions and composition’, Statistics and its Interface 2, 457–
+  468.
+VanderWeele, T. & Vansteelandt, S. (2010), ‘Odds ratios for mediation analysis
+  with a dichotomous outcome’, American Journal of Epidemiology 172, 1339–
+  1348.
+Vansteelandt, S., Linder, M., Vandenberghe, S., Steen, J. & Madsen, J.
+  (2019), ‘Mediation analysis of time-to-event endpoints accounting for repeatedly
+  measured mediators subject to time-varying confounding’, Statistics in Medicine
+  38, 4828–4840.
+
+
+
+Appendix A.
+Appendix A.1. Proof of formula (3) – Accelerated Failure
+              Rate Model
+   Notice that
+                                               Z
+  E[TaMa∗ |x] = EMa∗ E[TaMa∗ |Ma∗ , x] =           E[TaMa∗ |Ma∗ = m, x]dPMa∗ (m|x).
+
+From (A3) and then (A1),
+             Z                              Z
+E[TaMa∗ |x] = E[Tam |m, x]dPMa∗ (m|a∗ , x) = E[Tam |a, m, x]dPMa∗ (m|a∗ , x),
+
+so that                              Z
+                   E[TaMa∗ |x] =         E[T |a, m, x]dPM (m|a∗ , x).
+
+Using the fact that the time to evento follows the accelerated failure rate model,
+                                               Z
+                                   ⊤
+          E[TaMa∗ |x] = eβ0 +β1 a+β4 x E [eγε ] e(β2 +β3 a)m dPM (m|a∗ , x).
+
+On the other hand, it is known that the moment generating function of M (given
+a∗ and x) is equal to
+                                                                        
+                                   b [θ(a∗ , x) + τ ϕ] − b [θ(a∗ , x)]
+             EM eτ M |a∗ , x = exp                                         , (A1)
+                                                      ϕ
+
+                  Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+186                                                       Marcelo M. Taddeo & Leila D. Amorim
+
+
+so that,
+                                                                                                   
+                               ⊤                     b [θ(a∗ , x) + (β2 + β3 a)ϕ] − b [θ(a∗ , x)]
+E[TaMa∗ |x] = eβ0 +β1 a+β4 x E [eγε ] exp                                                                 .
+                                                                          ϕ
+
+
+Appendix A.2. Proof of formula (6 – Aalen Model)
+   From the proof of Proposition 4.7, Appendix A.4.4 (p. 502), VanderWeele
+(2015), if (A1)-(A4) hold, then, for δ > 0,
+
+       P(TaMa∗ ∈ (t, t + δ]|TaMa∗ ≥ t, x)
+             Z
+                                              P(Tam ≥ t|x) M
+           = P(T ∈ (t, t + δ]|T ≥ t, a, m, x)                  dP (m|a∗ , x),
+                                              I1 (t|a, a∗ , x)
+                        R
+where I1 (t|a, a∗ , x) = P(Tam′ ≥ t|x)dP(m′ |a∗ , x). Now,
+
+      P{Tam′ ≥ t|x} = P{T ≥ t|a, m′ , x}
+                         
+                    = exp B0 (t) + B1 (t)a + B2 (t)m′ + B3 (t)am′ + B4 (t)⊤ x ,
+                 Rt
+where Bj (t) =    0
+                       βj (s)ds, so that
+
+ I1 (t|a, a∗ , x)
+        Z
+                
+     = exp B0 (t) + B1 (t)a + B2 (t)m′ + B3 (t)am′ + B4 (t)⊤ x dPM (m′ |a∗ , x)
+
+and hence
+                      
+I1 (t|a, a∗ , x) = exp B0 (t) + B1 (t)a + B4 (t)⊤ x E [exp {(B2 (t) + B3 (t)a)M |a∗ , x}] .
+
+Using the fact that λTaMa∗ (t) = limδ→0 P(t < TaMa∗ ≤ t + δ|TaMa∗ ≥ t)/δ can be
+written as
+                          Z
+                                 1
+             λTaMa∗ (t) =    lim P(t < TaMa∗ ≤ t + δ|TaMa∗ ≥ t, x)
+                             δ→0 δ
+
+and then applying the bounded convergence theorem, we have
+                 Z Z
+                        λ(t|a, m, x) exp {(B2 (t) + B3 (t)a)m} M
+  λTaM ∗ (t) =                                                 dP (m|a∗ , x)dPX (x|TaMa∗ ≥ t).
+         a               E [exp {(B2 (t) + B3 (t)a)M |a∗ , x}]
+
+Hence,
+                                   Z
+ λTaM ∗ (t) = β0 (t) + β1 (t)a +       β4 (t)⊤ xdPX (x|TaMa∗ ≥ t) + (β2 (t) + β3 (t)a)I2 (t|a, a∗ , x),
+        a
+
+
+
+where
+                        Z
+                            E [M exp {(B2 (t) + B3 (t)a)M } |a∗ , x] X
+   I2 (t|a, a∗ , x) =                                               dP (x|TaMa∗ ≥ t).
+                             E [exp {(B2 (t) + B3 (t)a)M |a∗ , x}]
+
+                        Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                                187
+
+Now, using the fact that the distribution of M is a member of the Exponential
+family (given a∗ and x),
+                                                              
+          τM ∗
+                           b [θ(a∗ , x) + τ ϕ] − b [θ(a∗ , x)] ′
+   E M e |a , x = exp                                            b [θ(a∗ , x) + τ ϕ] ,
+                                             ϕ
+so that                                      
+                            E M eτ M |a∗ , x
+                                                = b′ [θ(a∗ , x) + τ ϕ] ,
+                             E [eτ M |a∗ , x]
+and
+                            Z
+       I2 (t|a, a∗ , x) =       b′ [θ(a∗ , x) + (B2 (t) + B3 (t)a)ϕ] dPX (x|TaMa∗ ≥ t).
+
+On the one hand, using assumptions (A1)-(A4),
+                           Z
+         P(TaMa∗ ≥ t|x) = P(TaMa∗ ≥ t|Ma∗ = m, x)dP Ma∗ (m|x),
+
+so that                                    Z
+                 P(TaMa∗ ≥ t|x) =              P(Tam ≥ t|m, x)dP M (m|a∗ , x).
+
+Therefore,
+                        P(TaMa∗ ≥ t|x) = E [ST (t|a, M, x)|a∗ , x] ,
+where ST (t|a, m, x) is the survival function of T . Besides that,
+                       Z Z
+     P(TaMa∗ ≥ t) =          P(TaMa∗ ≥ t|Ma∗ = m, x′ )dP Ma∗ (m|x′ )dPX (x′ )
+
+so that                                Z
+                 P(TaMa∗ ≥ t) =            E [ST (t|a, M, x′ )|a∗ , x′ ] dPX (x′ ).
+
+Hence,
+                                               E [ST (t|a, M, x)|a∗ , x] dPX (x)
+              dPX (x|TaMa∗ ≥ t) = R                                                    .
+                                               E [ST (t|a, M, x′ )|a∗ , x′ ] dPX (x′ )
+From (2),
+      E [ST (t|a, M, x)|a∗ , x]
+                
+        = exp B0 (t) + B1 (t)a + B4 (t)⊤ x E [exp {(B2 (t) + B3 (t)a)M } |a∗ , x]
+and then using (A1),
+E [ST (t|a, M, x)|a∗ , x]
+                                                                                    
+                                       b [θ∗ (x) + (B2 (t) + B3 (t)a)ϕ] − b [θ∗ (x)]
+  = exp B0 (t) + B1 (t)a + B4 (t)⊤ x +                                                 ,
+                                                             ϕ
+so that
+                                                                                  
+                                          b[θ ∗ (x)+(B2 (t)+B3 (t)a)ϕ]−b[θ ∗ (x)]
+                         exp B4 (t)⊤ x +                      ϕ
+                                                                                      dPX (x)
+   dPX (x|TaMa∗ ≥ t) = R    n                                                         o           .
+                                          b[θ ∗ (x′ )+(B2 (t)+B3 (t)a)ϕ]−b[θ ∗ (x′ )]
+                         exp B4 (t)⊤ x′ +                      ϕ
+                                                                                        dPX (x′ )
+
+
+                      Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+188                                                        Marcelo M. Taddeo & Leila D. Amorim
+
+
+Therefore, if we write for notational convenience dPX (x|TaMa∗ ≥ t) ≡
+dQt (x|a, a∗ ), then
+                           Z
+                    ∗
+          I2 (t|a, a , x) = b′ [θ(a∗ , x) + (B2 (t) + B3 (t)a)ϕ] dQt (x|a, a∗ ).
+
+and
+                                     Z
+λTaMa∗ (t) = β0 (t) + β1 (t)a +          β4 (t)⊤ xdQt (x|a, a∗ ) + (β2 (t) + β3 (t)a)I2 (t|a, a∗ , x),
+
+or
+λTaMa∗ (t) =β0 (t) + β1 (t)a
+                          ⊤                                                       ∗
+                                                                                     
+            + EX t β4 (t) X + (β2 (t) + β3 (t)a)Eθ(a∗ ,X)+(B2 (t)+B3 (t)a)ϕ M |a, a .
+
+
+Appendix A.3. Proof of formula (10 – Cox Model)
+      Assuming the Cox model, we know that
+                                           
+                 λTa Ma∗ (t|x) = λo (t) exp β1 a + β4⊤ x r(t|a, a∗ , x),
+
+where
+                        R                   n              ⊤
+                                                                          o
+                            e(β2 +β3 a)m exp −Λo (t)eβ1 a+β4 x+(β2 +β3 a)m dP (m|a∗ , x)
+     r(t|a, a∗ , x) =            R                  ⊤                                   ,
+                                   exp −Λo (t)eβ1 a+β4 x+(β2 +β3 a)m dP (m|a∗ , x)
+
+see VanderWeele (2015), Proposition 4.4, p. 496. Now, if the events are rare, i.e.
+Λo (t) ≈ 0, and using (A1), then
+                        h                    i                                                    
+                                                      b [θ(a∗ , x) + (β2 + β3 a)ϕ] − b [θ(a∗ , x)]
+      r(t|a, a∗ , x) ≈ E e(β2 +β3 a)M |a∗ , x = exp                                                  .
+                                                                           ϕ
+
+Hence,
+                                                                                      
+                                          b [θ(a∗ , x) + (β2 + β3 a)ϕ] − b [θ(a∗ , x)]
+λTa Ma∗ (t|x) ≈ λo (t) exp β1 a + β4⊤ x +                                                .
+                                                               ϕ
+
+
+Appendix B. Binomial and Poisson Distributions
+            for M
+Binomial Mediator
+
+    Writing g(π) = log{π/(1 − π)}, ϕ = 1 and b(θ) = m log(1 + eθ ), we have the
+following cases:
+
+     • AFT and Cox Models: using (4) and (5) (or (11) and (12)), it follows that
+
+                                                     (1 + eθ(a,x)+β2 +β3 a )/(1 + eθ(a,x) )
+                NIECox ≈ NIEAFT = m log                                                        ,
+                                                    (1 + eθ(a∗ ,x)+β2 +β3 a )/(1 + eθ(a∗ ,x) )
+
+                        Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                                             189
+
+     and
+                                                                                   ∗
+                                                  1 + eθ(a ,x)+β2 +β3 a
+                                                        ∗
+            NDECox ≈ NDEAFT = β1 (a − a ) + m log                         .
+                                                  1 + eθ(a∗ ,x)+β2 +β3 a∗
+
+  • Aalen Model: using (8) and (9), we get
+                                                                                                              
+                     X            m(β2 (t) + β3 (t)a)                   m(β2 (t) + β3 (t)a)                ∗
+        NIEAalen = Et                                         −                        ∗            a, a
+                             e−(B2 (t)+B3 (t)a)+θ(a,X)) + 1       e−(B2 (t)+B3 (t)a)+θ(a ,X)) + 1
+
+     and NDEAalen = β1 (t)(a − a∗ ) + E(t; a, a∗ ) − E(t; a∗ , a∗ ), with
+                                                                                    
+                                                  m(β2 (t) + β3 (t)a)
+          E(t; a, a∗ ) = EX    β 4 (t) ⊤
+                                         X +                                  a, a ∗
+                           t
+                                             e−(B2 (t)+B3 (t)a+θ(a∗ ,X)) + 1
+                                            h                          i
+                                                 θ(a∗ ,x)+B2 (t)+B3 (t)a m
+     and dQt (x|a, a∗ ) ∝ exp B4 (t)⊤ x 1+e 1+eθ(a∗ ,x)                    dPX (x).
+
+
+Poisson Mediator
+
+   Writing g(µ) = log µ, ϕ = 1 and b(θ) = eθ , we have the following cases:
+
+  • AFT and Cox Models: using (4) and (5) (or (11) and (12)), it follows that
+                                                          ∗
+                                                                 
+            NIECox ≈ NIEAFT = eβ2 +β3 a − 1 eθ(a,x) − eθ(a ,x) ,
+
+     and
+                                                     ∗
+                                                                      ∗
+                                                                         
+            NDECox ≈ NDEAFT = β1 (a − a∗ ) + eβ2 +θ(a ,x) eβ3 a − eβ3 a .
+
+  • Aalen Model: from (8) and (9), we have
+                                                         h                               i
+                                                                        θ(a∗ ,X)       ∗
+         NIEAalen = (β2 (t) + β3 (t)a)eB2 (t)+B3 (t)a EX
+                                                       t   e θ(a,X)
+                                                                    − e          |a, a
+
+     and NDEAalen = β1 (t)(a − a∗ ) + E(t; a, a∗ ) − E(t; a∗ , a∗ ), with
+                         h                                                                     i
+                                                               B2 (t)+B3 (t)a+θ(a∗ ,X)
+       E(t; a, a∗ ) = EX
+                       t   β 4 (t) ⊤
+                                     X + (β 2 (t) + β 3 (t)a)e                         |a, a ∗
+
+
+                                             ∗                       
+     and dQt (x|a, a∗ ) ∝ exp B4 (t)⊤ x + eθ(a ,x) eB2 (t)+B3 (t)a − 1 dPX (x).
+
+
+Appendix C. Responsiveness Measures for the
+            Aalen’s Model
+   Write the density in (7) as qt,a,a∗ (x) = φt,a,a∗ (x)/Φt,a,a∗ , where
+                                                                                    
+                                 b [θ(a∗ , x) + (B2 (t) + B3 (t)a)ϕ] − b [θ(a∗ , x)]
+   φt,a,a∗ (x) = exp B4 (t)⊤ x +
+                                                          ϕ
+
+                    Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+190                                                          Marcelo M. Taddeo & Leila D. Amorim
+
+                   R
+and Φt,a,a∗ =           φt,a,a∗ (x′ )dPX (x). Then, ∂a φt,a,a (x) = ϕ−1 ψ̃1,t (a, x)φt,a,a (x),
+where
+
+        ψ̃1,t (a, x) = (θ′ (a, x) + B3 (t)ϕ)Eϕ(B2 +B3 a)+θ(a,x) M − θ′ (a, x)Eθ(a,x) M
+                             R
+and ∂a Φt,a,a = ϕ−1              ψ0,t (a, x′ )φt,a,a (x′ )dPX (x′ ), so that
+
+                                       ∂a Φt,a,a  1
+                                                 = EX   ψ̃1,t (a, X),
+                                        Φt,a,a    ϕ t,a
+                                              −1
+with EX      X
+      t,a = Et,a,a . Hence, ∂a qt,a,a (x) = ϕ    ψ1,t (a, x)qt,a,a (x), with
+
+                                 ψ1,t (a, x) = ψ̃1,t (a, x) − EX
+                                                               t,a ψ̃1,t (a, X).
+
+From (6), we have
+
+                   TRAalen = ∂a λTaMa (t)|a=a∗ = β1 (t) + Ξ1 + Ξ2 + Ξ3 ,                            (A2)
+
+where Ξ1 = β3 (t)EX
+                  t,a∗ Eϕ(B2 (t)+B3 (t)a∗ )+θ(a∗ ,X) M ,
+
+       Ξ2 = ϕ−1 (β2 (t) + β3 (t)a∗ )EX                ′ ∗
+                                     t,a∗ (ϕB3 (t) + θ (a , X))Varϕ(B2 (t)+B3 (t)a∗ )+θ(a∗ ,X) M,
+
+
+and
+                 h                                                             i
+   Ξ3 = ϕ−1 EX          ⊤                     ∗                                        ∗
+             t,a∗ β4 (t) X + (β2 (t) + β3 (t)a )Eϕ(B2 (t)+B3 (t)a∗ )+θ(a∗ ,X) M ψ1,t (a , X).
+
+
+
+      Similarly, ∂a φt,a,a∗ (x) = ψ̃2,t (a, x)φt,a,a∗ (x), where
+
+                                 ψ̃2,t (a, x) = B3 (t)Eθ(a∗ ,x)+(B2 +B3 a)ϕ M
+                        R
+and ∂a Φt,a,a∗ =            ψ̃2,t (a, x′ )φt,a,a∗ (x′ )dPX (x′ ). Hence,
+
+                                        ∂a Φt,a,a∗
+                                                   = EX
+                                                      t,a ψ̃2,t (a, X),
+                                         Φt,a,a∗
+
+so that ∂a qt,a,a∗ (x) = ψ2,t (a, x)qt,a,a (x), where
+
+                                 ψ2,t (a, x) = ψ̃2,t (a, x) − EX
+                                                               t,a ψ̃2,t (a, X)
+
+and, using (6) again,
+
+                NDRAalen = ∂a λTaMa∗ (t|x)|a=a∗ = β1 (t) + Ξ1 + Ξ′2 + Ξ′3 ,                         (A3)
+
+where
+
+   • Ξ′2 = (β2 (t) + β3 (t)a∗ )B3 (t)EX
+                                      t,a Varϕ(B2 (t)+B3 (t)a∗ )+θ(a∗ ,X) M ;
+                                                                                  
+   • Ξ′3 = EX          ⊤                     ∗                                        ∗
+            t,a∗ β4 (t) X + (β2 (t) + β3 (t)a )Eϕ(B2 (t)+B3 (t)a∗ )+θ(a∗ ,X) M ψ2,t (a , X).
+
+
+
+                            Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+
+Causal Mediation for Survival Data                                                           191
+
+Finally,
+
+              NIRAalen = TRAalen − NDRAalen = (Ξ2 − Ξ′2 ) + (Ξ3 − Ξ′3 ),                   (A4)
+
+where
+
+      Ξ2 − Ξ′2 = ϕ−1 (β2 (t) + β3 (t)a∗ )EX    ′ ∗
+                                          t,a θ (a , X)Varϕ(B2 (t)+B3 (t)a∗ )+θ(a∗ ,X) M
+
+and
+                   h                                                             i
+   Ξ3 − Ξ′3 = EX          ⊤                     ∗                                        ∗
+               t,a∗ β4 (t) X + (β2 (t) + β3 (t)a )Eϕ(B2 (t)+B3 (t)a∗ )+θ(a∗ ,X) M ψ3,t (a , X)
+
+
+with ψ3,t (a∗ , x) = ϕ−1 ψ1,t (a∗ , x) − ψ2,t (a∗ , x).
+
+
+Appendix D. Additional results for causal
+            mediation analysis
+
+
+
+
+Figure 6: Deviance residual analysis when assuming (a) Normal, (b) Gamma with log
+          link and (c) Gamma with inverse link distributions.
+
+
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 161–191
+

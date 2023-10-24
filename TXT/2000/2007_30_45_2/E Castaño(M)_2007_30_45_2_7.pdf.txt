@@ -1,0 +1,422 @@
+Reconstrucción de datos de series de tiempo: una aplicación a la demanda horaria de la electricidad
+Universidad Nacional de Colombia;Universidad de Antioquia
+Resumen
+Generalmente, la identificación y estimación de modelos ARIMA parten del supuesto de que las series que se van a analizar no contienen datos faltantes, ni observaciones atípicas, ni existen intervenciones en el período de estudio. Sin embargo, en la práctica, estos problemas pueden ocurrir simultáneamente, afectando la identificación del modelo adecuado y por tanto su capacidad de pronóstico. Este artículo presenta un procedimiento que permite estimar el efecto de las intervenciones, de las observaciones atípicas, estimar las observaciones faltantes y simultáneamente identificar el modelo ARIMA. El procedimiento se aplica a una serie de demanda horaria de electricidad en la cual ocurren los tres eventos mencionados.
+Palabras clave: observaciones atípicas, observaciones faltantes, intervención, función de transferencia, ARIMA.
+Introducción
+Generalmente, la identificación y estimación de modelos ARIMA parten del supuesto de que las series que se van a analizar no contienen datos faltantes, ni observaciones atípicas, ni existen intervenciones en el período de estudio. Sin embargo, en la práctica, estos problemas pueden ocurrir simultáneamente, afectando la identificación del modelo y por tanto su capacidad de predicción. En la literatura de series de análisis de series de tiempo se han propuesto métodos para tratar datos faltantes, observaciones atípicas e intervenciones sobre la serie. Algunos de estos procedimientos se encuentran en Box & Tiao (1975), Chow & Lin (1976), Anderson & Moore (1979), Jones (1980), Kohn & Ansley (1983), Harvey & Pierse (1984), Maravall & Peña (1988), Nieto (1989), Peña & Maravall (1990), Chen & Liu (1990), Castañeda (1994). Estos métodos parten del supuesto de que el modelo es conocido o de que hay un subconjunto de observaciones que permiten identificar su estructura. Sin embargo, con frecuencia sucede que la ocurrencia de las observaciones faltantes, de las observaciones atípicas y de las intervenciones en el período de análisis es tal que impide la identificación de un modelo adecuado.
+    Este artículo presenta un procedimiento, basado en Castaño (1995, 1997), el
+cual permite estimar el efecto de las intervenciones, de las observaciones atípi-
+cas, estimar las observaciones faltantes y simultáneamente identificar el proceso
+ARIMA que generó el proceso aleatorio. El resultado proporciona una serie re-
+construida con estimaciones óptimas para los datos faltantes y para los efectos de
+observaciones atípicas, la cual puede ser usada efectivamente en predicción. El pro-
+cedimiento consta de dos etapas básicas: la primera de ellas produce estimaciones
+preliminares de las intervenciones, de las observaciones atípicas y las observaciones
+faltantes a partir de una aproximación inicial del proceso ARIMA del ruido por
+medio de un modelo autorregresivo de alto orden (o de un modelo multiplicativo
+en caso estacional), del uso del análisis de intervención (Box & Jenkins 1976), del
+uso del análisis de observaciones atípicas (Chen & Liu 1990) y de la consideración
+de que una observación faltante puede ser estimada de manera óptima al asignarle
+un valor tal que pueda ser identificada como una observación atípica aditiva (Chow
+& Lin 1976); en la segunda etapa se identifica el modelo usando las estimaciones
+preliminares y se reestiman las intervenciones, las observaciones atípicas y las ob-
+servaciones faltantes usando de nuevo el análisis de intervención y el análisis de
+observaciones atípicas sobre el modelo identificado.
+
+   El procedimiento se aplica a una serie de demanda de electricidad horaria en la
+cual se presentan los tres problemas antes mencionados. Los resultados obtenidos
+muestran que la serie reconstruida puede ser empleada para pronosticar adecua-
+damente la demanda horaria.
+
+    El artículo está compuesto por tres secciones. En la primera se presenta el
+procedimiento propuesto y sus fundamentos; en la siguiente, la aplicación de la
+metodología propuesta al caso de la demanda horaria de electricidad; finalmente,
+en la tercera sección se plantean las conclusiones.
+
+                                    Revista Colombiana de Estadística 30 (2007) 247–263
+
+Reconstrucción de datos de series de tiempo                                             249
+
+2. Metodología
+   A continuación se presenta el procedimiento propuesto, mostrando primero
+que una observación faltante se puede caracterizar como una observación atípica
+aditiva.
+
+ A. Caracterización de una observación faltante como una observación
+    atípica aditiva
+      Suponga que Zt es una serie de tiempo que sigue un proceso ARIMA de la
+      forma
+                                         θ(B)
+                                 Zt =           at
+                                       δ(B)φ(B)
+      donde B es el operador de rezagos usual, θ(B) es el polinomio de medias
+      móviles con todas sus raíces fuera del círculo unidad, φ(B) es el polinomio
+      autorregresivo con sus raíces fuera del círculo unidad y que no tiene fac-
+      tores comunes con θ(B), y δ(B) es el polinomio de diferencias (que induce
+      estacionaridad) con sus raíces sobre el círculo unidad. En primer lugar, con-
+      sideremos el caso donde hay solamente una observación faltante. Para esto,
+      suponga que la serie se observó durante T períodos y que no se encuentra
+      disponible la observación para el período t = t∗ , 1 < t∗ < T. Una carac-
+      terización natural de un valor faltante es describirlo como una observación
+      atípica aditiva. Esta caracterización ha sido empleada por varios autores en-
+      tre los que se encuentran Bruce & Martin (1989), Peña & Maravall (1990) y
+      Chen & Liu (1990). La razón es la siguiente: si suponemos que en el período
+      t = t∗ ocurre una observación atípica aditiva, podemos representar la serie
+      observada como:               (
+                                      Zt ,           si t 6= t∗ ;
+                             N Zt =          ∗
+                                           (t )
+                                      AFt + Zt , si t = t∗ .
+      donde A indica la desviación desde el verdadero valor de Zt∗ , y la variable
+        (t∗ )
+      Ft      toma el valor de uno cuando t = t∗ y de cero en otro caso. En este
+      caso, Chen & Liu (1990) mostraron que el valor ajustado de N Zt∗ (es decir,
+      después de remover el efecto atípico sobre N Zt∗ ) es:
+                   (          n−t∗ +j                                        )
+                       t−1
+                       P         P                            P∗
+                                                         P∗ n−t
+                                                        n−t
+                                     πk πk−j N Zt∗ −j +          πk πk−j N Zt∗ +j
+                       j=1      k=j                     j=1   k=j
+        N Zt∗∗ =                                 n−t
+                                                                                         (1)
+                                                  P∗
+                                                       πj2
+                                                 k=j
+
+      donde los coeficientes π son obtenidos del polinomio autorregresivo π(B) =
+      1 − π1 B − π2 B 2 − · · · = φ(B)/θ(B). Si la serie no es estacionaria entonces la
+      parte autorregresiva debe incluir el operador que induce estacionaridad. De
+      acuerdo con (1), el valor interpolado N Zt∗∗ está basado en las observaciones de
+      las series anteriores y posteriores de N Zt∗ , es decir, en los valores anteriores
+      y posteriores de la serie original Zt a la observación faltante Zt∗ . Por tanto
+      el valor ajustado no tiene nada que ver con la observación atípica N Zt∗ .
+
+                                         Revista Colombiana de Estadística 30 (2007) 247–263
+
+250                                                                                   Elkin Castaño
+
+       El resultado anterior sugiere que podemos estimar un valor faltante en una
+       serie de tiempo, tratándola como si fuera una observación atípica aditiva.
+       Por tanto, si conocemos a θ(B), φ(B) y δ(B), el procedimiento para estimar
+       el valor desconocido de Zt∗ consiste en asignar un valor atípico cualquiera a
+       la observación faltante y estimar el modelo intervenido:
+
+                                                 (t∗ )         θ(B)
+                                   N Zt = AFt            +            at
+                                                             δ(B)φ(B)
+
+       La estimación óptima de Zt∗ es el valor de N Zt∗ menos la estimación de A,
+       (Box & Tiao 1975).
+       De igual forma se procedería si la serie tuviera m observaciones faltantes no
+       consecutivas en los períodos t∗1 , t∗2 , . . . , t∗m . A cada período donde se desconoce
+       la observación, se asigna un valor atípico y en el modelo
+                                        m
+                                        X           (t∗ )        θ(B)
+                               N Zt =          Aj Ft j +                at
+                                        j=1
+                                                               δ(B)φ(B)
+
+       La estimación óptima de Ztj se obtiene como el valor de N Zt∗j menos la
+       estimación de Aj en el modelo anterior, para j = 1, 2, . . . , m.
+       Sin embargo, el problema en la práctica es más complicado pues, en general,
+       no se dispone del conocimiento de θ(B), φ(B) y δ(B), y debemos tratar de
+       identificarlos a partir de la información incompleta inicial. A continuación
+       presentamos el procedimiento que permite estimar el efecto de las interven-
+       ciones, de las observaciones atípicas, estimar las observaciones faltantes y
+       simultáneamente identificar el proceso ARIMA que generó el ruido del mo-
+       delo.
+
+ B. El procedimiento de reconstrucción
+
+ i) A cada una de las m observaciones faltantes asigne un valor que sea atípico.
+    Aproxime a Zt usando las intervenciones y un proceso puro autorregresivo de
+    orden alto. En la elección del orden, se debe tener en cuenta la frecuencia del
+    período de observación, y si el proceso es estacional o no. En otras palabras,
+    Zt puede aproximarse como el proceso autorregresivo puro:
+                            k
+                            X                    m
+                                                 X
+                                        (t )                  (t∗ )       1
+                     Zt =         vi (B)It i +           Aj Ft j +               at
+                            i=1                  j=1
+                                                                      δ(B)φ′ (B)
+
+      donde vi (B) es la función de transferencia correspondiente a la i-ésima inter-
+                                  (t )
+      vención, i = 1, . . . , k; It i es una variable indicadora que toma el valor de 1 si
+      t = ti , donde ti es el período donde ocurre la i-ésima intervención, y de cero en
+                     (t∗ )
+      otro caso; Ft j es una variable indicadora que toma el valor de 1 para cuando
+      t = t∗i , el período donde ocurre la j-ésima observación faltante, j = 1, . . . , m
+      y φ′ (B) es el polinomio autorregresivo del orden seleccionado. Para la apro-
+      ximación de un proceso ARIMA(p, 1, q), Said & Dickey (1984) obtuvieron el
+
+                                         Revista Colombiana de Estadística 30 (2007) 247–263
+
+Reconstrucción de datos de series de tiempo                                                         251
+
+    siguiente resultado: todo proceso ARIMA(p, 1, q) puede ser adecuadamente
+    aproximado por medio de un proceso ARIMA(n, 1, 0), donde n ≤ T 1/3 .
+    Estime el modelo anterior y detecte e identifique observaciones atípicas. Ve-
+    rifique si los residuales se comportan como ruido blanco. En caso afirmativo,
+    el orden elegido para el modelo autorregresivo aproxima adecuadamente la
+    estructura dinámica del proceso.
+
+ ii) Especifique un nuevo modelo en el cual se adicionan h observaciones atípicas
+     detectadas. El nuevo modelo por estimar es:
+                 k
+                 X                     m
+                                       X                   h
+                                                           X
+                               (t )               (t∗ )                      (t )       1
+          Zt =         vi (B)It i +           Aj Ft j +            vs∗ (B)Ot s +               at
+                 i=1                   j=1                 s=1
+                                                                                    δ(B)φ′ (B)
+
+    donde vs∗ (B) es la función de transferencia para la s-ésima observación atípica
+                   (t )
+    detectada y Ot s es una variable indicadora que toma el valor de 1 si t = ts , el
+    período en el cual ocurrió la s-ésima observación atípica, s = 1, . . . , h. Estime
+    el modelo y verifique que no existan nuevas observaciones atípicas y que los
+    residuales son ruido blanco.
+
+iii) Filtre a Zt por el modelo estimado sin incluir el modelo del ruido. Esto es lo
+     mismo que estimar el modelo restringido
+                         k
+                         X                     m
+                                               X                    h
+                                                                    X
+                                       (t )                (t∗ )                    (t )
+                 Zt =          vi (B)It i +           Aj Ft j +            vs∗ (B)Ot s + ηt
+                         i=1                    j=1                  s=1
+
+    donde el valor de los parámetros es restringido a ser igual a los estimados
+    en la etapa anterior. Obtenga los residuales e identifique el modelo ARIMA
+    correspondiente. Sobre esta serie de residuales pueden emplearse las técnicas
+    de identificación de Box-Jenkins para los modelos ARIMA.
+
+iv) Suponga que el modelo identificado es de la forma
+
+                                                    θ(B)
+                                          ηt =             at
+                                                  δ(B)φ(B)
+
+    Para obtener una estimación más refinada de las observaciones faltantes ajuste
+    el modelo
+                 k
+                 X                     m
+                                       X                    h
+                                                            X
+                                (t )               (t∗ )                     (t )      θ(B)
+          Zt =         vi (B)It i +           Aj Ft j +            vs∗ (B)Ot s +              at
+                 i=1                   j=1                  s=1
+                                                                                     δ(B)φ(B)
+
+    El valor de Zt para el período t = tj menos la estimación de Aj es la estimación
+                                                                bj , j = 1, 2, . . . , m).
+                                                     bt∗ = Zt − A
+    óptima de Zt∗j , j = 1, 2, . . . , m, (es decir, Z j
+
+    En cuanto a la optimalidad de la estimación de valores faltantes usando la ca-
+    racterización por medio de datos atípicos aditivos, Chen & Liu (1990) señalan
+    que el procedimiento emplea en forma óptima toda la información relevante
+
+                                              Revista Colombiana de Estadística 30 (2007) 247–263
+
+252                                                                         Elkin Castaño
+
+      para estimar el valor faltante. También señalan que cuando ocurre una se-
+      cuencia consecutiva de observaciones faltantes, los valores faltantes pueden
+      ser estimados de forma óptima usando los valores observados y los paráme-
+      tros estimados. Castaño (1995) utilizando series simuladas muestra que el
+      procedimiento de identificación del modelo ARIMA cuando existen diferentes
+      tipos de observaciones atípicas parece funcionar adecuadamente. Para el ca-
+      so de observaciones faltantes en la serie, Castaño (1997) usando simulaciones,
+      muestra que el procedimiento, además de permitir la identificación del modelo
+      adecuado, genera estimaciones óptimas para las observaciones faltantes aun
+      en muestras relativamente pequeñas (n = 150).
+
+3. Un ejemplo
+    Para planificar el despacho hora a hora de la electricidad requerida por una
+cierta región, las empresas distribuidoras necesitan pronosticar su demanda futura
+para cada una de las horas del día. Con este fin se estiman modelos cuya estructu-
+ra general tiene en cuenta la existencia de eventos calendario que afectan el nivel
+de la demanda, de otros eventos exógenos que contaminan las observaciones (co-
+mo apagones o mediciones erróneas), la inexistencia de observaciones en algunos
+períodos y la existencia de un modelo ARIMA que guía la evolución de la com-
+ponente estocástica de la serie. Según estos supuestos, el modelo frecuentemente
+considerado tiene la estructura general:
+
+  (1 − B)d (1 − B s )D Zt = (efectos calendario)t +
+                     m
+                     X                 h
+                                       X
+                               (t∗ )             (t )
+                           Aj Ft j +         Cs Ot s + (modelo ARMA para el ruido)t
+                     j=1               s=1
+
+donde d y D son los órdenes de diferenciación ordinaria y estacional para estacio-
+narizar el proceso Zt (el cual debe ser estable en varianza); (efectos calendario)t
+indica la posible influencia de un conjunto de 41 eventos calendario sobre el nivel
+del consumo, y que se modelan como intervenciones aditivas sobre el nivel de la
+demanda debido a que las series son cronológicamente discontinuas. Un efecto ca-
+lendario describe el impacto que tiene sobre el nivel de la demanda de electricidad,
+la ocurrencia de una fecha específica del año, como por ejemplo, el 31 de diciembre.
+                  Pm          (t∗ )
+    La expresión j=1 Aj Ft j indica la existencia de m observaciones faltantes
+que ocurren en los períodos t∗1 , t∗2 , . . . , t∗m .
+                  Ph         (t )
+    La expresión s=1 Cs Ot s indica la existencia de h observaciones atípicas de
+tipo aditivo que ocurren en los períodos t1 , t2 , . . . , th , y Cs señala el impacto del
+evento exógeno sobre la serie.
+    En general, las funciones de transferencia consideradas en el procedimiento no
+son exclusivamente aditivas, es decir, funciones que cambian el nivel del proceso
+solamente para el período en el cual ocurren. Sin embargo, en este caso particular
+son las más adecuadas debido a que, como se ha mencionado, las series usadas son
+series cronológicamente discontinuas, en el sentido de que son series conformadas
+por una sola hora de cada día.
+
+   La componente (modelo ARMA para el ruido)t indica la existencia de un mo-
+delo ARIMA para el ruido de la serie.
+   La figura 1 presenta la serie de la demanda de electricidad para la hora 12 de
+todos los días desde enero 1 de 1996 hasta agosto 31 de 2002, para un total de
+2435 observaciones.
+
+                                Figura 1: Demanda de electricidad hora 12 m.
+    En esta serie aparecen sistemáticamente datos faltantes (67 en total, que en la
+figura corresponden a una demanda de 0), y se observan también algunos datos
+atípicos.
+   La figura 2, que considera los datos para cuatro semanas, permite observar
+que la serie posee una componente de estacionalidad de período 7 (estacionalidad
+semanal).
+   Observando la figura 1 vemos que este es un caso en el cual la distribución de los
+datos faltantes es tal que no existe un subconjunto sin observaciones faltantes de
+longitud suficientemente grande que permita la identificación adecuada del modelo.
+    El uso del procedimiento de reconstrucción para datos faltantes y atípicos de
+la serie arrojó los siguientes resultados:
+
+Etapa 1 : Estimación preliminar de los efectos de las intervenciones, observaciones
+    atípicas y de las observaciones faltantes.
+
+Sub-etapa 1 : Identificación de los órdenes diferenciación.
+
+                               Figura 2: Ciclo estacional de la demanda horaria.
+
+      La tabla 1 contiene los resultados de la estimación preliminar de los efectos
+      de las intervenciones, observaciones atípicas y de las observaciones faltantes.
+      Los coeficientes de la parte autorregresiva ordinaria y estacional están cerca
+      de uno, indicando que el proceso parece no ser estacionario tanto en su
+      componente ordinaria como en la estacional. Diferenciar una vez la parte
+      ordinaria y una vez la parte estacional podría estacionarizar la serie.
+
+Sub-etapa 2 : Identificación de las observaciones atípicas y faltantes.
+      Diferenciando la serie mediante los operadores (1 − B)(1 − B)7 y realizando
+      de nuevo la estimación del modelo, se obtiene la tabla 2 con la identificación
+      de las observaciones atípicas y faltantes.
+      Entre observaciones atípicas y faltantes se detecta un total de 120 observa-
+      ciones.
+
+Sub-etapa 3 : Estimación preliminar de las intervenciones, observaciones atípicas
+     y faltantes.
+      Las observaciones atípicas detectadas se adicionan al modelo, el cual es esti-
+      mado de nuevo para obtener una estimación preliminar de las intervenciones,
+      observaciones atípicas y faltantes. Esta etapa es iterativa hasta obtener un
+      resultado en el que no se detecten más observaciones atípicas.
+
+Etapa 2 : Identificación del modelo del ruido.
+
+                 Tabla 1: Resumen de la estimación preliminar.
+
+Sub-etapa 1 : Se estima el modelo anterior sin modelo en el ruido y restringiendo
+     los parámetros a los estimados en la etapa 1. Los residuales del modelo son
+     usados para la identificación del modelo del ruido. La figura 3 presenta las
+     ACF y PACF muestrales.
+
+       Tabla 2: Resumen de la detección de observaciones atípicas: Tipo AO.
+
+        Los resultados parecen ser consistentes con un modelo ARMA de media mó-
+        viles estacional multiplicativo de la forma ARMA(0, 1)×(0, 1)S=7 . El análisis
+        posterior indica que es más adecuado un modelo ARMA(1, 1) × (0, 1)S=7 .
+
+Figura 3: Funciones de autocorrelación (ACF) y autocorrelación parcial (PACF)
+          de los residuales del modelo (Sub-etapa 1).
+
+
+Sub-etapa 2 : Estimación con el modelo identificado para el ruido.
+                    Introduciendo el modelo ARMA(1, 1) × (0, 1)S=7 para el ruido, se estima de
+                    nuevo el modelo.
+                    Finalmente, la imposición de restricciones nulidad para las estimaciones es-
+                    tadísticamente no significativas (usando como criterio que el valor absoluto
+                    de su respectivo estadístico t sea menor que 1) proporciona el modelo final,
+                    presentado en la tabla 3:
+
+                               Tabla 3: Resumen de la estimación del modelo final.
+
+                  Tabla 3: Resumen de la estimación del modelo final. (continuación)
+
+        Los diagnósticos básicos, presentados en las figuras 4 y 5, indican que los
+        errores de modelo son ruido blanco, que no se rechaza el supuesto de nor-
+        malidad y que las raíces de los polinomios AR y MA tienen raíces fuera del
+        círculo unidad.
+
+Figura 4: Funciones de autocorrelación (ACF) y autocorrelación parcial (PACF)
+          de los residuales del modelo (modelo final).
+
+                                              Figura 5: Gráfico de Q-Q normal.
+     La reconstrucción de la serie por observaciones faltantes y atípicas se basa en
+filtrar la serie original usando las estimaciones obtenidas en el modelo final.
+
+    La tabla 4 muestra parcialmente algunos resultados, donde DEMHOR es la
+demanda original, NDEMHOR es la DEMANDA reconstruida, INDIC es una va-
+riable que toma el valor de 1 si la observación es atípica o faltante y EFECT es la
+cantidad que hay que restar a la demanda para obtener la demanda “normal”.
+
+                     Tabla 4: Reconstrucción de la demanda.
+   En figura 6 aparece la serie original y la serie reconstruida.
+    Finalmente, la figura 7 presenta los pronósticos para la demanda de las 168
+horas de la siguiente semana, después de elaborar los modelos para cada una de
+las 24 horas, siguiendo la metodología anterior.
+   Los resultados muestran una gran capacidad de la serie reconstruida para pro-
+nosticar la demanda desconocida.
+
+
+4. Conclusiones
+ i) Los métodos de imputación de valores faltantes suponen conocimiento del
+    modelo o que los datos sean tales que un subconjunto de ellos permitan iden-
+    tificar el modelo. Otros métodos que hacen imputaciones ad hoc basados en
+
+                                        Figura 6: Demanda horaria reconstruida.
+Figura 7: Demanda horaria real y pronosticada (la serie de la demanda real corresponde
+          a la línea con puntos).
+
+      promedio de observaciones vecinas o estacionalmente vecinas, pueden gene-
+      rar problemas en la identificación si existen observaciones atípicas. El método
+      propuesto permite la identificación del modelo y estimación conjunta de datos
+      faltantes, efectos de intervenciones y observaciones atípicas y de los paráme-
+      tros del modelo.
+
+ ii) El procedimiento puede ser extendido al caso de un vector de series de tiempo
+     con datos faltantes y observaciones atípicas.
+
+iii) La aplicación del procedimiento a los datos de una serie real de demanda
+     horaria de electricidad, muestra que el procedimiento parece comportase bien.
+Referencias
+Anderson, B. D. O. & Moore, B. J. (1979), Optimal Filtering, Prentice Hall, Englewood, Cliffs, NJ.
+Box, G. E. P. & Jenkins, G. M. (1976), Time Series Analysis, Forecasting and Control, second edn, Holden-Day.
+Box, G. E. P. & Tiao, G. C. (1975), ‘Intervention Analysis with Applications to Economic and Environmental Problems’, Journal of the American Statistical Association 70, 335–365.
+Bruce, A. & Martin, R. (1989), ‘Leave-k-Out Diagnostics for Time Series’, Journal of the Royal Statistical Society 51(3), 363–424.
+Castañeda, M. (1994), Reconstrucción de series de tiempo univariadas mediante el enfoque de pronósticos con restricciones, Tesis de Maestría, Estadística, Universidad Nacional de Colombia, Facultad de Ciencias, Departamento de Estadística, Bogotá.
+Castaño, E. (1995), ‘Identificación de un modelo ARIMA contaminado’, Lecturas de Economía 42, 49–70.
+Castaño, E. (1997), ‘Identificación de un modelo ARIMA cuando existen observaciones faltantes’, Lecturas de Economía 47, 25–45.
+Chen, C. & Liu, L. (1990), ‘Joint Estimation of Models Parameters and Outliers Effects in Time Series’, Working Papers Series, Scientific Computing Associates pp. P.O.Box 625, DeKalb, Illinois 60115.
+Chow, G. & Lin, A. (1976), ‘Best Linear Unbiased Estimation of Missing Observation in a Economic Time Series’, Journal of the American Statistical Association 71, 719–721.
+Harvey, A. C. & Pierse, R. G. (1984), ‘Estimating Missing Observations in Economic Time Series’, Journal of the American Statistical Association 79(385), 15–131.
+Jones, R. H. (1980), ‘Maximum Likelihood Fitting of ARMA Models to Time Series with Missing Observations’, Technometrics 22, 389–395.
+Kohn, R. & Ansley, F. (1983), ‘Fixed Interval Estimation in State Space Models when Some of the Data are Missing or Aggregated’, Biometrika 70, 683–688.
+Maravall, A. & Peña, D. (1988), Missing Observations of Time Series and the Dual Autocorrelation Function, Servicio de Estudios, Banco de España, Madrid. Documento de trabajo No. 8830.
+Nieto, F. (1989), Reconstrucción de una serie de tiempo censurada usando filtros de Kalman, Tesis de Maestría, Estadística, Universidad Nacional de Colombia, Facultad de Ciencias, Departamento de Estadística, Bogotá.
+Peña, D. & Maravall, A. (1990), ‘Interpolation, Outliers and the Inverse Autocorrelations’, Communications in Statistics A20(10), 3175–3186.
+Said, S. & Dickey, D. (1984), ‘Testing Unit Roots in Autoregresive-Moving Average Models with Unknown Order’, Biometrika 71, 599–601.

@@ -1,0 +1,1130 @@
+Estimación de información faltante, imputación y Estadísticos de prueba en modelos mixtos a dos vı́as de clasificación
+Universidad Nacional de Colombia
+Resumen
+Se propone una metodologı́a para la estimación de información faltante en modelos mixtos de medias de celda que permite la disminución de la correlación entre la información observada y la información estimada, basada en el método propuesto por Melo & Melo (2005). Éste se fundamenta en los métodos de estimación vı́a máxima verosimilitud, expuesto en Searle (1971), y de covariable, propuesto por Bartlett (1937). Después de realizar la imputación de la información, se plantea una manera de llevar a cabo el análisis de varianza en modelos sin interacción, mediante pruebas ponderadas para los efectos fijos y aleatorios involucrados en el modelo.
+Palabras clave: Modelo de medias de celda, modelo mixto, información faltante, estimación e imputación, distribución de formas cuadráticas.
+Introducción
+En el contexto del diseño de experimentos, cuando se realizan las pruebas de campo, es posible que se pierdan unidades observacionales o experimentales. Esto ocurre a pesar de vigilar cuidadosamente el proceso, por razones fuera de control, ajenas a la voluntad del investigador. La ausencia de dicha información, en algunos casos puede poner en riesgo la validez del proceso.
+En los diseños multifactoriales y, en especial, en el modelo de medias de celda, cuando hay celdas vacı́as no todas las medias son estimables y ciertas hipótesis sobre combinaciones lineales de los parámetros pierden sentido. Dicha falta de información destruye la ortogonalidad del diseño y se requiere identificar las funciones estimables, cuya naturaleza depende de si el modelo es conectado o no. En cuanto a este último aspecto se destacan los trabajos realizados por Murray & Smith (1985) y Dodge (1985) en modelos a n vı́as de clasificación.
+El estudio de la información faltante se remonta al año de 1930, en el cual Allan
+& Wishart (1930) presentan dos métodos para estimar el valor de una sola obser-
+vación faltante para un diseño en bloques al azar y un cuadrado latino. Luego,
+Yates (1933) propone imputar los valores faltantes y ası́ llevar a cabo el análisis
+de varianza común, con las correcciones correspondientes en los grados de libertad
+del error. Son muchos los trabajos realizados al respecto desde esa época hasta
+la actualidad, los cuales en su mayorı́a son referenciados en una de las últimas
+y más importantes publicaciones de los principales aportes al análisis Estadístico
+con información faltante, realizada por Little & Rubin (2002). Sin embargo, la
+mayorı́a de los estudios sobre información faltante realizados hasta la época, ha-
+cen referencia esencialmente al manejo de la ausencia de información cuando se
+está trabajando con modelos de efectos fijos, de tal manera que para modelos de
+efectos aleatorios o mixtos los desarrollos referentes al manejo de la ausencia de
+información no son muy amplios.
+    Haciendo una revisión de la literatura dedicada a los modelos de componentes
+de varianza y mixtos, se destacan los trabajos de Fisher (1935), Henderson (1952),
+Sheffé (1959) y Searle (1971), discutidos en un trabajo completamente dedicado
+a los modelos de componentes de varianza, realizado por Searle et al. (1992).
+Adicionalmente, cuando se dispone de la información completa son importantes
+los desarrollos presentados por Corbeil & Searle (1976) para la estimación de los
+componentes de varianza vı́a máxima verosimilitud restringida, y Lindstrom &
+Bates (1988), quienes implementan el método de Newton Raphson y el algoritmo
+EM. Por otra parte, en diseños con datos desbalanceados o que se encuentran
+afectados por el problema de la ausencia de información, se encuentran los trabajos
+de Thomsen (1975), Gallo & Khuri (1990), Harville & Carriquiry (1992), Barroso
+et al. (1998) y uno de los más recientes, realizado por Melo & Melo (2005), en el
+cual se propone una metodologı́a para la estimación de la información faltante en
+modelos mixtos de medias de celda.
+    Los desarrollos presentados en la mayorı́a de estos trabajos muestran la ausen-
+cia de un estudio detallado relacionado con la construcción de los Estadísticos de
+prueba para verificar hipótesis relativas a los efectos fijos y aleatorios involucrados
+
+                                        Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                      37
+
+
+en los modelos mixtos cuando hay información faltante, al igual que la falta de
+una revisión exhaustiva de la distribución de las pruebas obtenidas.
+     Con el fin de suplir lo anterior, en el presente trabajo se propone una metodo-
+logı́a para manejar el problema de la información faltante en modelos mixtos de
+medias de celda. Para ello, en la sección inmediatamente siguiente se presentan al-
+gunos conceptos básicos sobre modelos mixtos y una breve descripción del método
+de Melo & Melo (2005). En la tercera sección se expone la metodologı́a propuesta
+para la estimación de información faltante en modelos mixtos de medias de celda y
+posteriormente se realiza un análisis de la distribución de los Estadísticos de prue-
+ba construidos. En la última sección se presenta una aplicación de la metodologı́a
+propuesta.
+
+
+
+2.      Conceptos preliminares
+    En esta parte se exponen algunos conceptos básicos, necesarios para el enten-
+dimiento adecuado de los desarrollos proporcionados en el presente artı́culo.
+    El modelo mixto de medias de celda presentado en Corbeil & Searle (1976)
+está dado por:
+                                    y = W µ + Zθ + e                                    (1)
+
+donde:
+
+     • y(n×1) es el vector de variables aleatorias,
+
+     • W(n×p) es la matriz de incidencia de rango columna completo que asocia las
+       observaciones con los respectivos componentes del vector µ(p×1) , el cual es
+       un vector de valores medios desconocidos de los efectos fijos,
+
+     • Z(n×r) es la matriz de incidencia que asocia las observaciones con los respec-
+       tivos componentes del vector θ(r×1) , el cual es de constantes desconocidas de
+       los efectos aleatorios, y e(n×1) es un vector de variables aleatorias no obser-
+       vables tal que e ∼ N (0(n×1) , σe2 In ). En este caso σe2 y las diferentes varianzas
+       de los elementos de θ son los componentes de varianza del modelo.
+
+
+2.1.     Estimación de información faltante en modelos mixtos
+         de medias de celda
+    Siguiendo los resultados presentados en Searle (1971), Barroso et al. (1998) y
+Melo & Melo (2005) exponen una metodologı́a para la estimación de información
+faltante en modelos mixtos de medias de celda, vı́a el método de máxima verosimi-
+litud y el método de covariable propuesto por Bartlett (1937). Dicha metodologı́a
+es base fundamental del presente trabajo y por esta razón se describe brevemente
+a continuación.
+
+                                          Revista Colombiana de Estadística 29 (2006) 35–56
+
+38                                            Diana Carolina Franco & Oscar Orlando Melo
+
+
+      Asumiendo que el modelo (1) tiene una estructura de variabilidad de la forma:
+
+                                 θ(r×1) ∼ N (0(r×1) , D(r×r) ),
+                                e(n×1) ∼ N (0(n×1) , R(n×n) ) y                           (2)
+                              Cov(θ, e) = 0(r×n)
+
+donde D y R son las matrices de varianzas y covarianzas de rango completo aso-
+ciadas a los factores aleatorios involucrados en el modelo.
+Por lo tanto, la matriz de varianzas y covarianzas asociada al vector y está dada
+por:
+                           V ar(y) = V(n×n) = ZDZ ′ + R                         (3)
+
+   Si el modelo mixto posee un único factor aleatorio, la estructura de variabilidad
+asumida para el modelo (1) es:
+
+                                  θ(r×1) ∼ N (0(r×1) , σθ2 Ir ),
+                                  e(n×1) ∼ N (0(n×1) , σe2 In ) y                         (4)
+                               Cov(θ, e) = 0(r×n)
+
+de donde:
+                             V arp (y) = Vp(n×n) = σθ2 ZZ ′ + σe2 In                      (5)
+
+      Por otra parte, la función de densidad conjunta de y y θ está dada por:
+
+     f (y, θ) =
+              1
+                          exp − 21 [(y − W µ − Zθ)′ R−1 (y − W µ − Zθ) + θ′ D−1 θ] (6)
+                                                                                 
+          n+r         1
+      (2π) 2 (|R||D|) 2
+
+
+   A fin de encontrar los máximos de la función anterior, se calculan las derivadas
+parciales de L = ln f (y, θ), de lo cual se obtiene el siguiente sistema de ecuaciones
+normales:        ′ −1
+                                    W ′ R−1 Z
+                                                     ′ −1 
+                  W R W                             µ       W R y
+                                                        =                          (7)
+                  Z ′ R−1 W Z ′ R−1 Z + D−1 θ               Z ′ R−1 y
+
+   Resolviendo el sistema anterior se obtienen los siguientes estimadores de máxi-
+ma verosimilitud para µ y θ:
+
+                                 µ̇ = (W ′ V −1 W )−1 W ′ V −1 y                          (8)
+                                 θ̇ = DZ ′ V −1 (In − PW )y                               (9)
+
+donde PW (n×n) = W (W ′ V −1 W )−1 W ′ V −1 .
+
+2.1.1.      Método de covariable para modelos mixtos de medias de celda
+
+    Si hay m > 1 observaciones faltantes en un diseño experimental, se puede
+incluir una covariable por cada observación faltante, teniendo un modelo de cova-
+riables a partir de la matriz diseño. En este caso, el modelo mixto de medias de
+
+                                            Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                     39
+
+
+celda se puede escribir como:
+                                     
+                            y   W1    Z    e
+                       y= 1 =      µ+ 1 θ+ 1                                          (10)
+                            y2  W2    Z2   e2
+donde el vector de variables aleatorias y(n×1) es particionado en dos vectores, uno
+con la información de los datos observados y1((n−m)×1) y otro que representa los
+datos no observados y2(m×1) , el cual puede ser un vector de ceros o cualquier vector
+de valores iniciales supuestos. Además, W(n×p) es particionada en dos submatrices
+cuyas filas están asociadas a la información observada W1((n−m)×p) y a la infor-
+mación faltante W2(m×p) , y, Z(n×r) es particionada en dos submatrices cuyas filas
+están asociadas a la información observada Z1((n−m)×r) y a la información faltante
+Z2(m×r) .
+    Debido a que se consideran m valores faltantes, tomando y2 = 0(m×1) en (10) e
+introduciendo una matriz de indicadores U(n×m) en la cual los elementos de cada
+una de las m columnas toman el valor de cero si el dato es observado y el valor de
+−1 en caso contrario, y, γ(m×1) es el vector asociado con los valores faltantes en el
+diseño, el modelo con covariables se puede escribir como:
+                                                        
+                         y1      W1        Z1         0         e
+                   ∗
+                  y =       =         µ+       θ+          γ+ 1
+                          0      W2        Z2       −Im         e2
+
+   En general, el modelo mixto de medias de celda con covariables queda de la
+forma:
+                          y ∗ = W µ + U γ + Zθ + e                       (11)
+donde U es la matriz de indicadores de los valores faltantes en el diseño.
+    Se asume que el modelo (11) tiene una estructura de variabilidad como la dada
+en (2), por lo tanto, la estructura conocida de la matriz de varianzas y covarianzas
+asociada al vector de variables aleatorias relacionadas con los datos observados y1
+está dada por:
+                    Var(y1 ) = [V1 ]((n−m)×(n−m)) = Z1 DZ1′ + R1                      (12)
+
+   Al desarrollar las derivadas parciales de la función de densidad conjunta de y ∗
+y θ, L∗ = ln f (y ∗ , θ), se encuentran los estimadores de los parámetros del modelo
+(11), los cuales están dados por Melo & Melo (2005):
+                           µ̃ = (W1′ V1−1 W1 )−1 W1′ V1−1 y1                          (13)
+                            θ̃ = DZ1′ V1−1 (I(n−m) − PW1 )y1                          (14)
+
+donde PW1 ((n−m)×(n−m)) = W1 (W1′ V1−1 W1 )−1 W1′ V1−1 , y el estimador de los com-
+ponentes del vector asociado a la información faltante está dado por:
+   γ̂ = ŷ2 = W2 (W1′ V1−1 W1 )−1 W1′ V1−1 + Z2 DZ1′ V1−1 (I(n−m) − PW1 ) y1
+                                                                        
+                                                                                (15)
+
+   Se puede comprobar que γ̂ ∼ N [γ, Var(γ̂)] con:
+     Var(γ̂) = W2 (W1′ V1−1 W1 )−1 W2′ + Z2 DZ1′ V1−1 (I − PW 1 )Z1 DZ2′ (m×m)
+                                                                       
+
+
+
+                                         Revista Colombiana de Estadística 29 (2006) 35–56
+
+40                                       Diana Carolina Franco & Oscar Orlando Melo
+
+
+3.     Estimación e imputación de la información
+       faltante con el modelo mixto de medias de
+       celda
+   El estimador de las observaciones faltantes ŷ2 propuesto por Melo & Melo
+(2005) es una combinación lineal del vector de información observada y1 y, por lo
+tanto, la covarianza entre estos dos vectores es diferente de cero:
+       Cov(y1 , ŷ2 ) = W1 (W1′ V1−1 W1 )−1 W2′ + (I − PW 1 )Z1 DZ2′ ((n−m)×m)
+                                                                   
+
+
+    Este hecho hace necesaria la existencia de una metodologı́a mediante la cual
+se disminuya la dependencia entre el vector de la información estimada y el de la
+información observada. Para ello se propone adicionar una componente aleatoria
+e2(m×1) al vector de observaciones estimadas ŷ2 , tal que:
+                                                2
+                              e2 ∼ N (0(m×1) , σe(1) Im )
+          2
+donde σe(1)     es la varianza de los errores obtenidos al ajustar un modelo mixto con
+la información observada.
+    Dicho vector de errores e2(m×1) es generado aleatoriamente y adicionalmente
+debe satisfacer el supuesto de incorrelación con el vector de factores aleatorios
+θ(r×1) y el vector de errores e1((n−m)×1) , de tal forma que: Cov(θ, e2 ) = 0(r×m) y
+Cov(e1 , e2 ) = 0((n−m)×m) .
+    Ası́, la expresión propuesta para la estimación de la información faltante está
+dada por:
+    γ̂ ∗ = ŷ2∗ = W2 (W1′ V1−1 W1 )−1 W1′ V1−1 + Z2 DZ1′ V1−1 (I − PW 1 ) y1 + e2
+                                                                        
+                                                                                  (16)
+
+   Al adicionar dicha componente aleatoria, el vector de las observaciones estima-
+das ya no es una combinación lineal de la información observada, y ası́ se dismi-
+nuye la correlación entre los subvectores del vector de información y. Lo anterior
+se puede ver de forma más clara al hallar las respectivas matrices de correlacio-
+nes asociadas con las matrices de varianzas y covarianzas entre la información
+observada y la estimada (Franco 2005).
+   Se puede comprobar que E(γ̂ ∗ ) = γ; además:
+    Var(ŷ2∗ ) = W2 (W1′ V1−1 W1 )−1 W2′ + Z2 DZ1′ V1−1 (I − PW 1 )Z1 DZ2′ + σe2 Im
+                                                                                   
+
+y la covarianza entre el vector de información observada y estimada está dada por:
+             Cov(y1 , ŷ2∗ ) = W1 (W1′ V1−1 W1 )−1 W2′ + (I − PW 1 )Z1 DZ2′
+                                                                           
+
+
+3.1.    Estimación de parámetros y análisis de varianza en
+        modelos mixtos de medias de celda
+    Para estimar los parámetros involucrados en el modelo y construir los estadı́sti-
+cos de prueba empleados en el análisis de varianza, se emplea el método de máxima
+
+                                       Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                            41
+
+
+verosimilitud para el modelo mixto de medias de celda especificado en (1), con una
+estructura de variabilidad como la expuesta en (4).
+    Teniendo en cuenta la idea anterior, se exponen a continuación los principales
+desarrollos obtenidos para los modelos mixtos con un único factor aleatorio.
+
+3.1.1.    Estimación de parámetros en modelos mixtos con un único
+          factor aleatorio
+
+   El modelo mixto de medias de celda presentado en (1), tiene una función de
+densidad conjunta de y y θ, como la expuesta en (6). En el caso de modelos mixtos
+con un único factor aleatorio sin interacción, este modelo tiene una estructura de
+variabilidad como la expuesta en (4), de tal forma que la estructura de variabilidad
+para y corresponde a la presentada en (5) y la función de densidad conjunta de y
+y θ es:
+
+  f (y, θ) =
+                1
+                              exp − 2σ1 2 (y − W µ − Zθ)′ (y − W µ − Zθ) + λθ′ θ
+                                                                               
+          n+r             1                                                        (17)
+      (2π) 2 (σe2n σθ2r ) 2            e
+
+
+
+
+                    σe2
+   donde λ =            .
+                    σθ2
+   Las ecuaciones normales presentadas en (7) se transforman en este caso en:
+                                ′
+                                            W ′Z
+                                                         ′ 
+                                W W                     µ   W y
+                                                          =                                  (18)
+                                Z ′W    Z ′ Z + λIr     θ   Z ′y
+
+Resolviendo el sistema anterior y empleando las propiedades de la inversa de la
+suma entre matrices, se obtienen los siguientes estimadores máximo verosı́miles
+para µ y θ respectivamente:
+
+                                  µ̂ = (W ′ Vp−1 W )−1 W ′ Vp−1 y                            (19)
+                                            ′
+                                   θ̂ = Dp Z Vp−1 [In − PW p ]y                              (20)
+
+con PW p (n×n) = W (W ′ Vp−1 W )−1 W ′ Vp−1 = W (W ′ T W )−1 W ′ T y
+
+         In − ZP −1 Z ′   T
+Vp−1 =         2
+                        = 2 , donde P = Z ′ Z + λIr y T = In − ZP −1 Z ′ .
+              σe         σe
+    Sin embargo, los parámetros µ y θ no son los únicos a estimar en el modelo de
+interés. De hecho, para poder emplear los estimadores obtenidos previamente, es
+necesario conocer Vp o, en su defecto, conocer una estimación de los componentes
+de varianza que la generan.
+    Con el fin de hallar los estimadores de σe2 y σθ2 , se debe tener
+                                                                   encuenta que W
+y Z son matrices de rango columna completo, entonces ran W Z = ran(W ) +
+ran(Z) − 1 = p + r − 1.
+
+                                                Revista Colombiana de Estadística 29 (2006) 35–56
+
+42                                          Diana Carolina Franco & Oscar Orlando Melo
+
+
+   Si se considera el Método de Ajuste de Constantes, también conocido como
+Método III de Henderson (1952), se tiene la siguiente descomposición de las sumas
+de cuadrados involucradas en la estimación de los componentes de varianza:
+                                                               −1  ′ 
+                                             W ′W      W ′Z
+                                             
+                     0     0     ′
+                                                                   W
+                R(µ , θ ) = y W           Z                              y
+                                               Z ′W     Z ′Z        Z′
+                    R(µ0 ) = y ′ W (W ′ W )−1 W ′ y
+                    R(θ0 ) = y ′ Z(Z ′ Z)−1 Z ′ y
+                                     ′
+                R(µ0 /θ0 ) = µ̂0 W ′ [In − Z(Z ′ Z)−1 Z ′ ]y
+                R(θ0 /µ0 ) = R(µ0 , θ0 ) − R(µ0 )
+
+donde µ̂0 = Q−1  ′
+             0 W [In − Z(Z Z)
+                             ′
+                                  Z ]y, con Q0 = W ′ [In − Z(Z ′ Z)−1 Z ′ ]W .
+                                −1 ′
+
+   Y como se muestra en Searle et al. (1992), los estimadores insesgados para los
+componentes de varianza están dados por:
+
+                  2        y ′ y − R(µ0 , θ0 )
+                σ̃e(0) =                                                                (21)
+                           n − ran[W Z]
+y
+
+                  2
+                                          2
+                           R(θ0 /µ0 ) − σ̃e(0) (ran[W Z] − ran(W ))
+                σ̃θ(0) =                                                                (22)
+                                 tr[Z ′ Z − Z ′ W (W ′ W )−1 W ′ Z]
+donde tr es el operador traza de una matriz.
+    Las sumas de cuadrados citadas previamente son las empleadas tradicionalmen-
+te e implementadas en diferentes paquetes Estadísticos, como en el procedimiento
+Proc Mixed de SAS. Sin embargo, el error de emplearlas radica en que hacen
+referencia en realidad a un modelo de la forma:
+
+                                     y = W µ0 + Zθ0 + e                                 (23)
+
+donde µ0 y θ0 son vectores de parámetros asociados a efectos fijos; de esta forma
+sus ecuaciones normales son respectivamente:
+                          ′
+                          W W W ′ Z µ0
+                                          ′ 
+                                                 W y
+                                              =                                (24)
+                          Z ′W Z ′Z       θ0     Z ′y
+
+    Por lo anterior, los estimadores dados en (21) y (22) no son apropiados en
+modelos donde θ0 es un vector de efectos aleatorios.
+    Sin embargo, nótese la gran similitud entre las ecuaciones normales (24) y las
+dadas en (18) para los modelos mixtos de interés con un único factor aleatorio.
+Como puede verse, estos sistemas de ecuaciones son iguales excepto porque se
+tiene P = Z ′ Z + λIr en lugar de Z ′ Z. Aprovechando esta similitud y realizando
+un procedimiento análogo al presentado en Searle (1971), se generan unas sumas
+de cuadrados similares a las asociadas al sistema (7) reemplazando Z ′ Z por P y
+con ellas se obtienen unos estimadores similares a los presentados en (21) y (22).
+
+                                           Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                            43
+
+
+   De esta forma, los estimadores para los componentes de varianza están dados
+por:
+                                    y ′ y − R(µ, θ)
+                           σ̃e2 =                                                             (25)
+                                    n − ran[W Z]
+y
+
+                                    R(θ/µ) − σ̃e2 (ran[W Z] − ran(W ))
+                           σ̃θ2 =                                                             (26)
+                                       tr[P − Z ′ W (W ′ W )−1 W ′ Z]
+
+donde R(µ, θ) = y ′ [In − ZP −1 Z ′ ]W µ̂ + y ′ ZP −1 Z ′ y, R(θ/µ) = R(µ, θ) − R(µ)
+con R(µ) = y ′ W (W ′ W )−1 W ′ y. Además µ̂ = Q−1 W ′ [In − ZP −1 Z ′ ]y, con Q =
+W ′ [In − ZP −1 Z ′ ]W = W ′ T W .
+    Sin embargo, aunque estos estimadores tienen sentido, dejan de ser insesgados
+cuando se sustituye Z ′ Z por P .
+    Uno de los caminos para volver estos estimadores insesgados consiste en hallar
+las esperanzas de las sumas de cuadrados involucradas y luego tomar como estima-
+dor del respectivo componente de varianza el cuadrado medio cuyo valor esperado
+es igual al componente de interés. Basados en dichas esperanzas, los estimadores
+insesgados de los componentes de varianza para el caso de interés (Franco 2005)
+son:
+
+
+             (y − W µ̂ − Z θ̂)′ (y − W µ̂ − Z θ̂) + λθ̂′ θ̂
+    σ̂e2 =                                                                                    (27)
+                          n − ran(W )
+             y ′ [In − W (W ′ W )−1 W ′ ]y − (y − W µ̂ − Z θ̂)′ (y − W µ̂ − Z θ̂) − λθ̂′ θ̂
+    σ̂θ2 =                                                                                    (28)
+                                  tr[Z ′ Z − Z ′ W (W ′ W )−1 W ′ Z]
+
+3.1.2.       Prueba de hipótesis general
+
+    Para el modelo mixto expuesto en (1), la hipótesis general es:
+                      (
+                        H0 : M β = 0; σe2 > 0, σθ2 > 0
+                                                                                              (29)
+                        Ha : M β 6= 0; σe2 > 0, σθ2 > 0
+
+donde:                                                                             
+                                                                          µ(p×1)
+                M(n×(p+r)) = W(n×p)           Z(n×r)          β((p+r)×1) =
+                                                                             θ(r×1)
+
+   De tal manera que el modelo (1) se escribe en términos de un modelo de la
+forma:
+                                y = Mβ + e                               (30)
+
+   Para desarrollar la prueba, se parte de la función de verosimilitud de y y β, y
+a partir de ésta se hace la prueba de hipótesis utilizando la razón de verosimilitud
+generalizada dada por:
+
+                                               Revista Colombiana de Estadística 29 (2006) 35–56
+
+44                                          Diana Carolina Franco & Oscar Orlando Melo
+
+
+
+                                      2          1
+                                    ϕn =       2
+                                                      !                                (31)
+                                             σ̃e(0)H0
+                                                 2
+                                               σ̃e(0)
+        2
+donde σ̃e(0) está dado por (21) y σ̃e(0)H0 es este mismo asumiendo H0 cierta.
+
+     Por otra parte, si H0 es cierta en (29), se tiene que:
+                                               2
+                               (n − ran[W Z])σ̃e(0)H0
+                                                      = y′ y
+
+     y por consiguiente de (21):
+                             2                      2
+             (n − ran[W Z])σ̃e(0) = (n − ran[W Z])σ̃e(0)H0
+                                                           − R(µ0 , θ0 )
+
+     Reemplazando los dos anteriores resultados en (31), se obtiene:
+
+                           2                     1
+                          ϕn =                                 !                       (32)
+                                            R(µ0 , θ0 )
+                                   1+                   2
+                                      (n − ran[W Z])σ̃e(0)
+
+    Sin embargo, el estimador insesgado de σe2 dado en (21) está asociado a un
+modelo como el presentado en (23), en el cual θ0 es considerado un vector de efectos
+fijos más que de efectos aleatorios. De acuerdo con todo lo discutido previamente
+respecto a este modelo y la relación que tiene con el modelo mixto de interés, para
+que la razón obtenida sea útil en el modelo en estudio, lo apropiado es hacer uso
+del estimador insesgado de σe2 dado en (27). En este caso,
+
+                  (n − ran(W ))σ̂e2 = (n − ran(W ))σ̂e(H
+                                                     2
+                                                        0)
+                                                           − R(µ, θ)
+
+y reemplazando de nuevo en (31), se llega a:
+                               2               1
+                           ϕn =                                                      (33)
+                                             R(µ, θ)
+                                      1+
+                                         (n − ran(W ))σ̂e2
+
+Ésta es la razón adecuada para el modelo mixto de interés dado en (1), para la
+cual se cumple que:
+
+                      2                       R(µ, θ)
+                    ϕ n es pequeña si                      es grande
+                                          (n − ran(W ))σ̂e2
+
+y es una función monótona que permite utilizar a:
+
+                                         R(µ, θ)
+                                     (n − ran(W ))σ̂e2
+
+para llevar a cabo la prueba de hipótesis general.
+
+                                          Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                     45
+
+
+    Al considerar la hipótesis general de la forma presentada en (29), se evalúa
+conjuntamente el aporte tanto de la parte fija como de la aleatoria al modelo, pero
+no se tiene en cuenta que en el contexto del modelo mixto la componente aleatoria
+no debe ser tratada de la misma manera que la componente fija. Esto se debe a
+que para la parte aleatoria no se tiene interés en obtener conclusiones aplicadas
+únicamente a los niveles de los factores considerados, sino en generalizarlas a la
+población de la cual los tratamientos se seleccionaron y, por esta razón, el interés
+se centra en probar hipótesis referentes a la variabilidad de los efectos de los
+tratamientos.
+De lo anterior, la hipótesis general apropiada para el modelo mixto de interés es:
+     (
+       H0 : W µ = 0 y σθ2 = 0;          σe2 > 0
+       Ha : Al menos uno de los dos, W µ o σθ2 , es diferente de cero; σe2 > 0
+
+   Al construir el Estadístico de prueba asociado a esta hipótesis, se encuentra
+que el Estadístico de prueba obtenido empleando estos resultados es equivalente al
+expuesto en (33) (Franco 2005).
+
+3.1.3.   Prueba de hipótesis marginal para los efectos fijos involucrados
+         en el modelo
+
+    Para el modelo mixto de interés expuesto en (1), la hipótesis para los efectos
+fijos está dada por:
+                      (
+                        H0 : W µ = 0; σe2 > 0, σθ2 > 0
+                                                                                (34)
+                        Ha : W µ 6= 0; σe2 > 0, σθ2 > 0
+
+    Para desarrollar la prueba, se parte de la función de verosimilitud asociada a
+la función de densidad conjunta de y y θ expresada en (17).
+    La prueba de hipótesis se hace realizando un razonamiento similar al presentado
+anteriormente. En este caso, se hace uso del estimador máximo verosı́mil de σe2
+dado en (27) y se llega a la expresión:
+
+                             2                1
+                           ϑn =                                                (35)
+                                            R(µ/θ)
+                                   1+
+                                        (n − ran(W ))σ̂e2
+esta última expresión tiene las mismas caracterı́sticas que la razón obtenida para
+llevar a cabo la prueba de la hipótesis general.
+
+3.1.4.   Prueba de hipótesis marginal para los efectos aleatorios
+         involucrados en el modelo
+
+    Para el modelo mixto expuesto en (1), la hipótesis asociada a los efectos alea-
+torios está dada por:     (
+                            H0 : Zθ = 0;      σe2 > 0
+                                                                                (36)
+                            Ha : Zθ 6= 0;     σe2 > 0
+
+                                         Revista Colombiana de Estadística 29 (2006) 35–56
+
+46                                      Diana Carolina Franco & Oscar Orlando Melo
+
+
+   Al igual que en la prueba para los efectos fijos, se parte de la función de
+verosimilitud asociada a la función de densidad conjunta de y y θ expresada en
+(17).
+   La prueba de hipótesis se hace utilizando la razón de verosimilitud generalizada
+y el estimador máximo verosı́mil de σe2 dado en (27). Al hacer los reemplazos
+respectivos se tiene que:
+                           2             1
+                          ζn =                                                     (37)
+                                   R(µ, θ) − y ′ PW p y
+                                                        
+                                1+
+                                   (n − ran(W ))σ̂e2
+
+    De manera similar a lo expuesto en la prueba de hipótesis general, cuando se
+considera que la hipótesis marginal para los efectos aleatorios es como en (36), se
+evalúa el aporte de la parte aleatoria Zθ al modelo, como si esta fuese fija al igual
+que W µ, razón por la cual no se tiene en cuenta que en el contexto del modelo
+mixto dado en (1), para la parte aleatoria del modelo el interés se centra en probar
+hipótesis referentes a la variabilidad de los efectos de los tratamientos.
+    De lo anterior, la hipótesis marginal para los efectos aleatorios apropiada para
+el modelo mixto de interés es de la forma:
+                                (
+                                  H0 : σθ2 = 0; σe2 > 0
+                                  Ha : σθ2 > 0; σe2 > 0
+
+    En este caso, el Estadístico de prueba asociado a esta hipótesis es equivalente
+a la involucrada en la razón de verosimilitud presentada en (37) (Franco 2005).
+
+3.1.5.     Análisis de varianza
+
+    En la tabla 1 se resume el análisis de varianza basado en las sumas de cuadrados
+tipo I, para el modelo mixto (1) después de imputar los m datos estimados; donde:
+ SCM = R(µ, θ),
+SCM F = R(µ∗ ) = y ′ PW p y,
+SCM A = R(θ/µ∗ ) = R(θ) − y ′ ZP −1 Z ′ PW p y,
+ SCE = y ′ y − R(µ, θ), y
+     SCT = y ′ y
+
+    Los grados de libertad asociados a cada una de las causas de variación en el
+modelo corresponden al rango de la matriz involucrada en la suma de cuadrados
+de cada uno de los factores de interés (Hocking 1996). Según Yates (1933), en
+diseños con información faltante, aún después de imputada la información en el
+arreglo, tanto los grados de libertad del error como del total deben corregirse por
+la cantidad m de datos ausentes en el arreglo. Dicha corrección se incluye en las
+tablas y los cuadrados medios asociados a cada uno de los componentes del modelo
+se obtienen como el cociente entre la suma de cuadrados y los respectivos grados
+de libertad.
+
+                                       Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                           47
+
+
+    El análisis de varianza basado en las sumas de cuadrados tipo III, para el
+modelo mixto dado en (1) después de imputar los m datos estimados, se resume
+en la tabla 2, en donde:
+
+ SCM ∗ = R(µ, θ) − y ′ ZP −1 Z ′ PW p y,
+SCM F ∗ = R(µ/θ) = R(µ, θ) − R(θ),           y
+          ∗      ′    ′    −1    ′
+  SCT = y y − y ZP              Z PW p y
+
+
+         Tabla 1: Análisis de varianza basado en las sumas de cuadrados tipo I.
+
+       Causa de           Grados de           Suma de      Cuadrado
+                                                                         Estadístico F
+       variación          libertad          cuadrados      medio
+    Modelo            p+r−1                 SCM            CM M          F G = CM M
+                                                                               CM E
+
+    E. fijos          p                     SCM F          CM M F        F F = CM MF
+                                                                                CM E
+
+    E. aleatorios     r−1                   SCM A          CM M A        F A = CM MA
+                                                                                CM E
+
+    Error             n−p−r+1−m             SCE            CM E
+    Total             n−m                   SCT
+
+
+
+         Tabla 2: Análisis de varianza basado en las sumas de cuadrados tipo III.
+
+       Causa de           Grados de          Suma de       Cuadrado
+                                                                         Estadístico F
+       variación          libertad         cuadrados       medio
+                                                                                      ∗
+    Modelo            p+r−2                SCM ∗          CM M ∗         F G∗ = CM M
+                                                                                 CM E
+                                                                                          ∗
+    E. fijos          p−1                  SCM F ∗        CM M F ∗       F F = CM MF
+                                                                                CM E
+
+    E. aleatorios     r−1                  SCM A          CM M A         F A = CM MA
+                                                                                CM E
+
+    Error             n−p−r+1−m            SCE            CM E
+                                                 ∗
+    Total             n−1−m                SCT
+
+
+
+3.2.      Distribución de las formas cuadráticas obtenidas
+   A continuación se realiza un resumen de los principales resultados obtenidos al
+analizar la distribución de las formas cuadráticas involucradas en los Estadísticos
+de prueba obtenidos a través del empleo de la razón de verosimilitud generaliza-
+da, para llevar a cabo la prueba de hipótesis general y las pruebas de hipótesis
+marginales para los efectos fijos y aleatorios que hacen parte del modelo mixto
+especificado en (1) (Franco 2005).
+
+3.2.1.        Prueba de hipótesis general
+
+  Suponiendo que y/Zθ ∼ N (M β, σe2 In ), las formas cuadráticas asociadas al
+modelo y al error, generadas a partir de la función de verosimilitud, la cual hace
+
+                                           Revista Colombiana de Estadística 29 (2006) 35–56
+
+48                                        Diana Carolina Franco & Oscar Orlando Melo
+
+
+referencia a un modelo como el presentado en (30), tienen las siguientes distribu-
+ciones (Franco 2005):
+
+                    SCM 0   y ′ (M (M ′ M )−1 M ′ )y      ′
+
+                      2
+                          =             2
+                                                     ∼ χ2(p+r−1,ψ)
+                     σe                σe
+con
+
+           β′M ′M β         SCE 0   y ′ (In − M (M ′ M )−1 M ′ )y
+      ψ=            ,   y         =                               ∼ χ2(n−(p+r−1))
+             2σe2             2
+                             σe                  σe2
+
+    Además, se puede comprobar que SCM 0 y SCE 0 son independientes y por
+ello:
+                (n − (p + r − 1))(SCM 0 )    ′
+                                          ∼ F(p+r−1,n−(p+r−1),ψ)      (38)
+                   (p + r − 1)(SCE 0 )
+este cociente se distribuye como una F central, si y sólo si H0 : M β = 0 es cierta.
+    El Estadístico de prueba obtenido tiene una distribución F ; sin embargo, esta
+prueba está asociada a un modelo como el presentado en (23), en el cual θ0 es
+considerado un vector de efectos fijos más que de efectos aleatorios. Aún ası́, este
+Estadístico de prueba es el empleado tradicionalmente e implementado en diferentes
+paquetes Estadísticos como SAS, el cual, al contrario de lo que se creı́a, realmente
+no tiene en cuenta las caracterı́sticas de los modelos mixtos en el procedimiento
+Proc Mixed.
+    Por lo anterior, para el modelo mixto de interés (1), el Estadístico apropiado
+para probar la hipótesis general dada en (29) es realmente el que involucra las
+sumas de cuadrados SCM y SCE.
+    Las formas cuadráticas asociadas al modelo y al error, generadas a partir de la
+función de verosimilitud, dada en (17), son:
+
+              SCM      R(µ, θ)   y ′ (ZP −1 Z ′ + T W (W ′ T W )−1 W ′ T )y
+                     =         =                                                     (39)
+               σe2       σe2                         σe2
+                         ′
+               SCE      y y − R(µ, θ)      ′
+                                          y [T − T W (W ′ T W )−1 W ′ T ]y
+                      =                =                                             (40)
+                 σe2         σe2                         σe2
+
+    El uso de una función de verosimilitud como la expuesta en (17), implica que
+en el modelo mixto (1), y ∼ N (W µ, Vp ), con Vp dada en (5).
+    Como se muestra en Franco (2005), la matriz asociada a la suma de cuadrados
+del modelo posmultiplicada por Vp no es idempotente a menos que P = Z ′ Z y que
+la estructura de variabilidad de y tenga la forma particular Vp = σe2 In ; en otras
+palabras, sólo se cumple si se tiene un modelo de efectos fijos, como el expuesto
+en (23). Por el contrario, la matriz asociada a la suma de cuadrados del error
+posmultiplicada por Vp es idempotente, de tal forma que:
+
+                SCM        ′                     SCE
+                     6∼ χ2(p+r−1,ψ)        y          ∼ χ2(n−(p+r−1))
+                 σe2                              σe2
+
+                                        Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                     49
+
+
+   Por otro lado, se puede comprobar que SCM y SCE no son independientes
+(Franco 2005). De lo anterior:
+
+                               (n − (p + r − 1))(SCM )
+                                  (p + r − 1)(SCE)
+                                            ′
+no se distribuye exactamente como una F(p+r−1,n−(p+r−1),ψ)     . Sin embargo, por la
+estrecha relación existente entre esta prueba y la presentada en (38), se asume que
+aproximadamente tiene esta distribución y que se comporta de manera aproximada
+como una F central, si y sólo si H0 : M β = 0 es cierta.
+    Aunque este último resultado no parece ser satisfactorio, esta última prueba,
+aunque no tenga una distribución F exacta, es más apropiada que la empleada
+tradicionalmente, ya que tiene en cuenta la naturaleza del modelo mixto de interés
+presentado en (1), tal y como se ha venido exponiendo a lo largo de esta sección.
+
+3.2.2.   Prueba de hipótesis marginal para los efectos fijos involucrados
+         en el modelo
+
+   Para la hipótesis marginal asociada a los efectos fijos dada en (34), la forma
+cuadrática de la parte fija del modelo, generada a partir de la función de verosi-
+militud apropiada, expuesta en (17), está dada por:
+
+                  SCM F ∗   y ′ (T W (W ′ T W )−1 W ′ T )y      ′
+
+                     2
+                          =                                ∼ χ2(p−1,φ)
+                    σe                    σe2
+
+              µ′ W ′ W µ
+con      φ=
+                 2σe2
+    Adicionalmente, como la forma cuadrática asociada al error también tiene dis-
+tribución χ2 y se verifica que SCM F ∗ y SCE son independientes, entonces:
+                  (n − (p + r − 1))(SCM F ∗ )    ′
+                                              ∼ F(p−1,n−(p+r−1),φ)
+                         (p − 1)(SCE)
+este cociente se distribuye como una F central, si y sólo si H0 : W µ = 0 es cierta.
+
+3.2.3.   Prueba de hipótesis marginal para los efectos aleatorios
+         involucrados en el modelo
+
+   Para la hipótesis marginal relativa a los efectos aleatorios dada en (36), la
+forma cuadrática asociada a la parte aleatoria del modelo, generada a partir de la
+función de verosimilitud expuesta en (17), está dada por:
+
+              SCM A   R(µ, θ) − y ′ PW p y   y ′ [(In − T )(In − PW p )]y
+                    =                      =                                          (41)
+                σe2           σe2                          σe2
+
+y la forma cuadrática asociada al error corresponde a la expuesta en (40). Si se
+estuviese trabajando con un modelo de efectos fijos como el expuesto en (23),
+
+                                         Revista Colombiana de Estadística 29 (2006) 35–56
+
+50                                         Diana Carolina Franco & Oscar Orlando Melo
+
+
+entonces:
+              P = Z ′ Z,    T = In − Z(Z ′ Z)−1 Z ′ = T T,     y   Vp = σe2 In
+de donde para la forma cuadrática dada en (41) se tendrı́a la idempotencia y la
+independencia de la forma cuadrática asociada al error. Sin embargo, es claro que
+en este caso no se está trabajando con un modelo que esté involucrando únicamente
+efectos fijos, como el expuesto en (23) y, por lo tanto, como se muestra en Franco
+(2005), esto no se cumple a menos que P = Z ′ Z y que la estructura de variabilidad
+de y tenga la forma particular Vp = σe2 In .
+    Teniendo en cuenta que la única forma cuadrática que se distribuye χ2 es la
+asociada al error, y que entre ésta y la de la parte aleatoria del modelo no hay
+independencia, entonces:
+                               (n − (p + r − 1))(SCM A)
+                                                                                       (42)
+                                     (r − 1)(SCE)
+                                       ′                                  θ′ Z ′ Zθ
+no se distribuye exactamente como una F(r−1,n−(p+r−1),φ 1)
+                                                           , con φ1 =               .
+                                                                             2σe2
+   Al igual que el Estadístico obtenido para la prueba de hipótesis general, en este
+caso no se tiene una distribución F exacta. Sin embargo, el Estadístico dado en
+(42) resulta ser más apropiado que el utilizado comúnmente.
+
+
+3.3.      Metodologı́a para el manejo de la información faltante
+          en modelos mixtos
+     1. Hallar unas estimaciones iniciales de los componentes de varianza involucra-
+        dos en el modelo, σθ2 y σe2 , empleando la información con la que se cuenta
+        originalmente en el arreglo a través del Método III de Henderson (1952).
+     2. Encontrar las estimaciones iniciales de los vectores de efectos fijos y aleatorios
+        involucrados en el modelo, µ y θ, de acuerdo con las expresiones dadas en
+        (13) y (14), respectivamente.
+     3. Realizar la estimación de la información faltante, empleando la expresión
+        dada en (16) e imputarla en el diseño.
+     4. Encontrar unas nuevas estimaciones de los componentes de varianza invo-
+        lucrados en el modelo, σθ2 y σe2 , empleando la información completa en el
+        arreglo a través del Método III de Henderson (1952).
+     5. Hallar unas nuevas estimaciones de los vectores de efectos fijos y aleatorios
+        involucrados en el modelo, µ y θ, utilizando la información completa en el
+        diseño, de acuerdo con las expresiones (19) y (20), respectivamente.
+     6. Realizar los análisis de varianza con la información completa expuestos en
+        las tablas 1 y 2, involucrando las últimas estimaciones de los componentes
+        de varianza y de los vectores de efectos fijos y aleatorios, y la respectiva
+        corrección en los grados de libertad del error y del total, de acuerdo con la
+        cantidad de datos faltantes en el arreglo.
+
+
+                                          Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                      51
+
+
+4.     Caso de estudio
+    Tomando la adaptación realizada por Hocking (1996) del diseño factorial tra-
+bajado por Milliken & Johnson (1984), se tiene un diseño factorial 2 × 6, en el cual
+se considera la productividad de diferentes máquinas en una fábrica al ser manio-
+bradas por diferentes operarios. El objetivo es comparar la productividad de dos
+máquinas usadas en la fabricación de cierto producto, para lo cual seis empleados
+fueron seleccionados aleatoriamente y cada uno de ellos maniobró cada una de las
+máquinas en tres ocasiones. En este diseño se asume que las máquinas son fijas
+mientras que los operarios son aleatorios. El arreglo factorial 2 × 6 sin interacción,
+descrito previamente, se caracteriza por el siguiente modelo:
+
+                                 yijk = mi + pj + eijk                                 (43)
+
+con: i = 1, 2, j = 1, 2, 3, 4, 5, 6 y k = 1, 2, 3, y donde yijk es la productividad de la
+k-ésima réplica correspondiente a la i-ésima máquina maniobrada por el j-ésimo
+operario; mi es la productividad promedio de la i-ésima máquina, pj es el efecto
+aleatorio del j-ésimo operario, tal que pj ∼ N (0, σp2 ); y eijk es la componente del
+error aleatorio, tal que eijk ∼ N (0, σe2 ).
+    Matricialmente, el modelo expresado en (43) se puede escribir como el modelo
+mixto de medias de celda, expresado en (1). En este caso, y(36×1) es el vector de
+productividades, W(36×2) es la matriz de incidencia de rango columna completo
+que asocia las observaciones con los respectivos componentes del vector µ(2×1) de
+valores medios desconocidos de los efectos fijos de las máquinas, Z(36×6) es la matriz
+de incidencia que asocia las observaciones con los respectivos componentes del
+vector θ(6×1) de constantes desconocidas de los efectos aleatorios de los operarios
+y e(36×1) es el vector de errores aleatorios.
+    Para este modelo se asume una estructura de variabilidad como la expuesta en
+(4), es decir:
+
+                           θ(6×1) ∼ N (0(6×1) , σθ2 I(6×6) ),
+                          e(36×1) ∼ N (0(36×1) , σe2 I(36×36) )   y
+                        Cov(θ, e) = 0(6×36)
+
+    De lo anterior, se tiene una estructura conocida de la matriz de varianzas y
+covarianzas asociada al vector de variables aleatorias y, presentada en (5).
+    Para el arreglo con la información completa, los estimadores máximo verosı́mi-
+les de los parámetros involucrados en el modelo dados en (8) y (9) son:
+                                                  2         3
+                                                       1.58
+                                                   6 −0.39 7
+                                "     #            6        7
+                                 52.36             6   6.90 7
+                           µ̇ =               θ̇ = 6                                   (44)
+                                                   6        7
+                                 60.32                 0.83 7
+                                                            7
+                                                   6
+                                                   6        7
+                                                   4   1.69 5
+                                                     −10.62
+
+
+                                          Revista Colombiana de Estadística 29 (2006) 35–56
+
+52                                             Diana Carolina Franco & Oscar Orlando Melo
+
+
+Para hacer uso de la metodologı́a propuesta, se considera que el diseño factorial de
+interés tiene m = 10 datos faltantes. En la tabla 3 se muestra el arreglo factorial
+2 × 6 con la información faltante.
+
+
+      Tabla 3: Arreglo de la estructura factorial 2 × 6, con m = 10 datos faltantes.
+
+                                                           Réplica
+                        Máquina    Operario         1       2         3
+                                           1        52.0     x         x
+                                           2        51.8    52.8       x
+                            I              3        60.0     x         x
+                                           4        51.1    52.3       x
+                                           5        50.9    51.8      51.4
+                                           6        46.4    44.8      49.2
+                                           1        64.0     x         x
+                                           2        59.7    60.6      59.0
+                            II             3        68.6    65.8       x
+                                           4        63.2    62.8      62.2
+                                           5        64.8    65.0       x
+                                           6        43.7    44.2      43.0
+
+
+    En la tabla 4 se presentan los resultados de las estimaciones de los datos fal-
+                                              2
+tantes, asumiendo que e2(6×1) ∼ N (0(6×1) , σ̂e(1) I(6×6) = 13.5I(6×6) ). Al hacer una
+revisión de las estimaciones obtenidas se puede ver que en general éstas son buenas
+al compararlas con los datos originales, aunque algunos datos son subestimados y
+otros sobreestimados. Se puede observar, además, que las estimaciones de los da-
+tos faltantes empleando los estimadores propuestos son cercanas a las resultantes
+al usar la metodologı́a de estimación presentada en Melo & Melo (2005), cuyos
+resultados coinciden con los generados al hacer uso del algoritmo EM de Análi-
+sis de Varianza presentado en Hocking (1996), tal y como se muestra en Melo &
+Melo (2005). En este caso, los parámetros estimados considerando únicamente la
+información disponible en el arreglo son:
+                                                     2            3
+                                                             1.52
+                                "      #
+                                                     6
+                                                     6      −0.25 7
+                                                                  7
+                                 52.65            0
+                                                     6       6.63 7
+                           µ̃ =                 θ̇ = 6
+                                                     6            7
+                                 59.77                       1.30 7
+                                                                  7
+                                                     6
+                                                     6            7
+                                                     4       1.19 5
+                                                           −10.39
+
+
+     Y las estimaciones iniciales de los componentes de varianza son: σ̂θ2 = 38.58 y
+σ̂e2 = 13.45.
+    Las estimaciones de los componentes de varianza obtenidas después de estimar
+e imputar la información faltante a través del método propuesto en Melo & Melo
+(2005) son:
+    σ̂θ2 = 33.8125 y σ̂e2 = 8.8481. Las obtenidas al hacer uso del método propuesto
+en el presente trabajo son respectivamente: σ̂θ2 = 33.9955 y σ̂e2 = 9.3358.
+
+                                           Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                         53
+
+
+Tabla 4: Valores estimados para la estructura factorial 2×6, con m = 10 datos faltantes.
+
+                                   y2       ŷ2     e2       ŷ2∗
+                                  52.1   54.2      -2.76     51.4
+                                  52.1   54.2      -1.10     53.1
+                                  52.3   52.4      -0.71     51.7
+                                  59.9   59.3       0.44     59.7
+                                  59.9   59.3       0.80     60.1
+                                  51.7   54.0      -1.33     52.7
+                                  63.9   61.3       0.27     61.6
+                                  63.9   61.3       1.31     62.6
+                                  67.2   66.4      -0.44     66.0
+                                  64.8   61.0       2.12     63.1
+
+
+    En la tabla 5 se presentan las convenciones empleadas para la identificación de
+los análisis de varianza obtenidos a través del empleo de las diferentes metodologı́as
+de estimación de información faltante con el modelo mixto de medias de celda.
+
+  Tabla 5: Convenciones empleadas para la identificación de los análisis de varianza.
+
+        Convención                                  Análisis de varianza
+   CT D(I) y CT D(III)       Con todos los datos originales observados, tipos I y III,
+                             respectivamente.
+    CDI(I) y CDI(III)        Con datos imputados a través de la técnica presentada en
+                             Melo & Melo (2005), tipos I y III, respectivamente.
+  CDI ∗ (I) y CDI ∗ (III)    Con datos imputados a través del método propuesto en
+                             este trabajo, tipos I y III, respectivamente.
+
+
+    Para los análisis de varianza con los datos completos, los grados de libertad
+están dados por: p = 2, r − 1 = 5, n − (p + r − 1) = 36 − 7 = 29, n = 36.
+    Resulta interesante ver que en el contexto de los modelos mixtos, los análisis
+de varianza tradicionales e implementados en paquetes Estadísticos como SAS, son
+generados a partir de estimaciones de los parámetros µ y θ que son poco apropiadas
+al omitir la naturaleza de los modelos de interés. Por ejemplo, para el diseño con
+datos completos, las sumas de cuadrados son generadas con base en las siguientes
+estimaciones de los parámetros:
+                                                         2        3
+                                                            35.03
+                                  "     #
+                                                        6
+                                                        6  −8.63 77
+                                   52.36                6 152.63 7
+                          µ̇0 =                   θ̇0 = 6
+                                                        6         7
+                                   60.32                    18.48 7
+                                                                  7
+                                                        6
+                                                        6         7
+                                                        4   37.50 5
+                                                          −235.02
+
+  Como puede verse, para el vector de efectos aleatorios esta estimación difiere
+mucho de la presentada en (44), la cual es la apropiada, ya que como se muestra en
+
+                                             Revista Colombiana de Estadística 29 (2006) 35–56
+
+54                                          Diana Carolina Franco & Oscar Orlando Melo
+
+
+(9), tiene en cuenta que en el modelo de interés θ es un vector de efectos aleatorios
+y no de efectos fijos. Por el contrario, los análisis de varianza propuestos en este
+trabajo son generados a partir de estimaciones de los parámetros µ y θ que tienen
+en cuenta la naturaleza de los modelos de interés.
+    En la tabla 6 se presentan los resultados obtenidos en el análisis de varianza,
+utilizando las pruebas propuestas en este trabajo. Los grados de libertad están
+dados por: n − (p + r − 1) − m = 36 − 7 − 10 = 19 y n − m = 36 − 10 = 26.
+
+
+     Tabla 6: Análisis de varianza propuesto para el diseño factorial 2 × 6, (m = 10).
+
+     Metodologı́a   CT D(I)   CT D(III)    CDI(I)     CDI(III)     CDI ∗ (I)   CDI ∗ (III)
+     SCM             116000        1776     115345         1611      115257          1683
+     SCM F           114848         625     114238          504      114140           566
+     SCM A             1151        1151       1107         1107        1118          1118
+     SCE                233         233        208          208         220           220
+     SCT             116233        2009     115554         1819      115477          1903
+     CM M             16571         296      16478          269       16465           281
+     CM M F           57424         625      57119          504       57070           566
+     CM M A             230         230        221          221         224           224
+     CM E                 8            8        11           11          12            12
+     FG                2062           37      1503           25        1425            24
+     FF                7147           78      5210           46        4938            49
+     FA                  29           29        20           20          19            19
+
+
+    De la tabla de análisis de varianza se puede ver que los valores de los Estadísticos
+de prueba obtenidos a través del empleo de la metodologı́a propuesta son cercanos
+a los resultantes al usar el análisis de varianza tradicional cuando se han imputado
+los datos faltantes empleando los estimadores de Melo & Melo (2005), y son los
+que menos se alejan de los obtenidos al realizar el análisis con los datos completos.
+Esto se debe a que en las metodologı́as de estimación tradicionales se adicionan
+residuales nulos a los valores estimados, razón por la cual las estimaciones quedan
+totalmente determinadas por la información observada en el arreglo, al contrario
+de lo que sucede con la metodologı́a propuesta, en la cual, para que las estimaciones
+cuenten con una variabilidad interna un poco más fiel a la realidad, se adiciona
+un error aleatorio al vector de valores estimados, con lo que además se logra una
+disminución de la correlación lineal entre los subvectores del vector de información.
+
+
+5.        Conclusiones
+   Se propone una metodologı́a para la estimación de información faltante con
+el modelo mixto de medias de celda, la cual proporciona estimadores insesgados
+y permite estimar tanto los datos individuales en las celdas como los valores de
+
+                                           Revista Colombiana de Estadística 29 (2006) 35–56
+
+Imputación y Estadísticos de prueba en modelos mixtos a dos vı́as                     55
+
+
+las celdas vacı́as. En la metodologı́a propuesta se adiciona un error aleatorio al
+vector de valores estimados, con lo cual se disminuye la correlación lineal entre los
+vectores de información observada y estimada.
+    Los Estadísticos de prueba construidos tradicionalmente e implementados en
+paquetes Estadísticos como SAS, omiten las caracterı́sticas de los modelos mixtos,
+y por ello resultan menos apropiados que los generados en el presente trabajo, los
+cuales tienen en cuenta la naturaleza de los modelos de interés.
+Referencias
+Allan, F. & Wishart, J. (1930), ‘A Method of Estimating the Yield of a Missing Plot in Field Experiments’, J. Agric. Sci. 20, 399–406.
+Barroso, L. P., Bussab, W. O. & Knott, M. (1998), ‘Best Linear Unbiased Predictor in the Mixed Model with Incomplete Data’, Communications in Statistics 21, 121–129.
+Bartlett, M. S. (1937), ‘Some Examples of Statistical Methods of Research in Agriculture and Applied Biology’, Journal of the Royal Statistical Society 4(2), 137–183.
+Corbeil, R. R. & Searle, S. R. (1976), ‘Restricted Maximum Likelihood (REML) Estimation of Variance Components in the Mixed Model’, Technometrics 18, 31–38.
+Dodge, Y. (1985), Analysis of Experiments with Missing Data, John Wiley & Sons, New York.
+Fisher, R. A. (1935), The Design of Experiments, Oliver & Boyd, Edinburgh.
+Franco, D. C. (2005), Metodologı́a para la estimación de información faltante, imputación y Estadísticos de prueba en modelos mixtos a dos vı́as de clasificación, Tesis de maestría, Universidad Nacional de Colombia, Departamento de Estadística, Bogotá D. C.
+Gallo, J. & Khuri, A. I. (1990), ‘Exact Test for the Random and Fixed Effects in an Unbalanced Mixed Two Way Cross-Classification Model’, Biometrics 46, 1087–1095.
+Harville, D. A. & Carriquiry, A. L. (1992), ‘Classical an Bayesian Prediction as Applied to an Unbalanced Mixed Linear Model’, Biometrics 48, 987–1003.
+Henderson, C. R. (1952), Estimation of Variance and Covariance Components, Cornell University. North Carolina Summer Statistics Conference.
+Hocking, R. R. (1996), Methods and Applications of Linear Models, John Wiley & Sons, New York.
+Lindstrom, M. J. & Bates, D. M. (1988), ‘Newton Raphson and EM Algorithms for Linear Mixed Effects Models for Repeated Measures Data’, Journal of the American Statistical Association 83, 1014–1022.
+Little, R. & Rubin, D. (2002), Statistical Analysis with Missing Data, John Wiley & Sons, New York.
+Melo, O. O. & Melo, S. E. (2005), Metodologı́a para la estimación de datos faltantes en modelos mixtos de medias de celdas, in ‘Modelamiento Estadístico. Memorias del XV Simposio de Estadística’, Universidad Nacional de Colombia. Departamento de Estadística, Bogotá.
+Milliken, G. & Johnson, D. (1984), Analysis of Messy Data, Vol. I of Designed Experiments, Van Nostrand Reinhold, New York.
+Murray, L. W. & Smith, D. W. (1985), ‘Estimability, Testability, and Connectedness in the Cell Means Models’, Communications in Statistics 14, 1889–1917.
+Searle, S. R. (1971), Linear Models, John Wiley & Sons, New York.
+Searle, S. R., Casella, G. & McCulloch, C. (1992), Variance Components, John Wiley & Sons, New York.
+Sheffé, H. (1959), The Analysis of Variance, Wiley.
+Thomsen, I. (1975), ‘Testing Hyphoteses in Unbalanced Variance Components Models for Two Way Layouts’, Annals of Statistics 3, 257–265.
+Yates, F. (1933), ‘The Analysis of Replicate Experiments When the Field Results are Incomplete’, Emp. Journ. Exp. Agric. (1).

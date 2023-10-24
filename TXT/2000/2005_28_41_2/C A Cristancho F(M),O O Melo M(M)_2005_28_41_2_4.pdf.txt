@@ -1,0 +1,752 @@
+Optimización de sistemas de respuesta dual. Una aproximación compromiso
+Universidad Nacional de Colombia
+Resumen
+Recientemente se han propuesto diversas aproximaciones para la optimización de procesos donde se identifican dos variables respuesta, sin llegar a un concenso en el establecimiento de una solución compromiso ante la presencia de múltiples condiciones contradictorias. Se propone una nueva metodologı́a que toma en cuenta simultáneamente la calidad de las predicciones, las variabilidades relativas y los costos o preferencias asociados a cada respuesta. Se ilustra mediante un ejemplo y los resultados pueden ser replicados utilizando el módulo SOLVER de EXCEL.
+Palabras Claves: Análisis multiobjetivo, sistemas de respuesta dual, superficies de respuesta, múltiples respuestas, optimización simultánea.
+Introducción
+La optimización de sistemas de respuesta dual (SRD) ha sido un problema muy estudiado en el diseño robusto de procesos y productos industriales, donde las situaciones experimentales involucran la realización de múltiples mediciones de diversas caracterı́sticas de cada elemento de investigación y se tiene como meta establecer un conjunto de condiciones que, a juicio del investigador, sean favorables al desarrollo del proceso analizado (Myers & Carter 1973).
+Sin embargo, su utilidad no se restringe a este campo ya que existe una gran variedad de situaciones donde es de vital importancia el desarrollo de metodologı́as para la optimización simultanea de dos respuestas, como la optimización conjunta de la media y la varianza de una variable respuesta univariada, la maximización de un rendimiento minimizando una función de costos o sujeto a un presupuesto especı́fico, la minimización de un tiempo de ejecución mientras se optimiza una caracterı́stica de calidad de un producto, etc., teniendo ası́ aplicaciones en áreas tan diversas como ciencias fı́sicas, quı́micas, biológicas, sociales, clı́nicas, ingenierı́a, economı́a e investigación de mercados.
+En este contexto, las metodologı́as basadas en superficies de respuesta (MSR) juegan un papel fundamental en la estimación de condiciones de operación óptimas para la ejecución del experimento o proceso particular ya que han mostrado ventajas respecto a otros métodos de optimización multirespuesta, en particular para modelar situaciones de tipo continuo y por el hecho de tener medidas en términos de significancia estadı́stica de la bondad de los modelos propuestos.
+En la sección 2 se describe el problema de optimización dual. En la sección se propone una transformación y un esquema de optimización para el SRD y en la sección 4, se presenta una aplicación de la metodologı́a planteada y se entregan las conclusiones de este trabajo.
+El problema de optimización dual
+Tomando como referencia los casos enunciados por Taguchi (1986) para la
+optimización de la media y la varianza de una respuesta, se pueden considerar las
+siguientes alternativas de optimización para cualquier tipo de respuesta univariada:
+
+      Aproximación del objetivo a un valor deseado (VD): encontrar condiciones
+      bajo las cuales la variable respuesta se acerque a un valor deseado o prede-
+      terminado por el investigador.
+
+      Maximización del objetivo (↑): encontrar condiciones bajo las cuales la va-
+      riable respuesta sea tan grande como sea posible.
+
+      Minimización del objetivo (↓): encontrar condiciones bajo las cuales la va-
+      riable respuesta sea tan pequeña como sea posible.
+
+   De esta manera, al considerar respuestas duales, existen nueve casos posibles de
+optimización, determinados por los pares de objetivos (O1 , O2 ) que se encuentran
+consignados en la siguiente matriz, con las convenciones establecidas para el caso
+univariado:
+
+Optimización de sistemas de respuesta dual. Una aproximación compromiso                     157
+
+
+                                                                    
+                         (V D, V D)          (V D, ↑)       (V D, ↓)
+                         (↑, V D)            (↑, ↑)         (↑, ↓) 
+                          (↓, V D)            (↓, ↑)         (↓, ↓)
+
+    Por ejemplo, la pareja de objetivos (V D, ↑) corresponde al caso (Aproximación
+de la variable respuesta 1 a un valor deseado y maximización de la variable res-
+puesta 2) y las parejas de la diagonal de la tabla corresponden a objetivos iguales
+para las dos variables respuestas.
+    El principal problema en el establecimiento de una solución compromiso es la
+existencia de alternativas no dominadas. Un conjunto de alternativas no domina-
+das, también conocido como conjunto de soluciones óptimas de Pareto o conjunto
+de soluciones no inferiores, se produce cuando, al conseguir una mejorı́a en la
+optimización de un objetivo, se desmejoran otros objetivos (Censor 1977).
+    La razón principal para la existencia de soluciones no dominadas está en la
+comparación de vectores duales de un espacio m-dimensional (m ≥ 2) donde la
+relación “menor o igual que” sólo es de orden parcial 1 (Smith, Mesa, Dyner, Jara-
+millo, Poveda & Valencia 2000), convirtiendo la optimización dual en un problema
+complejo que involucra la toma de decisiones. Por ejemplo, se puede afirmar que
+(2, 3) < (4, 8), pero no se puede comparar por medio de la relación “menor o igual
+que” a (5, 6) con (4, 7).
+    A grandes rasgos, las formulaciones para la resolución del problema de opti-
+mización se clasifican en: i) enfoques basados en la optimización media-varianza
+(MV), como los presentados en Del Castillo & Montgomery (1993), Lin & Tu
+(1995) y Tang & Xu (2002) y ii) enfoques basados en múltiples respuestas, como
+los presentados en Harrington (1965), Derringer & Such (1980) y Vining (1998).
+    La tabla 1 resume las formulaciones de algunos enfoques que en la actualidad se
+consideran más relevantes y presentan mayor difusión. A continuación se presentan
+algunos autores que han trabajado en este tipo de problemas.
+    Derringer & Such (1980, referido como DS) retomaron la función de deseabili-
+dad propuesta por Harrington (1965) y la adaptaron para su utilización mediante
+MSR. El establecimiento de funciones de deseabilidad presupone un conocimiento
+a priori de los rangos de valores más deseables para las respuestas analizadas.
+    Vining (1998, referido como V), retomó el trabajo de Khuri & Conlon (1981,
+referido como KC), al proponer una función que incorpora la matriz de varianzas
+y covarianzas de las respuestas predichas, e introducir un término que penaliza
+regiones donde la calidad de la predicción es relativamente pobre. Además, se
+incluye el uso de una función de costos. Una seria desventaja de este enfoque está en
+la escogencia de una matriz de costos que constituye un componente subjetivo que
+refleja la calidad de conocimiento del proceso.
+    Tang & Xu (2002, referido como TX) generalizaron varias de las metodologı́as
+propuestas, mediante programación por metas. Este enfoque considera restriccio-
+   1 Una relación entre pares de elementos de un conjunto es de orden parcial si es reflexiva y
+
+transitiva. Una relación de orden parcial en un conjunto X es de orden total si para dos elementos
+cualesquiera a, b de X siempre se puede afirmar o bien que a ≤ b, o que b ≤ a.
+
+158                                       César A. Cristancho F. & Oscar O. Melo M.
+
+
+nes sobre las variables independientes, tanto de tipo esférico como cuboidal. Como
+casos particulares pueden considerarse Del Castillo & Montgomery (1993) y Lin
+& Tu (1995). Su desventaja está en no hacer consideraciones sobre la matriz de
+varianzas y covarianzas de las respuestas y en la calidad de las predicciones.
+
+        Tabla 1: Resumen de algunas de las metodologı́as más relevantes
+
+        Autor       Enfoque                       Formulación
+                                                                      1/m
+      DS (1980)     Múltiple   Maximizar D= (d1 ∗ d2∗ . . . ∗ dm )
+                                           
+                                             ybl − Ml   r
+                                           
+                                                             Ml ≤ ybl ≤ Tl
+                                            Tl − Ml
+                                donde dl =    ybl − Sl t
+                                                             Tl ≤ ybl ≤ Sl
+                                           
+                                             Tl − Sl
+                                           
+                                                 0           ybl < Ml , o ybl > Sl
+      KC (1981)     Múltiple              d − T )′ (Σyb(x))−1 (y(x)
+                                Minimizar (y(x)                     d − T)
+       V (1998)     Múltiple                          d − T ) + t0
+                                           d − T ) (C)(y(x)
+                                Minimizar (y(x)
+                                                       ′
+
+
+
+                                donde t0 = traza (CΣyb(x))
+                                           yc − T 2  yc − T 2
+                                             µ     µ       σ    σ
+      TX (2002)     MV          Minimizar              +
+                                               ωµ            ωσ
+
+donde: ybl corresponde a la l-ésima respuesta ajustada; Tl , Sl y Ml son respectiva-
+mente al valor objetivo fijado, el máximo valor deseado y el mı́nimo valor deseado
+para la l-ésima respuesta; r y t corresponden a decisiones subjetivas que determi-
+nan la curvatura de D; ωl corresponde al peso relativo de la l-ésima respuesta y
+C corresponde a una matriz de costos.
+
+
+3.     Metodologı́a de análisis propuesta
+    Partiendo de una situación experimental, donde se identifican dos variables
+respuestas y1 , y2 que se supone pueden ser explicadas por un conjunto de varia-
+bles controlables x1 , . . . , xk y posterior a la escogencia de un diseño experimental
+de acuerdo a las caracterı́sticas del proceso, los objetivos del investigador y a los
+recursos con que se cuenta para la obtención de dichos objetivos, se ajustan dos
+modelos empı́ricos a los datos observados, uno para cada variable respuesta, me-
+diante la utilización de MSR. Un modelo ajustado de segundo orden para la l-ésima
+respuesta (l = 1.2) es:
+                                                ′       ′
+                                   ybl = b0l + xl bl + xl Bl xl                      (1)
+donde b0l , bl y Bl contienen las estimaciones de los coeficientes del intercepto,
+lineales y de segundo orden respectivamente, Bl es una matriz simétrica cuyos ele-
+mentos diagonales son los coeficientes puros de segundo orden βlii y cada elemento
+lij (i 6= j) toma el valor βlij /2.
+    Dado que en la mayorı́a de problemas prácticos no existe una solución optimal
+para las dos respuestas consideradas individualmente a causa de la existencia de
+
+Optimización de sistemas de respuesta dual. Una aproximación compromiso              159
+
+conjuntos de soluciones no dominadas, en este punto, se parte del valor esperado
+de una función de pérdida cuadrática dado por Graybill (1976):
+                                      ′
+                        y (x)) − T ] C [E(b
+              E(ℓ) = [E(b                 y (x)) − T ] + traza [CΣyb(x)]               (2)
+donde Σyb(x) es la matriz de varianzas y covarianzas de las respuestas estimadas
+en la localización x, T es un vector que contiene los valores ideales para cada
+respuesta y C es una matriz de costos relativos o preferencias asociadas a cada
+respuesta. Suponiendo que la respuesta ajustada yb(x) es un estimador insesgado
+de E [by (x)] y, siguiendo a Vining (1998), se utiliza la siguiente estimación de la
+función de pérdida:
+                  b (ℓ) = [b
+                  E
+                                      ′
+                                          y (x) − T ] + traza [CΣyb(x)]
+                           y (x) − T ] C [b                                            (3)
+
+
+3.1.    Varianzas y covarianzas de predicción
+     Sea Xl la matriz diseño para la l-ésima respuesta (l = 1.2) y sea x′l0 la localiza-
+ción de interés expandida por el modelo para la l-ésima respuesta. La varianza de
+predicción de la localización xl0 , medida en términos de la l-ésima respuesta, es:
+                                                            −1
+                       hjl = Var ybl (xl0 ) = σll xl0 Xl′ Xl     xl0                   (4)
+
+    La covarianza de predicción entre las dos respuestas predichas yb1 (x10 ) y yb2 (x20 )
+está dada por:
+                                                          −1 ′  ′ −1
+                  y1 (x10 ), yb2 (x20 )) = σ12 x10 X1′ X1
+       h12 = Cov (b                                          X1 X2 X2 X2       x20 (5)
+
+
+3.2.    Posibles escogencias de la matriz C
+    Una escogencia lógica para C es hacerla una matriz diagonal, con Cll igual a
+las preferencias relativas de cada respuesta:
+                                                
+                                            ω  0
+                                C=W = 1
+                                            0 ω2
+en cuyo caso la función de pérdida se expresa como:
+            b                       2                    2
+            E(ℓ)       y1 (x) − τ1 ) + ω2 (b
+                 = ω1 (b                    y2 (x) − τ2 ) + ω1 h11 + ω2 h22            (6)
+                                                               2      
+                 = ω1 (by1 (x) − τ1 )2 + h11 + ω2 (b y2 (x) − τ2 ) + h22
+
+   Bajo esta escogencia de C, la función de pérdida es fuertemente influenciada
+por las diferentes escalas para cada respuesta y sus diferentes variabilidades.
+   Una segunda opción consiste en tomar C = KΣ−1        b , donde K es una matriz que
+                                                         y
+involucra costos asociados al proceso, para el caso, asumimos K = W y la función
+de pérdida es:
+                                                                          
+              b
+             E(ℓ) = ω1 h22 (by1 − τ1 )2 + h11 + ω2 h11 (b   y2 − τ2 )2 + h22
+                                                      
+                     − h12 yb1 − τ1 )(b
+                                      y2 − τ2 ) + 2h12                             (7)
+
+160                                              César A. Cristancho F. & Oscar O. Melo M.
+
+
+    Esta escogencia también es interesante porque tiene en cuenta fundamental-
+mente la varianza de predicción de cada respuesta y, por consiguiente, su varia-
+bilidad. Sin embargo, la penalidad impuesta a las regiones con alta varianza de
+predicción influencia en mayor medida la obtención del óptimo que las ponde-
+raciones dadas a cada respuesta. En virtud de esto, se utiliza la primera opción
+reseñada, pero se soluciona el problema de las diferentes escalas y variabilidades
+mediante la transformación que se propone en la siguiente subsección.
+
+
+3.3.    Transformación propuesta
+    Establecer una transformación de  las variables respuestas (y1 , y2 ) que equilibre
+las variabilidades relativas σ12 , σ22 y las diferencias en localización es un punto
+crucial para que las ponderaciones (ω1 , ω2 ), dadas a cada respuesta en un esquema
+de optimización, sean una medida precisa de su importancia.
+    Sin embargo, establecer dicha transformación requiere que tanto las pruebas de
+hipótesis sobre significancia y bondad de ajuste del modelo, como la localización
+de un óptimo no se vean afectadas por la misma, es decir, los estadı́sticos F , R2 y
+el punto estacionario xs deben ser invariantes a la transformación.
+    Bajo estas condiciones, una idea natural para la transformación de cada res-
+puesta yl (l = 1.2) es la de una función lineal (yl − k1l ) /k2l , con k1l y k2l cons-
+tantes, de tal manera que se anulen los efectos de localización y de escala. En el
+presente artı́culo se propone utilizar la siguiente estandarización:
+
+                                  yl − (máx(yl ) + min(yl )) /2   yl − k1l
+               f (yl ) = yl∗ =                                   =                      (8)
+                                     (máx(yl ) − mı́n(yl )) /2       k2l
+
+    De esta manera, existe un balance en términos de las diferencias en escala y
+localización, y de los valores extremos para cada respuesta:
+
+                                            (máx(yl ) − mı́n(yl )) /2
+                       f (máx(yl )) =                                 =1
+                                            (máx(yl ) − mı́n(yl )) /2
+
+                                           (mı́n(yl ) − máx(yl )) /2
+                       f (mı́n(yl )) =                                = −1
+                                           (máx(yl ) − mı́n(yl )) /2
+
+   Bajo esta estandarización, la suma de cuadrados del error para la l-ésima res-
+puesta en el modelo transformado es:
+
+                                           n 
+                                                               ŷil − k1l 2  1 
+                 n
+                 X                         X
+                                   2           yil − k1l
+       SCEl∗ =         (yil∗ − ŷil∗ ) =                   −                =  2 SCEl
+                 i=1                       i=1
+                                                  k2l              k2l        k2l
+
+              Pn              2
+donde SCEl = i=1 (yil − ŷil ) .
+   De igual manera, la suma de cuadrados total para la l-ésima respuesta en el
+
+Optimización de sistemas de respuesta dual. Una aproximación compromiso             161
+
+modelo transformado es:
+                         Pn              n 
+                                             yil − k1l 2 1 X yil − k1l 2
+           Xn                           X                     n
+   ∗             ∗ 2    ( i=1 yil∗ )2
+  SYl Yl =     (yil ) −               =                  −
+           i=1
+                            n           i=1
+                                                k2l        n i=1  k2l
+              1 X 2                               1 X 2                           
+                  n              Xn                   n              Xn
+                                               2                                   2
+         =    2      y il − 2k1l     y il + nk1l −       y il + 2k1l     y il − nk1l
+             k2l i=1             i=1
+                                                   n i=1             i=1
+
+              1 X 2        1  X 2 
+                     n                 n
+                                          1
+         =    2      y il −         yil = 2 SYl Yl
+             k2l i=1
+                            n   i=1
+                                         k2l
+
+                 Pn         2    Pn       2
+donde SYl Yl = i=1 (yil ) − ( i=1 yil ) /n. Ası́ que la suma de cuadrados de la
+regresión para la l-ésima respuesta en el modelo transformado es:
+
+                                                    1           1        1
+             SCRl∗ = SY∗l Yl − SCEl∗ =              2  SYl Yl − 2 SCEl = 2 SCRl
+                                                   k2l         k2l      k2l
+donde SCRl = SYl Yl − SCEl . De esta forma:
+
+                                 SCRl∗ /(pl − 1)   SCRl /(pl − 1)
+                         Fl∗ =                   =                 = Fl
+                                 SCEl /(n − pl )
+                                    ∗              SCEl /(n − pl )
+y,
+                                               SCRl∗     SCRl
+                                     Rl∗2 =            =        = Rl2
+                                               SY∗l Yl   SYl Yl
+
+    Entonces, no solo para esta, sino para cualquier transformación lineal se pre-
+servan los valores de la estadı́stica F y el coeficiente de determinación R2 .
+    A partir de la ecuación (1), se obtiene el modelo transformado:
+                                           ′         ′
+                  ybl − k1l  b0 + xl bl + xl Bl xl − k1l          ′        ′
+        ybl ∗ =             = l                          = c0l + xl b∗l + xl B∗l xl      (9)
+                      k2l               k2l
+
+     Ası́ que mediante una transformación lineal y ésta en particular, de las ecua-
+ciones (1) y (9), se obtiene que el cambio en la estimación de los betas para la
+l-ésima respuesta está dada de la siguiente forma:
+
+
+                         b0l − k1l                       bl                     Bl
+             c0l =                               b∗l =            y     Bl∗ =
+                            k2l                          k2l                    k2l
+
+
+Entonces,
+
+                                               Bl υl = λl υl
+                                               Bl        λl
+                                                   υl =      υl
+                                               k2l       k2l
+                                               Bl∗ υl = λ∗l υl
+
+162                                            César A. Cristancho F. & Oscar O. Melo M.
+
+
+    Los vectores propios normalizados de las dos matrices Bl y Bl∗ son iguales, más
+                                               λl
+no los valores propios cuya relación es λ∗l =     .
+                                               k2l
+    La estadı́stica de prueba para la hipótesis nula H0 : βjl = 0 (j = 1, . . . , k;
+l = 1, 2) no se altera:
+                                 βjl                 βjl
+                ∗
+               βjl               k2l                 k2l                 βjl
+   t∗0l = q                 =p               =q                    =q                 = t0l
+              σ̂l2 Cjj(l)      CM El∗ Cjj(l)    (SCEl )(Cjj(l) ) 1
+                                                                      σ̂ 2 C
+                                                       n−pl      2
+                                                                k2l       l   jj(l)
+
+
+y la ubicación del punto estacionario para la l-ésima respuesta permanece inva-
+riante:
+                       1              1  Bl −1 bl    1
+               x∗sl = − Bl∗−1 b∗l = −               = − Bl−1 bl = xsl
+                       2              2 k2l     k2l    2
+
+3.4.    Esquema de optimización dual propuesto
+   Mediante la transformación propuesta en la sección anterior, la siguiente es la
+formulación del problema de optimización con una restricción de tipo esférico:
+                         ∗                         ∗                     
+              b
+         mı́n E(ℓ) = ω1 (by1 (x) − τ1∗ )2 + h11 + ω2 (b
+                                                      y2 (x) − τ2∗ )2 + h22      (10)
+
+sujeto a xT x ≤ ρ2 .
+     De igual manera, la formulación del problema de optimización con una restric-
+ción de tipo cúbico está dada por:
+                            ∗                         ∗                     
+                b
+           mı́n E(ℓ) = ω1 (b y1 (x) − τ1∗ )2 + h11 + ω2 (b
+                                                         y2 (x) − τ2∗ )2 + h22   (11)
+
+sujeto a xl ≤ x ≤ xu .
+    Ası́, para estos dos casos se tiene en común que la función objetivo tiene forma
+cuadrática; yb1∗ (x) y yb2∗ (x) son las respuestas ajustadas para cada variable respuesta
+estandarizadas a la escala [-1, 1]; ω1 y ω2 corresponden a las importancias relativas
+de cada respuesta; h11 y h22 son las varianzas de predicción para cada respuesta en
+el punto x; τ1∗ y τ2∗ corresponden a valores ideales bajo la misma transformación de
+cada yi respectivamente, y deben variar gradualmente, de acuerdo al paso que el
+investigador considere para cada respuesta, hasta el punto en el que no se obtenga
+una mejorı́a en las respuestas consideradas; ρ corresponde a un radio donde se
+desea restringir la búsqueda del óptimo (restricción esférica), y xl y xu correspon-
+den a cotas inferiores y superiores para la búsqueda del óptimo respectivamente
+(restricción cúbica).
+
+
+4.     Aplicación de la metodologı́a a un caso
+    En un experimento para la determinación de fenol mediante una reacción osci-
+lante de tipo Belosout–Zhabotinsky se pretende encontrar una combinación óptima
+
+Optimización de sistemas de respuesta dual. Una aproximación compromiso              163
+
+de los factores: Bromato (BrO4), Americio (AM) y Cerio (Ce4+), donde las va-
+riables respuestas consideradas son amplitud y tiempo de inducción y se busca
+simultáneamente la maximización de la amplitud con la minimización del tiempo
+de inducción. El diseño experimental es un diseño factorial 43 , donde el número
+de observaciones por tratamiento no es el mismo (diseño desbalanceado), y las
+variables respuesta se definen de la siguiente forma:
+
+       Tiempo de inducción: tiempo que demora la reacción en “arrancar”, se en-
+       cuentra medido en segundos.
+
+       Amplitud: punto más bajo donde comienza a oscilar el máximo, se encuentra
+       medido en absorbancias.
+
+   En la tabla 2 se muestran los niveles factoriales del diseño experimental utili-
+zado (en unidades naturales).
+
+
+                    Tabla 2: Niveles factoriales en escala natural
+                 BrO4     0.05008    0.07308     0.15008         0.20001
+                 AM       0.05004    0.07304     0.15            0.20002
+                 Ce4+     0.00549    0.013068    0.030004        0.050037
+
+    Las variables respuesta consideradas inicialmente fueron transformadas de la
+siguiente manera: a la amplitud (referida como Amp) se le aplicó una transfor-
+mación raiz cuarta y al tiempo de inducción (referida como Tind) se le aplicó la
+transformación logaritmo natural, con el fin de estabilizar varianza de los residuales
+y conseguir un mejor ajuste de los modelos.
+    Ası́, con el fin de obtener un balance en las variabilidades relativas y no sesgar la
+optimización dual a la optimización de la respuesta con mayor media y varianza en
+su escala natural, las variables respuesta sujetas a transformaciones de Box y Cox,
+fueron luego estandarizadas a la escala [-1, 1] mediante las siguientes fórmulas:
+                                                                     √
+          ∗         ln(Tind) − 7.73               p
+                                                  4
+                                                            ∗       4
+                                                                         Amp − 0.781
+        ln (Tind) =                                   Amp        =
+                         1.37                                              0.326
+
+4.1.     Efecto de la estandarización en las respuestas
+    El efecto de la estandarización en las respuestas puede verse mediante el cálculo
+y contraste de las variabilidades relativas para las respuestas utilizadas (transfor-
+madas y no transformadas a la escala [−1, 1]), dadas las propiedades mostradas
+en la sección anterior.
+    En la tabla 3 se observa que la diferencia entre las varianzas estimadas pa-
+ra las dos variables respuesta consideradas es menor en la nueva escala. Dicho
+cambio representa el balance de las variabilidades relativas de las dos respuestas
+consideradas. A continuación se realiza el análisis para cada variable respuesta.
+
+164                                        César A. Cristancho F. & Oscar O. Melo M.
+
+
+Tabla 3: Variabilidades relativas para las respuestas consideradas en la escala na-
+tural y en la escala [-1,1]
+
+                         varianza escala natural    varianza escala [-1,1]
+              ln(Tind)
+               √                 0.5232                    0.2753
+                4
+                  Amp            0.0291                    0.2751
+
+
+4.2.    Análisis para la variable amplitud
+    Las siguientes fórmulas fueron empleadas para relacionar las unidades naturales
+del diseño con unidades estandarizadas a la escala [-1, 1]:
+              BrO4 − 0.1250              AM − 0.1250             Ce4+ − 0.0277
+       x1 =                       x2 =                    x3 =
+                −0.0749                   −0.0749                   −0.0222
+
+    A partir de un modelo de segundo orden completo, se utilizó el método de
+selección stepwise de variables regresoras y se descartaron los términos BrO42 , y
+AM2 , con un nivel de significancia α = 0.1. En la tabla 4 se muestra el análisis de
+varianza, según el cual, el modelo y todos los términos individuales involucrados
+son significativos al 5 %; además, a un nivel de significancia del 5 %, se concluye
+que el modelo de segundo orden utilizado se ajusta adecuadamente a los datos
+experimentales. (valor−p = 0.1422)
+
+
+Tabla 4: Análisis
+            √      de varianza para el modelo de segundo orden ajustado. Variable
+respuesta: ( 4 Amp)∗
+
+             Fuente           SC (III)   gl     CM          F        Prob > F
+       Modelo                 26.0547     7    3.7221    529.2797    < 0.0001
+         A-BrO4                0.4731     1    0.4731     67.2712    < 0.0001
+         B-AM                  0.3338     1    0.3338     47.4668    < 0.0001
+         C-Ce4+               19.5361     1   19.5361   2778.0164    < 0.0001
+         C2                    1.7501     1    1.7501    248.8616    < 0.0001
+         AB                    0.1023     1    0.1023     14.5477       0.0003
+         AC                    0.4170     1    0.4170     59.2997    < 0.0001
+         BC                    0.0965     1    0.0965     13.7216       0.0004
+       Residual                0.6329    90    0.0070
+         Falta de ajuste       0.4425    56    0.0079      1.4111       0.1422
+         Error Puro            0.1904    34    0.0056
+       Total                  26.6876    97
+
+   De igual forma, a través de las magnitudes de los estadı́sticos F , se puede
+observar que el factor Ce4+, tanto en su forma lineal, como en su forma cuadrática,
+presenta el impacto más significativo en la amplitud de la reacción.
+   La tabla 5 incluye algunas medidas relevantes en la evaluación del ajuste del
+                        2
+modelo; por ejemplo, Raj  indica que el modelo de segundo orden utilizado explica
+
+Optimización de sistemas de respuesta dual. Una aproximación compromiso          165
+
+el 97.44 % de la variabilidad observada (ajustando por el número de términos en
+                                   2
+el modelo); de manera similar, RP    RED sugiere que el modelo explica cerca del
+                                                                   2     2
+97.15 % de la variabilidad en nuevos datos. Luego, los valores Raj   y RP  RED no
+difieren en una gran cuantı́a y el modelo puede considerarse satisfactorio, tanto
+para fines de descripción como para predicción de nuevos valores.
+
+Tabla
+ √    5: Medidas relacionadas con el ajuste del modelo. Variable respuesta:
+( 4 Amp)∗
+
+                    Desv. Est.       0.08385    R2        0.97628
+                                                 2
+                    Media           -0.06901    Raj       0.97443
+                                                 2
+                    C.V.          -121.50996    RP red    0.97155
+
+    Fijando el valor del factor Ce4+ en 0.05, la figura 1 presenta la superficie
+ajustada para el modelo de segundo orden:
+ p
+( 4 Amp)∗ = − 0.8529 − 1.6211(BrO4) − 1.2651(AM ) + 59.5002(Ce4+)
+              − 644.8629(Ce4+)2 + 8.6210(BrO4)(AM ) + 60.2722(BrO4)(Ce4+)
+              − 30.6483(AM )(Ce4+)                                                (12)
+
+
+
+
+Figura
+ √     1: Superficie de respuesta ajustada (Ce4+=0.05). Variable respuesta:
+( 4 Amp)∗ .
+
+   El análisis gráfico sugiere que el óptimo buscado está cerca de una combinación
+de niveles donde BrO4 se encuentra en nivel alto y AM en nivel bajo.
+
+166                                         César A. Cristancho F. & Oscar O. Melo M.
+
+
+4.3.    Análisis para la variable tiempo de inducción
+    Fue necesario aplicar la transformación logaritmo natural tanto a la variable
+respuesta, como a los factores que la explican, para conseguir un ajuste adecuado
+del modelo. De esta manera, el logaritmo natural del tiempo de inducción estanda-
+rizado a la escala [-1, 1] es explicado por los factores ln(BrO4), ln(AM ), ln(Ce4+).
+Para relacionar los factores en sus unidades naturales con unidades estandarizadas
+a la escala [-1, 1], se utilizaron las siguientes fórmulas:
+
+        ln(BrO4) + 2.302              ln(AM ) + 2.302               ln(Ce4+) + 4.100
+ x1 =                          x2 =                          x3 =
+             0.692                        0.693                          1.105
+
+   Se ajustó un modelo de segundo orden completo y los resultados del análisis
+de varianza se muestran en la tabla 6, el modelo y todos los términos individuales
+involucrados son significativos al 5 %. El valor-p de falta de ajuste, igual a 0.2585,
+indica que el modelo de segundo orden se ajusta adecuadamente a los datos.
+
+
+Tabla 6: Análisis de varianza para el modelo de segundo orden ajustado. Variable
+respuesta: ln∗ (Tind).
+
+             Fuente        SC (III)    gl       CM          F          Prob > F
+       Modelo              26.6128      9      2.9570    2793.0130     < 0.0001
+         A-ln(BrO4)         0.2755      1      0.2755     260.1858     < 0.0001
+         B-ln(AM)           3.7215      1      3.7215    3515.1054     < 0.0001
+         C-ln(CE)          17.3531      1     17.3531   16390.7961     < 0.0001
+         A2                 0.0163      1      0.0163      15.4053        0.0002
+         B2                 0.0229      1      0.0229      21.6746     < 0.0001
+         C2                 0.1460      1      0.1460     137.8962     < 0.0001
+         AB                 0.0144      1      0.0144      13.6454        0.0004
+         AC                 0.0350      1      0.0350      33.1060     < 0.0001
+         BC                 0.0474      1      0.0474      44.7901     < 0.0001
+       Residual             0.0932     88      0.0011
+         Falta de ajuste    0.0617     54      0.0011        1.2348       0.2585
+         Error Puro         0.0315     34      0.0009
+       Total               26.7060     97
+
+    De igual manera, a través de las magnitudes de los estadı́sticos F se puede
+observar que el factor ln(Ce4+) en su forma lineal presenta el impacto más signi-
+ficativo en el tiempo de inducción de la reacción, seguido por el factor ln(AM ).
+    La tabla 7, muestra algunas medidas relevantes en la evaluación del ajuste del
+                                 2
+modelo; por ejemplo, el valor Raj  indica que el modelo de segundo orden utilizado
+explica 99.61 % de la variabilidad observada (ajustando por el número de términos
+                                       2
+en el modelo); de manera similar, el RP   red sugiere que el modelo explica aproxima-
+damente el 99.56 % de la variabilidad en nuevos datos. Como existe concordancia
+entre estos dos valores, el modelo puede considerarse satisfactorio, no sólo para
+fines de descripción sino para predicción de nuevos valores.
+
+Optimización de sistemas de respuesta dual. Una aproximación compromiso       167
+
+
+Tabla 7: Medidas relacionadas con el ajuste del modelo. Variable respuesta:
+ln∗ (Tind).
+
+                    Desv. Est.      0.03253   R2       0.99651
+                                               2
+                    Media          -0.14517   Raj      0.99615
+                                               2
+                    C.V.          -22.41226   RP red   0.99560
+
+
+
+
+Figura 2: Superficie de respuesta ajustada (Ce4+=0.05). Variable respuesta:
+ln∗ (Tind).
+
+
+
+   Fijando el valor de Ce4+ en 0.05, la figura 2 presenta la superficie de respuesta
+ajustada para el modelo de segundo orden:
+
+
+      y2 = − 1.9935 + 0.2185 ln(BrO4) − 0.2757 ln(AM ) − 0.1325 ln(Ce4+)
+           + 0.0820(ln(BrO4))2 + 0.0871(ln(AM ))2 + 0.0747(ln(Ce4+))2
+           − 0.0399 ln(BrO4) ln(AM ) − 0.0405 ln(BrO4) ln(Ce4+)
+           − 0.0477 ln(AM ) ln(Ce4+)                                           (13)
+
+donde y2 = ln∗ (Tind). Se observa que conforme aumenta el valor del factor
+ln(AM ) y disminuye el valor del factor ln(BrO4), la respuesta decrece, de tal
+forma que el óptimo arrojado en la optimización restringida de esta respuesta es
+contrario
+ √        al que se puede establecer en la optimización restringida de la variable
+( 4 Amp)∗ . Además, el factor ln(AM ) tiene un efecto mayor que el factor ln(BrO4)
+
+168                                      César A. Cristancho F. & Oscar O. Melo M.
+
+
+en el tiempo de inducción de la reacción.
+   En conclusión, para la variable respuesta ln∗ (Tind), los valores mı́nimos están
+determinados principalmente por la escogencia de valores altos del factor ln(AM ),
+con lo cual, al considerar las dos respuestas simultáneamente, se presentan solucio-
+nes contradictorias y por tal razón debe adoptarse una solución compromiso que
+tenga en cuenta los valores de cada respuesta, la calidad de las predicciones, y las
+preferencias por la optimización de una respuesta en detrimento de la otra.
+
+
+4.4.     Optimización dual y análisis de sensibilidad.
+    En la tabla 8, se muestran los resultados de la optimización simultánea de las
+dos respuestas consideradas, tanto para la metodologı́a propuesta, como para las
+metodologı́as de Tang & Xu (2002), Vining (1998) y Derringer & Such (1980).
+    Se observa que las ponderaciones asumidas para el esquema de optimización
+propuesto no influyen en gran medida en el óptimo
+                                                 √   encontrado, la única solución
+distinta se obtuvo al considerar que la variable 4 Amp tiene 9 veces la importancia
+de la variable ln(T ind), en cuyo caso el factor B decrece en magnitud (de 0.2 a
+0.1503).
+
+
+Tabla 8: Comparación de las soluciones obtenidas para el problema de optimización
+dual
+                                                                       √
+    Metodologı́a w1 w2          BrO4      AM        Ce4      ln(Tind) 4 Amp
+     Propuesta    0.1 0.9 0.2000 0.1503 0.0500                6.6065    0.9852
+     Propuesta    0.2 0.8 0.2000 0.2000 0.0500                6.4593    0.9679
+          ..        ..    ..      ..        ..        ..         ..        ..
+           .         .     .       .         .         .          .         .
+       Propuesta    0.5   0.5   0.2000    0.2000    0.0500    6.4593     0.9679
+           ..        ..    ..      ..        ..        ..        ..         ..
+            .         .     .       .         .         .         .          .
+       Propuesta    0.9   0.1   0.2000   0.2000     0.0500    6.4593     0.9679
+           V        0.5   0.5   0.1947   0.0500     0.0453    7.4006     1.0046
+          TX        0.5   0.5   0.1361   0.2000     0.0500    6.4017     0.9030
+      DS (r=t=1)    0.5   0.5     0.2    0.08761     0.05     6.9381     1.0072
+
+    En la metodologı́a propuesta, las condiciones de operación que optimizan la
+respuesta están dadas por los niveles altos de cada uno de los factores. En la
+metodologı́a KV la combinación óptima está determinada por la escogencia de
+valores altos de BrO4, valores bajos de AM y valores altos de Ce4 ; para TX la
+combinación óptima estarı́a dada por niveles intermedios de BrO4 y niveles altos
+de AM y Ce4 ; y para DS el óptimo estarı́a dado por la combinación BrO4 y Ce4
+altos y AM entre niveles intermedios y bajos.
+    Tomando como referencia la variable respuesta ln∗ (Tind), se puede realizar
+una ordenación de las soluciones obtenidas por las distintas metodologı́as de la
+siguiente forma: el menor tiempo de inducción está dado por la solución de TX,
+seguido por la metodologı́a propuesta, DS y por último V, que presentan una
+
+Optimización de sistemas de respuesta dual. Una aproximación compromiso         169
+
+solución que puede considerarse como no competitiva para esta respuesta.
+                                                                      √
+    Realizando la comparación de acuerdo a la variable respuesta 4 Amp, las solu-
+ciones pueden ordenarse de la siguiente manera: la mayor amplitud de reacción la
+presenta DS, seguido por V, la metodologı́a propuesta y finalmente TX, con una
+solución que no es competitiva para esta respuesta.
+    En la tabla 9, se muestran las varianzas de predicción para las variables res-
+puestas en su escala natural; la varianza de predicción de la solución obtenida para
+la variable ln (Tind) mediante la metodologı́a propuesta es bastante menor que las
+varianzas de predicción de todas √las demás formulaciones, en cambio, la varian-
+za de predicción de la respuesta 4 Amp es similar para todas las formulaciones,
+siendo inferior para V.
+
+
+                Tabla 9: Comparación de varianzas de predicción
+                   Metodologı́a    w1    w2      h11        h22
+                    Propuesta      0.1   0.9   3.5646    0.000980
+                    Propuesta      0.2   0.8   3.1392    0.000994
+                        ..          ..    ..      ..         ..
+                         .           .     .       .          .
+                    Propuesta      0.5   0.5   3.1392    0.000994
+                        ..          ..    ..      ..         ..
+                         .           .     .       .          .
+                    Propuesta      0.9   0.1   3.1392    0.000994
+                       V           0.5   0.5   6.8523    0.000962
+                       TX          0.5   0.5   4.0470    0.001001
+                       DS          0.5   0.5   4.6870    0.000967
+
+    En conclusión, la solución obtenida por la metodologı́a propuesta y la solución
+obtenida por Derringer & Such (1980) son las mejores desde el punto de vista de
+valores asumidos por las respuestas ajustadas y de calidad de las predicciones,
+medida en términos de la varianza de predicción. Pueden realizarse experimentos
+confirmatorios para determinar cual de estas dos soluciones es más aconsejable
+para las finalidades del investigador.
+
+
+5.    Conclusiones
+   La metodologı́a propuesta para la optimización de respuestas duales, presenta
+ventajas respecto a las otras metodologı́as reseñadas (Tang & Xu (2002), Vining
+(1998), Derringer & Such (1980)), porque considera simultáneamente:
+
+ i) Las variabilidades relativas de cada respuesta (efectos de escala).
+ ii) Los costos asociados a cada respuesta, o, en su defecto, estructuras de prefe-
+     rencias del investigador en el proceso de optimización dual.
+iii) Efectos de localización para cada respuesta.
+
+170                                      César A. Cristancho F. & Oscar O. Melo M.
+
+
+iv) La calidad de las predicciones, medida en términos de los errores estándar de
+    predicción.
+ v) Los valores ajustados para cada respuesta dentro de una región de interés.
+
+Dentro del esquema de optimización propuesto, el análisis de sensibilidad de las
+ponderaciones dadas a cada respuesta permite obtener una medida de la adap-
+tabilidad de las soluciones, en términos de la capacidad de responder a cambios
+en la estructura de preferencias de las respuestas consideradas. Además, al tomar
+múltiples puntos de inicio, puede verse como una alternativa robusta a la presencia
+de numerosos óptimos locales.
+
+Agradecimientos Este trabajo se enmarca dentro del proyecto de investigación
+Modelos estadísticos en el análisis de datos longitudinales y medidas repetidas, con
+apoyo económico de la DIB de la Universidad Nacional de Colombia, Sede Bogotá.
+Referencias
+Censor, Y. (1977), ‘Pareto optimality in multiobjetive problems’, Applied Mathematics and Optimization 4, 41–59.
+Del Castillo, E. & Montgomery, D. C. (1993), ‘A nonlinear programming solution to the dual response problem’, Journal of Quality Technology 25, 199–204.
+Derringer, G. & Such, R. (1980), ‘Simultaneous optimization of several responses variables’, Journal of Quality Technology 12, 214–219.
+Graybill, F. A. (1976), Theory and Application of the Linear Model, Duxbury Press, Boston.
+Harrington, J. E. C. (1965), ‘The desirability function’, Industrial Quality Control 21, 494–498.
+Khuri, A. I. & Conlon, M. (1981), ‘Simultaneous optimization of multiple responses represented by polynomial regression functions’, Technometrics 23, 363–375.
+Lin, D. K. J. & Tu, W. (1995), ‘Dual response surface optimization’, Journal of Quality Technology 27, 34–39.
+Myers, R. H. & Carter, W. H. (1973), ‘Response surface techniques for dual response systems’, Technometrics 15, 301–317.
+Smith, R., Mesa, O., Dyner, I., Jaramillo, P., Poveda, G. & Valencia, D. (2000), Decisiones con multiples objetivos e incertidumbre, Technical report, Universidad Nacional de Colombia, Medellin.
+Taguchi, G. (1986), Introduction to Quality Engineering: Designing Quality into Products and Processes, Kraus International Publications. White Plains, New York.
+Tang, L. C. & Xu, K. (2002), ‘A unified approach for dual response surface optimization’, Journal of Quality Technology 34, 437–447.
+Vining, G. (1998), ‘A compromise approach to multiresponse optimization’, Journal of Quality Technology 30, 309–313.

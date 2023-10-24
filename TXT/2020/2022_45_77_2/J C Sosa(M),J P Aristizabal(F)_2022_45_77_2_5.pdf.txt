@@ -1,0 +1,1761 @@
+Some Developments in Bayesian Hierarchical Linear Regression Modeling. Algunos desarrollos en modelos de regresión lineal jerárquicos bayesianos
+Universidad Nacional de Colombia, Bogotá, Colombia. Universidad Externado de Colombia, Bogotá, Colombia
+Abstract
+Considering the exibility and applicability of Bayesian modeling, in this work we revise the main characteristics of two hierarchical models in a regression setting. We study the full probabilistic structure of the models along with the full conditional distribution for each model parameter. Under our hierarchical extensions, we allow the mean of the second stage of the model to have a linear dependency on a set of covariates. The Gibbs sampling algorithms used to obtain samples when tting the models are fully described and derived. In addition, we consider a case study in which the plant size is characterized as a function of nitrogen soil concentration and a grouping factor (farm).
+Key words : Bayesian inference; Clustering; Gibbs Sampling; Hierarchical model; Linear regression.
+Resumen
+Considerando la exibilidad y aplicabilidad del modelamiento Bayesiano, en este trabajo se revisan las principales características de dos modelos jerárquicos en un escenario de regresión. Se estudia la estructura probabilística completa de los modelos junto con la distribución condicional completa para cada parámetro del modelo. Las extensiones jerárquicas que se presentan permiten que la media de la segunda etapa del modelo tenga una dependencia lineal de un conjunto de covariables. Se describen y derivan completamente los algoritmos de muestreo de Gibbs para ajustar los modelos. Además, se considera un caso de estudio en el que se caracteriza el tamaño de plantas en función de la concentración de nitrógeno en el suelo y un factor de agrupación (ncas).
+Palabras clave  : Agrupamiento; Inferencia bayesiana; Muestreador de Gibbs; Modelo jerárquico; Regresión lineal.
+
+
+
+
+1. Introduction
+
+      A key characteristic of many problems is that the observed data can be used to
+estimate aspects of the population even though they are never observed. Often, it
+is quite natural to model such a problem hierarchically, with observable outcomes
+modeled conditionally on certain parameters, which themselves are assigned a
+probabilistic specication in terms of further random quantities.
+
+      Hierarchical models can have enough parameters to t the data well, while
+using a population distribution to structure some dependence into the parameters,
+thereby avoiding problems of over-tting. In addition, by establishing hierarchies
+we are not forced to choose between complete pooling and not pooling at all as
+the classic analysis of variance does (Gelman et al., 2013).
+
+      In this work we analyze observational continuous data arranged in groups.
+Specically, we discuss hierarchical models for the comparison of group-specic
+parameters across groups in a regression setting.             Our hierarchical approach
+is conceptually a straightforward generalization of a standard Normal model.
+Emulating     Ho    (2009),   we   use   an   ordinary   regression   model   to   describe
+within-group heterogeneity of observations, and also, describe between-group
+heterogeneity using a sampling model for the group-specic regression parameters.
+Then, we take a step further and develop another hierarchical model adding a
+specic layer for carrying out clustering tasks. At this point, we explicitly note
+that the main dierence between two given models relies on the stochastic structure
+of the regression parameters. For instance, the hierarchical approach (also known
+as HLRM later) embraces a way to borrow information across groups through
+a shrinkage eect promoted by the prior formulation, whereas the clustering
+specication (also known as CHLRM later) additionally aims to collect groups
+with similar xed eects.
+
+      Since the intended audience for this article needs to be knowledgeable in
+statistical methods, the reader should be aware that hierarchical linear modeling
+from a Bayesian perspective is a well developed area within the Statistics literature.
+There are available many technical and methodological developments ranging from
+standard linear models (Gelman et al., 2013), generalized linear models (Dey et al.,
+2000) to even more sophisticated such as nonparametric linear models (Müller
+et al., 2015). Finally, the literature is also very broad in the treatment of these
+topics when applied to specic statistical disciplines such as longitudinal data
+analysis (Wakeeld, 2013), spatio-temporal data analysis (Banerjee et al., 2014),
+and statistical analysis of network data (Kolaczyk & Csárdi, 2020), just to name
+a few.
+
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                                    233
+
+
+
+    Even though our modeling approach is quite conventional under the Bayesian
+paradigm, our main contribution mainly relies in how models are structured and
+developed.      Thus, we provide for each model all the details regarding model
+and (hierarchical) prior specication, careful hyperparameter selection under little
+external information, and simulation-based algorithms for computation. Finally,
+we also consider several metrics to quantify the performance aspects of our models
+by means of both goodness-of-t and in-sample model checking metrics. In every
+instance along the way, we go over several building blocks of the literature about
+hierarchical modeling techniques and clustering tasks.
+
+    This paper is structured as follows: Section 2 revisits all the details related
+to the Normal linear regression model (LRM). Sections 3 and 4 provide a full
+development of hierarchical Normal linear regression models (HLRM) as well
+as clustering hierarchical Normal linear regression models (CHLRM). Section 5
+discusses in depth other modeling approaches.                  Section 6 shows several specics
+related to computation and model tting.                     Section 7 presents several specics
+about model checking through tests statistics, and also, model section through
+information criteria. Section 8 makes a complete analyzes of a case study. Finally,
+Section 9 discusses our ndings and future developments.
+
+
+
+
+2. Normal Linear Regression Model (LRM)
+
+    Here, we show some relevant aspects about linear regression modeling in a
+Bayesian setting, which is a powerful data analysis tool quite useful for carrying
+out many inferential tasks such as data characterization and prediction. Roughly
+speaking, our goal is to nd a model for predicting the dependent variable
+(response) given one or more independent (predictor) variables.
+
+
+
+2.1. Model Specication
+    First, we consider a simple scenario in which we want to characterize the
+sampling distribution of a random variable y through a set of explanatory variables
+x = [x1 , . . . , xp ]T . Thus, we look upon a Normal linear regression model of the
+form
+
+
+       yi,j = xT
+               i,j β + ϵi,j ,
+                                            iid
+                                                  N
+                                  ϵi,j | σ 2 ∼ (0, σ 2 ) ,     i = 1, . . . , n ,   j = 1, . . . , m ,
+
+where yi,j , xi,j , and ϵi,j are the response variable, the covariates, and the random
+error, respectively, corresponding to the              i-th observation from the j -th group,
+and β = [β1 , . . . , βp ]
+                             T are the regression parameters of the model. Note that the
+previous model can be re-expressed as
+
+
+                                  y | X, β, σ 2 ∼     N (Xβ, σ I)
+                                                       nm
+                                                                    2
+
+
+where       y is the response vector given by y = [y T                      T T
+                                                              1 , . . . , y m ] , with y j =
+                    T
+[yj,1 . . . , yj,n ] , and X is the design matrix arranged in a similar fashion.
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+234                                                        Juan Sosa & Jeimy-Paola Aristizabal
+
+      In order to perform full Bayesian analysis using the likelihood given above, we
+                                                                       2
+consider a semi-conjugate prior distribution for β and σ                   of the form
+
+
+                             N
+                       β ∼ (β 0 , Σ0 )    and     σ2 ∼     IG(ν /2, ν σ /2)
+                                                               0
+                                                                         2
+                                                                       0 0
+
+
+as in most Normal sampling problems.
+
+
+
+2.2. Prior Elicitation
+      In the absence of convincing external information to the data, it is customary
+using a defuse prior distribution in order to be as minimally informative as possible.
+In the same spirit of the unit information prior as in Kass & Wasserman (1995), we
+                                                                       T      −1
+                                                OLS , Σ0 = g σ0 (X X)
+                                                                   2                          2     2
+let g = nm and ν0 = 1, and set β 0 = β̂                                            , with σ0 = σ̂ OLS ,
+where ϕ̂   OLS stands for the ordinary least squares (OLS) estimate of ϕ. This choice
+                       g
+of g makes the ratio
+                      g+1 very close to 1, and therefore, β is practically centered
+                                                2                               2
+around 0; similarly, the prior distribution of σ is weakly centered around σ̂                       OLS
+since ν0 = 1. Note that large values of g as well as small values of ν0 reect weak
+prior beliefs.    This prior distribution cannot be strictly considered a real prior
+distribution, as it requires knowledge of y to be constructed.                     However, it only
+uses a small amount of the information given in y , and can be loosely thought of
+as the prior distribution of a researcher with unbiased but weak prior information.
+
+
+
+2.3. Posterior Inference
+      The posterior distribution can be explored using Markov chain Monte Carlo
+(MCMC) methods (Gamerman & Lopes, 2006) such as the Gibbs sampling.
+Implementing such an algorithm under the previous model is quite simple since
+the full conditional distributions are
+
+
+β | y, X, σ 2 ∼   N ((Σ + σ XTX) (Σ β + σ XTy), (Σ + σ XTX) )
+                   p
+                          −1
+                          0
+                                 −2        −1     −1
+                                                  0    0
+                                                              −2               −1
+                                                                               0
+                                                                                         −2         −1
+
+
+and
+           σ 2 | y, X, β ∼   IG((ν + nm)/2, (ν σ + (y − Xβ)T(y − Xβ))/2) .
+                                 0
+                                                   2
+                                                 0 0
+
+See for example Christensen et al. (2011) for details about this result.
+
+      Under the previous setting, we need to carefully choose values for the set of
+                                                               2
+model hyperparameters, namely, β 0 , Σ0 , ν0 , and σ0 . Often, the analysis must be
+done in the absence of prior information, so we should use a prior distribution as
+minimally informative as possible. The so-called g -priors (see for example Albert
+(2009) for a brief discussion) oer this possibility and the desirable feature of
+invariance to changes in the scale of the regressors. A popular alternative in this
+direction consists in letting β 0      = 0 and Σ0 = gσ 2 (XT X)−1 for some positive
+value g that reects the amount of information in the data relative to the prior
+distribution (choosing a large value of g naturally induces a diuse prior). It can
+                                                              2
+be shown that under the g -prior specication, p(σ                 | y, X) is an Inverse Gamma
+distribution, which means that we can use direct sampling as follows:
+
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                                                235
+
+
+
+                    IG (ν + nm)/2, (ν σ + yT(I − X(XTX) XT)y)/2
+                                                                                                                
+                   2                                            2                    g                  −1
+   1. Sample σ         ∼               0                      0 0                   g+1                            .
+
+
+                 β∼N      (XT X) XT y,     σ (XT X)
+                                                   
+                                 g                     −1            g    2            −1
+   2. Sample                p                                                               .
+                                g+1                                 g+1
+
+See for example Ho (2009) for more details.
+
+
+
+
+3. Hierarchical Normal Linear Regression Model
+   (HLRM)
+
+   We present the treatment of a hierarchical model, in which the observed
+data is assumed to be normally distributed with both group-specic xed eects
+(and therefore subject-specic means) and group-specic variances.                                           The model
+specication provided below is quite convenient because in addition to a global
+assessment of the mean relationship between the covariates and the response
+variable (as allowed by a standard linear regression model), it gives the means
+to carry out specic inferences within each group as well as comparisons among
+groups.
+
+
+
+
+                    (a) HLRM                                                          (b) CHLRM
+                                       Figure 1: DAG representations.
+
+
+
+3.1. Model Specication
+   We consider         m independent groups, each one of them with n independent
+normally distributed data points (i.e., a balanced experiment), yi,j , each of which
+with subject-specic mean µi,j                    = xT
+                                                     i,j β j , with β j = (β1,j , . . . , βp,j ), and group-
+                        2
+specic variance σj ; i.e.,
+
+
+          yi,j | xi,j , β j , σj2 ∼
+                                      ind
+                                            N xT β , σ  , i = 1, . . . , n , j = 1, . . . , m .
+                                                 i,j    j
+                                                              2
+                                                              j
+
+In addition, we propose a hierarchical prior distribution with the following stages:
+
+                β j | β, Σ ∼
+                                iid
+                                      N (β, Σ)
+                                            p               and
+                                                                              iid
+                                                                    σj2 | ξ 2 ∼     IG(ν /2, ν ξ /2) ,
+                                                                                        0       0
+                                                                                                    2
+
+
+
+                        Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+236                                                                       Juan Sosa & Jeimy-Paola Aristizabal
+
+
+
+                          N (µ , Λ ) , Σ ∼ IW(n , S ) , ξ ∼ G(a , b ) ,
+with
+                                                                          −1          2
+                    β∼         p     0       0                       0    0                     0   0
+                                             2
+                                             2
+                           = (σ12 , . . . , σm
+where ζ = (β 1 , . . . , β m ), σ              ), β , Σ, and ξ 2 are the unknown model
+parameters, and µ0 , Λ0 , n0 , S0 , ν0 , a0 , and b0 are hyperparameters carefully
+selected according to external information.                              Figure 1 provides a directed acyclic
+graph (DAG) representation of the model. As a nal remark, note that tting this
+hierarchical model is not equivalent to tting regular regression models to each
+group independently since the information shared across groups (shrinkage eect)
+would be lost.
+
+
+
+3.2. Prior Elicitation
+      Following the same unit-information-prior-inspired approach considered to
+select the hyperparameters of the Normal linear regression model (once again
+we refer the reader to Kass & Wasserman (1995)), we again let        g = nm and
+                                            T   −1
+                                      OLS
+                                        2                  2      2
+ν0 = 1, and set µ0 = β̂      , Λ0 = g σ0 (X X)     , with σ0 = σ̂   (see Section 2               OLS
+for details). In addition, aiming to establishing a diuse and reasonable centered
+
+
+                                                                                   E(Σ) = Λ
+prior for Σ, we let n0 = p + 2 and S0 = Λ0 because such a specication produces
+a mean vague concentration of β around µ0 since                                               0 a priori. Finally, we
+                                         2                                                                    2
+
+       E(ξ ) = σ                    CV(ξ ) = 1
+let a0 = 1 and b0 = 1/σ0 because this choice leads to a diuse prior for ξ                                       such
+             2                               2
+
+                                                           E(σ ) = σ
+that                 0 with                        , which clearly emulates the prior elicitation in a
+                                                                 2       2
+regular regression setting for which                                     0.
+
+
+
+3.3. Posterior Inference
+      Joint      posterior     inference         for       the   model     parameters         can   be   achieved    by
+constricting a Gibbs sampling algorithm (Gamerman & Lopes, 2006), which
+requires iteratively sampling each parameter from its full conditional distribution.
+
+        Θ = (ζ, σ 2 , β, Σ, ξ 2 ) be the full set of parameters in the model.
+      Let                                                                                                           The
+posterior distribution of Θ is
+
+
+            p(Θ | y, X) ∝ p(y | X, ζ, σ 2 ) p(ζ | β, Σ) p(β) p(Σ) p(σ 2 | ξ 2 ) p(ξ 2 ) ,
+which leads to
+                      n
+                    m Y
+                                          exp − 2σ1 2 yi,j − xT
+                                                                    2 
+                                   −1/2
+                    Y
+p(Θ | y, X) ∝                  σj                             i,j β j
+                                                       j
+                    j=1 i=1
+                         m
+                               |Σ|−1/2 exp − 21 (β j − β)T Σ−1 (β j − β)
+                         Y                n                             o
+                     ×
+                         j=1
+
+                     × exp − 21 (β − µ0 )T Λ−1
+                           n                                  o
+                                                                      −(n0 +p+1)/2
+                                                                                    exp − 12 tr(S0 Σ−1 )
+                                                                                        
+                                                   0 (β − µ0 ) × |Σ|
+                        m                                           
+                       Y                                         2
+                     ×    (ξ 2 )ν0 /2 (σj2 )−(ν0 /2+1) exp − ν0σξ 2/2 × (ξ 2 )a0 −1 exp {−b0 ξ 2 } .
+                                                                               j
+                         j=1
+
+Let ϕ represent any parameter in Θ. The full conditional distribution (fcd) of ϕ
+given the rest of the parameters, the design matrix X, and the data y is denoted
+
+
+
+                           Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                                                                    237
+
+
+
+by p(ϕ | rest). We derived these distributions looking at the dependencies in the
+full posterior distribution. Thus, we have that:
+
+
+    The fcd of β j , for j = 1, . . . , m, is
+
+                            Σ−1 + σj−2 XT                    −2 T               −2 T
+                                                                                      −1 
+      β j | rest ∼ Np
+                                              −1                   
+                                                    −1                   −1
+                                        j X j      Σ   β + σ j X  y
+                                                                j j  ,  Σ   + σ j Xj Xj
+
+
+       where Xj = [x1,j , . . . , xn,j ] .
+                                                 T
+
+    The fcd for β is
+
+      β | rest ∼ Np
+                                               −1                                                                                  −1 
+                              Λ−1     −1
+                                                             Λ−1      −1
+                                                                                                             , Λ−1     −1
+                                                                                         Pm
+                               0 + mΣ                         0 µ0 + Σ                         j=1 β j          0 + mΣ                         .
+
+    The fcd of Σ is
+
+                                    IW n + m, S + P
+                                                                                                                          −1 
+                                                                                                    T
+                                                         
+                                                                              m
+                  Σ | rest ∼               0                  0               j=1 (β j − β)(β j − β)                               .
+
+
+    The fcd of σj2 , for j = 1, . . . , m, is
+
+                  σj2 | rest ∼      IG (ν + n)/2, ν ξ + P (y − xT β )  /2 .
+                                           0                      0
+                                                                          2             n
+                                                                                        i=1     i,j          i,j   j
+                                                                                                                       2
+
+
+
+    The fcd of ξ 2 is
+
+                                               G a + mν /2, b +
+                                                                                                                  
+                                                                                          ν0 Pm    −2
+                              ξ 2 | rest ∼           0                0             0     2   j=1 σj                   .
+
+            (b)
+   Let ϕ          denote the state of parameter ϕ in the b-th iteration of the Gibbs
+sampling algorithm, for b = 1, . . . , B . Then, such an algorithm in this case is as
+follows:
+
+
+   1. Choose an initial conguration for each parameter in the model,                                                                     say
+        (0)
+      β 1 , . . . , β (0)
+                      m , β
+                            (0)
+                                , Σ
+                                   (0)     2 (0)
+                                       , (σ1 )
+                                                             2 (0)
+                                                 , . . . , (σm ) , and (ξ 2 )(0) .
+                      (b−1)              (b−1)     (b−1)    (b−1)     2 (b−1)             2 (b−1)
+   2. Update         β1       , . . . , βm     , β       , Σ      , (σ1 )     , . . . , (σm )     ,                                      and
+           2 (b−1)
+      (ξ )           until convergence:
+
+                              (b)
+           a) Sample β j            from the fcd p(β j                | (σj2 )(b−1) , β (b−1) , Σ(b−1) , y j , Xj ), for
+              j = 1, . . . , m.
+                              (b)                                             (b)
+           b) Sample β              from the fcd p(β | {β j                         }, Σ(b−1) ).
+                                                                              (b)
+           c) Sample Σ
+                              (b)
+                                    from the fcd p(Σ | {β j                         }, β (b) ).
+                                                                                         (b)
+           d) Sample       (σj2 )(b) from the fcd p(σj2 | β j , (ξ 2 )(b−1) , y j , Xj ), for j =
+              1, . . . , m.
+                              2 (b)                               2
+           e) Sample (ξ        )      from the fcd p(ξ                    | {(σj2 )(b) }).
+
+   3. Cycle until achieve convergence.
+
+
+
+                          Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+238                                                                             Juan Sosa & Jeimy-Paola Aristizabal
+
+4. Clustering Hierarchical Normal Linear
+   Regression Model (CHLRM)
+
+      Here we extend the hierarchical approach provided in the previous section
+by adding more structure to the model in order to perform clustering task at
+a group level (clusters whose elements are groups).                                           Specically, we consider a
+mixture model instead of a regular Normal distribution in the likelihood, and
+then, introduce a new set of parameters known as cluster assignments to break
+the mixture and then be able to identify those groups belonging to the same cluster.
+
+
+
+4.1. Model Specication
+      A natural way to extend the standard hierarchical model consists in relaxing
+the normality assumption about the response variable by replacing it with a nite
+mixture of Normal components in such a way that
+
+
+
+                                           N y | xT β , σ  , i = 1, . . . , n , j = 1, . . . , m ,
+                                K
+                           ind X
+yi,j | xi,j , {β k }{σk2 } ∼          ωk          i,j           i,j    k
+                                                                                2
+                                                                                k
+                               k=1
+
+where    K is a positive xed integer that represents the number of clusters in
+                                                                                    2             2
+which groups can be classied, β 1 , . . . , β K and σ1 , . . . , σK are the cluster-specic
+regression parameters and cluster-specic variances of the mixture components,
+                                                                                                                     PK
+and ω1 , . . . , ωK are mixture probabilities such that 0 < ωk < 1 and                                                 k=1 ωk = 1.
+Note that under this formulation we recover the Normal linear regression model
+by setting K = 1.
+
+
+
+                                Pr(γ = k | ω ) = ω
+      According to the previous mixture, the probability that the group j is part of
+the cluster k is ωk , i.e.,            j                    k              k , for j = 1, . . . , m and k = 1, . . . , K ,
+where γj is a categorical variable (known as either cluster assignment or cluster
+indicator) that takes integer values in                               1, . . . , K with probabilities ω1 , . . . , ωK ,
+respectively. Thus, we can use the cluster assignments γ1 , . . . , γm to break the
+mixture and write the model as
+                                ind
+                                      N y | xT β , σ
+                                                                               
+   yi,j | xi,j , γj , β γj , σγ2j ∼         i,j         i,j      γj
+                                                                           2
+                                                                           γj           i = 1, . . . , n ,       j = 1, . . . , m .
+
+In addition, a parsimonious way to formulate a hierarchical prior distribution can
+be achieved by letting
+
+    γ|ω∼       Cat(ω) , β | β, Σ ∼iid N (β, Σ)
+                                k                       p                   and          σk2 | ξ 2 ∼
+                                                                                                      iid
+                                                                                                            IG(ν /2, ν ξ /2) ,
+                                                                                                                 0     0
+                                                                                                                           2
+
+
+with
+
+       ω∼    Dir(α ) , β ∼ N (µ , Λ ) , Σ ∼ IW(n , S ) , ξ ∼ G(a , b ) ,
+                     0                p      0      0                                   0
+                                                                                             −1
+                                                                                             0
+                                                                                                             2
+                                                                                                                       0   0
+                                                                                 2    2            2
+where γ = (γ1 , . . . , γm ), ω = (ω1 , . . . , ωK ), ζ = (β 1 , . . . , β K ), σ = (σ1 , . . . , σK ),
+β , Σ, and ξ 2 are the unknown model parameters, and α0 , µ0 , Λ0 , n0 , S0 , ν0 , a0 ,
+and b0 are hyperparameters carefully selected according to external information.
+Finally, note that the DAG representation of the model is very similar to that
+of HLRM, but including an extra random node corresponding to the clustering
+process (see Figure 1).
+
+
+
+                         Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                                               239
+
+
+
+4.2. Prior Elicitation
+   Under the same approach as before, we let once again g = nm and ν0 = 1,
+                                  T −1 , with σ 2 = σ̂ 2 , n0 = p + 2, S0 = Λ0 ,
+                  OLS , Λ0 = g σ0 (X X)
+                              2
+and set µ0 = β̂
+                     2
+                                                0                                 OLS
+a0 = 1, and b0 = 1/σ0 . Thus, the only hyperparameter that remains unspecied
+                                                  1           1
+is α0 . To do so in a sensible way, we let α0 =
+                                                  K , . . . , K , which has a direct
+connection with a Chinese restaurant process prior (Ishwaran & Zarepour, 2000)
+and places a diuse prior distribution for the number of occupied clusters in the
+data.
+
+
+
+4.3. Posterior Inference
+   Once again we appeal to MCMC methods as in Section 3 to explore the
+                                                                                               2
+posterior distribution of the model parameters Θ = (γ, ω, ζ, σ                                     , β, Σ, ξ 2 ).   The
+posterior distribution of Θ is such that
+
+
+p(Θ | y, X) ∝ p(y | X, γ, ζ, σ 2 ) p(γ | ω) p(ω) p(ζ | β, Σ) p(β) p(Σ) p(σ 2 | ξ 2 ) p(ξ 2 ) ,
+
+which leads to
+
+                  n
+                m Y                                                     K
+                                                                      m Y           K
+                                    exp − 2σ12 yi,j − xT
+                                                              2  Y
+                             −1/2                                          [γ =k]
+                Y                                                                   Y  α
+p(Θ | y, X) ∝               σj                         i,j β γj     ×     ωk j    ×   ωk 0k
+                                               γj
+                j=1 i=1                                                            j=1 k=1                  k=1
+                      K
+                            |Σ|−1/2 exp − 12 (β k − β)T Σ−1 (β k − β)
+                      Y                  n                           o
+                 ×
+                      k=1
+
+                 × exp − 12 (β − µ0 )T Λ−1
+                      n                            o
+                                                          −(n0 +p+1)/2
+                                                                       exp − 12 tr(S0 Σ−1 )
+                                                                          
+                                        0 (β − µ0 ) × |Σ|
+
+                      K                                   n          o
+                      Y                                          2
+                 ×        (ξ 2 )ν0 /2 (σk2 )−(ν0 /2+1) exp − ν0σξ 2/2 × (ξ 2 )a0 −1 exp {−b0 ξ 2 } ,
+                                                                      k
+                      k=1
+
+
+ where    [x = i] is the Iverson bracket.                    Such a posterior distribution is quite
+reminiscent of the one that we derived for the hierarchical model in Section 3,
+but this time it includes a portion related with the clustering process, and also,
+group-specic parameters cycle over K terms instead of m.
+
+   Once again, we derive the fcd's from the posterior distribution, obtaining that:
+
+
+    The fcs of γj , for j = 1, . . . , m, is a Categorical distribution such that
+
+
+             Pr(γ = k |                             N(y | xT β , σ ) ,
+                                              n
+                                              Y
+                                                                              2
+                  j              rest) ∝ ωk            i,j      i,j       k   k         for k = 1, . . . , K .
+                                              i=1
+
+
+    The fcs of ω is
+
+                                  ω | rest ∼   Dir(α + n , . . . , α + n )
+                                                      01        1             0K          K
+
+        where   nk = #{j : γj = k} is the number of elements in cluster k , for
+        k = 1, . . . , K .
+
+                       Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+240                                                                                        Juan Sosa & Jeimy-Paola Aristizabal
+
+   The fcd of β k , for k = 1, . . . , K , is
+               rest ∼ Np                                  T                                   −2 T                  −2 T
+                                                                  −1                                                      −1 
+                                           −1       −2                              −1                        −1
+        βk |                          Σ         + σk X(k) X(k)                  Σ        β + σk X(k) y (k) , Σ   + σk X(k) X(k)
+
+                                               T : γj = k]T and y                               T                T
+                                                                                                        N
+         where X(k) = [Xj                     (k) = [y j : γj = k] . Note that if cluster
+        k is empty, then the fcd of β k is just β k | rest ∼ p (β, Σ).
+   The fcd for β is
+                                                                                                                                −1 
+        β | rest ∼ Np
+                                                              −1                                                    
+                                      Λ−1  ∗ −1
+                                                                       Λ−1      −1
+                                                                                                                      , Λ−1  ∗ −1
+                                                                                                  PK
+                                       0 +K Σ                           0 µ0 + Σ                     k:nk >0 β k         0 +K Σ
+                             ∗
+         where K                 is the number of non-empty clusters.
+
+   The fcd of Σ is
+
+                                       IW n + K , S + P
+                                                                                                                                 −1 
+                                                                                                                T
+                                                                   
+                                                              ∗                      K
+                Σ | rest ∼                          0                   0            k:nk >0 (β k − β)(β k − β)                           .
+
+   The fcd of σk2 , for k = 1, . . . , K , is
+
+                                 IG
+                                                                      2  
+     2
+    σk | rest ∼                              2 Pm Pn          T
+                      (ν0 + nk )/2, ν0 ξ + j:γj =k i=1 yi,j − xi,j β γj     /2 .
+
+                                                                                                                     2              2
+        Again, note that if cluster k is empty, then the fcd of σk is just σk | rest ∼
+        IG(ν /2, ν ξ /2)
+               0             0
+                                 2
+                                           .
+
+   The fcd of ξ                 2
+                                      is
+
+                                                        G a + K ν /2, b +
+                                                                                                                         
+                                                                            ∗                       ν0 PK        −2
+                                  ξ 2 | rest ∼                 0                0          0        2   k:nk >0 σk            .
+
+      Thus, the Gibbs sampling algorithm in this case is as follows:
+
+  1. For           a     given         value         of       K,       choose            an      initial       conguration         for       each
+                                                                       (0)                (0)                  (0)        (0)
+        parameter in the model, say γ1                                       , . . . , γm , ω (0) , β 1 , . . . , β K , β (0) , Σ(0) ,
+                              2 (0)
+        (σ12 )(0) , . . . , (σK ) , and (ξ 2 )(0) .
+                     (b−1)              (b−1)              (b−1)            (b−1)
+  2. Update        γ1        , . . . , γm , ω (b−1) , β 1        , . . . , βK ,                                          β (b−1) , Σ(b−1) ,
+          2 (b−1)              2 (b−1)            2 (b−1)
+        (σ1 )     , . . . , (σK )         , and (ξ )      until convergence:
+
+                                      (b)                                                               (b−1)
+          a) Sample γj                          from the fcd p(γj               | ω (b−1) , {β k                }, {(σk2 )(b−1) }, Xj ), for
+                j = 1, . . . , m.
+                                       (b)                                           (b)
+          b) Sample ω                           from the fcd p(ω | {γj                     }).
+          c) Sample
+                       (b)
+                                                                   | {γj }, (σk2 )(b−1) , β (b−1) , Σ(b−1) , {y j }, {Xj }), for
+                                                                         (b)
+                βk           from the fcd p(β k
+                k = 1, . . . , K .
+                                      (b)                                            (b)
+          d) Sample β                          from the fcd p(β | {β k                     }, Σ(b−1) ).
+                                                                                         (b)
+          e) Sample Σ
+                                       (b)
+                                                from the fcd p(Σ | {β k                        }, β (b) ).
+                                       2 (b)                                    2           (b)          (b)
+          f ) Sample (σk )                        from the fcd p(σk | {γj                         }, {β k }, (ξ 2 )(b−1) , {y j }, {Xj }),
+                for k = 1, . . . , K .
+                                       2 (b)                                    2
+          g) Sample (ξ                     )      from the fcd p(ξ                  | {(σk2 )(b) }).
+  3. Cycle until achieve convergence.
+
+
+
+                                  Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                                    241
+
+
+
+5. Further Extensions
+
+   In order to gain stochastic exibility, yet another way of extending the model
+provided in Section 3 consists in completely relaxing the normality assumption
+about the response variable by assigning a prior distribution to it. Specically, we
+consider a Dirichlet process (DP) mixture model of the form
+
+
+                           ind
+                                     N y | xT β , σ  dG(β )                               DP(α, H)
+                                 Z
+      yi,j | xi,j , σj2 , G ∼                i,j   i,j       j
+                                                                 2
+                                                                 j   j     and       G∼
+
+where α is a positive scalar parameter and H is a base distribution function. In
+this case, the DP generates cumulative distribution functions on R (see for example
+Müller et al. (2015) for a formal treatment of the DP). The model given above can
+be also written as
+
+                           ind
+     yi,j | xi,j , β j , σj2 ∼   N xT β , σ  , β | G ∼ G
+                                       i,j     j
+                                                   2
+                                                   j             j         and      G∼     DP(α, H) ,
+                                                         T
+which makes evident why the µi,j = xi,j β j can be interpreted as subject-specic
+random eects. Such an extension is beyond the scope of this work and will be
+discussed in detail elsewhere.
+
+
+
+                                              E(y | x , β , θ ) = xT β + θ
+   Other straightforward parametric extensions are considering group-specic
+eects θ1 , . . . , θm in a way thati,j i,j  j j       i,j j   j , for i = 1, . . . , n,
+j = 1, . . . , m, as well as extra model hierarchies such as letting ν0 to be a
+integer random value ranging from 1 to a xed large upper bound in a way
+that p(ν)   ∝ e−κ0 ν , where κ0 is a hyperparameter.                       For clustering tasks, more
+sophisticated extensions require the specication of nonparametric priors of the
+                   iid P∞                                                              Q
+form γj | {ωk } ∼         k=1 ωk δk , for j = 1, . . . , m, where ωk = uk                h<k (1 − uh ) are
+weights constructed from a sequence u1 , u2 , . . ., with uk ∼
+                                                                             ind
+                                                                                   Beta(1 − a, b + ka)   for
+0 < a < 1 and b > −a.                The joint distribution of the set of weights ω1 , ω2 , . . .
+is called a stick-breaking prior with parameters                         a and b.      This formulation
+is connected to the stick-breaking construction of the Poisson-Dirichlet process
+(Pitman & Yor, 1997).                The stick-breaking representation associated with the
+Dirichlet process is a special case with a = 0.
+
+
+
+
+6. Computation
+
+   We implement the models provided in Sections 2, 3, and 4 following the
+corresponding algorithms provided in each section (our code is available for those
+readers that explicitly ask it from the corresponding author).                             Every time our
+results are based on B = 50, 000 samples of the posterior distribution obtained
+after thinning the original chains every 10 observations and a burn-in period of
+10,000 iterations. In addition, before using the MCMC samples with inferential
+purposes, we determine rst if there is any evidence of lack of convergence of
+any chain to its stationary distribution. Following standard practices, we produce
+log-likelihood traceplots of each model. Fitting the models to the data provided
+in Section 8, such plots strongly suggest that there are no stationary concerns
+
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+242                                                                 Juan Sosa & Jeimy-Paola Aristizabal
+
+since the log-likelihoods move in a consistent direction (see Figure 2).                          Further,
+autocorrelation plots of model parameters (not shown here) indicate that there
+are no signs of strong dependence in the chains. Thus, we are very condent of
+our MCMC samples to perform inductive tasks.
+
+
+
+
+                             −426
+              Log−likelihood
+                  −432  −438
+
+
+
+
+                                       0      10000     20000     30000    40000     50000
+                                                           Iteración
+                                                         (a) LRM
+              −280 −260 −240
+                  Log−likelihood
+
+
+
+
+                                       0      10000     20000     30000    40000     50000
+                                                           Iteración
+                                                        (b) HLRM
+             −290 −270 −250
+                Log−likelihood
+
+
+
+
+                                      0       10000    20000     30000     40000     50000
+                                                          Iteración
+                                                       (c) CHLRM
+Figure 2: Log-likelihood traceplots when tting the models for the plant size data
+          analyzed in Section 8.
+
+
+
+
+                                    Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                      243
+
+
+
+7. Model Checking and Goodness-of-Fit
+
+   We check the in-sample performance of the model by generating new data
+from the posterior predictive distribution, and then, calculating a battery of test
+statistics (such as the mean), aiming to compere the corresponding empirical
+distributions with the actual values observed in the sample (Gelman et al., 2013).
+In this spirit, for each quantity of interest, we also compute the posterior predictive
+p-value (ppp), which can be calculated as
+
+                              ppp =   Pr(t(yrep) > t(y) | y)
+where y
+          rep is a predictive dataset and t a test statistic, in order to measure how
+good the model is in tting the actual sample.
+
+   Finally, in order to asses the goodness-of-t of each model as a measure
+of their predictive performance, in what follows we consider two metrics that
+account for both model t and model complexity. The goal here is not necessarily
+picking the model with lowest estimated prediction error but to determine if
+improvements in tting the model are large enough to justify the additional
+diculty. That why such measures also serve as model-selection tools. The model-
+based literature has largely focused on the Bayesian Information Criteria (BIC)
+as a mechanism for model selection. However, the BIC is typically inappropriate
+for hierarchical models since the hierarchical structure implies that the eective
+number of parameters will typically be lower than the actual number of parameters
+in the likelihood (Gelman et al., 2014). Two popular alternatives to the BIC that
+address such an issue are the Deviance Information Criterion (DIC) (Spiegelhalter
+et al., 2002, 2014),
+                            DIC = −2 log p(y | Θ̂) + 2p    DIC ,
+with p                            E
+         DIC = 2 log p(y | Θ̂) − 2 (log p (y | Θ)) or pDIC =        Var (log p (y | Θ)), and
+the Watanabe-Akaike Information Criterion (WAIC) (Watanabe, 2010, 2013),
+
+
+                    WAIC = −2
+                                  X
+                                            E
+                                         log (p (yi,j | Θ)) + 2 pWAIC ,
+                                   i,j
+
+
+with    pWAIC = 2
+                    P   
+                              E
+                  i,j log (p (yi,j | Θ)) −         E
+                                           (log p (yi,j | Θ)) , where Θ̂ is the
+posterior mean of model parameters, and p           DIC
+                                                and p              WAIC
+                                                             are penalty terms
+accounting for model complexity.            Note that in the previous expressions all
+expectations, which are computed with respect to the posterior distribution, can be
+approximated by averaging over Markov chain Monte Carlo (MCMC) samples (see
+Section 6 for details). Next section we use the two versions of the DIC presented
+here.
+
+   Additional     out-of-sample   goodness-of-t       assessments    can   be   carried   out
+through a series of cross-validation experiments (randomly selected subsets of
+roughly equal size in the dataset are treated asmissing and then predicted using
+the rest of the data) on several datasets exhibiting dierent kinds of grouping
+factors as well as samples sizes. We refer the reader to Gelman et al. (2013, Chap.
+7) for such protocol.
+
+
+
+                    Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+244                                                                                           Juan Sosa & Jeimy-Paola Aristizabal
+
+8. Illustration
+
+         Nitrogen is an essential macro-nutrient needed by all plants to thrive.                                                                            It is
+an important component of many structural, genetic, and metabolic compounds
+in plant cells.             Increasing the levels of nitrogen during the vegetative stage can
+strengthen and support the plant roots, enabling them to take in more water
+nutrients. This allows a plant to grow more rapidly and produce large amounts
+of succulent, green foliage, which in turn can generate bigger yields, tastier
+vegetables, and a crop that is more resistant to pests, diseases, and other adverse
+conditions. Using too much nitrogen, however, can be just as harmful to plants
+as to little. A researcher took n = 5 measurements of nitrogen soil concentration
+(x) and plant sizes (y ) within each of m = 24 farms.                                                               Thus, we have that yi,j
+and xi,j are the plant size and the nitrogen soil concentration values, respectively,
+associated the              i-th plant from the j -th farm, i = 1, . . . , 5 and j = 1, . . . , 24.
+This dataset is given in Crawley (2012, p. 704) and remains publicly available at
+https://github.com/shifteight/R-lang/blob/master/TRB/data/farms.txt.
+
+                                                                                                                                              10
+                                                                                                                                       10        20
+                                                                                                                                                    415
+       0.04
+
+
+
+
+                                                                                                                                                     1515
+                                                           110
+
+
+
+
+                                                                                                                    110
+                                                                                                                                   10  10 2011 411
+                                                                                                                                            20    44
+                                                                                                                                    20 9 921
+                                                                                                                                      10     1115 41111
+                                                                                                                                                    515
+                                                                                                                                      8
+                                                                                                                               9820 6621
+                                                                                                                                       8       22    52 22
+                                                                                                                            9 96 3836 6 5 522
+                                                                                                                            21                          2 14
+                                                                                                                                           22 1 5
+ Density
+
+
+
+
+                                                                                                                                  1221
+                                                                                                                                  21  33
+                                                           100
+
+
+
+
+                                                                                                                    100
+                                                                                                                             8 12      18
+                                                                                                                                     2212221116         14 2
+                                                    Size
+
+
+
+
+                                                                                                             Size
+                                                                                                                            12       18 18      14 141717
+                                                                                                                                                       17
+                                                                                                                          18 3          1           17
+                                                                                                                                               161616 17     7
+0.02
+
+
+
+
+                                                                                                                                  24     19 1919 77
+                                                                                                                                         1
+                                                                                                                                        19          14
+                                                                                                                            1224
+                                                                                                                           18           24
+                                                                                                                                        1916         7 7
+                                                           90
+
+
+
+
+                                                                                                                    90
+                                                                                                                                 24
+                                                                                                                                  24
+                                                                                                                                13 13            23
+                                                           80
+
+
+
+
+                                                                                                                    80
+
+                                                                                                                                131313232323
+       0.00
+
+
+
+
+                                                                                                                                     23
+              70         90     110       130                             15       20         25                                 15         20        25
+                          Size.                                                Nitro. Conc.                                           Nitro. Conc.
+       110
+       100
+Size
+       90
+       80
+
+
+
+
+                   1    2   3   4     5   6     7      8         9   10    11    12     13   14    15   16   17      18    19    20    21   22   23    24
+                                                                                  Farm
+Figure 3: Descriptive plots.                  The second panel exhibit the ordinary least squares
+                       regression line for this data. Colors in the third panel correspond to dierent
+                       farms.
+
+
+
+8.1. Exploratory Data Analysis
+         A histogram of the plant size is shown in the rst panel of Figure 3.                                                                              The
+plant size ranges from 76.56 to 117.50 which seems quite large in comparison with
+the plant size range within each farm (see the bottom panel).                                                                         The second and
+
+
+
+                                Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                       245
+
+
+
+third panels show the relationship between the plant size and the nitrogen soil
+concentration. In particular, the second panel exhibits the ordinary least squares
+(OLS) regression line for these data, which is given by y= 92.57 + 0.36x with
+                    OLS
+a standard error of σ̂  =  8.46 with 118 degrees of freedom, and an adjusted
+              2
+R-squared of Radj = 2.56%. The third panel presents the same plot but taking
+into account the farm where the measurements belong to.                       These panels along
+with the OLS t indicate two main features about this experiment: (1) there is an
+important relationship between the nitrogen soil concentration and the plant size
+(in our OLS t the slope turns out to be signicant, p-value = 0.04); and (2) there
+is a clear farm eect on plant size since colors in the scatter plot reveal clustering
+patters, and also, the corresponding boxplots strongly suggest dierences in terms
+of mean plant growth among farms.
+
+
+
+8.2. Fitting a LRM
+    We t the LRM given in Section 2 to these data without taking into account
+the farm information. Posterior summaries of the model parameters are provided
+in Table 1. Even though the posterior mean of the model parameters practically
+coincide with their corresponding OLS estimates, these results are again quite
+limited since they do not allow us to isolate any kind of eect over the plant
+size arising from the grouping factor.          Such limitation strongly motivates the
+hierarchical approaches that we present in this paper.
+
+
+Table 1: Posterior summaries of the model parameters in the linear regression model.
+                         Parameter   Mean      SD        Q2.5%       Q97.5%
+                            β1        92.59   3.60       85.53       99.61
+                            β2        0.36    0.18       0.01         0.70
+                            σ2        72.89   9.67       56.35       94.07
+
+
+
+
+8.3. Fitting a HLRM
+    Now we go further and t the HLRM given in Section 3 to the plant size
+data considering both group-specic xed eects β 1 , . . . , β m and group-specic
+             2       2
+variances σ1 , . . . , σm . Such a group-specic approach is very convenient because it
+allows us to carry out separate-group inferences as opposed to its non-hierarchical
+counterpart.
+
+    We present our main results in Figures 4 and 5 where we display 95% quantile-
+                                                     2           2
+based credible intervals for β 1 , . . . , β m and σ1 , . . . , σm , respectively. At this point
+we are capable of making evident some important ndings. The uncertainty about
+the group-specic parameters is not constant since the amplitude of the credible
+intervals clearly varies across farms.        This eect is particularly evident for the
+variance components. In addition, point estimates (posterior means) of the group-
+specic parameters are also quite variable, which strongly suggests that for these
+data considering this approach is benecial because it allows us to characterize
+
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+246                                                                       Juan Sosa & Jeimy-Paola Aristizabal
+
+for each farm its own unique features. However, some farms show some signs of
+similar features, which was also evident before in Figure 3. We explore clustering
+patterns in the next subsection.
+        140
+        120
+        100
+β1,j
+        80
+        60
+
+
+
+
+              1    2   3   4     5   6   7   8   9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24
+                                                               Farm
+       2.5
+       2.0
+       1.5
+       1.0
+β2,j
+       0.5
+       0.0
+       −0.5
+       −1.0
+
+
+
+
+              1    2   3   4     5   6   7   8   9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24
+                                                               Farm
+Figure 4: 95% quantile-based credible intervals and posterior means (squares) for the
+                  regressor xed-eects regressor parameters in the hierarchical Normal linear
+                  regression model. Colored thicker lines correspond to credible intervals that
+                  do not contain zero. Top panel: β1,1 , . . . , β1,m (intercepts). Bottom panel:
+                  β2,1 , . . . , β2,m (slopes). OLS estimates are depicted through a red horizontal
+                  line.
+
+       As expected, we see that all the intercepts are statistically signicant, but
+also highly variable (ranging from 61.48 to 106.81). On the other hand, the story
+behind the slopes (ranging from 0.08 to 1.04) is quite dierent. We see that just 9
+out of 24 (37.5%) of such parameters turn out to be signicant, namely, for farms
+1, 7, 9, 15, 18, 20, 21, 22, and 23 (Figure 6 shows the corresponding estimated
+regression lines for these farms).                    The previous fact strongly suggests that the
+relevance of the relationship between the nitrogen soil concentration and the plant
+
+
+
+                               Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                                                                  247
+
+
+
+size is not consistent across farms. Therefore, in this case, considering farms as a
+grouping factor makes a substantial impact on the analysis.
+
+
+       50
+       40
+       30
+σ2j
+       20
+       10
+       0
+
+
+
+
+            1    2   3   4     5          6   7   8   9    10   11   12   13   14   15    16   17   18   19   20   21   22   23   24
+                                                                     Farm
+Figure 5: 95% quantile-based credible intervals and posterior means (squares) for the
+                variance parameters σ12 , . . . , σm
+                                                   2
+                                                     in the hierarchical Normal linear regression
+                model.
+                                    110
+                                    100
+                             Size
+                                    90
+                                    80
+
+
+
+
+                                                      15             20              25
+                                                                Nitro. Conc.
+Figure 6: Estimated lines of the hierarchical Normal linear regression model for those
+                farms whose nitrogen soil concentration is statistically signicant. Colors are
+                used to represent dierent farms.
+
+
+
+8.4. Fitting a CHLRM
+      It is quite reasonable attempting to identify clusters composed of farms given
+the abundant evidence of similarities among groups and cluster formation detected
+
+
+
+                         Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+248                                                                  Juan Sosa & Jeimy-Paola Aristizabal
+
+in both the exploratory data analysis and the hierarchical modeling stage of the
+analysis. Here, we t the CHLRM model given in Section 4 in order to provide a
+formal partition of farms. To this end, we t the model using K = m as a default
+number of communities.                Such an extreme case represents the prior belief that
+there are no clustering patterns at all. A moderate large value of K is convenient
+in situations like this because it allows the data to self-select how many non-empty
+clusters should be considered. We will see in what follows that out from the m
+clusters, many turn out to be empty and only a few remain.
+
+
+                                                                     Actor 19, Mana., Dept. 2
+                                                                                                     1
+                                                    16 23
+     0.4
+
+
+
+
+                                                     4 10
+                                                     2  1
+                                                     1
+                                                       20
+                                                        9
+                                                    18 13
+                                                        7                                            0.75
+     0.3
+
+
+
+
+                                                    11
+                                                    10 24
+                                                    20
+                                                       19
+                                                       17
+ Density
+
+
+
+
+                                                    19 16
+                                                    15 14
+  0.2
+
+
+
+
+                                                    14 21                                            0.5
+                                                    13 15
+                                                     9
+                                                       11
+                                                        8
+                                                     5  6
+     0.1
+
+
+
+
+                                                     3  4
+                                                    21 22
+                                                                                                     0.25
+                                                    17 18
+                                                    12
+                                                       12
+                                                        5
+                                                     8  3
+     0.0
+
+
+
+
+                                                     6  2
+                                                    7
+                                                                 2
+                                                                 3
+                                                                 5
+                                                             17 12
+                                                                18
+                                                                22
+                                                                 4
+                                                                 6
+                                                                 8
+                                                                11
+                                                                15
+                                                             14 21
+                                                             15 14
+                                                             19 16
+                                                             20 17
+                                                                19
+                                                                24
+                                                                 7
+                                                             18 13
+                                                                 9
+                                                                20
+                                                                 1
+                                                              4 10
+                                                             16 23
+                                                                                                     0
+           5       6      7        8      9    10
+                       Number of clusters
+                                                         7
+                                                             6
+                                                                 8
+                                                                     12
+
+
+                                                             21
+                                                              3
+                                                              5
+                                                              9
+                                                             13
+
+
+
+
+                                                             10
+                                                             11
+
+
+                                                              1
+                                                              2
+               (a) Posterior distr. of K ∗                                 (b) Incidence matrix A
+
+               Figure 7: Posterior inference on the cluster assignments γ1 , . . . , γm .
+
+      Let     K ∗ be the number of non-empty clusters in the partition induced by
+γ1 , . . . , γm . The left panel of Figure 7 shows the posterior distribution of K ∗ .
+                                                       ∗             ∗
+
+Pr
+We see that the most highly probable values are K = 7 and K = 8. In fact,
+         ∗
+   (K ∈ {7, 8} | y, X) = 0.76, which means that around three quarters of the
+posterior partitions are composed of either 7 or 8 clusters of farms. The estimated
+                                                                     ∗
+number of non-empty clusters in the data is K                             = 7 (maximum a posteriori with
+a reference value very close to 0.4).
+
+     On the other hand, the right panel in Figure 7 shows the m×m incidence matrix
+A = [aj,j ′ ] obtained from the posterior distribution of the cluster assignments
+
+                              Pr
+γ1 , . . . , γm . The incidence matrix is a pairwise-probability matrix whose elements
+are given by aj,j ′ =       (γj = γj ′ | y, X), for j, j ′ = 1, . . . , m (note that aj,j = 1 for
+                                                                                                ′
+all j ). Thus, aj,j ′ simply represents the posterior probability that farms j and j
+belong to the same community. Such probabilities are indeed identiable, however
+labels themselves are not since the likelihood is invariant to relabelling of the
+mixture components (this is known as the label switching problem; see Stephens
+(2000) and references therein).               On top the incidence matrix, we also present a
+point estimate of the partition induced by such a matrix (represented by black
+lines), which can be obtained by employing the clustering methodology proposed
+in Lau & Green (2007) with a relative error cost of 0.5. As expected, we see that
+
+
+
+                            Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                  249
+
+
+
+eight clusters are formed from the data.       Labels in both rows and columns are
+deliberately arranged in a way that the corresponding partition can be visualize
+easily. The corresponding cluster sizes are 6, 6, 5, 2, 2, 1, 1, and 1. Specically,
+the clusters are composed of the following farms:           C1 = {2, 3, 5, 12, 18, 22},
+C2 = {4, 6, 8, 11, 15, 21}, and C3 = {14, 16, 17, 19, 24}, C4 = {7, 13}, C5 = {9, 20},
+C6 = {1}, C7 = {10}, and C8 = {23}. These clusters along with their estimated
+regression lines are also represented in Figure 6. We see that the estimated clusters
+make sense spatially according to the data points. The slope parameters turn out
+to be signicant for every cluster.
+
+
+
+8.5. Model Checking and Goodness-of-Fit
+   First, we evaluate in-sample predictive performance of each model by means
+of the mean square error (MSE) of replicated data as well as the posteriori
+predictive p-values (ppp's) associated with the predictive distribution of a set of
+test statistics (mean, median, interquartile range, and the standard deviation),
+both locally and globally (i.e., with and without considering the farm as grouping
+factor, respectively). Furthermore, as discussed in Section 7, we also consider the
+deviance information criterion (DIC) in order to assess the overall goodness-of-t
+of the models.
+
+   In what follows we examine the performance of all the tted models, namely,
+the linear regression model (LRM), the hierarchical linear regression model
+(HLRM), and the clustering hierarchical linear regression model (CHLRM). Our
+main ndings at a global level are presented in Table 2.              As expected, the
+performance of LRM at predicting new data is the worst.              Interestingly, both
+HLRM and CHLRM practically have the same behavior in this regard.                        A
+similar result is encountered again in terms of model t, but this time both
+versions of the DIC favor HLRM over CHLRM. These results strongly suggest
+that considering a hierarchical structure when building a model clearly favor both
+in-sample predictive performance as well as goodness-of-t.
+
+
+Table 2: Global measures associated with the mean square error, posterior predictive p-
+          values, and deviance information criterion for all the models tted to the plant
+          size data. LRM: Normal linear regression model. HLRM: Hierarchical Normal
+          linear regression model. CHLRM: Clustering hierarchical Linear regression
+          model.
+                 Model      MSE       pDIC1    DIC1      pDIC2     DIC2
+                 LRM       144.528    2.972    857.158   0.792    854.381
+                 HLRM      10.206     30.469   526.450   22.804   511.122
+                 CHLRM     10.068     32.167   555.020   18.929   528.545
+
+
+   At global level, all the models seem to predict adequately the test statistics
+since there are no evidence of extreme ppp values close to either 0 or 1 (table not
+shown here). However, the story locally is quite dierent. Figure 8 show boxplots
+summarizing the ppp distribution at a local level (i.e., within each farm).             As
+opposed to its early global conduct, LRM misbehaves and fails at capturing the the
+
+
+
+                   Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+250                                                                              Juan Sosa & Jeimy-Paola Aristizabal
+
+test statistics because the ppp's are too extreme. On the other hand, both HLRM
+and CHLRM t the data properly since the ppp distribution is approximately
+centered around 0.5.               However, the ppp's for HLRM are less spread than those
+for CHLRM, which indicates that HLRM tends to have a mild improvement in
+predictive performance in this case.
+             1.0
+
+
+
+
+                                                                           1.0
+             0.8
+
+
+
+
+                                                                           0.8
+             0.6
+
+
+
+
+                                                                           0.6
+       ppp
+
+
+
+
+                                                                     ppp
+             0.4
+
+
+
+
+                                                                           0.4
+             0.2
+
+
+
+
+                                                                           0.2
+             0.0
+
+
+
+
+                                                                           0.0
+                   Min.    Max.   IQR   Mean Med.      SD                           Min.    Max.   IQR   Mean Med.   SD
+                             Test statistic                                                   Test statistic
+                            (a) LRM                                                         (b) HLRM
+                                          1.0
+                                          0.8
+                                          0.6
+                                    ppp
+                                          0.4
+                                          0.2
+                                          0.0
+
+
+
+
+                                                Min.    Max.   IQR    Mean Med.        SD
+                                                            Test statistic
+                                                        (c) CHLRM
+                          Figure 8: Local ppp's for a battery of test statistics.
+
+
+
+
+9. Discussion
+
+      Hierarchical models provide a strong alternative to analyze complex and
+realistic settings.          Their parameter exibility allow us to describe many charac-
+teristics of a given dataset that a regular single-level model does not provide.
+The ability to model within and between means and variances yields to better
+
+
+
+                            Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                        251
+
+
+
+knowledge of the problem (even if we want to predict future values at any stage).
+For even more detail and deep types of complexity, this kind of models provide
+many alternatives for generalizations as discussed in Section 5. In addition, the
+information criteria (e.g., DIC) discussed in Section 7 was proven to be successful
+to be a powerful as a model selection tool.
+
+
+
+                                                               E(y(t) | x, β(t)) = xTβ(t)
+   If additional time-dependent covariates were available, we would be able to
+extend the linear dependency in the model by letting                                            ,
+where    β(t) = (β1 (t), . . . , βd (t)) is a vector of arbitrary real smooth functions
+called dynamic parameters. This model plays a fundamental role identifying and
+characterizing dynamic tendencies and patterns over time in many scientic areas,
+such as biology, epidemiology and medical science, among others (Sosa & Buitrago,
+2021).
+
+   Finally, we recommend consider variational methods as alternative approaches
+for parameter estimation in order to consider larger datasets.               Such techniques
+currently constitute an active research area in computational statistics (Blei et al.,
+2017).
+
+                
+                 Received: October 2021  Accepted: February 2022
+References
+Albert, J. (2009), Bayesian Computation with R, Use R!, Springer.http://books.google.com/books?id=AALhk_mt7SYC
+Banerjee, S., Carlin, B. & Gelfand, A. (2014), Hierarchical modeling and analysis for spatial data, CRC press.
+Blei, D., Kucukelbir, A. & McAulie, J. (2017), `Variational inference: A review for statisticians', Journal of the American statistical Association 112(518), 859-877.
+Christensen, R., Johnson, W., Branscum, A. & Hanson, T. (2011), Bayesian Ideas and Data Analysis: An Introduction for Scientists and Statisticians, Chapman & Hall/CRC Texts in Statistical Science, Taylor & Francis. http://books.google.com/books?id=qPERhCbePNcC
+Crawley, M. J. (2012), The R book, John Wiley & Sons.
+Dey, D., Ghosh, S. & Mallick, B. (2000), Generalized linear models: A Bayesian perspective, CRC Press.
+Ferguson, T. (1973), `A bayesian analysis of some nonparametric problems', The annals of statistics pp. 209-230.
+Gamerman, D. & Lopes, H. (2006), Markov chain Monte Carlo: stochastic simulation for Bayesian inference, CRC Press.
+Gelman, A., Carlin, J., Stern, H., Dunson, D., Vehtari, A. & Rubin, D. (2013), Bayesian Data Analysis, Third Edition, Chapman & Hall/CRC Texts in Statistical Science, Taylor & Francis. http://books.google.com/books?id=ZXL6AQAAQBAJ
+Gelman, A., Hwang, J. & Vehtari, A. (2014), `Understanding predictive information criteria for bayesian models', Statistics and computing 24(6), 997-1016.
+Hoff, P. (2009), A First Course in Bayesian Statistical Methods, Springer Texts in Statistics, Springer. http://books.google.com/books?id=V8jT2SimGR0C
+Ishwaran, H. & Zarepour, M. (2000), `Markov chain monte carlo in approximate dirichlet and beta two-parameter process hierarchical models', Biometrika 87(2), 371-390.
+Kass, R. & Wasserman, L. (1995), `A reference bayesian test for nested hypotheses and its relationship to the schwarz criterion', Journal of the american statistical association 90(431), 928-934.
+Kolaczyk, E. & Csárdi, G. (2020), Statistical analysis of network data with R, Vol. 65, Springer.
+Lau, J. & Green, P. (2007), `Bayesian model-based clustering procedures', Journal of Computational and Graphical Statistics 16(3), 526-558.
+Müller, P., Quintana, F. A., Jara, A. & Hanson, T. (2015), Bayesian nonparametric data analysis, Springer.
+Pitman, J. & Yor, M. (1997), `The two-parameter poisson-dirichlet distribution derived from a stable subordinator', The Annals of Probability pp. 855-900.
+Sethuraman, J. (1994), `A constructive denition of dirichlet priors', Statistica sinica pp. 639-650.
+Sosa, J. & Buitrago, L. (2021), `Time-varying coecient model estimation through radial basis functions', Journal of Applied Statistics pp. 1-25.
+Spiegelhalter, D. J., Best, N. G., Carlin, B. P. & Linde, A. (2014), `The deviance information criterion:  12 years on', Journal of the Royal Statistical Society: Series B (Statistical Methodology) 76(3), 485-493.
+Spiegelhalter, D. J., Best, N. G., Carlin, B. P. & Van Der Linde, A. (2002), `Bayesian measures of model complexity and t', Journal of the Royal Statistical Society: Series B (Statistical Methodology) 64(4), 583-639.
+Stephens, M. (2000), `Dealing with label switching in mixture models', Journal of the Royal Statistical Society: Series B (Statistical Methodology) 62(4), 795-809.
+Wakeeld, J. (2013), Bayesian and frequentist regression methods, Springer Science & Business Media.
+Watanabe, S. (2010), `Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory', Journal of Machine Learning Research 11(Dec), 3571-3594.
+Watanabe, S. (2013), `A widely applicable Bayesian information criterion', Journal of Machine Learning Research 14(Mar), 867-897.
+
+
+
+
+Appendix A. Dirichlet process
+
+                                                                                        DP(α, G)
+   A random distribution function F is generated from a Dirichlet Process with
+parameters α > 0 and G a distribution function on R, denoted by F ∼                                ,
+if for any nite measurable partition B1 , . . . , Bk of R,
+
+
+                      (F (B1 ), . . . , F (Bk )) ∼   Dir(αG(B ), . . . , αG(B )) .
+                                                                     1       k
+
+G plays the role of the center of the DP (also referred to as base probability
+measure, or base distribution), where as α can be viewed as a precision parameter
+(the larger α is, the closer we expect a realization F from the process to be to G).
+See Ferguson (1973) for the role of G on more technical properties of the DP.
+
+
+
+           DP(α, G) F
+   Alternatively, the constructive denition of the DP (Sethuraman, 1994) states
+that F ∼                  if    is (almost surely) of the form
+
+                                                     ∞
+                                                     X
+                                         F (·) =           ωk δϑk (·)
+                                                     k=1
+
+where δϑ (·) denotes a point mass at ϑ (degenerate distribution putting probability
+                iid
+one on ϑ), ϑk ∼ G, ωk = zk
+                                    Qk−1
+                             ℓ=1 (1 − zℓ ), zk ∼
+                                                              iid
+                                                                    Beta
+                                                  (1, α), for k = 1, 2, . . .. Hence,
+the DP generates distributions that can be represented as countable mixtures of
+point masses (the locations ϑk arise i.i.d. from the base distribution G), whose
+weights
+P∞      ωk arise through a stick-breaking construction (it can be shown that
+  k=1 ωk = 1 almost surely).
+   Based on its constructive denition, it is evident that the DP generates (almost
+surely) discrete distributions on R.
+
+
+
+
+Appendix B. Notation
+
+    The cardinality of a set A is denoted by |A|. If P is a logical proposition, then
+1P = 1 if P is true, and 1P = 0 if P is false. ⌊x⌋ denotes the oor of x, whereas [n]
+denotes the set of all integers from 1 to n, i.e., {1, . . . , n}. The Gamma function
+                     R ∞ x−1 −u
+is given by Γ(x) =      u    e du.
+                      0
+   Matrices and vectors with entries consisting of subscripted variables are
+denoted by a boldfaced version of the letter for that variable.                      For example,
+x = (x1 , . . . , xn ) denotes an n × 1 column vector with entries x1 , . . . , xn . We use 0
+and 1 to denote the column vector with all entries equal to 0 and 1, respectively,
+
+
+
+                        Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+254                                                         Juan Sosa & Jeimy-Paola Aristizabal
+
+and I to denote the identity matrix.                 A subindex in this context refers to the
+corresponding dimension; for instance, In denotes the n × n identity matrix. The
+                                                 T
+transpose of a vector x is denoted by x ; analogously for matrices. Moreover, if X
+                                                                        −1
+is a square matrix, we use tr(X) to denote its trace and X                   to denote its inverse.
+                               √
+The norm of x, given by            xT x, is denoted by ∥ x∥ .
+      Now, we present the form of some standard probability distributions:
+
+
+    Multivariate normal:
+            d × 1 random vector X = (X1 . . . , Xd ) has a multivariate Normal
+                                                                                      N
+        A
+        distribution with parameters µ and Σ, denoted by X | µ, Σ ∼   d (µ, Σ), if
+        its density function is
+
+               p(x | µ, Σ) = (2π)−d/2 |Σ|−1/2 exp − 21 (x − µ)T Σ−1 (x − µ) .
+                                                 
+
+
+    Inverse Wishart:
+
+                              WI
+        A d×d random matrix W has a Inverse Wishart distribution with parameters
+        ν y S−1 , i.e., W ∼ (ν, S−1 ), if its density function is
+              p(W) ∝ |W|−(ν+d+1)/2 exp − 12 tr(SW−1 ) , ν > 0 , S > 0.
+                                           
+
+
+    Gamma:
+
+                                    G(α, β)
+        A random variable X has a Gamma distribution with parameters α, β > 0,
+        denoted by X | α, β ∼                 , if its density function is
+
+                                           β α α−1
+                         p(x | α, β) =         x   exp {−βx} ,            x > 0.
+                                          Γ(α)
+
+    Inverse Gamma:
+
+                                                IG(α, β)
+        A random variable X has an Inverse Gamma distribution with parameters
+        α, β > 0, denoted by X | α, β ∼                    , if its density function is
+
+                                         β α −(α+1)
+                       p(x | α, β) =         x      exp {−β/x},              x > 0.
+                                        Γ(α)
+
+    Beta:
+
+                                    Beta(α, β)
+        A random variable X has a Beta distribution with parameters α, β                      > 0,
+        denoted by X | α, β ∼                    , if its density function is
+
+                                     Γ(α + β) α−1
+                   p(x | α, β) =               x  (1 − x)β−1 ,            0 < x < 1.
+                                     Γ(α) Γ(β)
+
+    Dirichlet:
+        AK × 1 random vector X = (X1 , . . . , XK ) has a dirichlet distribution
+
+                 Dir
+                                                                  > 0, denoted by
+        with parameter vector α = (α1 , . . . , αK ), where each αk
+        X|α∼     (α), if its density function is
+                           ( Γ PK α Q
+                               (
+                              QK k=1
+                                        k)  K    αk −1     PK
+              p(x | α) =                    k=1 xk     , if k=1 xk = 1;
+                                 k=1 Γ(αk )
+                              0,                         otherwise.
+
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+
+Hierarchical Linear Regression Models                                                    255
+
+
+
+    Categorical:
+     A K × 1 random vector X     = (X1 , . . . , XK ) has a categorical distribution
+                                                         PK
+               Cat
+     with parameter vector p = (p1 , . . . , pK ), where   k=1 pk = 1, denoted by
+     X|p∼      (p), if its probability mass function is
+                              ( Q
+                                   K     1{x=k}       PK
+                  p(x | p) =       k=1 pk         , if k=1 xk = 1;
+                                0,                  otherwise.
+
+
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 45 (2022) 231-255
+

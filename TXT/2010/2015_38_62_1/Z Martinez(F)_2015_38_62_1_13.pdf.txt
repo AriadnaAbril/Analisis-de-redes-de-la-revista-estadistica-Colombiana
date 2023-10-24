@@ -1,0 +1,1156 @@
+Curves Extraction in Images. Extracción de curvas en imágenes
+Universidad Simón Bolívar, Caracas, Venezuela
+Abstract
+We present a methodology for extracting processes of curves in images, using a statistical summary of the directional information given in measures of location, curvature and direction associated with the pixels that compose each curve. The main purpose is to obtain measures that serve as input for the reconstruction, in vector format, of a process of curves which are of interest, so that the extracted curves can be easily stored and reconstructed based on few parameters conserving representative information of its curvature at each pixel. As starting point, the directional information obtained from a methodology of consistent curves detection is used, which includes k the decomposition of the image in a directional domain contained in R2 , with k ∈ N. Basic summary measures criteria are proposed for this type of data and the application to four cases of satellite images for extraction of sections of rivers in these images are shown.
+Key words: Curvature, Detection, Energy, Feature Selection, Image Processing, Maximum, Median, Trajectory.
+1. Introduction
+    The description of processes of interest located on objects in images is a task of
+great importance for applications in different disciplines, from the study of satellite
+images, printed text processing and representation of events in seismic trace, to
+medical imaging practiced by x-ray and tomography (Gonzalez & Woods 2002,
+Cheriet, Kharma, Liu & Suen 2007) Carrying out the description of the properties
+of the objects contained in images, allows us to obtain information about the
+phenomena under study associated with those objects. An image is made up of a
+number of pixels or points in N2 , and each is associated with a value of intensities
+of gray (in the case of a monochrome image). Commonly, detection methodologies
+are applied to images based on some property of the intensity of the pixels, which
+allows to determine which pixels belong to a process described by the object and
+which should be separated from it and dismissed as part of the background. An
+extra step, which allows an understanding of the behavior of the visual appearance
+of the detected object, is the procedure of recognition of the object, carried out
+through the extraction of some of its features. We call this procedure “object
+extraction”; in our particular case “curves extraction”, which does not only consist
+of the identification of the pixels of the image, as a part of a curve, but also to
+associate to each pixel, a vector of properties that describe the region of the curve
+to which they belong, and that will be used as input for a simplified reconstruction
+of curves.
+    In this paper a procedure of curves extraction by obtaining features based on
+the information of decomposition of the studied image in directional channels is
+carried out. In a first step, the image will be processed using a method of curves
+detection in order to obtain information from its directional decomposition (Do
+2001, Martínez & Ludeña 2011). Thereafter, a summary of measures of directional
+information is presented and applied, chosen to represent the features of extraction
+(Nixon & Aguado 2008, Chang & Coghill 2000), which are location, curvature
+and direction of the curve on each pixel. Also, a preliminary proposal of curves
+reduction algorithm is presented, whose purpose is to provide an alternative to
+the classic thinning and object tracking algorithms (Cheriet et al. 2007, Myler &
+Weeks 1993) through simple operations linked to the directional information from
+the process, which will facilitate the reconstruction of the extracted curves.
+    This article is organized as follows: In section 2 we expose in detail the metho-
+dology to apply, since the filters used for curves detection to obtain the directional
+information, until the design of summary measures and the reduction algorithm.
+In section 3 an example of application on satellite images of rivers is shown with a
+
+
+                                     Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                          297
+
+brief presentation of the results of the use of the proposed methodology. Finally,
+conclusions about the results obtained are exposed.
+
+
+
+2. Methodology
+    This section describes the methodology used for the extraction and reduction of
+curves. We observe the image I (x, y), with (x, y) ∈ P ⊂ N 2 , P a finite ensemble.
+I is a function which associates to each pixel (x, y) a value u ∈ R of intensity of
+gray. The relevant information in the image consists of the curves processes. So,
+the image can be described by the model
+
+                       I (x, y) = C (x, y) + b (x, y) , (x, y) ∈ P                   (1)
+
+where C(x, y) represents curves and b(x, y) is the background, composed by objects
+which are not of interest, and we want to discard this background. This procedure
+is called object detection. Because a known property for curve-like objects is that
+its pixels spread energy over several simultaneous directions (Chang & Coghill
+2000, Do 2001, Candès & Donoho 2004), a procedure of detection using directional
+filters is applied.
+    So, as an initial step, a decomposition of the image I in directional non-
+overlapping channels containing the directional energy produced by the convo-
+lution between the image and a tight frame of curvelets is applied. This decom-
+position covers directions from 0° to 180° in a given scale j, and for each pixel, a
+total of 2D(j) directional channels are obtained.
+    The problem is that after this application, too much directional information for
+each pixel is obtained. If the refinement scale j increases, so does the number of di-
+rections in which it is possible to track curves. This hinders the effective description
+of the behavior of the curves. In this type of problems, called high dimensionality
+problem (Nixon & Aguado 2008), the solution lies in making a transformation of
+information through any technique of summary that conveniently describes with
+few parameters the studied objects. As part of the procedure of features extrac-
+tion, a summary of the information based on directional energy distribution is
+proposed. We will use the maximum and median given by the distribution of
+the percentage of directional energy as measures, first of all, to assign a unique
+label to each pixel that identifies the predominant direction to which it belongs.
+Secondly, to assign a unique magnitude of directional energy. Measures to be ob-
+tained will be: Number of directional channels, directional labels and summary
+of directional energy. The first two measures will be used as representatives of
+curvature and direction of each pixel respectively. The last measure will be used
+later as information about the morphology of the curve.
+    During the detection a threshold method is applied to improve the information
+of interest which is usually hidden by energy events.
+   In a final step, a proposal of reduction is presented as an alternative thinning
+procedure (Cheriet et al. 2007, Myler & Weeks 1993) to obtain a simplification
+
+
+                                      Revista Colombiana de Estadística 38 (2015) 295–320
+
+298                                                                   Zoraida Martínez
+
+
+close to the medial axis of the extracted curves and facilitate their representation.
+It will be based on the information given by the directional features.
+   In the following subsections we, briefly describe the theoretical and application
+details about these steps to achieve the extracting processes of curves in images.
+
+
+2.1. Detection Procedure
+2.1.1. Directional Information
+
+    With the purpose of obtaining directional information on image, part of the
+methodology implemented for curves detection in Martínez & Ludeña (2011), Mar-
+tinez (2011) is applied based on a tight frame of curvelets (Candès, Demanet,
+Donoho & Ying 2006, Candès & Donoho 2004, Candès & Donoho 2002, Candès
+& Donoho 2000b, Candès & Donoho 2000a) through a discrete implementation by
+contourlets (Do & Vetterli 2005, Do & Vetterli 2001, Do 2001).
+    Curvelets tight frame elements are denoted as ρj,k,x,y , where j represents the
+scale at which is calculated the curvelet, k the direction of the base of the curvelet,
+and (x, y) the position of the pixel px,y . The appendix provides a brief description
+of the expression used for the calculation of ρj,k,x,y . The relationship between
+width and length of each of these elements is anisotropic and is given by w = l2 ,
+where w represents the width and l the length of the base of the curvelet. In the
+work of Candès & Donoho (2004) its suitability and efficiency for the representation
+of objects with curvature was proven.
+    A directional channel is obtained from the coefficients given by the convolution
+of an element ρj,k,x,y from the frame of curvelets with the image I. Coefficients
+of the channel have more energy for pixels in regions that have a direction that
+matches the base of the curvelet used to produce it.
+    Let n = n1 × n2 be the dimension of the treated image; after the application of
+the 2D(j) curvelets an output matrix with dimension 2D(j) ×n is obtained. Each of
+the n pixels that compose the image will have 2D(j) associated channels, through
+which the directional energy is distributed. One of the properties of this energy
+distribution is related to the curvature of the curve: the greater the curvature,
+the greater directional energy dispersion; i.e., energy occupies more directional
+channels, but at the same time the magnitude of this energy is lower in each of
+them. Whereas, if the curvature is less, then there are fewer occupied channels,
+but the magnitude of the energy that these present is increased.
+     The directional channel αj,k is obtained by the convolution of the curvelet
+matrix ρj,k with the image I, therefore αj,k = hI, ρj,k i is a matrix where each entry
+is linked to a pixel px,y in coordinates (x, y) and contains the value of directional
+energy αj,k (x, y). We assign intensity values as follow: zero to the background,
+greater than zero to objects.
+   For the previous development, in a scale j there are d = 2D(j) directional
+channels for the implementation of the frame of curvelets, with j ∈ N and D(j) =
+j + 2. This means that when the value of scale increases, the scale is finer and
+more directional channels are obtained. For each directional channel as a label
+
+
+                                     Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                        299
+
+a number k is assigned , with k = 1, . . . , d, representing ranges of directions for
+                                            °
+the angle θ with increments of s = 180    d . Thus, for scale j = 3, used in the
+application in section 3, the directional domain between 0° and 180° is subdivided
+in d = 32 channels, with increments of s = 5.625°, where (k − 1) s ≤ θ < ks, with
+k = 1, . . . , 32. For example, the channel labeled as k = 7 contains information of
+directions from 33.75° to 39.375°.
+
+2.1.2. Thresholding
+
+   Enhancement by intensities transformation is an ideal approach to try on pro-
+blems where part of the image may contain hidden features of interest. In our
+particular case, we need to enhance zones of the the curve where the amount of
+energy spreading is too subtle in relation to other events such as intersections be-
+tween curves, since these produce an amount of energy greater than the rest of
+the pixels on almost all directional channels.
+    So, after the directional decomposition, to improve the information of interest
+and select the pixels to be labeled as curve, a global threshold is used with r = 3
+levels (Gonzalez, Woods & Eddins 2004).
+   The definition of the threshold is the following:
+                           
+                                   0          if      αj,k (x, y) < u0
+                           
+                             a × αj,k (x, y)   if   u0 ≤ αj,k (x, y) < u1
+                           
+         U (αj,k (x, y)) =                                                         (2)
+                           
+                            b × αj,k (x, y)   if   u1 ≤ αj,k (x, y) < u2
+                           
+                               αj,k (x, y)     if      αj,k (x, y) ≥ u2
+
+   with constants 0 < a, b < 1 and 0 < u0 < u1 < u2 < 255.
+    Here, a slicing of the image is produced, where values lower than u0 are dis-
+carded (set to zero), values higher or equal to u2 remain unaltered and the rest of
+intensities are transformed to two slices which only preserve a proportion a and b
+of the intensities, respectively.
+    Due to the fact that objects in an image occupy different ranges in the gray
+scale, to choose appropriates values to thresholds, histogram shape-based methods
+are commonly used, where the peaks, valleys and curvatures of the histogram of
+the image are analyzed (Sezgin & Sankur 2004). In our particular case, intervals
+of intensities of gray where concavities and valleys are produced will be the guide
+to select the values u0 , u1 and u2 .
+    The values a = 0.8; b = 0.95, representing only 80% and 90% of the original
+intensity of the pixel were used. These values are kept fixed for all the presented
+examples.
+
+
+
+
+                                    Revista Colombiana de Estadística 38 (2015) 295–320
+
+300                                                                    Zoraida Martínez
+
+
+2.2. Extraction Procedure
+2.2.1. Revision of Directional Channels
+
+      We present the following definitions:
+
+Adjacent Channels: Channels corresponding to the direction closest to the range
+    of angles of the studied channel. Each channel has two adjacent channels.
+    For example, the channel including directions ranging from 33.75° to 39.375°
+    has the adjacent channels from 28.125° to 33.75° and from 39.375° to 45°.
+
+Significant Channels: Channels where the energy is greater than a certain thresh-
+     old. In this case, this means that the energy is greater than zero.
+
+Significant Adjacent Channels: String of ordered and significant channels that
+     have at least one adjacent channel which is also significant.
+
+Isolated channels: Channels whose adjacent channels are not significant.
+
+    As a first treatment of the energy information, we apply a revision to the
+directional channels associated with each pixel, removing isolated channels and
+maintaining only significant adjacent channels that form the chain of channels with
+greater length; i.e., in the case that more than one string of adjacent channels
+occurs, only the longer string is preserved. Then, we adjust the energy in the
+channels not removed by scaling. So, it is set that the given pixel has energy in a
+unique and connected string of ordered directional channels, which eliminates any
+ambiguity in the directional information of the pixel.
+
+
+2.2.2. Number of Significant Adjacent Channels
+
+    We use the number of significant adjacent channels that were not eliminated
+during the revision, denoted by l (x, y). In Martinez (2011) the total number
+of channels that are occupied by the directional energy was used as part of a
+functional which allowed to separate objects in the image into two groups in a
+consistent way: “curves” or objects with non-zero curvature and “straight lines” or
+objects with zero curvature. Here, the revised version of this amount is proposed
+as a representative value of the curvature feature of the curves.
+
+
+2.2.3. Directional Label
+
+   We establish a unique label that represents, among all significant adjacent
+channels, the summary of directional information of each pixel. As criteria of
+summary, the median position and the position of the maximum of significant
+adjacent channels were taken, and are described as follows.
+Middle Channel Label. For each pixel the central channel of significant adjacent
+channels is identified, and its directional label is assigned to the pixel. Thus, for
+
+
+                                      Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                            301
+
+the image I, if the pixel p = (x, y) ∈ I has a chain of significant   adjacent channels
+with length lx,y given the vector of energies α1 , α2 , . . . , αlx,y , then
+
+                              lx,y = [median {1, . . . , lx,y }]
+                              e                                                        (3)
+is the middle channel label for pixel p.
+Maximum’s Channels Label. For each pixel we identify the channel between
+significant adjacent channels that has greater directional energy, and its directional
+label is assigned to the pixel. Thus, for the image I, if the pixel p = (x, y) ∈ I
+has a chain of significantadjacent channels with length lx,y given the vector of
+energies α1 , α2 , . . . , αlx,y , then
+                                  0
+                                 lx,y = argmax {αi }                                   (4)
+                                         i∈{1,...,lx,y }
+
+is the channel’s maximum label for pixel p.
+
+
+2.3. Reduction Procedure
+2.3.1. Summary of the Energy from Significant Adjacent Channels
+
+   Here, we take into account the relationship between the magnitude of the
+summary of the directional energy and the morphology of the curve. This requires
+a unique value per pixel that represents the value of the directional energy. The
+median and maximum are used again to obtain this value. Values of summarized
+energy will be compared among groups of pixels to decide which are discarded and
+which are retained to carry out the tracking of the trajectory of curves previously
+detected and extracted.
+Middle Channel Energy. For each pixel we identify the central channel of
+significant adjacent channels, and its energy is assigned as the representative of all
+energies.
+     Thus, for the image I, if the pixel p = (x, y) ∈ I has a chain of significant adja-
+cent channels with length lx,y , given by the vector of energies α1 , α2 , . . . , αlx,y ,
+                                                                                        
+
+   lx,y is the middle channel label, then the middle channel energy is given by,
+if e
+                                   Gmed (x, y) = αl̃x,y .                              (5)
+
+Maximum Energy of the Channels. For each pixel we identify the channel
+with maximum energy between significant adjacent channels, and its energy is
+assigned as the representative of all energies.
+      Thus, for the image I, if the pixel p = (x, y) ∈ I has a chain of significant adja-
+cent channels with length lx,y , given by the vector of energies α1 , α2 , . . . , αlx,y ,
+                                                                                        
+
+if lx,y
+    0
+        is the maximum’s channels label, then the maximum energy of the channels
+is given by,
+                                   Gmax (x, y) = αlx,y
+                                                     0 .                               (6)
+    For both measures it will be shown in section 3 that energy tends to be higher
+for internal pixels of the curves. Then, this directional information can be useful
+
+
+                                        Revista Colombiana de Estadística 38 (2015) 295–320
+
+302                                                                    Zoraida Martínez
+
+
+for the method of reduction, which will be used to locate pixels representatives of
+the medial axis of the curves.
+
+2.3.2. Curves Reduction
+
+      We present the following definitions:
+
+Region: pixels belonging to pieces of curves.
+Directional Region: all of the pixels labeled under the same direction. There
+     will be a total of d directional regions produced in the decomposition of the
+     image, which we denote as Rk , with k = 1, . . . , d.
+Directional Subregion: subset of pixels belonging to a directional region which
+     compose a connected region; i.e., each pixel has at least one neighbor pixel
+     that is in the same directional region. It will be denoted as Ski , with
+     k = 1, . . . , d, i = 1, . . . , r (k), where r(k) represents the total number of
+     directional subregions of the directional region Rk .
+
+To keep track of the curves, a reduction is carried out taking advantage of the
+directional information summarized by location, direction and curvature features
+obtained in the extraction. This procedure is done for directional subregions. We
+will take into account only the subregions Rki that have more than q pixels, where
+the value q can be changed interactively.
+   Two approaches are proposed to deal with this part of the problem. A first
+approach is based on measures of middle channel energy and maximum energy of
+the channels, so that, each region is reduced by a threshold that depends not only
+on the value of energy, but is also based on the number of pixels in the subregion.
+The threshold retains only a proportion pe ∈ (0, 1) of the pixels with higher energy
+value.
+    Let S i be the subregion composed by ni pixels with energy coefficients Gm  i ,
+                     (m)
+1 ≤ m ≤ ni , and Gi      its sorted version, where (m) refers to the index of the
+m-th value of energy sorted in ascending order. Let pe be the proportion of pixels
+we want to retain by subregion; then, the amount of pixels which will be rejected
+is calculated by,
+                             n0 = [nr × (1 − pe )] + 1.                        (7)
+                                                    (n )
+So, the limit of the threshold will be given by Gi 0 . Thus, only those pixels such
+              (n0 )
+that Gmi > Gi       will be kept.
+    In another approach, for the subregion S i the pixel which exhibits the highest
+value of energy is used as a starting point for the reduction on the subregion. From
+this, a straight line is drawn with slope given by the directional label previously
+assigned to the subregion. Only the pixels in the subregion that match a discretized
+version of this straight line will be kept.
+    Finally, we complete the tracking of the trajectory of curves associating sub-
+regions which have neighboring pixels with directional labels near to directional
+label of the treated subregion.
+
+
+                                      Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                        303
+
+3. Results
+3.1. Implementation with MATLAB
+    Routines to implement the methodology outlined in section 2 were programmed
+in MATLAB. The scale j = 3 was used in the application, for a total of d = 32
+directional channels. Images are presented in a graylevels system with 256 values
+in the range from 0 to 255.
+
+
+3.2. Case Studies
+    We consider an application to four satellite images from Google Earth, which
+contains roads, built-up areas or cultivated areas and sections of rivers. In figure
+1 the images are presented. The goal is to achieve rivers extraction as a curve
+process by obtaining the following features: Localization, curvature and direction
+for each pixel of the curve. Next, a reduction of the extracted curves is applied.
+
+
+
+
+             (a) River 1 (USA)                       (b) River 2 (Ukraine)
+
+
+
+
+            (c) River 3 (Ukraine)                     (d) River 4 (Russia)
+               Figure 1: Satelital images of rivers from Google Earth.
+
+
+
+
+                                    Revista Colombiana de Estadística 38 (2015) 295–320
+
+304                                                                   Zoraida Martínez
+
+
+3.3. Directional Channels
+    Figure 2 shows some examples of curvelet frame elements in the scales j =
+1, 2, 3, for two different directional channels. In these images the differences be-
+tween scales can be appreciated. On a larger scale, the elements will be smaller
+and thinner. In the decomposition and extraction of curves from the image, only
+the finer scale j = 3 will be used.
+
+
+
+
+        j = 1, k = 4                 j = 2, k = 7                 j = 3, k = 15
+
+
+
+
+        j = 1, k = 7                j = 2, k = 13                 j = 3, k = 26
+Figure 2: Images of some examples of curvelet frame elements in the scales j = 1, 2, 3.
+
+
+
+
+3.4. Thresholding
+    Figure 3 shows histograms for directional channels from each image in figure
+1 with vertical lines set in the intensities of gray where values u0 , u1 and u2 were
+selected. In the case of river images, values u0 , u1 and u2 are selected taking
+into account the concavity and the valley or low values presented in the tail of
+histograms. For the river 1 image we decided, based on its histogram, to use
+two values near to concavity of the histogram and another in the end of the tail
+given by u0 = 100, u1 = 150 and u2 = 240. Due to the similar behavior of the
+histograms in other images we used the same values, except in the case of river 4,
+where the tail presents a substantial decay. In this case the value u2 = 200 was
+selected. Table 1 summarizes the values selected.
+
+
+3.5. Number of Significant Adjacent Channels
+    To facilitate their interpretation, figure 4 shows the number of significant ad-
+jacent channels l (x, y) encoded in grouped labels. In figure 5 four zones of images
+
+                                     Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                                                                             305
+
+                  500                                                                  500
+
+
+                  450                                                                  450
+
+
+                  400                                                                  400
+
+
+                  350                                                                  350
+
+
+                  300                                                                  300
+
+      Frequency
+
+
+
+
+                                                                           Frequency
+                  250                                                                  250
+
+
+                  200                                                                  200
+
+
+                  150                                                                  150
+
+
+                  100                                                                  100
+
+
+                   50                                                                   50
+
+
+                    0                                                                    0
+                        0    50   100           150       200       250                      0    50   100          150     200   250
+                                   Intensity of gray                                                    Intensity of gray
+
+
+                                  River 1                                                              River 2
+                  1000                                                                 500
+
+
+                  900                                                                  450
+
+
+                  800                                                                  400
+
+
+                  700                                                                  350
+
+
+                  600                                                                  300
+
+
+
+
+                                                                           Frequency
+      Frequency
+
+
+
+
+                  500                                                                  250
+
+
+                  400                                                                  200
+
+
+                  300                                                                  150
+
+
+                  200                                                                  100
+
+
+                  100                                                                   50
+
+
+                    0                                                                    0
+                         0   50    100           150       200       250                     0    50   100          150     200   250
+                                    Intensity of grey                                                   Intensity of gray
+
+
+                                  River 3                                                              River 4
+                    Figure 3: Histograms of directional channels from images in figure 1.
+
+                                             Table 1: Values for the threshold.
+                                                        Images       a0                a1        a2
+                                                        River 1      100               150       240
+                                                        River 2      100               150       240
+                                                        River 3      100               150       240
+                                                        River 4      100               150       200
+
+
+
+river 1 and river 4 which include several regions are shown. We observe that in
+regions where there is a greater change of the curvature or there are changes in
+concavity, the number of significant adjacent channels per pixel is notably higher
+than in regions where the curvature changes are few and do not produce changes
+in concavity. For example, in figure 5(a) the pixels with 18 to 22 significant ad-
+jacent channels approximately correspond to a change in concavity. When pixels
+move away from the zone of change in concavity, the number of significant adja-
+cent channels decreases, in this case, the group with 13 to 17 channels, followed by
+groups with less than 13 channels. In the case 5(b) the inflection point of the curve,
+scarcely noticeable at first sight, is clearly marked with a high value of l (x, y) from
+23 to 32 channels. In the cases 5(c-d) pixels with several changes in concavity are
+marked with 32 channels label. In figure 6 these details are highlighted for river
+1.
+
+
+
+
+                                                                  Revista Colombiana de Estadística 38 (2015) 295–320
+
+306                                                                     Zoraida Martínez
+
+
+   In summary, with this measure we can observe that zones with greater curva-
+ture correspond to a larger number of channels, while zones with less curvature
+correspond to a smaller number of channels, and changes in concavity can be
+determined.
+
+
+
+
+                  River 1                                     River 2
+
+
+
+
+                  River 3                                     River 4
+Figure 4: Images of the Number of Significant Adjacent Channels. The scale j = 3
+          has a total of d = 32 possible channels, here labels were grouped in six gray
+          levels.
+
+
+    A result to take into account is that some regions with 30 or more significant
+adjacent channels may belong to crosses, regions composed of circular structures,
+or regions with non-identifiable directionality in the current scale. In figure 7
+examples from river 1 and river 3 are shown, in which pixels with 32 significant
+adjacent channels were highlighted; i.e., all possible channels have non-zero energy.
+In the case 7(a) the highlighted pixels belong to a crossing of the river with a very
+faint object. In the cases 7(b-c) ones does not get a clear identification of the
+curvature changes present at first glance in the original image. In these cases, an
+initial proposal is to work on a more coarse scale for analysis; since, in the current
+scale, the bases of the elements of the frame do not produce coefficients equal to
+zero, moreover its base does not match the direction of the curve. For example,
+the case 7(b) is treated in the scale j = 2 in figure 8, which shows three of d = 16
+possible channels on this scale. In this case, from the total number of channels
+only eight are significant, and only five of them are adjacent; most channels are
+between 0° and 45°. Therefore, this scale does not present the same kind of lack
+
+
+                                     Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                          307
+
+
+
+
+                       (a)                                    (b)
+
+
+
+
+                       (c)                                    (d)
+Figure 5: Images of the Number of Significant Adjacent Channels. Example zones from
+          figure 4. (a-b) from river 1, (c-d) from river 4.
+
+
+
+
+               (a)                        (b)                        (c)
+Figure 6: Images of highlighted details of river 1 from the figure 5. (a-b) Pixels with a
+          number of channels from 18 to 22 are highlighted in dark gray. (c) from 13
+          to 32 channels.
+
+
+
+of definition present in the finer scale. However, in the following sections we can
+see that one of the proposed measures is also useful for handling this problem.
+
+                                      Revista Colombiana de Estadística 38 (2015) 295–320
+
+308                                                                    Zoraida Martínez
+
+
+
+
+             (a)                          (b)                            (c)
+Figure 7: Images of highlighted details of zones with problems (a) Cross between river
+          and another object. (b-c) Regions with non-identifiable directionality. In all
+          cases, the energy of the pixels occupies all d = 32 directional channels.
+
+
+
+
+Figure 8: Images of channels in scale j = 2 for zone from figure 7(b). In more coarse
+          scale j = 2 the studied region appears in scarcely five of d = 16 significant
+          adjacent channels, while on the scale j = 3 it appears in all d = 32 channels.
+          Here, two channels that are significant for this zone and one in which the
+          energy is zero are shown.
+
+
+
+3.6. Directional Labels
+    As a summary of all directional channels we associate a single value or label
+to each pixel between d = 32 possible directions. The encoding of directional
+channels in labels was detailed in subsections 2.1.1 and 2.2.3. The results for
+middle channel label and maximum’s channel label were calculated using (3) and
+(4) respectively. In the graphical representation, to simplify, labels are grouped in
+three classes: labels from 1 to 12, associated with directions 90° to 157.5°; labels
+from 13 to 19, associated with directions 157.5° to 180° and 0° to 16.875°; and
+labels from 20 to 32, associated with directions 16.875° to 90°.
+    As can be seen on the right side of figure 9, which represents middle channel
+labels, subregions labeled from 1 to 12 presented the notorious property of being
+sloped towards the left in the majority of cases, while subregions labeled from 20
+to 32 presented the property of being sloped towards the right in the majority of
+cases, and subregions labeled from 13 to 19 presented the property of being sloped
+on horizontal position. Few of the latter cases presented problems in identification.
+In figure 10 we show examples of particular zones.
+   In the figure 11, we show a couple of examples of zones with the assigned
+middle channel label of each pixel, represented by straight line segments with the
+
+
+                                      Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                           309
+
+slope associated with its labels. The gradual change in the label can be observed
+at the same time that the direction of the curve also changes.
+    In cases with ambiguities for the number of significant adjacent channels the
+information is not clear in this measure; as seen in few regions from rivers 1 and 4
+and long regions from rivers 2 and 3. Then, the middle channel label is a suitable
+candidate to represent the directional information about each pixel as a unique
+value, but problems still remain for some types of regions.
+
+
+
+
+                   River 1                                      River 1
+
+
+
+
+                   River 3                                      River 3
+Figure 9: Images of middle channel labels for rivers 1 and 3. On the left side, the
+          representation in each of 32 possible labels is shown. On the right side, labels
+          were grouped in three gray levels.
+
+
+    In the case of maximum’s channel labels, in figures 12 and 13 a behavior sim-
+ilar to the middle channel labels can be observed. We emphasize, in particular,
+the behavior of the maximum in the zones with problems of identification rep-
+resented in cases like 13(c) compared to 10(c) and the entire image the river 3
+in 12 compared to 9. In these cases, it was possible to obtain an assignment of
+a label for subregions consistent with the behavior of river direction in a zone
+where the assignment given by the number of significant adjacent channels or the
+middle channel labels failed. Thus, we propose this label as the best provider of
+information for the final extraction of the curves in the image in comparison with
+the middle channel label. But in a future work we will be combining such label
+information with that found in the more coarse scale in subsection 3.5 for a best
+treatment of curvature in cases with ambiguity.
+
+
+                                       Revista Colombiana de Estadística 38 (2015) 295–320
+
+310                                                                        Zoraida Martínez
+
+
+
+
+               (a)                        (b)                        (c)
+  Figure 10: Images of example zones of river 1 from the right side of the figure 9.
+
+
+
+
+Figure 11: Images of flow of directional labels. Gradual change in the labels follows
+           changes in curvature.
+
+
+   Then, with these labels we have a single value per pixel serving as the repre-
+sentative of curve direction.
+   Finally, for the case under study, we obtained each of the desired features of
+the curves, and its usefulness has been proved comparing its behavior against the
+behavior of the curves in the image,
+
+   • Location: the same pixel coordinates, which possess a non-zero energy, iden-
+     tified it as part of a curve.
+   • Curvature: the number of significant adjacent channels is a measure of the
+     degree of curvature of the curve.
+   • Direction: middle channel label is a proper representative of the direction
+     the curve, follows but the use of the maximum’s channel label is preferred
+     since it allows a better directional description, even in cases where the middle
+     channel labels fails.
+
+      So, we assign to pixel px,y the features vector,
+                            cx,y = ((x, y) ; l (x, y) ; l0 (x, y))                      (8)
+The set of all these vectors composes the group of extracted curves.
+
+
+                                        Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                        311
+
+
+
+
+                 River 1                                     River 1
+
+
+
+
+                 River 2                                     River 2
+
+
+
+
+                 River 3                                     River 3
+
+
+
+
+                 River 4                                     River 4
+Figure 12: Images of maximum’s channel labels for all rivers. On the left side, the
+           representation in each of 32 possible labels is shown. On the right side,
+           labels were grouped in three grey levels.
+
+
+                                    Revista Colombiana de Estadística 38 (2015) 295–320
+
+312                                                                    Zoraida Martínez
+
+
+
+
+             (a)                             (b)                             (c)
+
+
+
+
+             (d)                             (e)                             (f)
+Figure 13: Example zones from figure 12. (a-c) river 1, (d) river 2, (e) river 3 and (f)
+           river 4.
+
+
+
+
+3.7. Summary of the Energy
+
+    It is naturally expected for the energy produced by the convolution between the
+image and a determined curvelet adjust to the shape of the curve in the direction
+of the base of the curvelet, such as the highest values of directional energy are
+concentrated in the inner part of the region, in the given direction. This is because
+the values that are closer to the background, and away from the direction of the
+base of the curvelet, incorporate more zeros than the rest. Our measure is however,
+a summary of energy where we choose among the 32 directional channels a single
+channel whose energy will be the representative; it requires that the summary
+maintain the above-described property.
+    The measures used for selecting the energy are the median and the maximum
+again. So, we calculate by (5) and (6) the middle channel energy and maximum
+energy of the channels. Results are shown in figures 14 and 15, with examples
+of some zones studied in the previous sections. Here, it can be observed that the
+magnitude of the energy produced by the summary procedure continues to adjust
+to the shape of the curves through the entire image. These results motivate the
+proposal of reduction presented in subsection 2.3.2 to find a representative of the
+medial axis of the curves within each subregion.
+
+
+                                      Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                           313
+
+
+
+
+             (a)                           (b)                            (c)
+
+
+
+
+             (d)                            (e)                           (f)
+Figure 14: Image of middle channel energy with zones where we highlight some of the
+           pixels with higher energy.(a-c) river 1, (d) river 2, (e) river 3 and (f) river
+           4.
+
+
+3.8. Curves Reduction
+    In order to simplify any reconstruction of the curve the next goal is to find
+a reduced version of the extracted curves to perform tracking of curve trajectory
+calculating a candidate for medial axis of each subregion. We will use as input
+the summary of energy due to the properties observed in section 3.7. The results
+presented in the images are based on the maximum energy of the channels. We
+only consider subregions composed of more than q = 5 pixels.
+    In the first case of reduction, figure 16, we set the value pe = 31 ; i.e., only a
+third of pixels from each subregion is preserved.
+   In the second case of reduction, the angle to the straight line segment is the
+lower limit of the range of angles that define the directional channel. The initial
+pixel is the one with more energy over all pixels in subregion S i . An example of
+the application to one subregion is given in figure 17.
+   In Figure 18 the original images of the rivers, are shown together with the
+results of the second case of reduction. We carry out tracking of the curve, joining
+only neighboring subregions whose directional labels had close values; in this case,
+not more than three neighbor channels of difference. Results are shown also on
+the right side of figure 18. When comparing the reduced results with the original
+images, the reduction follows much of the rivers path. But, for example, at the
+beginning of river 1, shown in figure 5(b), part of a vertical section is lost, where
+
+
+                                       Revista Colombiana de Estadística 38 (2015) 295–320
+
+314                                                                    Zoraida Martínez
+
+
+
+
+             (a)                           (b)                           (c)
+
+
+
+
+             (d)                           (e)                           (f)
+Figure 15: Image of maximum energy of the channels with zones where we highlight
+           some of the pixels with higher energy.(a-c) river 1, (d) river 2, (e) river 3
+           and (f) river 4.
+
+
+
+
+Figure 16: Image of first case of reduction for river 1. Only a third of pixels from each
+           subregion is preserved.
+
+
+
+
+the inflection point is located. A redefinition of selection of the straight line seg-
+ment based on the change in curvature information from l (x, y) could lead to an
+adequate representation of this zone.
+
+                                      Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                           315
+
+
+
+
+Figure 17: Image of second case of reduction. Example of a single subregion. The zone
+           of the curve containing the subregion is in light gray, subregion in dark gray,
+           and straight line segment from reduction in black.
+
+
+    Some river sections are thinner and not captured by the detection procedure.
+In this case we propose working with a finer scale j = 4 which would use d = 64
+directional channels.
+   As for remaining objects not belonging to the rivers, it can be observed that
+they are reduced to very simplified strokes and are also perfectly separated from
+the rivers.
+
+
+4. Conclusions and Future Work
+    For practical examples on satellite river images, we determine that using curve
+detection and measures such as the number of significant adjacent channels, mid-
+dle channel and maximum’s channels labels, we can effectively describe features
+such as localization, curvature and direction on each pixel from the curves in the
+image. With this, we achieved the extraction of the curves with features that
+can be used as an input for the reconstruction thereof. As a preliminary step for
+reconstruction we applied a proposal of reduction of the extracted curves, based
+on middle channel energy and maximum energy of the channels with two different
+approaches of thinning by reduction. The results obtained in the reduction show
+an effective tracking of river trajectory. However, there is room for improvement
+and suggestions for future work are presented in this regard,
+
+   • The inclusion of pixel curvature information to make a better decision on
+     the representation of the reduction.
+   • The implementation of a finer scale j = 4 with d = 64 possible directions,
+     which would include information on thinner sections of the river that were
+     not detected.
+
+
+
+                                       Revista Colombiana de Estadística 38 (2015) 295–320
+
+316                                                                    Zoraida Martínez
+
+
+
+
+                                            River 1
+
+
+
+
+                                            River 2
+
+
+
+
+                                            River 3
+
+
+
+
+                                            River 4
+Figure 18: Images of Second case of reduction for all rivers. On the left side, original
+           images. In the center, the reduction. On the right side, the tracking of the
+           trajectory from the reduction.
+
+
+
+      Aside from this, we will consider other applications for the obtained results,
+
+   • The reconstruction in a vectorial file (svg) for curves extracted from an
+     image.
+
+   • The measurement of objects in an image.
+
+   • The characterization of textures in an image.
+
+
+                                      Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                      317
+
+Acknowledgements
+   This work was funded by Departamento de Investigación y Desarrollo (DID)
+from Universidad Simón Bolívar (USB) as part of the project S1-IN: “Análisis
+Estadístico y Descripción Automática de Información Direccional de Texturas”.
+                                                          
+                   Received: June 2013 — Accepted: May 2014
+
+
+References
+Candès, E., Demanet, L., Donoho, D. & Ying, L. (2006), ‘Fast discrete curvelet transforms’, Multiscale Modeling Simulation 5(3), 861–899.
+Candès, E. & Donoho, D. (2000a), ‘Curvelets - A suprisingly efective nonadaptive representation for objects with edges’, Curves and Surfaces C(2), 1–10.
+Candès, E. & Donoho, D. (2000b), ‘Curvelets, multiresolution representation, and scaling laws’, SPIE Wavelet Applications in Signal and Image Processing VIII 4119(1), 1–12.
+Candès, E. & Donoho, D. (2002), ‘Recovering edges in ill-posed inverse problems optimality of curvelet frames’, Annals of Statistics 30(3), 784–842.
+Candès, E. & Donoho, D. (2004), ‘New tight frames of curvelets and optimal representations of objects with piecewise C 2 singularities’, Communications on Pure and Applied Mathematics 57(2), 219–266.
+Chang, W. & Coghill, G. (2000), Line and Curve Feature Discrimination, in ‘Proceedings of the International ICSC Congress on Intelligent Systems and Applications (ISA 2000)’, Symposium on Computational Intelligence (CI 2000), Wollongong, Australia.
+Cheriet, M., Kharma, N., Liu, C. & Suen, C. (2007), Character Recognition Systems, John Wiley & Sons, Inc., Hoboken, New Jersey, USA.
+Do, M. N. (2001), Directional multiresolution image representations, PhD thesis, Swiss Federal Institute of Technology, Lausanne, Switzerland.
+Do, M. & Vetterli, M. (2001), ‘Contourlets: A directional multiresolution image representation’, Proceedings International Conference on Image Processing 1, 357–360.
+Do, M. & Vetterli, M. (2005), ‘The Contourlet Transform: An Efficient Directional Multiresolution Image Representation’, IEEE Transactions on Image Processing 14(12), 2091–2106.
+Gonzalez, R. & Woods, R. (2002), Digital Image Processing, second edn, Prentice Hall, Upper Saddle River, New Jersey, USA.
+Gonzalez, R., Woods, R. & Eddins, S. (2004), Digital Image Processing Using MATLAB, Prentice Hall.
+Martinez, Z. (2011), Detección automática de curvas en imágenes, Tesis Doctoral, Universidad Central de Venezuela, Facultad de Ciencias, Postgrado de Matemáticas, Caracas, Venezuela.
+Martínez, Z. & Ludeña, C. (2011), ‘An algorithm for automatic curve detection’, Computational Statistics & Data Analysis 55(6), 2158–2171.
+Myler, H. R. & Weeks, A. R. (1993), Computer Imaging Recipes in C, Prentice Hall, Inc.
+Nixon, M. & Aguado, A. (2008), Feature Extraction & Image Processing, second edn, Academic Press, London.
+Phoong, S., Kim, C., Vaidyanathan, P. & Ansari, R. (1995), ‘A new class of two-channel biorthogonal filter banks and wavelet bases’, IEEE Transactions on Signal Processing 43(3), 649–665.
+Sezgin, M. & Sankur, B. (2004), ‘Survey over image thresholding techniques and quantitative performance evaluation’, Journal of Electronic Imaging 13(1), 146–165.
+
+
+Appendix
+  This is a brief description of the applied directional filters, for more details see
+Martinez (2011) and Do (2001).
+                              (l )
+      The frame elements ρj,k,x,y
+                            j
+                                  are calculated as
+
+                                   (l )              (l )
+                                              X
+                               ρj,kj (t) =          ck j [m]φj,m (t)                         (9)
+                                             m∈Z2
+
+                            (l )
+where, the coefficients ck j are defined as
+                                            M−1
+                                                                            !
+                      (l )                          (l )
+                                     X      X
+                     ck j [m] :=                   gk j [2s + ki ] fi [m − s]              (10)
+                                     s∈Z2    i=0
+
+
+   • The index j represent the scale, lj is the level of the filter bank associated
+     with the scale j and k = 1, . . . , 2lj is the directional channels index. So,
+     depending on the scale, the process is decomposed on 2lj directional channels.
+     Thus, the passage from a scale to the next with higher value, represents the
+     duplication of directional channels; which means a refinement of obtained
+     information.
+                           j 
+   • Let φj,m (t) = 2−j φ t−2 2j
+                                 m
+                                    be a orthonormal base, this is calculated by
+        φ(x) = 1[0,1]×[0,1] (x).
+
+                                             Revista Colombiana de Estadística 38 (2015) 295–320
+
+Curves Extraction in Images                                                               319
+
+   • Filters fi are the inverse, by z-transform, of synthesis filters Fi for a lapla-
+                                                                              (r)
+     cian pyramid decompose in oversampling filters bank, where Fi (z) =
+     h     r−1                 r
+                                  i r−2
+                                     Q  Mj 
+       z −M ki − G(z)Hi z M            G z     , r = 1, 2, i = 0, . . . , 3, M = ( 20 02 )
+                                     j=0
+      is the sampling matrix, and k0 = ( 00 ), k1 = ( 10 ), k2 = ( 01 ), k3 = ( 11 ) are
+      coset vectors.
+
+          Filters G, Hi are obtained from 2D filters,
+
+                                    g2D (n1 , n2 ) = g (n1 ) g (n2 )
+                                    h2D (n1 , n2 ) = h (n1 ) h (n2 )
+
+      where g and h are the biorthogonal filters 9-7 given by:
+
+               n          0        ±1             ±2         ±3         ±4
+             h (n)   0, 852699 0, 418092      −0, 110624 −0, 023849 0, 037828
+             g (n)   0, 788486 0, 377403      −0, 040689 −0, 064539
+
+      hi [n] is the poliphase representation of h[n]; given by: hi [n] = h [M n + ki ].
+      Hi (z) is the z-transform of hi [n], and G is the z-transform of g[n]
+
+   • gkl , with l = lj , are obtained from diamond filters H0 and H1 like a iterated
+     bank of directional filters:
+
+                            H0 (u, v) = u−2N + u−1 β uv −1 β(uv),               (11)
+                                                           
+
+
+
+                      H1 (u, v) = −β uv −1 β(uv)H0 (u, v) + u−4N +1                       (12)
+                                          
+
+      with
+                                    N
+                                    X
+                                          vk,N α−N +k + α−N −k+1                          (13)
+                                                                       
+                           β(α) =
+                                    k=1
+
+      and
+                                                2k
+                          (−1)N +k−1           Y   N +1
+        vk,N =                                           ;             k = 1, . . . , N   (14)
+                 2(N − k)!(N − 1 + k)!(2k − 1) i=0 2 − i
+
+      with N = 23, as recommended in Phoong, Kim, Vaidyanathan & Ansari
+      (1995).
+
+Thus, let resampling matrix    Q0 = 11 −1  1 , Q1 = −1 1 , Q2 = Q1 , Q3 = Q0 ,
+                                                      1 1
+                                                         
+
+                        1 , R2 = ( 1 1 ), R3 = −1 1 .
+R0 = ( 10 11 ), R1 = 10 −1                      1 0
+                                  10
+
+                           (l)                   2
+     For the first level of Hk , with ω ∈ [−π, π] ; t0 = 0, 1; t1 = 0, 1; t2 = 2t0 +t1 ;
+t3 , t4 = 0, 1 if t2 = 0, 1, y t3 , t4 = 2, 3 if t2 = 2, 3, we have, for example:
+
+
+
+                                       Revista Colombiana de Estadística 38 (2015) 295–320
+
+320                                                                               Zoraida Martínez
+
+
+      l = 2 ⇒ 0 ≤ k ≤ 3, then Kt2 (ω) = Ht0 (ω) Ht1 QT0 ω ,
+                                                         
+
+                               (3)
+      l = 3 ⇒ 0 ≤ k ≤ 7, then Hk (ω) = Kt2 (ω) Ht2 , t3 RtT2 (2ω) ,
+                                                                
+
+                                 (4)        (3)
+      l = 4 ⇒ 0 ≤ k ≤ 15, then Hk (ω) = Hk (ω) Ht3 , t4 RtT3 PtT2 (2ω) ,
+                                                                     
+
+      where:
+                 
+                     H0    if   i 6= j   for i, j = 0, 1; i = j        for    i, j = 2, 3
+        Hi,j =                                                                                (15)
+                     H1    if   i=j                         6 j
+                                         for i, j = 0, 1; i =          for    i, j = 2, 3
+
+                                         l
+      For ti = 0, 1 we have k =              ti 2l−i , thus ≤ k ≤ 2l−1 − 1.
+                                         P
+                                       i=2
+                                         l
+      For ti = 2, 3 we have k =              (ti − 2)2l−i + 2l−1 , thus 2l−1 ≤ k ≤ 2l − 1.
+                                         P
+                                       i=2
+      Pi = Ri Qi ; i = 0, . . . , 3.
+      Filters hlk are the inverse z-transform from filters Hkl , and
+
+                                    gkl [n − Sk m] = hlk [Sk m − n]                           (16)
+
+with                                             
+                                    diag 2l−1 , 2      para 0 ≤ k < 2l−1
+                                
+                        (l)
+                       Sk =                                                                  (17)
+                                    diag 2, 2l−1       para 2l−1 ≤ k < 2l
+
+
+
+
+                                                Revista Colombiana de Estadística 38 (2015) 295–320
+

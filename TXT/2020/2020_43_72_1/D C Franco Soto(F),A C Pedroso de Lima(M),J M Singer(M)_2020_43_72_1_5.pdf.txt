@@ -1,0 +1,883 @@
+A Birnbaum-Saunders Model for Joint Survivaland Longitudinal Analysis of Congestive Heart Failure Data
+Un modelo Birnbaum-Saunders para el análisis conjunto de datos de supervivencia y longitudinales de insuficiencia cardíaca congestiva
+Universidad Nacional de Colombia, Bogotá D.C., Colombia. Universidade de São Paulo, São Paulo, Brazil
+Abstract
+We consider a parametric joint modelling of longitudinal measurements and survival times, motivated by a study conducted at the Heart Institute (Incor), São Paulo, Brazil, with the objective of evaluating the impact of B-type Natriuretic Peptide (BNP) collected at diﬀerent instants on the survival of patients with Congestive Heart Failure (CHF). We employ a linear mixed model for the longitudinal response and a Birnbaum-Saunders model for the survival times, allowing the inclusion of subjects without longitudinal observations. We derive maximum likelihood estimators of the joint model parameters and conduct a simulation study to compare the true survival probabilities with dynamic predictions obtained from the fit of the proposed joint model and to evaluate the performance of the method for estimating the model parameters. The proposed joint model is applied to the cohort of 1609 patients with CHF, of which 1080 have no BNP measurements. The parameter estimates and their standard errors obtained via: i) the traditional approach, where only individuals with at least one measurement of the longitudinal response are included and ii) the proposed approach, which includes survival information from all individuals, are compared with those obtained via marginal (longitudinal and survival) models.
+Key words: Linear mixed model; Parametric survival model; Repeated measures.
+Resumen
+Consideramos una modelación conjunta paramétrica de mediciones longitudinales y tiempos de supervivencia, motivados por un estudio realizado en el Instituto do Coração (Incor), São Paulo, Brasil, con el objetivo de evaluar el impacto del Péptido Natriurético tipo B (BNP) recolectado en diferentes instantes, sobre la supervivencia de pacientes con Insuficiencia Cardíaca Congestiva (ICC). Empleamos un modelo lineal de efectos mixtos para la respuesta longitudinal y un modelo Birnbaum-Saunders para los tiempos de supervivencia, permitiendo la inclusión de sujetos sin observaciones longitudinales. Obtenemos los estimadores de máxima verosimilitud de los parámetros del modelo conjunto y realizamos un estudio de simulación para comparar las probabilidades de supervivencia verdaderas con las predicciones dinámicas obtenidas al ajustar el modelo conjunto propuesto y para evaluar el desempeño del método para estimar los parámetros del modelo. El modelo conjunto propuesto se aplica a la cohorte de 1609 pacientes con ICC, de los cuales 1080 no tienen mediciones de BNP. Las estimaciones de los parámetros y sus errores estándar obtenidos por medio de: i) el enfoque tradicional, donde únicamente se incluyen individuos con al menos una medición de la respuesta longitudinal y ii) el enfoque propuesto, que incluye la información de supervivencia de todos los individuos; se comparan con los obtenidos por medio de los modelos marginales (longitudinal y de supervivencia).
+Palabras clave: Medidas repetidas; Modelo de supervivencia paramétrico; Modelo lineal de efectos mixtos.
+
+1. Introduction
+     In many studies, repeated measurements of one or more variables (longitudinal
+responses), time until the occurrence of one or more events (survival responses)
+and additional observations on explanatory variables are collected on a set of
+subjects in order to characterize their relationship. This is the case of a study
+conducted at the Heart Institute (Incor), São Paulo, Brazil, where data related to:
+i) longitudinal measurements of B-type Natriuretic Peptide (BNP) levels (pg/mL),
+ii) the time between admission to the study and the date of death or censoring (in
+months), as well as iii) the values of basal covariates, were collected on patients
+with Congestive Heart Failure (CHF) to identify prognostic factors for the time
+to death.
+    In practical situations, data with this nature are often analyzed consider-
+ing the longitudinal and survival responses separately as noted in Rizopoulos
+(2010), among others. However, there are two scenarios in which it is more
+appropriate to perform a joint modelling: when interest is to analyze the be-
+havior of the longitudinal response, considering a possible dependence of time
+to dropout, potentially informative, treated as the survival response (Hogan &
+Laird 1997a, Hogan & Laird 1997b, Diggle, Farewell & Henderson 2007) and
+when interest is to analyze the time-to-event considering the eﬀect of the lon-
+gitudinal response measurements (Wulfsohn & Tsiatis 1997, Henderson, Diggle &
+
+                                      Revista Colombiana de Estadística 43 (2020) 83–101
+
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis              85
+
+Dobson 2000, Rizopoulos 2010, Crowther, Abrams & Lambert 2012). Diﬀerent au-
+thors suggest that in these cases joint modelling can facilitate the understanding
+of the mechanisms underlying the phenomenon under investigation and can im-
+prove the properties of parameter estimators, being an appealing alternative that
+has attracted the attention of recent research (Tsiatis & Davidian 2004, Yu, Law,
+Taylor & Sandler 2004, Diggle, Sousa & Chetwynd 2008, Rizopoulos, Verbeke &
+Molenberghs 2010, Wu, Liu, Yi & Huang 2012, Rizopoulos 2012b, Gould, Boye,
+Crowther, Ibrahim, Quartey, Micallef & Bois 2015).
+    A naive approach when the interest lies exclusively in the survival compo-
+nent, is to consider the longitudinal response as a time-dependent covariate in the
+Cox model, which requires that the time-dependent covariate values be known
+exactly at each instant of failure and further, that the time-dependent covariates
+are external, as decribed by Kalbfleisch & Prentice (2002). This approach may
+not be appropriate because the longitudinal observations are usually measured
+intermittently and subject to errors. Additionally, it may be influenced by the
+occurrence of the event under investigation (Hu, Tsiatis & Davidian 1998, Greene
+& Cai 2004, Rizopoulos 2010). An alternative is the two-stage approach, where
+a model for longitudinal response is initially fitted to the data and, using the
+values of the first stage estimated individual longitudinal, are subsequently incor-
+porated as a time-dependent covariate in the Cox model (Tsiatis, DeGruttola &
+Wulfsohn 1995, Ye, Lin & Taylor 2008, Albert & Shih 2010). Despite the advantage
+of its simple computational implementation, this method has the limitation of not
+considering the eﬀect of the survival response on the modelling of the longitudinal
+data. Another alternative is to estimate the model parameters by maximizing the
+likelihood function corresponding to the joint distribution of longitudinal and sur-
+vival responses (Wulfsohn & Tsiatis 1997, Henderson et al. 2000, Hsieh, Tseng &
+Wang 2006, Crowther et al. 2012, Rizopoulos 2010, Rizopoulos 2012b). Although
+the computational implementation of this approach is more complex, it has the
+advantage of using longitudinal and survival data simultaneously in the process of
+estimating model parameters. This approach is adopted in this paper.
+    In this context, most authors consider the Cox model to describe survival times
+(see Wulfsohn & Tsiatis 1997, Henderson et al. 2000, Rizopoulos 2010, Rizopou-
+los 2012b, among others) although log-normal and Weibull parametric models
+have also been considered for such purposes in Schluchter (1992), Pawitan & Self
+(1993), DeGruttola & Tu (1994). Linear mixed models are commonly employed
+to represent the longitudinal component. The usual methods, however, only use
+data for subjects that have at least one measurement of the longitudinal response.
+In studies where such measurements are not recorded for some participants, the
+corresponding estimates may be biased or less eﬃcient.
+    Among many alternatives to describe survival times, Birnbaum-Saunders dis-
+tributions seem appropriate in the context of CHF because in chronic cardiac
+diseases, a cumulative damage caused by several risk factors may lead to a degra-
+dation and to a consequent failure, an inherent feature of such models, as described
+in Galea, Leiva & Paula (2004), Leiva, Barros, Paula & Galea (2007), Barros, Paula
+& Leiva (2008), Balakrishnan, Leiva, Sanhueza & Vilca (2009) or Leiva, Athayde,
+Azevedo & Marchant (2011). With this in mind, we propose a joint modelling
+
+                                     Revista Colombiana de Estadística 43 (2020) 83–101
+
+86                 Diana C. Franco-Soto, Antonio C. Pedroso-de-Lima & Julio M. Singer
+
+
+methodology that considers a linear mixed model to describe the longitudinal re-
+sponse and a Birnbaum-Saunders model to describe the survival response, allowing
+the inclusion of the survival data of subjects without longitudinal observations.
+   In Section 2, we present the model and discuss inferential aspects including the
+dynamic prediction of the survival probability based on the available data up to
+the instant when we want to make the prediction. In Section 3, we summarize the
+results of a simulation study designed to compare the true survival probabilities
+with dynamic predictions obtained from the fitted model and to evaluate the
+performance of the method for estimating the model parameters. In Section 4 we
+analyze the data that motivated our research. We conclude with a discussion and
+suggestions for future research in Section 5.
+
+
+2. Proposed Methodology
+    Consider a set of n subjects followed over the time interval [0, τ ), τ > 0, and
+suppose that for the i-th subject (i = 1, . . . , n) we observe: i) a sequence of mea-
+surements of a longitudinal response yij = {yi (tij ), j = 1, . . . , ni } summarized in
+y i = (yi1 , . . . , yini )⊤ and occurring at times tij represented in ti = (ti1 , . . . , tini )⊤ ,
+ii) a record of the time between admission to the study and the occurrence of the
+event of interest (Ti ) or censoring (Ci ), summarized in Zi = min(Ti , Ci ) and δi =
+I(Ti ≤ Ci ), where I(·) denotes the indicator function and iii) values of ph explana-
+tory variables expressed as xhi (t) = [1, xhi1 , . . . , xhiah , xhiah +1 (t), . . . , xhiph (t)]⊤ ,
+the first ah of which are independent of time. The subscript h = 1, 2 indicates
+whether they correspond to the longitudinal or to the survival components, re-
+spectively.
+     The longitudinal response for the i-th subject at time t ≥ 0 is modelled as
+
+                                     yi (t) = mi (t) + ei (t)                                   (1)
+
+where mi (t) = µ1i (t) + w1i (t) denotes the true value of the longitudinal response,
+specified as a function of a mean response µ1i (t) = x1i (t)⊤ β 1 , with β 1 representing
+the fixed eﬀects corresponding to p1 explanatory variables in x1i (t) and the process
+w1i (t), characterized in terms of a specific time invariant random intercept for the
+i-th subject, b0i ∼ N (0, σ02 ) and ei (t) ∼ N (0, σe2 ) denotes the measurement error,
+considered independent of b0i , for all t ≥ 0.
+    We assume that the survival or censoring time observed for the i-th subject
+follows the log-linear Birnbaum-Saunders regression model
+
+                                 Vi = log(Zi ) = x⊤
+                                                  2i β 2 + εi ,                                 (2)
+
+where β 2 contains the fixed eﬀects corresponding to p2 explanatory variables in x2i
+and the model errors εi ∼ SinhN(α, 0, 2), with SinhN(α, ψ, σ) denoting the Normal
+hyperbolic sine distribution with α, ψ and σ representing the shape, location and
+scale parameters, respectively. The associated density and survival functions are,
+respectively
+
+                                            Revista Colombiana de Estadística 43 (2020) 83–101
+
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis                                                  87
+                 (              )        (            )       {        (    )}
+                        2       v−ψ                             2     2 v−ψ
+   fV (v) =             √  cosh                           exp − 2 sinh        ,                          v ∈ ℜ.        (3)
+                     ασ 2π       σ                             α         σ
+and                                             ( [   )]
+                                           2      v−ψ
+                            SV (v) = 1 − Φ sinh          ,                           v ∈ ℜ.                            (4)
+                                          α        σ
+For details on the relation between the Birnbaum-Saunders and the SinhN distri-
+butions, see Leiva et al. (2007).
+    In this set-up we develop the likelihood function corresponding to the joint dis-
+tribution of longitudinal and survival responses. Assuming that the random eﬀects
+b0i (i = 1, . . . , n) take into account both the association between the longitudinal
+and survival responses, and the correlation between the longitudinal observations
+(conditional independence), that the censoring mechanism and the observation
+times of the longitudinal response are not informative and considering indepen-
+dence between survival and censoring times [see Rizopoulos (2012b)], the joint
+likelihood function is
+
+ L(θ) =
+  [∫                               [∏                           ]                 ] ωi
+∏
+n                                   ni
+      p(vi , δi | b0i ; θ z , β 1 )    p(yi (tij ) | b0i ; θ y ) p(b0i ; θb )db0i      [p(vi , δi ; θ z0 )](1−ωi ) ,   (5)
+i=1                                  j=1
+
+
+where ωi = 1 if the i-th subject has at least one observation of the longitudi-
+nal response and ωi = 0, otherwise, θ = (θ ⊤           ⊤       ⊤                ⊤
+                                                 z , θ y , θb ) , with θ z = (θ z0 , γ)
+                                                                                        ⊤
+                 ⊤ ⊤
+and θ z0 = (α, β 2 ) denoting the vectors containing the parameters for the sur-
+vival responses for subsets of subjects that have or have not measurements of
+the longitudinal outcome, respectively, θ y = (β ⊤       2 ⊤
+                                                   1 , σe )     denotes the vector con-
+taining the longitudinal response parameters and θb = σ02 . Additionally, letting
+Mi (t) = {mi (u), 0 ≤ u ≤ t} denote the history of the true unobserved longitudinal
+process up to time t, we assume that
+
+ p(vi , δi | b0i ; θ z , β 1 ) = [fi (vi | Mi (vi ); θ z , β 1 )]δi [Si (vi | Mi (vi ); θ z , β 1 )](1−δi ) , (6)
+
+where fi (·) and Si (·) respectively denote the probability density and survival func-
+tions of the SinhN distribution with shape parameter α > 0, scale parameter σ = 2
+and location parameter
+
+                   ψγi = x⊤                     ⊤                   ⊤
+                          2i β 2 + γmi (vi ) = x2i β 2 + γ[x1i (vi ) β 1 + b0i ],                                      (7)
+
+p(yi (tij ) | b0i ; θ y ) and p(b0i ; θb ) representing Normal probability density functions
+for the longitudinal response and the random eﬀects, respectively. The parame-
+ter γ measures the association between the longitudinal and survival processes.
+Furthermore, we assume that
+
+                          p(vi , δi ; θ z0 ) = [fi (vi ; θ z0 )]δi [Si (vi ; θ z0 )](1−δi ) ,                          (8)
+
+where fi (·) and Si (·) respectively denote the probability density and survival func-
+tions of the SinhN distribution with shape parameter α > 0, scale parameter σ = 2
+and location parameter ψ0i = x⊤    2i β 2 .
+
+
+                                                      Revista Colombiana de Estadística 43 (2020) 83–101
+
+88                 Diana C. Franco-Soto, Antonio C. Pedroso-de-Lima & Julio M. Singer
+
+
+   Explicit expressions for the terms composing the likelihood function (5) are
+given in the Appendix.
+    Maximum Likelihood (ML) estimates of the joint model parameters are ob-
+tained by direct maximization of (5) using a quasi-Newton algorithm implemented
+via the PORT routines in the R optimizer nlminb (see Gay 1990), one of the algo-
+rithms employed in the JM library (Rizopoulos 2012a). Numerical integration is
+required because the integrals with respect to the random eﬀects b0i , i = 1, . . . , n in
+(5) have no analytical solution. For such purposes, we use Gauss-Hermite quadra-
+ture methods as suggested by Wulfsohn & Tsiatis (1997), Henderson et al. (2000)
+or Rizopoulos (2010), among others, for situations where the random eﬀects vec-
+tor for each subject has low dimension. In particular, this is the default method
+employed in the JM library (Rizopoulos 2012a), except in cases where a large num-
+ber of random eﬀects per subject is available. In such cases, Rizopoulos, Verbeke
+& Lesaﬀre (2009) recommend Laplace approximations. Explicit expressions for
+the elements of the ML estimating equations U (θ) = ∂(log L(θ)/∂θ = 0 may be
+obtained in Franco-Soto (2014), Appendix D.
+   Confidence intervals and tests of hypotheses about the parameters of interest
+are based on empirical large sample results as suggested by Rizopoulos (2012b).
+    An additional interest is to predict the survival probabilities for a new subject
+with longitudinal measurements Yi (t) = {yi (s); 0 ≤ s ≤ t} and values of base-
+line covariates contained in the vector xi based on the fit of a joint model to a
+random sample Dn = {Zi , δi , y i ; i = 1, . . . , n}. In other words, interest lies in
+the conditional probability of surviving time u > t, given survival up to time t,
+πi (u | t) = P (Ti ≥ u | Ti > t, Yi (t), xi , Dn ; θ). For such purpose we consider the
+structure of the estimator of πi (u | t) using the empirical Bayes estimate for bi
+proposed by Rizopoulos (2011), namely
+                                                         (t)
+                                         Si {u | Mi (u, e    b θ}
+                                                        bi , θ); b
+                          ei (u | t) =
+                          π                             (t)
+                                                                     ,                      (9)
+                                         Si {t | Mi (t, e    b θ}
+                                                        bi , θ); b
+
+      b denotes the maximum likelihood estimates of the model parameters θ and
+where θ
+ (t)
+e                                    b where
+b = argmax log p(b | Ti > t, Yi (t); θ),
+ i             b
+
+
+
+                                                          b
+                                    P (Ti > t, Yi (t), b; θ)
+                              b =
+        p(b | Ti > t, Yi (t); θ)
+                                                        b
+                                     P (Ti > t, Yi (t); θ)
+                                                        b
+                                        P (Ti > t | b; θ)p(Y             b       b
+                                                              i (t) | b; θ)p(b; θ)
+                               =∫                                                       ,
+                                                       b
+                                      P (Ti > t | bi ; θ)p(Y             b        b
+                                                            i (t) | bi ; θ)p(bi ; θ)dbi
+
+
+P {Ti > t | bi ; θ}b = Si {t | Mi (t, bi ; θ);   b denotes the survival function and
+                                               b θ}
+                b = ∏ n   (t)                b
+p(Yi (t) | bi ; θ)    j=1 p[yi (tij ) | bi ; θ] with ni (t) denoting the number of lon-
+                        i
+
+
+gitudinal measurements of the i-th unit up to time t. The performance of (9)
+for finite samples depends on the quality of the ML estimates of θ and on the
+prediction of the random eﬀects bi .
+
+                                           Revista Colombiana de Estadística 43 (2020) 83–101
+
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis              89
+
+   The methodology proposed in this paper was fully implemented in R
+(R Development Core Team 2013).
+
+
+3. Simulation
+    We conducted an extensive simulation study to compare the true survival prob-
+abilities with dynamic predictions obtained from the fitted joint model, based on
+the longitudinal data collected up to diﬀerent instants and to evaluate the perfor-
+mance of the method for estimating the model parameters.
+   The longitudinal response for the i-th subject at time t ≥ 0, yi (t), was gen-
+erated by (1) under Normal distributions for both the random eﬀects and error
+terms considering observation time and dichotomized CHF etiology (Chagas dis-
+ease = 0 or Other cardiomyopathies = 1) as covariates. The survival response was
+generated by a log-linear Birnbaum-Saunders regression model (2) including only
+CHF etiology as a covariate. To predict the survival probabilities, we considered
+only individuals with at least one measurement of the longitudinal response, i.e.,
+those for which ωi = 1 in (5).
+   The location parameter for the Birnbaum-Saunders model can be expressed as
+
+             ψγi = β20 + β21 CHFi + γ[β10 + β11 vi + β12 CHFi + b0i ]             (10)
+
+and the variance components are σ02 and σe2 .
+   The parameter values were taken as the estimates obtained by fitting the joint
+models to the 529 patients with at least one longitudinal observation in the Incor
+data.
+    First we generated the longitudinal observations for each patient and then con-
+sidered the corresponding mean observation as well as the CHF etiology covariate
+to generate the survival data, inducing an association between the two types of
+response. To mimic the set-up in the Incor data, the survival times were right
+censored either by specifying a Type I censoring scheme with a maximum follow-
+up time of τ = 180 or by randomly selecting censoring times from a Uniform
+distribution in the [0, τ ] interval.
+    Sixteen diﬀerent scenarios resulting from the combination of 4 sample sizes
+(n = 100, 250, 500, 1000) and 4 censoring percentages (pc = 0%, 25%, 50%, 75%)
+were considered. For each scenario we generated 500 samples and, for each sam-
+ple, we randomly selected 95% of the subjects to fit the Birnbaum-Saunders time-
+to-event model; the remaining 5% were considered to estimate the conditional
+survival probabilities based on the estimator πei (t + ∆t | t) in (9), as a function
+of the longitudinal response observation times t = 0, 24, 48, 72, 96 and the time
+increments ∆t = 12, 24, 36. The true probabilities πi (t + ∆t | t) were computed
+using the true parameter and the true (generated) random eﬀects values. The
+comparison was carried out in terms of the absolute diﬀerences between estimated
+conditional survival probabilities and their true values. The performance of es-
+                                                               ∑500
+timators was evaluated via the bias (θb − θ) with θb = 500−1 l=1 θbl , the relative
+
+
+                                     Revista Colombiana de Estadística 43 (2020) 83–101
+
+90               Diana C. Franco-Soto, Antonio C. Pedroso-de-Lima & Julio M. Singer
+
+
+bias [(θb − θ)/θ] as well as via the square root of the mean squared error (MSE),
+        ∑500
+[500−1 l=1 (θbl − θ)2 ]1/2 .
+    For each scenario, we constructed histograms for such diﬀerences based on the
+500 samples and computed the corresponding 95-th percentile for each combination
+of t and ∆t.
+   We show the results obtained for a sample of size n = 1000. Results for the
+remaining scenarios may be obtained in https://www.ime.usp.br/∼acarlos/Diana/
+ApendiceF.pdf
+   In Table 1 we present these values for the case without random censoring and
+7% Type I censoring. The number of diﬀerences corresponds to the available
+longitudinal measurements for the 50 subjects selected for prediction in the 500
+samples.
+
+Table 1: 95-th percentile and number of diﬀerences between true and estimated survival
+         probabilities, n = 1000, type I censoring = 7%, random censoring = 0%.
+                                     95-th percentile                  Number
+                             ∆t = 12     ∆t = 24      ∆t = 36     of diﬀerences
+                 t=0          0.25            0.34      0.35           25000
+                 t = 24       0.18            0.24      0.27           18354
+                 t = 48       0.12            0.18      0.21           11736
+                 t = 72       0.09            0.15      0.18            7761
+                 t = 96       0.08            0.12      0.15            5364
+
+
+    The results indicate that for a fixed time t, the diﬀerences between the true and
+estimated probabilities increase as ∆t increases. This is justified by the increasing
+distance between the time up to which longitudinal data are available and the
+instant for which the prediction is made. Furthermore, for ∆t fixed, there is a de-
+crease in these diﬀerences as t increases. A possible explanation is that availability
+of more longitudinal measurements for each subject improves the predictions of the
+random eﬀects involved in the proposed estimator. To verify this, we computed
+95-th percentile of the empirical distribution (based on the 500 generated samples)
+of the diﬀerences between the true and predicted random eﬀects. The results for
+the scenario described above are displayed in Table 2 and confirm our conjecture.
+
+Table 2: 95-th percentile and number of diﬀerences between true and estimated random
+         eﬀects, n = 1000, type I censoring = 7%, random censoring = 0%.
+                               95-th percentile      Number of diﬀerences
+                    t=0                1.33                    25000
+                    t = 24             0.99                    18354
+                    t = 48             0.84                    11736
+                    t = 72             0.76                    7761
+                    t = 96             0.71                    5364
+
+
+
+                                              Revista Colombiana de Estadística 43 (2020) 83–101
+
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis                       91
+
+    We also computed the mean and median of the maximum (among patients) dif-
+ferences between the true and estimated survival probabilities for the 500 generated
+samples. The results, displayed in Table 3 also confirm our previous conclusions.
+
+Table 3: Mean and median of the maximum (among patients) diﬀerences between the
+         true and estimated survival probabilities, n = 1000, type I censoring = 7%,
+         random censoring = 0%.
+                         ∆t = 12                    ∆t = 24                     ∆t = 36
+                      Mean        Median         Mean     Median         Mean       Median
+             t=0      0.30          0.28         0.41          0.37          0.43    0.40
+             t = 24   0.21          0.19         0.29          0.26          0.33    0.30
+             t = 48   0.14          0.12         0.20          0.18          0.24    0.22
+             t = 72   0.11          0.09         0.16          0.14          0.19    0.17
+             t = 96   0.08          0.07         0.13          0.11          0.16    0.14
+
+
+   In all cases, the bias, the relative bias and the square root of the MSE of the
+parameter estimates decrease as the sample size increases or the percentage of
+censoring decreases.
+   In Table 4 we present the average mean and median of the maximum (among
+patients) diﬀerences between the true and estimated survival probabilities for the
+500 generated samples for all combinations of t and ∆t values, weighted by the
+number of maxima in each case.
+
+Table 4: Weighted mean of mean and median of the maximum (among patients) diﬀe-
+         rences between the true and estimated survival probabilities.
+                                      Percent           Weighted mean
+                              n       censored          Mean      Median
+                                           0%           0.22          0.20
+                             1000          25%          0.20          0.18
+                                           50%          0.23          0.23
+                                           75%          0.50          0.49
+                                           0%           0.22          0.20
+                             500           25%          0.19          0.17
+                                           50%          0.20          0.20
+                                           75%          0.42          0.41
+                                           0%           0.19          0.17
+                             250           25%          0.16          0.14
+                                           50%          0.18          0.17
+                                           75%          0.35          0.34
+                                           0%           0.16          0.13
+                             100           25%          0.13          0.11
+                                           50%          0.14          0.13
+                                           75%          0.26          0.25
+
+
+
+                                            Revista Colombiana de Estadística 43 (2020) 83–101
+
+92               Diana C. Franco-Soto, Antonio C. Pedroso-de-Lima & Julio M. Singer
+
+
+   In Table 5, we present the bias, relative bias and square root of the MSE for
+the case where n = 1000, no random censoring and 7% Type I censoring time.
+
+Table 5: Bias, relative bias and square root of the MSE of estimators for n = 1000, type
+         I censoring = 7%, random censoring = 0%.
+ Parameter    True value   Simulation mean      Bias    Relative bias   Square root of MSE
+ log(α)        −0.460          −0.396           0.064        0.140            0.104
+ β20             6.140           5.480         −0.660      −0.108             0.928
+ β21             0.100           0.479          0.379        3.792            0.561
+ γ             −0.460          −0.436           0.024        0.053            0.065
+ β10             5.800           5.670         −0.130      −0.022             0.218
+ β11             0.010           0.009         −0.001      −0.127             0.002
+ β12           −1.100          −1.073           0.027        0.024            0.183
+ log(σ0 )        0.450           0.382         −0.068      −0.152             0.091
+ log(σe )      −0.320          −0.276           0.045        0.139            0.061
+
+
+    Comparing the results from the diﬀerent scenarios, we observed that the longi-
+tudinal component parameter estimates are more stable than those associated to
+the survival component which have a poor performance for small (n = 100) sample
+sizes. In summary, we conclude that the performance of the proposed model is
+better when: i) the sample size is larger and ii) the right censoring is smaller. In
+particular when the right censoring percentage is large, the parameter estimates
+have a poor performance and the prediction of the random eﬀects are not as good
+as those obtained when more longitudinal measurements are available. This leads
+to a decrease in the quality of the prediction of the dynamic survival probabili-
+ties. Therefore the Birnbaum-Saunders joint model is recommended for situations
+where the underlying rationale for such model is reasonable, the sample size is
+large and there is little right censoring.
+
+
+
+4. Analysis of the Incor Data
+    The proposed joint model was applied to the cohort of 1609 patients with CHF,
+of which 1080 have no BNP measurements.
+    Initially, the adequacy of the Birnbaum-Saunders model for the survival times
+description in comparison with the exponential, Weibull and log normal mod-
+els was verified, considering the analysis of the Cox-Snell residuals (see Klein &
+Moeschberger 2003).
+    Then, we conducted an analysis involved a selection of “acceptable” models for
+the longitudinal and for the survival data fitted separately via standard techniques
+as suggested by Wu et al. (2012). The 529 patients with at least one longitudinal
+observation were considered for the former and the complete set of 1609 patients
+was used for the latter. In this process, each of 24 covariates were fitted individu-
+ally along with CHF etiology (as suggested by the physicians) and the significant
+
+                                         Revista Colombiana de Estadística 43 (2020) 83–101
+
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis                      93
+
+ones were subsequently fitted simultaneously to either the longitudinal or the sur-
+vival component. The separate longitudinal and survival component models were
+sequentially refitted with the removal of the non-significant variables or grouping
+levels with non-significant eﬀects in each step. The (significant) variables in the
+last step were chosen to compose the joint model. Observation time, CHF etiology
+and left atrium diameter were used as covariates for the longitudinal component
+of the model whereas CHF etiology and left ventricular ejection fraction were
+considered as covariates for the survival response.
+   The longitudinal component was modelled via (1) with
+              x1i (t) = [1, x1i1 (t), x1i2 , x1i3 , x1i4 , x1i5 , x1i6 , x1i7 , x1i8 ]⊤ ,
+where x1i1 (t) denotes the time at which the response was observed, x1i2 , x1i3 , x1i4 ,
+x1i5 , x1i6 are dummy variables associated to the categories of CHF etiology (di-
+lated, ischaemic, hypertensive, alcoholic or other cardiopathies), x1i7 , x1i8 are
+dummy variables associated to the categories of left atrium diameter (augmented
+or missing) and w1i (t) consisting of a random intercept b0i ∼ N (0, σ02 ).
+   The survival component was modelled via (2) with
+                 x2i = [1, x2i1 , x2i2 , x2i3 , x2i4 , x2i5 , x2i6 , x2i7 , x2i8 ]⊤ ,
+where x2i1 , x2i2 , x2i3 , x2i4 , x2i5 are dummy variables associated to the categories of
+CHF etiology, x2i6 , x2i7 , x2i8 are dummy variables associated to the categories of
+left ventricular ejection fraction (very low, low or missing) and εi ∼ SinhN(α, 0, 2).
+   Finally, the association between both components was imposed by (7).
+    Maximum likelihood parameter estimates and their standard errors obtained
+via: i) the proposed joint model approach, which accommodates survival informa-
+tion of all individuals [likelihood given by (5)] and ii) the traditional joint model
+approach, where only individuals with at least one measurement of the longitu-
+dinal response are included (likelihood given by the first component of (5), i.e.,
+when ωi = 1), were compared with those obtained via marginal (longitudinal and
+survival) models in each set-up. The results are summarized in Tables 6-9.
+    In case i), although standard errors are slightly smaller under the joint model,
+no relevant diﬀerences between the joint and marginal models longitudinal pa-
+rameter estimates were detected with the exception of the time coeﬃcient for
+which non-significance is more evident under the former model (p = 0.1100 versus
+p = 0.0586). Estimates of the survival parameters and corresponding standard
+errors are comparable for both models and the association parameter estimate is
+positive and marginally significant (p = 0.0609).
+    In case ii), the standard errors of the longitudinal parameter estimates are
+consistently smaller under the joint model, enhancing the significance of the time
+coeﬃcient (p < 0.0001 versus p = 0.0586). Survival parameter estimates and
+corresponding standard errors obtained under the marginal and joint models are
+relatively diﬀerent, leading to changes in the significance in some cases. The
+association parameter estimate is negative and highly significant (p < 0.0001).
+   To evaluate the eﬀect of the percentage of patients with no longitudinal obser-
+vations we refitted the joint model to the data of the 529 patients with at least one
+
+
+                                             Revista Colombiana de Estadística 43 (2020) 83–101
+
+94                 Diana C. Franco-Soto, Antonio C. Pedroso-de-Lima & Julio M. Singer
+
+
+longitudinal measurements eliminating at random these measurements for 10%,
+30% and 50% of them. The results obtained, displayed in Table 10, suggest that
+the longitudinal components are less aﬀected than the survival ones, when the per-
+centage of subjects without measurements of the longitudinal response increases.
+Although there are some changes in the sign of some coeﬃcients, this is probably
+due to the lack of significance in most cases. In particular, the estimates of the
+coeﬃcient of association between the longitudinal and survival components of the
+model are aﬀected as the proportion of patients without at least one measurement
+of the longitudinal response increases, reaching a positive value for the case where
+50% of subjects with no longitudinal measurements are included. Furthermore,
+we note that the standard errors tend to be greater as the proportion of patients
+without at least one measurement of the longitudinal response increases.
+
+       Table 6: Longitudinal component results - Proposed approach (n = 1609).
+                                          Marginal model                       Joint model
+Parameter                          Estimate Std error     p-value Estimate Std error          p-value
+Intercept                             5.0529    0.2710 <0.0001         5.0808       0.2271 <0.0001
+Time                                  0.0040    0.0021     0.0586      0.0037       0.0023    0.1100
+Dilated cardiopathy                 −1.0525     0.2280 <0.0001       −1.0352        0.1561 <0.0001
+Ischaemic cardiopathy               −0.9640     0.2450     0.0001    −0.9692        0.1923 <0.0001
+Hipertensive cardiopathy            −1.2735     0.2268 <0.0001       −1.1949        0.1720 <0.0001
+Alcoholic cardiopathy               −0.2730     0.3861     0.4799    −0.1960        0.2427    0.4194
+Other cardiopathies                 −0.4967     0.4000     0.2149    −0.4280        0.2408    0.0755
+Augmented left atrium diameter        1.2543    0.2002 <0.0001         1.2047       0.1404 <0.0001
+Missing left atrium diameter          1.1106    0.3080     0.0003      1.0539       0.2468 <0.0001
+log(σ0 )                              0.3874          -          -     0.3747       0.0364 <0.0001
+log(σe )                            −0.3267           -          -   −0.3273        0.0256 <0.0001
+
+
+           Table 7: Survival component results - Proposed approach (n = 1609).
+                                     Marginal model                           Joint model
+ Parameter                     Estimate   Std error   p-value    Estimate       Std error    p-value
+ log(α)                          1.2506     0.1329    <0.0001        1.2401       0.1355     <0.0001
+ Intercept                       7.1560     0.3460    <0.0001        7.0577       0.3530     <0.0001
+ Dilated cardiopathy           −1.7624      0.1915    <0.0001    −1.6388          0.2011     <0.0001
+ Ischaemic cardiopathy           0.0945     0.1829     0.6056        0.1261       0.1836      0.4920
+ Hipertensive cardiopathy        0.3879     0.1673     0.0204        0.4371       0.1695      0.0099
+ Alcoholic cardiopathy           0.4768     0.2841     0.0933        0.4898       0.2825      0.0829
+ Other cardiopathies             0.1453     0.2734     0.5952        0.1788       0.2735      0.5133
+ Very low ejection fraction    −0.9429      0.2135    <0.0001    −1.0043          0.2156     <0.0001
+ Low ejection fraction         −0.1941      0.1991     0.3296    −0.2238          0.1995      0.2619
+ Missing ejection fraction     −0.3156      0.2626     0.2294    −0.3049          0.2620      0.2445
+ γ                                    -           -          -       0.0358       0.0191      0.0609
+
+
+
+
+                                           Revista Colombiana de Estadística 43 (2020) 83–101
+
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis                            95
+
+       Table 8: Longitudinal component results - Traditional approach (n = 529).
+                                          Marginal model                       Joint model
+Parameter                          Estimate Std error      p-value Estimate Std error         p-value
+Intercept                            5.0529       0.2710 <0.0001       4.7027      0.1744 <0.0001
+Time                                 0.0040       0.0021   0.0586      0.0092      0.0018 <0.0001
+Dilated cardiopathy                 −1.0525       0.2280 <0.0001     −0.8847       0.1283 <0.0001
+Ischaemic cardiopathy               −0.9640       0.2450   0.0001    −0.7222       0.1505 <0.0001
+Hipertensive cardiopathy            −1.2735       0.2268 <0.0001     −1.1674       0.1694 <0.0001
+Alcoholic cardiopathy               −0.2730       0.3861   0.4799    −0.2799       0.1975     0.1563
+Other cardiopathies                 −0.4967       0.4000   0.2149    −0.1495       0.2116     0.4801
+Augmented left atrium diameter       1.2543       0.2002 <0.0001       1.2418      0.1359 <0.0001
+Missing left atrium diameter         1.1106       0.3080   0.0003      1.0863      0.2477 <0.0001
+log(σ0 )                             0.3874            -         -     0.3882      0.0364 <0.0001
+log(σe )                            −0.3267            -         -   −0.3266       0.0257 <0.0001
+
+
+           Table 9: Survival component results - Traditional approach (n = 529).
+                                     Marginal model                           Joint model
+ Parameter                     Estimate   Std error    p-value   Estimate      Std error     p-value
+ log(α)                          0.0265       0.0881    0.7636   −0.4753          0.0802    <0.0001
+ Intercept                       5.0137       0.2959   <0.0001       7.1990       0.3427    <0.0001
+ Dilated cardiopathy             0.3346       0.1689    0.0476   −0.0518          0.1251     0.6792
+ Ischaemic cardiopathy           0.3241       0.1786    0.0696       0.1722       0.1346     0.2007
+ Hipertensive cardiopathy        0.6687       0.1726    0.0001       0.1698       0.1291     0.1883
+ Alcoholic cardiopathy           0.4770       0.2905    0.1006       0.3777       0.2148     0.0787
+ Other cardiopathies             0.3225       0.2869    0.2609       0.2170       0.2193     0.3224
+ Very low ejection fraction    −0.6077        0.2614    0.0201   −0.0620          0.2090     0.7668
+ Low ejection fraction         −0.2235        0.2579    0.3860       0.0041       0.2073     0.9843
+ Missing ejection fraction     −0.3338        0.3977    0.4014   −0.1503          0.2962     0.6118
+ γ                                    -            -         -   −0.4569          0.0428    <0.0001
+
+
+
+
+5. Discussion
+   We propose a methodology for joint modelling of longitudinal and survival
+data, which diﬀers from the methods proposed in the literature by considering a
+Birnbaum-Saunders model to describe the survival response and incorporating the
+survival information of subjects without observations of the longitudinal response.
+    The results of the simulation and practical application to the Incor data when
+only individuals with at least one measurement of the longitudinal response are in-
+cluded in the joint model, suggest that the inclusion of longitudinal measurements
+of an appropriate response may be employed to improve the analysis of survival
+data. In particular, an increase in the number of subjects with measurements of
+the longitudinal response can improve the evidence of the association between the
+longitudinal and survival responses and can lead to an increase in the precision
+
+                                           Revista Colombiana de Estadística 43 (2020) 83–101
+
+96                  Diana C. Franco-Soto, Antonio C. Pedroso-de-Lima & Julio M. Singer
+
+
+of parameter estimates. Further, an increase in the number of observations of
+the longitudinal response collected in a subject can improve the quality of the
+prediction of survival.
+
+     Table 10: Eﬀect of percentage of patients with no longitudinal observations.
+                                    Percentage of patients with no longitudinal observations
+                                   0%               10%                30%                50%
+                             Estimate    SE Estimate        SE Estimate       SE Estimate         SE
+ Longitudinal component
+ parameter
+ Intercept                     4.703    0.174      5.022    0.187    4.911   0.202    5.138     0.203
+ Time                          0.009    0.002      0.004    0.002    0.006   0.002    0.003     0.002
+ Dilated cardiopathy          −0.885    0.128     −0.995    0.139   −0.933   0.142   −1.014     0.140
+ Ischaemic cardiopathy        −0.722    0.151     −0.791    0.186   −0.777   0.213   −0.879     0.136
+ Hipertensive                 −1.167    0.169     −1.196    0.178   −1.111   0.156   −1.205     0.182
+ cardiopathy
+ Alcoholic cardiopathy        −0.280    0.197     −0.156    0.211   −0.632   0.252   −0.206     0.172
+ Other cardiopathies          −0.149    0.212     −0.383    0.218   −0.303   0.225   −0.504     0.361
+ Augmented left atrium         1.242    0.136      1.225    0.132    1.199   0.134    1.184     0.142
+ diameter
+ Missing left atrium            1.086   0.248       1.034   0.238    0.951   0.272    1.017     0.246
+ diameter
+ log(σ0 )                      0.388    0.036      0.386    0.036    0.405   0.037    0.379     0.037
+ log(σe )                     −0.327    0.026     −0.346    0.027   −0.360   0.030   −0.364     0.036
+ Survival component
+ parameter
+ log(α)                       −0.475    0.080     −0.001    0.087    0.020   0.088    0.024     0.088
+ Intercept                     7.199    0.343      5.664    0.376    5.373   0.383    4.813     0.406
+ Dilated cardiopathy          −0.052    0.125      0.234    0.170    0.280   0.172    0.366     0.175
+ Ischaemic cardiopathy         0.172    0.135      0.238    0.180    0.256   0.183    0.356     0.184
+ Hipertensive                  0.170    0.129      0.542    0.175    0.587   0.179    0.701     0.179
+ cardiopathy
+ Alcoholic cardiopathy         0.378    0.215      0.438    0.286    0.372   0.293    0.493     0.291
+ Other cardiopathies           0.217    0.219      0.284    0.281    0.307   0.287    0.356     0.291
+ Very low ejection            −0.062    0.209     −0.568    0.260   −0.606   0.260   −0.583     0.262
+ fraction
+ Low ejection fraction         0.004    0.207     −0.174    0.258   −0.209   0.257   −0.211     0.257
+ Missing ejection fraction    −0.150    0.296     −0.309    0.392   −0.309   0.396   −0.311     0.397
+ γ                            −0.457    0.043     −0.117    0.039   −0.060   0.040    0.029     0.041
+
+
+
+    Despite the need of joint modelling in this case, according to the results ob-
+tained previously, the results were not so evident in the practical application to
+the Incor data when survival information of all subjects is considered in the joint
+model, probably because of the observational nature of the study, carried out
+during 9 years with no fixed protocol for data collection. The large proportion
+(67%) of patients with no measurements of the longitudinal response may have
+masked the association between the two components of the joint model. Despite
+these results, the proposed methodology can be useful if there are cases of subjects
+without longitudinal information that should be included in the analysis.
+  In addition, the results obtained show the usefulness of the Birnbaum-Saunders
+model to describe the survival times in situations in which a cumulative damage
+
+                                                Revista Colombiana de Estadística 43 (2020) 83–101
+
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis                           97
+
+caused by several risk factors may lead to a degradation and to a consequent
+failure, as in the case of CHF.
+    Future research is needed before this approach can be routinely used in practical
+problems. In particular, we mention diagnostic techniques and simulation studies
+to determine the eﬀect of the proportion of units without longitudinal data on
+the joint model parameter estimates, considering the context of balanced studies
+where all subjects have the same amount of measurements of the longitudinal
+response, because the performance of the estimation method depends not only on
+the number of units with measurements of the longitudinal response, but also on
+the number of longitudinal observations collected in each subject, as previously
+discussed.
+
+
+Ackowledgements
+    The enlightening comments of an anonymous referee significantly contributed
+to the clarity of the paper. This research received financial support from Conselho
+Nacional de Desenvolvimento Científico e Tecnológico (CNPq: projects 308613/
+2011-2, 141319/2011-9, 146415/2013-2), Brazil; Fundação de Amparo à Pesquisa
+do Estado de São Paulo (FAPESP: project 2013/10528-2), Brazil and Universidad
+Nacional de Colombia (UNAL), Colombia.
+
+
+Appendix
+    Explicit expressions for the terms composing the likelihood function (5)
+                                 (         )     (           )     {          (           )}
+                                       1            vi − ψγi           2     2 vi − ψγi
+fi (vi | Mi (vi ); θ z , β 1 ) =      √     cosh                exp − 2 sinh
+                                    α 2π                2             α              2
+                                      {                  [                ]}
+                                                       1
+                               = exp log[κi1 (vi )] − log(8π) + κ2i2 (vi ) ,
+                                                       2
+                                              [        (           )]
+                                                2         vi − ψγi
+        Si (vi | Mi (vi ); θ z , β 1 ) = 1 − Φ sinh                   = 1 − Φ[κi2 (vi )],
+                                                α             2
+where
+                        (          )                                   (          )
+                   2      vi − ψγi                               2       vi − ψγi
+        κi1 (vi ) = cosh                      and     κi2 (vi ) = sinh             ,
+                   α          2                                  α           2
+
+                                                {                           }
+                                     1             [yi (tij ) − mi (tij )]2
+     p(yi (tij ) | b0i ; θ y ) =             exp −
+                                 (2πσe2 )1/2                  2σe2
+                                                {                                          }
+                                     1             [yi (tij ) − (x1i (tij )⊤ β 1 + b0i )]2
+                               =             exp −                                           ,
+                                 (2πσe2 )1/2                        2σe2
+
+
+                                           Revista Colombiana de Estadística 43 (2020) 83–101
+
+98                       Diana C. Franco-Soto, Antonio C. Pedroso-de-Lima & Julio M. Singer
+                                                                {      }
+                                                     1            b20i
+                                  p(b0i ; θb ) =             exp − 2 ,
+                                                 (2πσ02 )1/2      2σ0
+
+                             (    )        (           )    {            (         )}
+                               1              vi − ψ0i           2      2 vi − ψ0i
+         fi (vi ; θ z0 ) =    √     cosh                 exp − 2 sinh
+                             α 2π                 2             α             2
+                              {                    [                 ]}
+                                                 1
+                         = exp log[ξi1 (vi )] − log(8π) + ξi2 2
+                                                                (vi ) ,
+                                                 2
+
+and                                           (
+                                              [          )]
+                                          2     vi − ψ0i
+                  Si (vi ; θ z0 ) = 1 − Φ sinh              = 1 − Φ[ξi2 (vi )],
+                                         α          2
+
+where
+                           (          )                                           (          )
+                      2      vi − ψ0i                                        2      vi − ψ0i
+           ξi1 (vi ) = cosh                             and       ξi2 (vi ) = sinh            .
+                      α          2                                           α          2
+
+      The Gauss-Hermite quadrature approximation of the logarithm of (5), namely,
+
+
+              ∑
+              n                                      ∑
+                                                     n
+     l(θ) =         ωi log[p(vi , δi , y i ; θ)] +         (1 − ωi ) log[p(vi , δi ; θ z0 )]
+              i=1                                    i=1
+                            [∫                                 {∏                           }                 ]
+              ∑n                                                ni
+         =        ωi log          p(vi , δi | b0i ; θ z , β 1 )    p[yi (tij ) | b0i ; θ y ] p(b0i ; θb )db0i
+              i=1                                               j=1
+                ∑n
+              +         (1 − ωi ) log[p(vi , δi ; θ z0 )],
+                  i=1
+
+is given by
+                       [ Q                        ]
+              ∑
+              n         ∑ wk                         ∑n
+     l(θ) ≈     ωi log     √ Aik (θ)Bik (θ)Cik (θ) +     (1 − ωi ) log[Ei (θ)Fi (θ)],
+            i=1
+                            π                        i=1
+                              k=1
+
+where
+               { [                    (                        )]}
+                                    1
+ Aik (θ) = exp δi log(κik1 (vi )) −     log(8π) + κ2ik2 (vi )        ,
+                                    2
+               {                                }
+ Bik (θ) = exp (1 − δi ) log[1 − Φ(κik2 (vi ))] ,
+               {n       [            {                                   √           }]}
+                 ∑ i
+                             1            [yi (tij ) − (x1i (tij )⊤ β 1 + 2σ0 sk )]2
+ Cik (θ) = exp       log √        exp −                                                  ,
+                 j=1
+                            2πσe                               2σe2
+
+
+                                                     Revista Colombiana de Estadística 43 (2020) 83–101
+
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis                  99
+
+with
+                            (                                       √            )
+                      2       vi − [x⊤  β
+                                     2i 2   + γ(x 1i (v i ) ⊤
+                                                              β 1 +   2σ 0 sk )]
+          κik1 (vi ) = cosh                                                        ,
+                      α                             2
+                            (                                       √            )
+                      2       vi − [x⊤                     ⊤
+                                     2i β 2 + γ(x1i (vi ) β 1 +       2σ0 sk )]
+          κik2 (vi ) = sinh                                                       ,
+                      α                            2
+
+with sk denoting the k-th root of the Q-th order Hermite polynomial and wk the
+corresponding weight,
+                        { [                    (                     )]}
+                                             1
+            Ei (θ) = exp δi log(ξi1 (vi )) −                2
+                                                 log(8π) + ξi2 (vi )    ,
+                                             2
+                        {                               }
+            Fi (θ) = exp (1 − δi ) log[1 − Φ(ξi2 (vi ))] .
+
+             [                                                    ]
+                 Received: February 2019 — Accepted: December 2019
+
+
+References
+Albert, P. S. & Shih, J. H. (2010), ‘On estimating the relationship between longitudinal measurements and time-to-event data using a simple two-stage procedure’, Biometrics 66, 983–991.
+Balakrishnan, N., Leiva, V., Sanhueza, A. & Vilca, F. (2009), ‘Estimation in the Birnbaum-Saunders distribution based on scale-mixture of normals and the EM algorithm’, Statistics and Operations Research Transactions 33, 171–192.
+Barros, M., Paula, G. A. & Leiva, V. (2008), ‘A new class of survival regression models with heavy-tailed errors: robustness and diagnostics’, Lifetime Data Analysis 14, 316–332.
+Crowther, M. J., Abrams, K. R. & Lambert, P. C. (2012), ‘Flexible parametric joint modelling of longitudinal and survival data’, Statistics in Medicine 31, 4456–4471.
+DeGruttola, V. & Tu, X. M. (1994), ‘Modelling progression of CD-4 lymphocyte count and its relationship to survival time’, Biometrics 50, 1003–1014.
+Diggle, P., Farewell, D. & Henderson, R. (2007), ‘Analysis of longitudinal data with drop-out: objectives, assumptions and a proposal’, Journal of the Royal Statistical Society: Series C (Applied Statistics) 56, 499–550.
+Diggle, P. J., Sousa, I. & Chetwynd, A. G. (2008), ‘Joint modelling of repeated measurements and time-to-event outcomes: the fourth armitage lecture’, Statistics in Medicine 27, 2981–2998.
+Franco-Soto, D. C. (2014), Modelos Birnbaum-Saunders para sobrevivência comdados longitudinais, PhD dissertation, Departamento de Estatística, Instituto de Matemática e Estatística, Universidade de São Paulo, Brasil. *https://www.ime.usp.br/
+Galea, M., Leiva, V. & Paula, G. (2004), ‘Influence diagnostics in log-Birnbaum-Saunders regression models’, Journal Applied Statistics 31, 1049–1064.
+Gay, D. M. (1990), ‘Usage summary for selected optimization routines’, Computing science technical report 153, 1–21.
+Gould, A. L., Boye, M. E., Crowther, M. J., Ibrahim, J. G., Quartey, G., Micallef, S. & Bois, F. Y. (2015), ‘Joint modeling of survival and longitudinal nonsurvival data: current methods and issues. Report of the DIA Bayesian joint modeling working group’, Statistics in Medicine 34(14), 2181–2195.
+Greene, W. F. & Cai, J. (2004), ‘Measurement error in covariates in the marginal hazards model for multivariate failure time data’, Biometrics 60, 987–996.
+Henderson, R., Diggle, P. & Dobson, A. (2000), ‘Joint modelling of longitudinal measurements and event time data’, Biostatistics 1, 465–480.
+Hogan, J. W. & Laird, N. M. (1997a), ‘Mixture models for the joint distributions of repeated measures and event times’, Statistics in Medicine 16, 239–257.
+Hogan, J. W. & Laird, N. M. (1997b), ‘Model-based approaches to analysing incomplete longitudinal and failure time data’, Statistics in Medicine 16, 259–272.
+Hsieh, F., Tseng, Y. K. & Wang, J. L. (2006), ‘Joint modelling of survival and longitudinal data: likelihood approach revisited’, Biometrics 62, 1037–1043.
+Hu, P., Tsiatis, A. A. & Davidian, M. (1998), ‘Estimating the parameters in the Cox model when covariate variables are measured with error’, Biometrics 54, 1407–1419.
+Kalbfleisch, J. D. & Prentice, R. L. (2002), The Statistical Analysis of Failure Time Data, 2 nd edn, John Wiley & Sons, New Jersey.
+Klein, J. P. & Moeschberger, M. L. (2003), Survival Analysis: Techniques for Censored and Truncated Data, 2 nd edn, Springer-Verlag, New York.
+Leiva, V., Athayde, E., Azevedo, C. & Marchant, C. (2011), ‘Modelling wind energy flux by a Birnbaum-Saunders distribution with unknown shift parameter’, Journal of Applied Statistics 54, 2819–2838.
+Leiva, V., Barros, M. K., Paula, G. A. & Galea, M. (2007), ‘Influence diagnostics in log-Birnbaum-Saunders regression models with censored data’, Computational Statistics and Data Analysis 51, 5694–5707.
+Pawitan, Y. & Self, S. (1993), ‘Modelling disease marker processes in AIDS’, Journal of the American Statistical Association 83, 719–726.
+A Birnbaum-Saunders Model for Joint Survival and Longitudinal Analysis R Development Core Team (2013), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. *https://www.R-project.org
+Rizopoulos, D. (2010), ‘JM: An R package for the joint modelling of longitudinal and time-to-event data’, Journal of Statistical Software 35, 1–33.
+Rizopoulos, D. (2011), ‘Dynamic predictions and prospective accuracy in joint models for longitudinal and time-to-event data’, Biometrics 67, 819–829.
+Rizopoulos, D. (2012a), JM: Shared parameter models for the joint modelling of longitudinal and time-to-event data, R package version 1.2-0. *https://cran.r-project.org/web/packages/JM/index.html
+Rizopoulos, D. (2012b), Joint Models for Longitudinal and Time-to-Event Data With Applications in R, 1 st edn, Chapman-Hall/CRC Biostatistics Series, Boca Raton.
+Rizopoulos, D., Verbeke, G. & Lesaﬀre, E. (2009), ‘Fully exponential Laplace approximations for the joint modelling of survival and longitudinal data’, Journal of the Royal Statistical Society: Series B (Methodological) 71, 637–654.
+Rizopoulos, D., Verbeke, G. & Molenberghs, G. (2010), ‘Multiple-imputationbased residuals and diagnostic plots for joint models of longitudinal and survival outcomes’, Biometrics 66, 20–29.
+Schluchter, M. D. (1992), ‘Methods for the analysis of informatively censored longitudinal data’, Statistics in Medicine 11, 1861–1870.
+Tsiatis, A. A. & Davidian, M. (2004), ‘Joint modelling of longitudinal and time to-event data: an overview’, Statistica Sinica 14, 809–834.
+Tsiatis, A. A., DeGruttola, V. & Wulfsohn, M. S. (1995), ‘Modelling the relationship of survival to longitudinal data measured with error: applications to survival and CD4 counts in patients with AIDS’, Journal of the American Statistical Association 90, 27–37.
+Wu, L., Liu, W., Yi, G. Y. & Huang, Y. (2012), ‘Analysis of longitudinal and survival data: joint modeling, inference methods, and issues’, Journal of Probability and Statistics 2012, 1–17.
+Wulfsohn, M. S. & Tsiatis, A. A. (1997), ‘A joint model for survival and longitudinal data measured with error’, Biometrics 53, 330–339.
+Ye, W., Lin, X. & Taylor, J. M. G. (2008), ‘Semiparametric modeling of longitudnal measurements and time-to-event data: a two-stage regression calibration approach’, Biometrics 64, 1238–1246.
+Yu, M., Law, N. J., Taylor, J. M. G. & Sandler, H. M. (2004), ‘Joint longitudinal-survival-cure models and their application to prostate cancer’, Statistica Sinica 14, 835–862.

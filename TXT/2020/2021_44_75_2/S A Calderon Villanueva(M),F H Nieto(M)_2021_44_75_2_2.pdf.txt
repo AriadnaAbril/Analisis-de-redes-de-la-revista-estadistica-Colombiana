@@ -1,0 +1,826 @@
+Forecasting with Multivariate Threshold Autoregressive Models. Pronósticos con modelos multivariados autorregresivos de umbrales
+Universidad Nacional de Colombia city, Colombia
+Abstract
+An important stage in the analysis of time series is forecasting of the interest variables. However, the forecasting in non-linear time series models is not straightforward as in linear time series models because an exact analytical expression for the conditional expectation it is not easy to obtain. In this paper, a procedure for forecasting with multivariate threshold autoregressive(MTAR) models is proposed via the so-called predictive distributions in the Bayesian approach. This strategy gives us the forecasts for the response and exogenous variable vectors. The coverage percentages of the forecast intervals and the variability of the predictive distributions are analyzed in this work. An application in the Hydrology ﬁeld is presented.
+Key words: Bayesian approach; Forecasting; Predictive distributions; Coverage percentages; Multivariate threshold autoregressive Model.
+Resumen
+Una etapa importante en el análisis de series de tiempo es el pronóstico de las variables de interés. Sin embargo, el pronóstico en modelos de series de tiempo no lineales no es directo como en el caso de modelos lineales de series de tiempo porque obtener la forma analítica exacta de la esperanza condicional no es fácil. En este artículo, un procedimiento de pronóstico con modelos multivariados autorregresivos de umbrales(MTAR) es propuesta vía las las llamadas distribuciones predictivas en el enfoque Bayesiano. Esta estrategia nos entrega tanto los pronósticos del vector de respuesta, como el de las variables exógenas. Los porcentajes de cobertura de los intervalos de pronósticos y la variabilidad de las distribuciones predictivas son analizadas en este trabajo. Una aplicación al campo de la hidrología es presentada.
+Palabras clave: Enfoque bayesiano; Pronóstico; Distribuciones predictivas; Porcentajes de cobertura; Modelo multivariado Autoregresivo de umbrales.
+
+
+1. Introduction
+   Time series analysis is referred to the comprehension of dependence in real
+problems when the observations are taken in time. Linear and nonlinear models
+are used to understand those problems; however, sometimes, we can get better
+results using nonlinear models instead of linear ones. Many nonlinear time series
+models have been studied in the literature. We can ﬁnd in Tsay & Chen (2018)
+an extensive compendium of statistical methodologies for analyzing time series
+through nonlinear models. For instance, a family of that nonlinear time series
+models that have been useful in econometrics is the threshold autoregressive
+models(TAR), see Tong (2015) for a speciﬁc review of those models.
+    Some developments in the analysis of multivariate threshold autoregressive
+(MTAR) models have been carried out in the last years. Tsay (1998) introduced
+a methodology to estimate the parameters of de model using conditional least
+squares and Akaike Information Criterion (AIC) for identifying the so-called
+structural parameters. Additionally, recursive least squares and predictive
+residuals in the arranged regression were used to construct a non-linearity test.
+On the other hand, Bayesian analysis of MTAR models has been studied by
+some authors. Kwon et al. (2009) proposed a conjugate analysis to ﬁnd the
+posterior distributions of the coeﬃcients and covariance matrices, and next,
+these parameters were integrated out of the posterior distributions to obtain the
+threshold and the lag value. These authors identiﬁed the autoregressive orders
+via some information criteria. Wu & Lee (2011) also developed a Bayesian
+methodology to analyze MTAR models with conditional heteroscedasticity without
+exogenous variables as covariates. Calderon & Nieto (2017) carried out the analysis
+of MTAR models with missing data in the output and exogenous vectors. Variable
+selection methodology was employed to identify the autoregressive orders; marginal
+likelihood and the Metropolised Carlin-and- Chib gave in (Dellaportas et al., 2002)
+were used to determinate the number of regimes. Informative prior distributions
+were established in order to get a Bayesian conjugate analysis.
+    In spite of the latest developments in the MTAR models, the forecasting with
+these models has not been taken into account in the phase of the model ﬁtting
+in these studies. A speciﬁc problem that is studied by time series analysis is the
+forecasting of interest variables. We can ﬁnd an interesting survey of forecasting
+with nonlinear time series models in Kock & Teräsvirta (2011), including the neural
+networks model. In Geweke & Amisano (2010), we can also ﬁnd a forecasting
+strategy through predictive distribution for asset returns. However, we can ﬁnd
+some advances in forecasting with multivariate threshold autoregressive models.
+De Gooijer & Vidiella-i Anguera (2004) proposed two schemes of simulation(Monte
+Carlo and Bootstrapping) for obtaining the multi-step ahead forecasts and evaluate
+the forecasts using three criteria. The schemes do not include the uncertainty of the
+parameters. Another forecasting procedure that uses Monte Carlo(MC) simulation
+and the ability to extract samples from the posterior distribution of the parameters
+was proposed by Kwon (2003). This procedure includes the uncertainty of the
+some of parameters of the model. Nevertheless, these forecasting procedures do not
+incorporate, neither, the forecasting of the exogenous variables nor the uncertainty
+
+               Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+Forecasting with MTAR Models                                                                      371
+
+of autoregressive orders. Therefore, in this paper, a methodology is proposed to
+compute the point forecasts of variables-of-interest that it is based on Calderon
+& Nieto’s (2017) model. Additionally, the uncertainty of the point forecasts is
+obtained using the predictive distributions. The key issue of the methodology is the
+use of the uncertainty of the parameters of the model, including the autoregressive
+orders. This work also allows to deal with missing data and the forecasting of the
+exogenous variables in the model. The methodology is illustrated with simulation
+examples and a real-data hydrological/meteorological application. The article
+is organized as follows. In Section 2, the model with its assumptions and the
+forecasting procedure are presented. In Section 3, a simulation study is carried
+out to illustrate the proposed methodology. A real-data application is presented
+in Section 4 and Section 5 concludes.
+
+
+
+2. The model and Forecasting Procedure
+2.1. Specifying the MTAR Model
+   This section is a summary of Calderon & Nieto’s (2017) paper, where a
+Bayesian methodology was developed for ﬁtting the so-called MTAR model. In
+that paper, we found, particular details about the chosen prior distributions and
+the MCMC methods that were implemented. Let {Yt } , {Xt } {Zt } be stochastic
+processes such that Yt = (Y1t , . . . , Ykt )′ , k ≥ 1, Xt = (X1t , . . . , Xvt )′ , ν ≥ 1,
+and {Zt } is a univariate process. We say that {Yt } follows a MTAR model with
+threshold variable Zt if, for all t,
+
+              pj                 q                   d
+        (j)
+              ∑      (j)
+                                 ∑
+                                 j
+                                        (j)
+                                                    ∑
+                                                    j
+                                                           (j)       1/2
+ Yt = ϕ0 +          ϕi Yt−i +          β i Xt−i +         δ i Zt−i + Σ(j) εt when rj−1 < Zt ≤ rj , (1)
+              i=1                i=1                i=1
+
+
+where j = 1, . . . , l, l ∈ {2, 3, . . .} is the number of regimes and −∞ = r0 < r1 <
+· · · < rl−1 < rl = ∞ are the thresholds, which deﬁne the regimes. The non-
+negative integer numbers pj , qj and dj , with j = 1, . . . , l are called autoregressive
+orders for each regime. Notice that we have added the threshold variable as a
+covariate in an autoregressive form. {Yt }, {Xt } and {Zt } are called respectively
+the output, covariates and threshold processes. Additionally, the innovation
+process {εt } follows a multivariate independent Gaussian zero-mean process with
+covariance matrix Ik , the identity matrix of order k, and it is mutually independent
+of {Xt } and {Zt }.
+                                                    (j)                         (j)
+    For j = 1, . . . , l, the coeﬃcients ϕi for i = 0, 1, . . . , pj , β i for i = 1, . . . , qj ,
+ (j)                               1/2
+δi   for i = 1, . . . , dj and Σ(j) are real matrices of suitable dimensions and
+we call them non-structural parameters. We also deﬁne the vector of non-
+structural parameters as θyns = (θ1′ , . . . , θl′ , vec(Σ)′ )′ , with θj = vec(Aj ), ηj =
+1 + k · pj + v · qj + dj , for j = 1, . . . , l where
+
+                           (j)   (j)                 (j)              (j)      (j)
+              Aj = (ϕ0 , ϕ1 , . . . , ϕ(j)                (j)
+                                       pj , β1 , . . . , βqj , δ1 , . . . , δdj )k×ηj ,
+
+
+                    Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+372                                              Sergio A. Calderón-Villanueva & Fabio H. Nieto
+
+
+and Σ = (Σ(1) , . . . , Σ(l) ). The autoregressive orders, the threshold values r =
+(r1 , . . . , rl−1 )′ and the number of regimes l are known as structural parameters and
+they are denoted as θys = (p1 , . . . , pl , q1 , . . . , ql , d1 , . . . , dl , r′ , l)′ . Therefore, the full
+vector of parameters of the model, denoted MTAR(l; p1 , . . . , pl , q1 , . . . , ql , d1 , . . . , dl ),
+                ′     ′ ′
+is θy = (θyns      , θys ).
+      The MTAR model (1) can be written in the following way:
+
+                       Yt = (Ik ⊗ w′t,j )θj + Σ(j) εt if rj−1 < Zt ≤ rj ,
+                                                     1/2
+                                                                                                         (2)
+where θj = vec(A′j ) for j = 1, . . . , l, and ⊗ denotes the Kronecker product. We
+add 0-1 indicator variables γi,j , i = 1, . . . , ηj , j = 1, . . . , l; such that if γi,j = 1 , the
+associated parameter θi,j should be included; if γi,j = 0 the associated parameter
+should not be included. These indicator variables are added to the MTAR model
+in order to identify the autoregressive orders. Now, let γ j = (γ1,j , . . . , γηj ,j )′ be
+the full vector of indicators in the regime j. Based on that, we can re-write the
+MTAR model in (2) with the vectors γj , j = 1, . . . , l as follows,
+
+                                  Yt = (Ik ⊗ w′t,j )Γj θj + Σ(j) εt
+                                                                    1/2
+                                                                                                         (3)
+                                      = (Ik ⊗ w′t,j )ϑj + Σ(j) εt
+                                                           1/2
+                                                                                                         (4)
+if rj−1 < Zt ≤ rj , where ϑj = (γ1,j θ1,j , . . . , γηj ,j θηj ,j ) and Γj = Diag{γj } and
+now the vector of structural parameters is θys = (γ ′1 , . . . , γ ′l , r, l). Additionally,
+we assume that {Ut = (Zt , X′t )′ } is a (v + 1)-dimensional homogeneous bth order
+Markov chain with stationary density fu (·) and transition kernel density fu (·|·),
+both with respect to the Lebesgue-measure, where b is an integer number greater
+than zero. We assume {Ut } is exogenous in the sense that there is no feedback of
+{Yt } towards {Ut }. The Markovian assumption on {Ut } ensures that a greater
+quantity of possible models could be used to describe the time series {ut }. Theory
+and some examples of Markov chains can be found in (Meyn & Tweedie, 2009). In
+order to identify the models and estimate its parameters, we recommend following
+these steps in the presence of missing data: 1) ﬁll the missing data in the time
+series with initial values, 2) identify the number of regimes using the Metropolised
+Carlin-and-Chib approach or the marginal likelihood procedure. If the marginal
+likelihood procedure is used, then the threshold values are identiﬁed in this step
+using the non-linear AIC(NAIC). 3) Identify the autoregressive orders using the
+KUO or GVS variable selection methods. If the Metropolised Carlin-and-Chib
+approach was employed to identify the number of regimes, use the appropriated
+full conditional distribution for estimating the threshold values. 4) Estimate the
+non-structural parameters and the missing data. 5) Go to Step 1 putting now
+as initial missing-data estimates those obtained in Step 4 and continue the loop
+until the estimation of the parameters and missing data are practically the same
+(numerically stable).
+
+
+2.2. The Forecasting Procedure
+   In this section, a procedure for forecasting with an MTAR model is proposed.
+This is the core of this work, and the in-sample ﬁt of the model is only an
+
+                    Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+Forecasting with MTAR Models                                                                             373
+
+intermediate step, following Calderon & Nieto’s (2017) methodology. The goal is
+to ﬁnd E[YT +h |y1:T , u1:T , m], where T is the sample size, h ≥ 1, y1:T = (y1 , . . . , yT ),
+x1:T = (x1 , . . . , xT ) and u1:T = (u1 , . . . , uT ). This is the best prediction in the sense
+of the MMSE (minimum mean square error). Nevertheless, an exact analytical
+expression of that conditional expectation is not easy to obtain in this context of
+non-linear models. This fact was pointed out in Nieto’s (2008) article for univariate
+TAR models. Therefore, using Bayesian analysis and the quadratic loss function
+as the optimality criterion, we proceed to ﬁnd the joint predictive distributions
+p(yT +h |y1:T , u1:T , m) for h ≥ 1, with which we can obtain the target conditional
+expectations. This distribution can be obtained in the following way:
+
+   p(yT +1:T +h ,uT +1:T +h |y1:T , u1:T , m) =                                                       (5)
+                 Z
+                     p(yT +1:T +h , uT +1:T +h |y1:T , u1:T , θy,m , m)p(θy,m |y1:T , u1:T , m)dθy,m ,
+
+
+where p(θy,m |y1:T , u1:T , m) is the posterior distribution of the parameters of an
+MTAR model with m regimes and p(yT +1:T +h , uT +1:T +h |y1:T , u1:T , θy,m , m) is a
+distribution that must be speciﬁed with the assumptions of the MTAR model.
+In order to specify that distribution, all the assumptions about the MTAR model
+presented in last section are accepted and also for all t, Y1:t does not Granger-cause
+Ut (see Harvey, 1989), then
+
+   p(yT +1 , . . . , yT +h ,uT +1 , . . . , uT +h |y1:T , u1:T , θy,m , m) =                               (6)
+                           Y
+                           h
+                                 p(uT +i |u1:T +i−1 )p(yT +i |uT +i , y1:T +i−1 , u1:T +i−1 , θy,m , m).
+                           i=1
+
+It is worth noting that the densities in (6) for, i = 1, . . . , h, satisfy the following:
+
+(i) p(uT +i |u1:T +i−1 ) is the kernel density of the Markov chain {Ut }.
+
+(ii) p(yT +i |uT +i , y1:T +i−1 , u1:T +i−1 , θy,m , m) is a multinormal distribution with
+      mean
+                                               (Ik ⊗ w′T +i,j )Γj θj
+       and covariance matrix Σ(j) if rj−1 < zT +i ≤ rj , with w′T +i,j , Γj , θj for
+       j = 1, . . . , m described in Calderon & Nieto (2017).
+
+    To draw samples from (5), we can use MC simulation in the following way:
+for the i − th iteration:
+                                             (i)
+Step 1. Extract a random draw θy,m of the posterior distribution p(θy,m |y1:T , u1:T , m)
+     following the results shown in Calderon & Nieto (2017).
+                                               (i)
+Step 2. Extract a random draw uT +1 of the kernel density p(uT +1 |u1:T ).
+                                             (i)                               (i)                 (i)
+Step 3. Extract a random draw yT +1 of the density p(yT +1 |uT +1 , y1:T , u1:T , θy,m , m).
+
+                   Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+374                                                    Sergio A. Calderón-Villanueva & Fabio H. Nieto
+
+                                                                                         (i)              (i)
+    Continue extracting random draws recursively for uT +j and yT +j from
+          (i)                                (i)          (i)                          (i)
+p(uT +j |uT +1:T +j−1 , u1:T ) and p(yT +j |uT +1:T +j , yT +1:T +j−1 , y1:T , u1:T , θy,m , m) respec-
+                                                   (i)     (i)
+tively, for j = 2, . . . , h. With the set {ut+h , yt+h }i,h , it is possible to calculate:
+the mean of the predictive distribution (point forecast), the covariance matrix of
+the predictive distribution (measure of uncertainty of the forecast) and credible
+intervals or region intervals for future value of the vector (UT +1:T +h , YT +1:T +h ).
+This procedure allows us to include the uncertainty of the parameters of the MTAR
+model in the forecast, which generalizes the forecasting procedure proposed by
+Nieto (2008) and Vargas (2012).
+
+
+3. Simulation Examples
+      Let Ut = (Zt , Xt )′ be a stable V AR(1) process deﬁned as
+
+                                               Ut = AUt−1 + rt ,
+with
+                                                                    
+                                                           0.5    0.1
+                                                 A=
+                                                           0.4    0.5
+and
+                                           {rt } ∼ IIDN (0, Σr ),
+where                                                             
+                                                           1.0 0.4
+                                               Σr =                  .
+                                                           0.4 2.0
+It is well known that this process is a homogeneous Markov chain of order 1.
+      We consider the following models:
+Model 1.
+               
+               ϕ(1) + ϕ(1) Yt−1 + ϕ(1) Yt−2 + β (1) Xt−1 + δ (1) Zt−1 + Σ1/2 εt ,                   if Zt ≤ r
+                  0       1                2                  1            1             (1)
+        Yt =
+               ϕ(2) + ϕ(2) Yt−1 + Σ1/2 εt ,                                                         if Zt > r,
+                  0       1                (2)
+
+where
+                                                                                
+                                    (1)             1.0            (2)         5.0
+                                   ϕ0 =                   ,       ϕ0 =               ,
+                                                   −1.0                        2.0
+                                                                                     
+                         (1)            0.5        −0.2            (1)           0.1 0.6
+                        ϕ1 =                             ,        ϕ2 =
+                                        −0.2       0.8                          −0.4 0.5
+                                                                                                
+                   (2)            0.3 0.5              (1)            0.3          (1)         0.6
+                  ϕ1 =                     ,          β1 =                  ,     δ1 =
+                                  0.2 0.7                             −0.4                     1.0
+
+                      Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+Forecasting with MTAR Models                                                                                          375
+
+                                                                                          
+                             1/2         1.0     0.6              1/2          2.5     0.5
+                            Σ(1) =                    ,         Σ(2) =
+                                         0.6     1.5                           0.5     1.0
+with r = zb0.4 , the 40−th percentile of the series {zt }.
+
+    Now, we set the model with three regimes as:
+Model 2.
+                 
+                  (1)  (1)       1/2
+                 ϕ0 + ϕ1 Yt−1 + Σ(1) εt ,                                                   if Zt ≤ r1
+                      (2)  (2)        (2)        (2)        1/2
+          Yt =       ϕ0 + ϕ1 Yt−1 + ϕ2 Yt−2 + β 1 Xt−1 + Σ(2) εt ,                           if r1 < Zt ≤ r2
+                 
+                     (3)  (3)        (3)        (3)       1/2)
+                     ϕ0 + ϕ3 Yt−3 + β 2 Xt−2 + δ 1 Zt−1 + Σ(3) εt ,                          if Zt > r2
+
+where
+                                                                                             
+                      (1)         2.0            (2)            0.4             (3)        −3.0
+                     ϕ0 =              ,       ϕ0 =                   ,       ϕ0 =
+                                  1.0                          −4.0                        2.0
+                                                                      
+                                            (1)            −0.9    0.0
+                                           ϕ1 =
+                                                           0.2     −0.5
+                                                                                       
+                             (2)         0.7 0.0                (2)           0.8     0.2
+                            ϕ1 =                   ,           ϕ2 =
+                                         0.0 0.6                              0.0     −0.4
+                                                                         
+                                               (3)         −0.8 0.0
+                                           ϕ3 =
+                                                            0.2 0.8
+                                                                               
+                                   (2)         1.2                (3)         −0.6
+                               β1 =                  ,          β2 =
+                                               −0.8                           0.7
+                                                                   
+                                                     (3)         0.6
+                                                 δ1 =
+                                                                 2.0
+
+                                                                                                             
+         1/2          1.0 0.3              1/2             1.0 0.0              1/2             2.0      −0.4
+        Σ1 =                    ,         Σ2 =                      ,          Σ3 =
+                      0.3 4.0                              0.0 1.0                             −0.4      1.0
+
+with r1 = zb0.25 and r2 = zb0.75 , the 25−th and 75−th percentiles of the time series
+{zt }.
+
+Finally, we consider the following model:
+Model 3.
+                                                                                               
+    
+     1.0  0.5
+    
+                      0.1           0.0     0.0             0.3           1.0               0.6
+    
+          +             Y     +                 Y     +        X     +                          εt ,   if Zt ≤ r
+    
+    
+                               t−1                       t−2              t−1
+     −1.0       0.4   0.5             0.25    0.0               −0.4             0.6              1.5
+Yt =                                       
+    
+    
+    5.0 0.3
+                    0.5          2.5     0.5
+    
+    
+      + 
+                         Yt−1 +               εt ,                                                            if Zt > r.
+     2.0      0.2   0.7             0.5    1.0
+
+
+
+                     Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+376                                     Sergio A. Calderón-Villanueva & Fabio H. Nieto
+
+
+This model has less inﬂuence of the exogenous variables and its marginal variability
+is less than that exhibited by Model 1. This model characteristic can be seen in
+the simulated realizations of the stochastic processes.
+    We simulate a realization of size 1000 + h of the models 1, 2, and 3; next, we
+take as the eﬀective sample size T = 1000, and we proceed to forecast the vectors
+for T + h with h ≥ 1. We use the Frobenius norm of the covariance matrix of
+the predictive distribution (FNPD) to quantify the joint variability of the forecast.
+Table 1 gives us the forecasting results for the proposed Model 3, while Tables 2
+and 3 give us the summary of the forecasting results for models 1 and 2 with h = 10
+and the last 10000 iterations. We can see that all the true values lie within the
+95% individual credible intervals and many of the forecasts are close to them. It is
+important to point out that the forecasts for Model 3 proposed in this section have
+FNPD less than the forecasts for Model 1, this may be due to the lesser inﬂuence
+of the exogenous variables and less heteroscedasticity of the new proposed model.
+Another feature of the forecasting with MTAR models is that FNPD increases as
+the forecast horizon increases. Finally, we carried out a simulation study in order
+to check the performance of the proposed forecasting procedure. We simulated
+100 realizations of Model 1, Model 2, and Model 3, next it was calculated the
+percentage of times that true future values lie within individual 95% prediction
+credible intervals. We can observe in Table 4 that the coverage percentages are
+high for all models; however, some percentages are smaller than the expected value
+95%. The reason for that fact is that we did not calculate coverage percentages
+using joint prediction intervals. We can establish that the method proposed to
+forecast MTAR models behaves appropriately.
+
+           Table 1: Forecasting output and exogenous vectors for Model 3.
+  h   y1000+h   b
+                y1000+h   FNPD       95% C.I.     u1000+h   b
+                                                            u1000+h   FNPD      95% C.I.
+       13.99     18.05            (11.05;23.99)    -0.54      0.72            (-1.24;2.67)
+  1                       3.77                                        1.74
+       23.16     18.00            (15.54;21.41)    -1.67      0.85            (-1.93;3.62)
+        9.31     17.25             (8.10;24.69)    -0.58      0.44            (-1.80;2.66)
+  2                       4.98                                        2.03
+       21.04     18.60            (14.92;22.94)    -0.88      0.71            (-2.60;3.99)
+        7.73     16.64             (6.34;25.24)    -0.94      0.27            (-2.06;2.64)
+  3                       5.90                                        2.15
+       16.54     18.76            (13.37;24.17)    -1.67      0.50            (-2.98;3.98)
+        6.17     16.21             (5.11;25.48)    -0.94      0.19            (-2.21;2.61)
+  4                       6.65                                        2.23
+       14.23     18.60            (11.03;24.97)    -0.69      0.35            (-3.34;4.07)
+        6.34     15.77             (4.11;25.72)    -0.53      0.12            (-2.23;2.55)
+  5                       7.30                                        2.25
+       11.85     18.34             (9.14;25.30)    -2.05      0.25            (-3.50;3.89)
+       10.61     15.37             (3.50;26.02)     0.69      0.08            (-2.35;2.51)
+  6                       7.84                                        2.28
+       11.65     17.95             (7.34;25.84)    -1.91      0.14            (-3.60;3.89)
+       11.06     15.09             (3.11;26.14)     1.68      0.04            (-2.39;2.40)
+  7                       8.27                                        2.29
+       17.63     17.63             (6.21;26.23)     1.47      0.09            (-3.56;3.82)
+       18.13     14.75             (2.70;26.23)     0.00      0.01            (-2.39;2.43)
+  8                       8.57                                        2.26
+       12.38     17.28             (5.32;26.22)     3.19      0.04            (-3.69;3.75)
+       11.80     14.46             (2.42;26.26)     1.77      0.01            (-2.43;2.47)
+  9                       8.83                                        2.27
+       14.10     16.93             (4.58;26.30)     4.66      0.04            (-3.70;3.71)
+       15.80     14.46             (2.11;26.19)     3.49      0.01            (-2.37;2.46)
+ 10                       9.05                                        2.29
+       12.96     16.62             (4.10;26.30)     4.60      0.03            (-3.77;3.75)
+
+
+
+
+                Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+Forecasting with MTAR Models                                                             377
+
+
+
+           Table 2: Forecasting output and exogenous vectors for Model 1.
+ h    y1000+h   b
+                y1000+h   FNPD       95% C.I.      u1000+h   b
+                                                             u1000+h   FNPD      95% C.I.
+       14.66     15.70            (11.60;21.03)      1.13      0.05            (-1.91;2.02)
+ 1                        5.42                                         1.73
+       13.50     11.43             (2.52;16.73)     -0.11      0.38            (-2.36;3.18)
+       16.03     16.16             (9.06;22.03)     -0.42      0.06            (-2.21;2.31)
+ 2                        6.81                                         2.02
+       10.06     10.52             (-1.02;18.24)     1.33      0.22            (-2.99;3.52)
+       12.74     15.51             (7.47;22.68)     -0.13      0.05            (-2.23;2.40)
+ 3                        9.11                                         2.13
+       11.04      8.99             (-9.77;19.38)    -1.72      0.13            (-3.28;3.65)
+       13.97     14.83             (4.40;23.25)      0.03      0.03            (-2.40;2.45)
+ 4                        11.34                                        2.23
+       13.07      7.42            (-18.02;20.20)    -2.77      0.11            (-3.49;3.76)
+       11.11     13.86             (0.18;23.70)     -0.83      0.03            (-2.41;2.49)
+ 5                        13.51                                        2.26
+        6.52      5.87            (-25.83;20.65)    -2.42      0.08            (-3.63;3.72)
+       14.97     12.73             (-4.66;23.93)    -0.51      0.02            (-2.47;2.42)
+ 6                        15.62                                        2.29
+        4.24      4.50            (-33.00;21.09)    -3.82      0.09            (-3.73;3.86)
+        9.32     11.60             (-9.95;24.25)    -0.91      0.02            (-2.41;2.42)
+ 7                        17.54                                        2.28
+        -3.11     3.29            (-38.46;21.42)    -4.08      0.01            (-3.70;3.64)
+        9.73     10.53            (-15.56;24.40)    -2.26      0.00            (-2.47;2.44)
+ 8                        19.08                                        2.26
+        -8.00     2.20            (-41.94;21.54)    -2.08      0.02            (-3.63;3.73)
+        3.84      9.51            (-20.96;24.60)    -1.71      0.00            (-2.39;2.40)
+ 9                        20.40                                        2.27
+       -17.00     1.28            (-45.67;21.71)    -1.78      0.08            (-3.74;3.76)
+         0.23     8.58            (-24.53;24.49)    -4.32      0.00            (-2.45;2.42)
+ 10                       21.35                                        2.28
+       -25.12     0.54            (-45.41;21.82)    -0.95      0.01            (-3.77;3.77)
+
+
+
+
+           Table 3: Forecasting output and exogenous vectors for Model 2.
+ h    y1000+h   b
+                y1000+h   FNPD        95% C.I.     u1000+h   b
+                                                             u1000+h   FNPD      95% C.I.
+       -2.32      -1.34             (-3.94;1.03)    -1.75      -1.91           (-3.87;0.11)
+ 1                        4.07                                         1.74
+        2.09      0.92              (-6.60;8.89)    -4.53      -3.02           (-5.80;-0.20)
+        5.24      1.74              (-3.80;5.94)    -1.76      -1.25           (-3.48;1.02)
+ 2                        4.86                                         2.04
+       -3.17      -0.42             (-7.99;8.37)    -1.36      -2.28           (-5.62;1.03)
+        1.02      -1.18             (-7.48;4.46)    -0.14      -0.85           (-3.18;1.49)
+ 3                        5.53                                         2.19
+       -5.08      -0.42             (-8.49;9.29)    -0.20      -1.65           (-5.28;1.96)
+        5.05      0.54              (-7.88;7.09)    -0.62      -0.58           (-2.96;1.85)
+ 4                        6.02                                         2.23
+       -4.92      -0.95             (-8.92;8.83)    -0.01      -1.17           (-4.82;2.46)
+       -0.77      -0.99            (-10.02;6.93)    -0.87      -0.41           (-2.82;2.02)
+ 5                        6.43                                         2.24
+        7.05      -0.91             (-8.91;9.82)    -0.19      -0.81           (-4.45;2.79)
+        0.81      0.02             (-10.95;8.32)    -0.24      -0.28           (-2.74;2.17)
+ 6                        6.92                                         2.29
+        2.56      -1.17             (-9.13;9.39)    -3.78      -0.55           (-4.28;3.18)
+        0.78      -0.81            (-11.81;8.82)    -1.46      -0.21           (-2.64;2.25)
+ 7                        7.48                                         2.29
+        1.29      -1.17            (-9.52;10.37)    -5.42      -0.39           (-4.17;3.38)
+        0.78      -0.81           (-12.09;10.13)    -1.47      -0.14           (-2.53;2.30)
+ 8                        7.98                                         2.28
+        1.29      -1.17            (-9.93;10.11)    -3.25      -0.26           (-3.98;3.55)
+       -0.50      -0.60           (-13.11;10.64)    -1.60      -0.09           (-2.51;2.31)
+ 9                        8.35                                         2.28
+       -0.97      -1.15            (-9.95;10.73)    -2.79      -0.18           (-3.86;3.62)
+        4.32      -0.24           (-13.32;12.51)    -1.61      -0.06           (-2.52;2.40)
+ 10                       8.74                                         2.28
+        4.91      -1.12            (-9.98;10.95)    -3.57      -0.15           (-3.86;3.61)
+
+
+
+
+                 Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+378                                       Sergio A. Calderón-Villanueva & Fabio H. Nieto
+
+  Table 4: Coverage percentage of the individual 95% prediction credible intervals.
+                           h    Model 2     Model 3   Model 4
+                           1      90         100        92
+                           2      93          96        90
+                           3      88          95        93
+                           4     100          98        95
+                           5      94          93        96
+                           6      97          92        91
+                           7     100          91        95
+                           8      99          96        96
+                           9      96          95        96
+                           10     97          94        95
+
+
+
+
+4. An Empirical Application
+    In this section, we apply the forecasting procedure to hydrological data. In
+Calderon & Nieto (2017) was found the relationship between daily rainfall (in mm)
+and the daily river ﬂow (in m3 /s) of two rivers where one river empties into the
+other in a region of the department of Cauca in Colombia. The rainfall was
+measured at the San Juan’s meteorological station with an altitude of 2400 meters
+above the sea level and geographical coordinates 2◦ 2’ 7.1” north and 76◦ 29’
+47.1” west. The ﬁrst river ﬂow was measured at the El Trebol’s hydrological
+station of the Bedon river with an altitude of 1720 meters above the sea level and
+geographical coordinates 2◦ 15’ 0.1”north and 76◦ 7’ 42.6”west; the second river
+ﬂow was measured at the La Plata river at the Villalosada hydrological station
+with an altitude of 1300 meters above the sea level and geographical coordinates
+2◦ 18’ 43.9” north and 75◦ 58’ 12.5” west. The stations are located close to the
+Earth’s equator in a very dry geographical zone. This last characteristic permits
+the control of hydrological/meteorological factors, which may distort the kind of
+dynamical relationship explained by the MTAR model, this fact was mentioned in
+Nieto (2005) with regard to univariate TAR models. The period of time that we
+considered is from January 1st, 2006 to April 14th, 2009 (1200 time points) which
+has 57 time points with missing data in the rainfall series, 214 in the series of the
+river ﬂow of the Bedon river and 213 in the series of the river ﬂow of the La Plata
+river. These data were provided by IDEAM, the oﬃcial Colombian agency for
+hydrological and meteorological studies. We can note in Figure 1 the time series of
+the variables proposed for the analysis, these ﬁgures show us a strong relationship
+between the rainfall and the river ﬂows, and a stable behaviour in mean with some
+bursts of large values which were taken into account in the modelling process.
+    Let Pt and Yt = (Y1,t , Y2,t )′ be the rainfall and the bivariate river ﬂow of the
+Bedonpand La Plata rivers at day t. We consider that the threshold variable is
+Zt = Pt−1 because of universal convention due to measurement of the variables,
+and for decreasing the heteroscedasticity in {Pt }. The original bivariate time series
+{yt } was transformed due to the marginal heteroscedasticity in both variables to
+         √
+e
+yt = log( yt ), which means that the transformations are made componentwise.
+
+                Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+Forecasting with MTAR Models                                                              379
+
+
+
+
+        60
+        40
+        20
+        0
+              0           200        400        600         800        1000       1200
+        35
+        25
+        15
+        5                                        (a)
+
+
+
+
+              0           200        400        600         800        1000       1200
+
+                                                 (b)
+        100
+        60
+        20
+
+
+
+
+              0           200        400        600         800        1000       1200
+
+                                                 (c)
+
+Figure 1: Time series of the real application: (a) Rainfall; (b) River ﬂow of the Bedon
+          River; (c) River ﬂow of the La Plata River.
+
+
+    On the other hand, we can see that the threshold variable has a mixed type
+distribution, which does not have density with respect to the Lebesgue-measure.
+Nieto’s (2005) ideas suggest an approximation for the distributions that deﬁnes
+the Markov chain {Zt }, the initial distribution
+
+                                F1 (z) = pF0 (z) + (1 − p)G(z)
+
+where p = P r(Z = 0) > 0, F0 (z) = I[0,∞) (z), I denotes the indicator function, and
+G(z) is a distribution function with Lebesgue-measure density g(z) with support
+on (0, ∞). The transition kernel is deﬁned as the distribution
+
+                  F (zt |zt−1 ) = p(zt−1 )F0 (zt ) + [1 − p(zt−1 )]G(zt |zt−1 )
+
+where p(zt−1 ) = P r(Zt = 0|zt−1 ) and G(zt |zt−1 ) is a distribution function that
+depends on zt−1 with Lebesgue-measure density g(zt |zt−1 ) with support on (0, ∞).
+The approximation is considered as follows: for each positive integer n, let
+                     
+                     
+                     0,                             −∞ < z < −1/n,
+           F0n (z) = (1/2)[sin(nzπ + π/2) + 1], −1/n ≤ z ≤ 0,
+                     
+                     
+                       1,                            z > 0.
+
+{F0n } is a sequence of distribution functions and converges pointwise to F0 .
+Additionally, F0n is diﬀerentiable at all real number z with ﬁrst derivative
+                         
+                         
+                         0,                              −∞ < z < −1/n,
+                 ′
+       hn (z) = F0n (z) = (nπ/2)[cos(nzπ + π/2) + 1], −1/n ≤ z ≤ 0,
+                         
+                         
+                           0,                             z > 0.
+
+                  Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+380                                                           Sergio A. Calderón-Villanueva & Fabio H. Nieto
+
+
+The sequence hn converges pointwise to δ0 , the Dirac delta function at z = 0 which
+is not a Lebesgue density function. The approximations of the initial and Kernel
+densities for n suﬃciently large are respectively
+
+                                                   f1n = phn (z) + (1 − p)g(z)
+
+and
+                                     fn (zt |zt−1 ) = p(zt−1 )hn (zt ) + [1 − p(zt )]g(zt |zt−1 ),
+we use n = 100 for the approximation. We proceed with estimation of the
+parameters of the initial density. To estimate p, we counted the number of zeroes
+in the sample of the rainfall and used the relative frequency as an estimation which
+is p̂ = 0.23; we consider that g(z) is a normal density truncated at z = 0.
+
+
+
+
+                              0.15
+           density function
+
+
+
+
+                              0.10
+
+
+
+
+                              0.05
+
+
+
+
+                              0.00
+
+                                        0             2               4           6             8
+                                                              Bandwidth =1.2
+
+                                Figure 2: Density estimate throughout kernel Gaussian.
+
+
+    A numerical procedure is used to estimate the mean and standard deviation of
+density g(z), it is based on a non-parametric approximation with Gaussian Kernel,
+see Figure 2. The maximum of the estimated kernel is µ̂ = 2.64 and the inﬂexion
+point must have the form µ̂ + σ̂ which can be found using the second derivative
+of the estimated kernel, see Figure 3. We can observe an inﬂexion point located
+at the interval (4.44; 4.45) and it is approximately 4.445, therefore the estimation
+of standard deviation is σ̂ = 1.885 and with this we complete the estimation of
+the parameters for the initial density. For the kernel density, the estimation of
+pj = P r(Zt = 0|zt−1 ∈ Bj ) where Bj = {z|rj−1 < z ≤ rj } for j = 1, . . . , l is done
+counting the pairs (zt−1 ∈ Bj , zt = 0) and dividing by the total pairs (zt−1 , zt = 0)
+which for m = 2 they are p̂1 = 0.8532, p̂2 = 0.1468; the kernel is a normal density
+truncated at z = 0 with mean zt−1 and standard deviation σ̂ = 1.885.
+
+
+
+
+                                 Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+Forecasting with MTAR Models                                                                                                 381
+
+                                          0.02
+
+
+                                          0.01
+
+
+                                          0.00
+
+            density derivative function
+                                    −0.01
+
+
+                                    −0.02
+
+
+                                    −0.03
+
+
+                                    −0.04
+
+
+                                    −0.05
+
+                                                 0            2             4                6             8
+                                                                    Bandwidth =1.2
+
+       Figure 3: Second derivative of estimated density for threshold variable.
+
+
+       Table 5: Forecasting of output and threshold variables for the real data.
+   h    yT +h  b
+               y1200+h     FNPD        95% C.I.                                      zT +h   b
+                                                                                             z1200+h     FNPD    95% C.I.
+        N.A.    1.166                (0.973;1.394)
+   1                        0.160                                                    3.00        0.601   1.309   [0;4.522)
+        N.A.    1.561                (1.339;1.820)
+        N.A.    1.153                (0.944;1.447)
+   2                        0.182                                                    2.828       0.738   1.566   [0;5.627)
+        N.A.    1.564                (1.317;1.870)
+        1.097   1.135                (0.913;1.466)
+   3                        0.197                                                    2.645       0.701   1.582   [0;5.623)
+        1.458   1.549                (1.300;1.893)
+        1.042   1.120                (0.888;1.475)
+   4                        0.207                                                    2.449       0.781   1.645   [0;5.827)
+        1.445   1.540                (1.278;1.881)
+        1.166   1.112                (0.872;1.487)
+   5                        0.216                                                    1.414       0.789   1.668   [0;5.801)
+        1.504   1.538                (1.266;1.907)
+        1.313   1.100                (0.850;1.483)
+   6                        0.225                                                    4.24        0.801   1.695   [0;5.983)
+        1.739   1.530                (1.251;1.921)
+        1.216   1.091                (0.835;1.477)
+   7                        0.231                                                    3.605       0.785   1.671   [0;5.937)
+        1.556   1.520                (1.222;1.908)
+        1.179   1.080                (0.821;1.462)
+   8                        0.236                                                    2.236       0.779   1.665   [0;5.933)
+        1.435   1.508                (1.210;1.901)
+        1.147   1.073                (0.810;1.473)
+   9                        0.239                                                    1.732       0.785   1.668   [0;5.960)
+        1.394   1.500                (1.189;1.885)
+        1.142   1.065                (0.793;1.466)
+   10                       0.242                                                    1.414       0.779   1.663   [0;5.887)
+        1.393   1.491                (1.179;1.895)
+   N.A. means that it is a missing value.
+
+
+    It was also found that the estimation of the number of regimes and the threshold
+was ˆl = m = 2 and r̂ = 2.6. With this information and replacing the missing data
+with their estimation, we proceed with the forecasting procedure. The forecasting
+for both threshold variable and output vector was carried out regarding a forecast
+horizon of h = 10, where the ﬁnal estimates of the missing data were used to
+complete the series. The forecasts, credible intervals and the FNPD are shown
+
+                                             Revista Colombiana de Estadística - Theoretical Statistics 44 (2021) 369–383
+
+382                                    Sergio A. Calderón-Villanueva & Fabio H. Nieto
+
+
+on Table 5 based on a run of 15000 iterations with a burning period of 5000.
+All credible intervals take zeroes or positive values only, this is an important fact
+because the forecasting of the univariate TAR model in Nieto (2008) exhibited
+negative values in the credible intervals for the output vector in the hydrological
+application.
+
+
+5. Conclusions
+    In this paper, we have derived the Bayesian predictive distributions of the
+MTAR model, which involve the uncertainty of the model parameters. The
+forecasts are obtained using simulation methods to draw samples of the joint
+predictive distribution. Additionally, the procedure includes how to deal with
+missing data. We note that the forecasting procedure behaves well based on the
+results of the simulated and real data examples. As future work, we will consider
+the inﬂuence of prior distributions for the parameters models in the forecasting
+performance.
+                                                               
+                   Received: November 2020 — Accepted: May 2021
+
+
+References
+Calderon, S. & Nieto, F. (2017), ‘Bayesian analysis of Multivariate Threshold Autoregressive Models with Missing Data’, Communications in Statistics: Theory and Methods 46(1), 296–318.
+De Gooijer, J. G. & Vidiella-i Anguera, A. (2004), ‘Forecasting threshold cointegrated systems’, International Journal of Forecasting 20(2), 237–253.
+Dellaportas, P., Forster, J. & Ntzoufras, I. (2002), ‘On Bayesian model and variable selection using MCMC’, Statistics and Computing 12(1), 27–36.
+Geweke, J. & Amisano, G. (2010), ‘Comparing and evaluating Bayesian predictive distributions of asset returns’, International Journal of Forecasting 26(2), 216–230.
+Harvey, A. (1989), Forecasting, structural time series model and the Kalman ﬁlter, Cambridge University Press, Cambridge.
+Kock, A. B. & Teräsvirta, T. (2011), Forecasting With Nonlinear Time Series Models, in M. P. Clements & D. F. Hendry, eds, ‘The Oxford Handbook of Economic Forecasting’, Oxford University Press, Oxford, chapter 2, pp. 61–87.
+Kwon, Y. (2003), Bayesian Analysis of Threshold Autoregressive Models, PhD thesis, University of Tennessee - Knoxville.
+Kwon, Y., Bozdogan, H. & Bensmail, H. (2009), ‘Performance of Model Selection Criteria in Bayesian Threshold VAR (TVAR) Models’, Econometric Reviews 28(1-3), 83–101.
+Meyn, S. & Tweedie, R. (2009), Markov Chains and Stochastic Stability, Oxford Statistical Science, Cambridge University Press, Cambridge.
+Nieto, F. (2005), ‘Modeling Bivariate Threshold Autoregressive Processes in the Presence of Missing Data’, Communications in Statistics - Theory and Methods. 34(4), 905–930.
+Nieto, F. (2008), ‘Forecasting with univariate TAR models’, Statistical Methodology 5(3), 263–273.
+Tong, H. (2015), ‘Threshold models in time series analysis-Some reﬂections’, Journal of Econometrics 189(3), 485–491.
+Tsay, R. S. (1998), ‘Testing and Modeling Multivariate Threshold Models’, Journal of the American Statistical Association 93(443), 467–482.
+Tsay, R, S. & Chen, R. (2018), Nonlinear Time Series Analysis, Wiley Series in Probability and Statistics, John Wiley and Sons.
+Vargas, L. (2012), Cálculo de la distribución predictiva en un modelo TAR, Master’s thesis, Universidad Nacional de Colombia, Colombia.
+Wu, C. & Lee, J. (2011), ‘Forecasting Time-Varying Covariance with a Robust Bayesian Threshold Model’, Journal of Forecasting 30(5), 451–468.

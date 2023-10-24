@@ -1,0 +1,492 @@
+Predicción de series temporales con redes neuronales: una aplicación a la inflación colombiana
+Universidad Federal de Pernambuco
+Resumen
+Evaluar la capacidad de las redes neuronales en la predicción de series temporales es de sumo interés. Una aplicación que pronostique valores futuros de la serie de inflación colombiana permite mostrar que las redes neuronales pueden ser más precisas que las metodologı́as SARIMA de Box-Jenkins y el suavizamiento exponencial. Además, los resultados revelan que la combinación de pronósticos que hacen uso de las redes neuronales tiende a mejorar la capacidad de predicción.
+Palabras Claves: Perceptron multicapas, modelos SARIMA, suavizamiento exponencial, combinación de pronósticos, componentes no observables.
+Introducción
+Una estrategia alternativa que utilice redes neuronales será considerada con el objetivo de elaborar pronósticos sobre la serie de inflación colombiana, es decir, sobre las variaciones del índice de precios al consumidor (IPC), publicado mensualmente por el Dane. El desarrollo de metodologías que permitan pronosticar y comprender el comportamiento de la inflación es de sumo interés para muchos sectores de la población y la economı́a. De esta forma, su cuantificación resulta necesaria para la toma de decisiones dentro del contexto económico y social.
+Investigaciones y aplicaciones de las redes neuronales a nivel económico, en
+el ámbito colombiano, han sido realizadas por Misas, López & Borrero (2002),
+Misas, López, Arango & Hernández (2003) y recientemente Jalil & Misas (2006)
+y Aristizábal & Misas (2006), quienes han evidenciado las bondades de las re-
+des neuronales en la predicción, comparadas con otras metodologı́as tradicionales.
+Motivados por las caracterı́sticas de las redes neuronales, nuestra idea principal es
+describir una metodologı́a alternativa, referente al mecanismo de modelamiento de
+las redes neuronales y diferente a la expuesta en artı́culos preliminares en el con-
+texto colombiano, que permita unirse al abanico de técnicas ya existentes en esta
+lı́nea. El conocimiento de la inflación (información que es publicada mensualmen-
+te) resulta fundamental al tomar decisiones tanto de control sobre los instrumentos
+de polı́tica monetaria, como tasas de interés, encajes bancarios u operaciones de
+diversa ı́ndole que aumenten o contraigan la disponibilidad de recursos en la eco-
+nomı́a. Por ejemplo, para los mercados de capitales es fundamental contar con
+polı́ticas de los bancos centrales enfocadas a mantener bajo control la inflación, en
+la medida en que se aminora la incertidumbre de los agentes, las tasas de interés
+pueden reducirse, y por ende, se estimula la actividad económica.
+     Las predicciones obtenidas de la inflación con redes neuronales serán contras-
+tadas con las obtenidas a través de las metodologı́as SARIMA de Box-Jenkins
+y el suavizamiento exponencial, como también de la combinación de pronósticos.
+La utilidad de estas metodologı́as tradicionales en el pronóstico es analizada por
+Ospina & Zamprogno (2003), quienes evalúan el desempeño de ciertas técnicas en
+la predicción de series temporales.
+     Hornik et al. (1989) y Cybenko (1989), entre otros, han demostrado que las
+redes neuronales son aproximadores universales y que el perceptron multicapas
+es una de las arquitecturas más utilizadas en la solución de problemas debido a
+su fácil uso y aplicabilidad; véase Cohen et al. (1993), Narendra & Parthasaranty
+(1990) y Wieggend et al. (1990) para aplicaciones con redes neuronales. Dentro del
+área estadı́stica, las redes neuronales son consideradas como métodos no lineales,
+no paramétricos y multivariados (véase Zhang et al. 1998).
+     Para evaluar el desempeño de las redes neuronales en el pronóstico, se utili-
+zarán las metodologı́as de Box-Jenkins y suavizamiento exponencial, al igual que
+la combinación de pronósticos. Se supondrá que el lector tiene un conocimiento
+básico con relación a cada tema. No obstante, el desarrollo metodológico de la
+teorı́a de Box-Jenkins puede ser estudiado más ampliamente en Box & Jenkins
+(1976), Box et al. (1994) y Morettin & Toloi (2004), entre otros; para más detalles
+
+                                       Revista Colombiana de Estadı́stica 29 (2006) 77–92
+
+Predicción con redes neuronales: una aplicación a la inflación colombiana            79
+
+
+sobre los algoritmos de suavizamiento exponencial, véase Morettin & Toloi (2004)
+y Montgomery & Johnson (1976), y con relación a la combinación de pronósti-
+cos, Barnard (1963) y Hendry & Clements (2004) hacen desarrollos completos en
+este sentido. Igualmente, el conocimiento sobre la obtención de componentes no
+observables, como tendencia y estacionalidad, a través de la metodologia de Box-
+Jenkins será importante en el desarrollo de este artı́culo. El lector podrá referirse
+a Maravall & Kaiser (2000) para una discusión mayor sobre este tema.
+     El presente artı́culo se encuentra organizado de la siguiente forma: en la sec-
+ción 2 se discuten las principales caracterı́sticas de la red neuronal perceptron
+multicapas. En la sección 3 se calculan pronósticos para la inflación; se realizan
+comparaciones con las metodologı́as clásicas y la combinación de pronósticos. Por
+último, en la sección 4, se presentan las principales conclusiones.
+
+
+2.     Redes neuronales artificiales
+    La arquitectura de redes neuronales más ampliamente utilizada es la que se
+conoce con el nombre de perceptron multicapas, la cual se caracteriza por el hecho
+de que sus neuronas se agrupan en capas por niveles. Cada una de estas capas
+está constituida por un conjunto de neuronas. Hay tres tipos de capas diferentes:
+la capa de entrada, las capas ocultas y la capa de salida, como se observa en la
+figura 1.
+
+                          Figura 1: Red neuronal feedforward.
+
+    Las neuronas de la capa de entrada se encargan únicamente de recibir señales
+o patrones que vienen del exterior y propagan tales señales a todas las neuronas
+de la capa siguiente. La última capa actúa como salida de la red, proporcionando
+al exterior la respuesta de la red para cada uno de los patrones de entrada. Las
+neuronas de las capas ocultas realizan un procesamiento no lineal de los patrones
+recibidos. Como se observa en la figura 1, las conexiones del perceptron multicapas
+están siempre dirigidas hacia delante, i. e., las neuronas de una capa se conectan
+con las neuronas de la capa siguiente; por tal motivo reciben el nombre de redes
+alimentadas hacia delante o redes feedforward. A las conexiones se les asocia un
+número real llamado peso de la conexión y a las neuronas de la red un umbral,
+que en el caso del perceptron multicapas es tratado como una conexión adicional
+a la neurona.
+
+
+2.1.    Propagación de los patrones de entrada
+     Una vez descrita la forma como fluye la información a través de la arquitectura
+del perceptron multicapas, presentaremos a continuación las expresiones para el
+cálculo de las activaciones de las neuronas de la red.
+     Considere un perceptron multicapas con C capas (C − 2capas ocultas) y nc
+neuronas en la capa c, para c = 1, 2, . . . , C. Sea W c = wij c
+                                                                   la matriz de pesos
+asociada a las conexiones de la capa c a la capa c + 1, para c = 1, 2, . . . , C − 1, en
+       c
+que wij  representa el peso de la conexión de la neurona i de la capa c a la neurona
+j de la capa c + 1; además, sea U c = (uci ) el vector de umbrales de las neuronas
+de la capa c para c = 2, . . . , C. Es denotada por aci la activación de la neurona i
+de la capa c; estas activaciones se calculan de la siguiente forma:
+                                      nc−1
+                                                          !
+                                       X
+                              c             c−1 c−1     c
+                            ai = f         wij aj + ui
+                                     j=1
+
+para i = 1, 2, . . . , nc y c = 2, 3, . . . , C. Las activaciones para la primera capa
+corresponden simplemente con las observaciones de entrada a la red.
+    La función f (·) es llamada función de activación o transferencia. Para el per-
+ceptron multicapas, las funciones de activación más utilizadas son la logı́stica o
+sigmoide y la tangente hiperbólica; sin embargo, también se utilizan otras funcio-
+nes de activación (véase Gately 1996). El propósito de la función de activación o
+transferencia es no permitir la salida de valores muy grandes, los cuales pueden
+retrasar el proceso de convergencia del algoritmo de entrenamiento o aprendizaje,
+que se describirá a continuación.
+
+
+2.2.    Algoritmo de retropropagación
+   El algoritmo de aprendizaje es el mecanismo mediante el cual se van adaptando
+y modificando todos los parámetros de la red. El problema de aprendizaje de la
+red es un problema de minimización de la siguiente forma:
+                                        mı́n E
+                                           W
+
+W es el conjunto de parámetros de la red (pesos y umbrales) y E una función del
+error que evalúa la diferencia entre la salida de la red y la salida deseada. En la
+
+                                        Revista Colombiana de Estadı́stica 29 (2006) 77–92
+
+Predicción con redes neuronales: una aplicación a la inflación colombiana                  81
+
+
+mayorı́a de los casos la función del error es definida por:
+                                                  N
+                                               1 X
+                                      E=             e(n)                                    (1)
+                                               N n=1
+
+donde N es el número de observaciones o patrones y e(n) es el error cometido por
+la red para el n-ésimo patrón, que es dado por:
+                                           nC
+                                        1X
+                               e(n) =         (si (n) − yi (n))2                             (2)
+                                        2 i=1
+
+con Yn = (y1 (n), y2 (n), . . . , ynC (n)) y Sn = (s1 (n), s2 (n), . . . , snC (n)), los vectores
+de salida de la red y salida deseada para el n-ésimo patrón, respectivamente.
+     De esta forma, si W ∗ es un mı́nimo de la función (1), i. e., el punto donde el
+error es el menor posible y la salida de la red es próxima de la deseada, se obtiene
+el fin del proceso de aprendizaje.
+     Para el perceptron multicapas, el método de optimización no lineal más utili-
+zado es el steepest descent sobre la función E. De esta forma, cada parámetro w
+de la red es modificado para cada patrón de entrada n de acuerdo con la siguiente
+ley de aprendizaje:
+                                                        ∂e(n)
+                                   w(n) = w(n − 1) − η                                        (3)
+                                                          ∂w
+con e(n) definido en (2) y η la tasa de aprendizaje que influye en la magnitud
+de desplazamiento sobre la superficie del error. El método del gradiente puede ser
+aplicado de forma eficiente, resultando en el conocido algoritmo de retropropaga-
+ción o regla delta generalizada (véase Rumelhart et al. (1986b) e Isasi & Galván
+(2004) para una descripción más detallada sobre esta regla).
+     Como puede observarse en (3), el cambio en un peso es proporcional al gra-
+diente del error, con la proporcionalidad dada por el parámetro η. Valores altos
+de la tasa de aprendizaje en principio podrı́an favorecer una convergencia con me-
+nos iteraciones, pues permite avanzar rápidamente en la superficie del error. Sin
+embargo, tasas de aprendizaje altas pueden tener consecuencias negativas sobre el
+aprendizaje, haciendo que el método salte u oscile alrededor del mı́nimo. Valores
+pequeños de las tasas de aprendizaje pueden evitar estos problemas, aunque posi-
+blemente lleven a una convergencia más lenta del algoritmo de aprendizaje, debido
+a que la magnitud del desplazamiento sobre la superficie del error es menor.
+     Un método simple para evitar la inestabilidad en el algoritmo de aprendizaje,
+debido a la tasa de aprendizaje, consiste en modificar (3) a través de la inclusión
+de un segundo término llamado momento, obteniendo de esta forma la siguiente
+ley:
+                                                ∂e(n)
+                      w(n) = w(n − 1) − η              + α∆w(n − 1)                           (4)
+                                                 ∂w
+donde α es un número positivo que actúa como ponderador. Esta regla fue pro-
+puesta por Rumelhart et al. (1986a) y preserva las propiedades de la regla definida
+en (3), en el sentido en que modifica los parámetros de la red para minimizar la
+
+                                            Revista Colombiana de Estadı́stica 29 (2006) 77–92
+
+82                                                                 Juan Camilo Santana
+
+
+función del error (1). El nuevo término, α∆w(n − 1), incorpora al método algu-
+na inercia, haciendo que la modificación actual del parámetro dependa sólo de
+la dirección de la modificación anterior y consigue evitar oscilaciones. Haciendo
+cálculos sucesivos sobre ∆w(n − 1), Isasi & Galván (2004) exhiben una expresión
+más general de (4):
+                                              n
+                                              X            ∂e(t)
+                        w(n) = w(n − 1) − η         αn−t                            (5)
+                                              t=0
+                                                            ∂w
+
+   El proceso de aprendizaje del perceptron multicapas debe ser finalizado cuan-
+do ∂E
+   ∂w ≈ 0, momento en el cual los parámetros de la red no cambian de forma
+perceptible entre iteraciones consecutivas.
+
+
+2.3.    Capacidad de generalización
+    A la hora de evaluar el comportamiento de la red, y en particular del perceptron
+multicapas, no importa saber si la red aprendió con éxito los patrones utilizados
+durante el aprendizaje, sino conocer el comportamiento de la red frente a patrones
+que no fueron utilizados durante el entrenamiento.
+    Para tal fin, es necesario disponer de dos conjuntos de patrones: el conjunto de
+entrenamiento, que entrena y modifica los pesos y umbrales de la red, y el conjunto
+de validación, que mide la capacidad de la red para responder correctamente a
+los patrones que no fueron ingresados durante el entrenamiento. Cuando la red
+aproxima correctamente los patrones de aprendizaje, pero no responde bien a los
+patrones de validación, se dice que hubo subaprendizaje de la red, posiblemente
+ocasionado por varios factores, como el uso de un número excesivo de neuronas o
+capas ocultas, implicando un aumento en el número de parámetros a ser estimados;
+véase Isasi & Galván (2004), Kaastra & Boyd (1996) y Zhang et al. (1998) para
+una discusión mayor sobre el tema.
+
+
+3.     Aplicación
+    El análisis referente al modelamiento y predicción que se presenta en seguida
+se basa en el ı́ndice mensual de precios al consumidor (IPC). La serie de variacio-
+nes mensuales (inflación) es calculada por el Dane y se puede consultar a través
+de la página www.dane.gov.co. El perı́odo comprendido entre enero de 1998 y di-
+ciembre de 2005 se utiliza para el modelamiento y pronóstico. Adicionalmente, la
+transformación logaritmo se usa para controlar varianza.
+    Utilizamos el perı́odo comprendido entre enero de 1998 a junio de 2005 para el
+modelamiento de la serie con la finalidad de obtener las predicciones del perı́odo
+de julio a diciembre de 2005. Nuestro principal interés es observar cómo cada
+modelo captura la estructura dinámica de la serie y la refleja sobre el perı́odo de
+predicción. La razón por la cual se consideran seis observaciones en la predicción
+y no un perı́odo más largo, como un año, radica en la creencia de que la existencia
+
+                                      Revista Colombiana de Estadı́stica 29 (2006) 77–92
+
+Predicción con redes neuronales: una aplicación a la inflación colombiana                83
+
+
+de cambios estructurales puede hacer que el modelo no recoja adecuadamente la
+dinámica que exhibirı́a la serie verdadera y, por ende, se podrı́an presentar elevados
+errores de pronóstico. De esta forma, conocer la dinámica de la inflación del primer
+trimestre del año puede mejorar la capacidad predictiva del modelo y permitir una
+mejor predicción para el segundo semestre.
+    Respecto a las predicciones realizadas por cada metodologı́a se adoptan dos
+formas de medición del error de predicción para establecer las comparaciones:
+
+
+• Error cuadrático medio (MSE). Si Z1 , Z2 , . . . , Zt son las observaciones de
+     la serie temporal y Zt+1 , Zt+2 , . . . , Zt+h sus h predicciones respectivas, en-
+     tonces:
+               1 Ph
+     M SE =             e2 , donde et+k es el error de predicción de Zt+k , el valor
+               h k=1 t+k
+     de la serie en el instante t + k.
+
+• Error absoluto medio (MAE). Aquı́,
+                1 Ph
+      M AE =                 |et+k |, donde et+k es el error de predicción en el instante
+                h k=1
+      t + k, k = 1, 2, . . . , h.
+
+
+   La serie de inflación para el perı́odo comprendido entre enero de 1998 y di-
+ciembre de 2005 se presenta en la figura 2, en la cual es posible observar fuertes
+indicios de no estacionariedad y estacionalidad.
+
+                       Figura 2: Serie de inflación: enero/98-diciembre/05.
+
+3.1.    Modelamiento y pronóstico
+    Los algoritmos de suavizamiento exponencial aditivo y multiplicativo de Holt-
+Winters se utilizaron para obtener, inicialmente, predicciones referentes al perı́odo
+que se extiende de enero de 1998 a junio de 2005. Los valores optimizados de
+las constantes de suavizamiento resultaron semejantes para los modelos aditivo y
+multiplicativo, en este caso, consecuencia de utilizar la transformación logaritmo
+sobre la serie; igualmente, las predicciones obtenidas a través de estos dos modelos
+resultaron semejantes, ası́ que el modelo aditivo fue escogido para la generación
+de las predicciones. La tabla 1 exhibe las respectivas predicciones un paso (h = 1)
+y seis pasos (h = 6) al frente, sobre la escala original.
+
+  Tabla 1: Predicción de la inflación a través del suavizamiento exponencial aditivo.
+
+     Para el proceso de identificación del modelo a través de la metodologı́a SA-
+RIMA de Box-Jenkins se utilizó el criterio de información Bayesiano (BIC). El
+programa Tramo-Seats se usó para estimar los parámetros del modelo SARIMA.
+Este programa es gratuito y puede ser obtenido a través de la página web del
+Banco de España (www.bde.es).
+     El modelo SARIM A(1, 1, 1) × (0, 1, 1)12 fue escogido para la serie de la infla-
+ción. El análisis de diagnóstico permite observar que no hay evidencias contra la
+hipótesis de ausencia de autocorrelación de los residuos, como tampoco contra la
+hipótesis de normalidad de los residuos al nivel de significancia del 1 %.
+     La tabla 2 exhibe las estadı́sticas del análisis de diagnóstico sobre los residua-
+les del modelo seleccionado, donde SE(Res) es el error estándar de los residuos;
+Q−V al es la estadı́stica de Ljung-Box para probar la hipótesis de correlación serial,
+calculada sobre 24 autocorrelaciones (en todos los casos se utiliza la distribución
+asintótica χ2 , con 21 grados de libertad); N −test es la estadı́stica de Bowman-
+Shenton para probar la hipótesis de normalidad (la distribución asintótica χ2 (2
+g.l.) es utilizada); SK(t) es la estadı́stica que se usa para probar si la asimetrı́a es
+cero contra si es diferente de cero; KU R(t) es la estadı́stica utilizada para probar
+si el exceso de kurtosis es cero contra si es diferente de cero; Q2 es la estadı́sti-
+ca de McLeod & Li (1983) para probar la linealidad del proceso (la distribución
+asintótica χ2 (24 g.l.) es utilizada); por último, RU N S es la estadı́stica que se usa
+para probar la hipótesis nula sobre aleatoriedad del conjunto de residuos. Todas
+las pruebas de hipótesis se realizan al nivel de significancia de 1 %.
+     La ecuación del modelo estimado para la serie transformada de la inflación,
+
+    Las componentes de tendencia y estacionalidad servirán para el modelamiento
+con redes neuronales y fueron extraı́das del modelo SARIMA (véase Gómez &
+Maravall (1996) para una discusión mayor sobre el tema). La figura 3 exhibe las
+dos componentes no observables entre enero de 1998 y junio de 2005. Note que la
+tendencia exhibida por la inflación sigue una trayectoria decreciente desde finales
+de 2000 hasta mitad de 2005. Con la componente estacional podemos observar que
+en los meses de febrero se registran los datos de inflación más altos del año, y en
+julio los más bajos.
+    La tabla 3 contiene las predicciones un paso (h = 1) y seis pasos (h = 6) al
+frente, utilizando el modelo SARIMA estimado anteriormente.
+    Para el modelamiento de la inflación a través de redes neuronales se utilizó la
+propuesta de Varfis & Versino (1990). Cada serie es reescalada en el intervalo
+[−1, 1] antes de incluir variables rezagadas, componentes de tendencia y estaciona-
+lidad como neuronas de entrada. Aunque otras transformaciones de reescalamiento
+han sido propuestas con el objetivo de acelerar el proceso de entrenamiento (véase
+Zhang et al. 1998), intentamos ser consistentes con la función de activación selec-
+cionada. La función de activación utilizada es la tangente hiperbólica antisimétri-
+ca descrita en Haykin (1994). Adicionalmente, se consideran 2 capas ocultas, 2
+parámetros de aprendizaje, 2 parámetros de momento, 10000 epochs y un máximo
+
+                 Figura 3: Componentes no observables de la inflación.
+
+     Tabla 3: Predicción de la inflación a través de la metodologı́a de Box-Jenkins.
+
+de 6 neuronas por capa oculta, siguiendo las sugerencias de Kaastra & Boyd (1996)
+y Zhang et al. (1998). Tres clases de arquitectura de redes neuronales se definen:
+
+a) Red 1. Una capa oculta es considerada, con un número máximo de 6 neuronas.
+
+b) Red 2. Dos capas ocultas son consideradas, con igual número de neuronas en
+   cada capa oculta, con máximo 6 neuronas.
+
+c) Red 3. Dos capas ocultas son consideradas, con una neurona adicional en la
+   segunda capa y cada una con un número máximo de 6 neuronas.
+
+    El objetivo principal fue obtener redes con buen ajuste y la mejor predicción po-
+sible. Para bautizar las redes neuronales identificadas, se utilizó la notación de Sou-
+za & Zandonade (1993), dada por AN N (n1 , n2 , . . . , nC ), donde nc , c = 1, 2, . . . , C
+es el número de neuronas en la capa c. De esta forma, establecido un conjunto fijo
+de neuronas de entrada, 72 redes neuronales fueron simuladas, es decir, 24 redes
+
+                                            Revista Colombiana de Estadı́stica 29 (2006) 77–92
+
+Predicción con redes neuronales: una aplicación a la inflación colombiana            87
+
+
+neuronales por cada tipo de red. Consideramos adicionalmente la simulación de un
+conjunto de redes neuronales eximiendo la componente de tendencia, de tal forma
+que pudiéramos evaluar empı́ricamente la ventaja de introducir tal componente.
+    Un programa escrito en lenguaje R (R Development Core Team 2005) se usó pa-
+ra el proceso de simulación y predicción con redes neuronales. En promedio, cada
+red neuronal utilizó 10 minutos durante el proceso de entrenamiento, para un total
+de 12 horas de simulación. Las variables de entrada a la red se determinaron por
+medio de un modelo autorregresivo.
+
+
+3.2.    Resultado de las simulaciones
+    La red AN N (17, 5, 1) se identificó con 17 neuronas de entrada definidas por el
+primero, segundo, octavo, noveno y duodécimo rezagos de la serie y 12 variables
+dummy que identifican cada mes del año. Esta red es del tipo 1 con η = 0.1,
+α = 0.1 y es la que proporcionó la mejor predicción un paso al frente tanto en
+M SE como en M AE. La red AN N (15, 4, 1), con variables rezagadas de primero,
+duodécimo, decimotercer orden y 12 variables dummy, exhibió las mejores predic-
+ciones múltiples pasos según M SE. Esta red es del tipo 1, con η = 0.01, α = 0.5.
+En función del M AE las mejores predicciones múltiples pasos fueron proporciona-
+das por la red AN N (17, 2, 2, 1) con rezagos de primero, segundo, octavo, noveno
+y duodécimo orden, junto con 12 variables dummy como antes. Ésta es una red
+tipo 2 con η = 0.01, α = 0.1.
+    La tabla 4 exhibe las predicciones uno y múltiples pasos al frente para estas tres
+redes. Note que las tres redes encontradas anteriormente no incluyen la tendencia
+entre sus neuronas de entrada.
+
+                Tabla 4: Predicciones ANN : uno y seis pasos al frente.
+    Una vez obtenidas las predicciones a través de cada metodologı́a, inspeccio-
+naremos las medidas de error de predicción M SE y M AE para determinar cuál
+metodologı́a, de forma individual, es la que proporciona los mejores pronósticos.
+La tabla 5 exhibe estos resultados; se destaca que las redes neuronales presentan
+las mejores predicciones tanto en un paso como en múltiples pasos, comparadas
+con metodologı́as tradicionales como el suavizamiento de Holt-Winters y SARIMA
+de Box-Jenkins.
+    La media ponderada de las predicciones individuales proporcionadas por el sua-
+
+                      Tabla 5: Medidas de error de predicción.
+
+vizamiento exponencial, por el método SARIM A de Box-Jenkins y por las redes
+neuronales, fue utilizada para obtener una predicción mejorada. Las ponderaciones
+fueron escogidas siendo inversamente proporcionales al error de predicción indivi-
+dual. Es importante resaltar que sólo discutiremos las combinaciones que propor-
+cionaron las mejores predicciones según el M SE, es decir, aquellas combinaciones
+que proporcionaron el mı́nimo M SE. Para el estudio de estas combinaciones, un
+conjunto adicional de 16 redes neuronales con las mejores predicciones según el
+M SE fueron obtenidas a través de simulaciones, evaluando diferentes configura-
+ciones de la capa de entrada.
+     Poseemos en total 21 modelos: el mejor modelo SARIM A según el BIC, el
+mejor modelo de Holt-Winters aditivo y 19 redes neuronales con el mejor ajuste
+y predicción posible. Se consideraron, entonces, 221 posibles combinaciones y para
+cada combinación se calculó el M SE. El proceso de simulación para esta fase tuvo
+una duración de 8 minutos.
+     En la predicción un paso al frente, la combinación de las redes neuronales
+AN N (18, 2, 3, 1), AN N (17, 5, 1), AN N (17, 5, 5, 1) y AN N (17, 3, 1), que llamare-
+mos COM B1 , exhibió las mejores predicciones con M SE = 0.005 y M AE = 0.058.
+Estos resultados fueron mejores que los registrados en la tabla 5. Para la predic-
+ción seis pasos al frente, las redes neuronales AN N (18, 2, 3, 1), AN N (14, 6, 6, 1),
+AN N2 (15, 4, 1) (diferente a AN N (15, 4, 1)) y AN N (17, 3, 1), que llamaremos
+COM B2 , presentaron los mejores resultados con M SE = 0.009 y M AE = 0.072.
+     La tabla 6 contiene las predicciones uno y seis pasos al frente, resultado de
+estas combinaciones, y la tabla 7 contiene las medidas de error de predicción, las
+cuales pueden ser contrastadas con las exhibidas en la tabla 5.
+     Las variables rezagadas y los coeficientes η y α de las redes neuronales que
+hicieron parte de estas combinaciones se describen en la tabla 8.
+     La combinación de pronósticos con redes neuronales, incluyendo las predic-
+ciones del modelo SARIM A y el suavizamiento de Holt-Winters, dejó a la com-
+binación de las predicciones de los modelos SARIM A, HW , AN N (18, 2, 3, 1),
+AN N (17, 5, 1) y AN N (17, 5, 5, 1) (COM B3 ) con la mejor predicción un paso
+al frente según el M SE y a la combinación de las predicciones de los modelos
+SARIM A, HW , AN N (18, 2, 3, 1), AN N (14, 6, 6, 1), AN N2 (15, 4, 1) y AN N (17, 3, 1)
+(COM B4 ) con la mejor predicción múltiples pasos al frente según el M SE.
+
+                        Tabla 6: Combinación de predicciones.
+
+                       Tabla 7: Medidas de error de predicción.
+
+                         Tabla 8: Redes neuronales utilizadas.
+Ten es la componente de tendencia y 12D las doce variables dummy.
+
+
+
+    Note que las redes neuronales consideradas en estas combinaciones se anali-
+zaron en combinación antes, proporcionando las mejores predicciones. Adicional-
+mente, la combinación de las predicciones de los modelos SARIM A y HW con
+las redes neuronales, redujo la M SE y el M AE para COM B3 en la predicción
+múltiples pasos, comparada con los resultados obtenidos por COM B1 . Lo inverso
+ocurrió con COM B4 en beneficio de las predicciones un paso al frente en compa-
+ración con COM B2 . La tabla 9 exhibe los resultados comentados anteriormente,
+y las predicciones obtenidas por COM B3 y COM B4 se presentan en la tabla 10.
+                       Tabla 9: Medidas de error de predicción.
+
+                       Tabla 10: Combinación de predicciones.
+
+4.     Conclusiones
+     Los resultados obtenidos ilustraron el uso de las redes neuronales en la predic-
+ción de series temporales. Un ejemplo aplicado sobre las variaciones en el ı́ndice
+de precios al consumidor (IPC) permitió observar que las predicciones obtenidas a
+través de redes neuronales tienden a ser más precisas que las originadas por meto-
+dologı́as tradicionales, como el suavizamiento exponencial y el método SARIMA de
+Box-Jenkins. Adicionalmente, la utilidad de las redes neuronales, en combinación
+con otras redes o metodologı́as tradicionales, se mostró efectiva en el proceso de
+predicción en términos del M SE. Finalmente, las redes neuronales sin la neurona
+de tendencia, en la mayorı́a de los casos exhibieron las menores medidas de error en
+la predicción, en comparación con la metodologı́a utilizada que propone la tenden-
+cia como una neurona de entrada. En todos los casos se estimaron y seleccionaron
+redes que tuvieran el mejor ajuste posible sobre el conjunto de entrenamiento y la
+menor medida de error de predicción sobre el conjunto de validación con el fin de
+evitar el problema de subaprendizaje.
+Referencias
+Aristizábal, M. & Misas, M. (2006), Evaluación asimétrica de una red neuronal artificial: una aplicación al caso de la inflación en Colombia, Technical report, Working Paper 377. Subgerencia de estudios económicos–Banco Central de Colombia.
+Barnard, G. A. (1963), ‘New Methods of Quality Control’, Journal of the Royal Statistical Society A 126, 255–259.
+Box, G. E. P. & Jenkins, G. M. (1976), Time Series Analysis: Forecasting and Control, San Francisco: Holden-Day.
+Box, G. E. P., Jenkins, G. M. & Reinsel, G. (1994), Time Series Analysis: Forecasting and Control, 3a. edn, Englewood Cliffts: Prentice Hall.
+Cohen, M., Franco, H., Morgan, N., Rumelhart, D. & Abrash, V. (1993), Advances in Neural Information Processing Systems, Morgan Kaufmann, chapter Context-dependent multiple distribution phonetic modeling with MLPs, pp. 649–657.
+Cybenko, M. (1989), ‘Aproximation by Superposition of a Sigmoidal Function’, Mathematics of Control, Signals and Systems 2, 303–314.
+Gately, E. (1996), Neural Networks for Financial Forecasting, New York: John Wiley and Sons.
+Gómez, V. & Maravall, A. (1996), Programs Tramo (Time series Regression with Arima noise, Missing observations, and Outliers) and Seats (Signal Extraction in Arima Time Series). Instructions for the User, Technical report, Working Paper 9628. Servicio de estudios-Banco de España.
+Haykin, S. (1994), Neural Networks, New York: McMillan College Publishing Company.
+Hendry, D. F. & Clements, M. P. (2004), ‘Pooling of Forecast’, Econometrics Journal 7, 1–31.
+Hornik, K., Stinchcombe, M. & White, H. (1989), ‘Multilayer Feedforward Networks and Universal Approximations’, Neural Networks 2, 359–366.
+Isasi, P. & Galván, I. (2004), Redes neuronales artificiales – un enfoque práctico, Madrid: Pearson-Prentice Hall.
+Jalil, M. & Misas, M. (2006), Evaluación de pronósticos del tipo de cambio utilizando redes neuronales y funciones de pérdida asimétricas, Technical report, Working Paper 376. Subgerencia de estudios económicos – Banco Central de Colombia.
+Kaastra, I. & Boyd, M. (1996), ‘Design a Neural Network for Forecasting Financial and Economic Time Series’, Neurocomputing 10, 215–236.
+Maravall, A. & Kaiser, R. (2000), Notes on Time Series Analysis, ARIMA models and Signal Extraction. www.bde.es/servicio/software/trabajos.htm
+McLeod, A. I. & Li, W. K. (1983), ‘Diagnostic Checking ARMA Time Series Models Using Squared-Residuals Autocorrelation’, Journal of the Time Series Analysis 4, 269–273.
+Misas, M., López, E., Arango, C. & Hernández, J. (2003), La demanda de efectivo en Colombia: una caja negra a la luz de las redes neuronales, Technical report, Working Paper 268. Subgerencia de estudios económicos–Banco Central de Colombia.
+Misas, M., López, E. & Borrero, P. (2002), ‘La inflación en Colombia: una aproximación desde redes neuronales’, Ensayos sobre Polı́tica Económica 41-42, 143–214.
+Montgomery, D. C. & Johnson, L. A. (1976), Forecasting and Time Series Analysis, New York: McGraw-Hill.
+Morettin, P. A. & Toloi, C. M. (2004), Análise de Séries Temporais, ABE - Projeto Fisher. São Paulo: Edgard Blücher.
+Narendra, K. & Parthasaranty, K. (1990), ‘Identification and Control of Dynamical Systems Using Neural Networks’, IEEE Transactions on Neural Networks 1, 4–27.
+Ospina, R. M. & Zamprogno, B. (2003), ‘Comparação de Algumas Técnicas de Previsão em Análise de Séries Temporais’, Revista Colombiana de Estadística 26(2), 129–157.
+R Development Core Team (2005), R: A language and environment for statistical computing, R Foundation for Statistical Computing, Vienna, Austria. http://www.R-project.org
+Rumelhart, D., Hilton, G. & Williams, R. (1986a), ‘Learning Representations by Backpropagating Errors’, Nature 323, 533–536.
+Rumelhart, D., Hilton, G. & Williams, R. (1986b), Parallel Distributed Processing, Cambridge: The MIT Press, chapter Learning representations by backpropagating errors.
+Souza, R. C. & Zandonade, E. (1993), Forecasting Via Neural Networks: Comparative Study, Technical report, Department of Electrical Engineering, Catholic University of Rio de Janeiro.
+Varfis, A. & Versino, C. (1990), Univariate Economic Time Series Forecasting, Cambridge University Press.
+Wieggend, A., Huberman, B. & Rumelhart, D. (1990), Predicting the Future: a Connectionist Approach, Technical report, PARC.
+Zhang, G., Patuwo, B. & Hu, Y. (1998), ‘Forecasting with Artificial Neural Networks: The State of Art’, International Journal of Forecasting 14, 35–62.

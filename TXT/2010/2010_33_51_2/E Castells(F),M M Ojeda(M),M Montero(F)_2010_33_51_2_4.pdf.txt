@@ -1,0 +1,895 @@
+Procedimiento y algoritmo de estimación en modelos multinivel para proporciones
+Universidad Autónoma de Guerrero; Universidad Veracruzana; Instituto de Cibernética
+Abstract
+Resumen En este artículo se describe un procedimiento para la estimación de parámetros fijos y aleatorios en modelos multinivel para proporciones. El procedimiento de estimación se basa en el método de los mínimos cuadrados generalizados. Una vez que se formula el modelo, se demuestra que es posible aplicar la teoría asintótica de estimación en el marco del modelo lineal general. Se elabora un algoritmo que permite calcular los estimadores propuestos. La aplicación se ilustra con un ejemplo de meta-análisis. Se concluye que el procedimiento presentado puede ser una estrategia favorable en investigaciones aplicadas. 
+Palabras clave: mínimos cuadrados generalizados iterativos, modelos multinivel, tablas de contingencia.
+
+1    Introducción
+La flexibilidad de la modelación multinivel ha implicado un papel cada vez más
+importante de esta técnica dentro de la teoría estadística y las aplicaciones; sin
+embargo, la inferencia estadística acerca de los modelos multinivel para propor-
+ciones es una problemática que presenta dificultades teóricas y computacionales
+aún sin resolver. Para evitar la carga computacional y la inestabilidad asociada
+con la compleja integración numérica que implica la estimación de parámetros
+de modelos multinivel no lineales se han desarrollado varios métodos. Entre los
+más comunes se encuentran los que se basan en aproximaciones de la integral
+involucrada en la verosimilitud marginal, los métodos bayesianos basados en
+algoritmos de Monte Carlo mediante Cadena de Markov (MCMC), los métodos
+EM estocásticos y los métodos de verosimilitud simulada (Fotouhi 2003). Es-
+tos métodos, aunque en principio aplicables con cierto éxito, presentan diversos
+inconvenientes; una de las más notables desventajas es su alto costo computa-
+cional.
+    En la actualidad, continúa siendo de particular interés explorar nuevos méto-
+dos que le brinden al investigador herramientas adecuadas para la estimación
+de parámetros en modelos multinivel para datos categóricos. El objetivo de este
+artículo es fundamentar la racionalidad del método propuesto por Montero,
+Castell & Ojeda (2007). Este enfoque se basa fundamentalmente en la inte-
+gración de tres estrategias estadísticas: 1) El uso, como base fundamental para
+elaborar métodos de inferencia para tablas de contingencia, de modelos asocia-
+dos a la distribución asintótica gaussiana de un vector de transformaciones de
+las frecuencias observadas; 2) El uso de aproximaciones simplificadoras para la
+matriz de covarianza asintótica de los errores aleatorios de nivel-1 en el modelo
+multinivel propuesto y 3) La aplicación de mínimos cuadrados generalizados it-
+erativos para la estimación de parámetros de los modelos gaussianos resultantes.
+    En la sección 2]se describe brevemente la filosofía del análisis multinivel
+para datos categóricos. En la sección 3 se formula un modelo multinivel para
+proporciones y en la sección 4 se demuestra que los estimadores propuestos
+tienen propiedades que permiten aplicar la teoría de estimación para muestras
+grandes. En la misma sección se demuestra la consistencia de los estimadores,
+tanto de los parámetros asociados a efectos fijos como a componentes de la
+varianza. En la sección 5 se presenta el algoritmo de estimación descrito en el
+anexo. Finalmente, en la sección 6. la aplicación del método se ilustra con un
+ejemplo.
+
+
+2    Motivación para el análisis multinivel de pro-
+     porciones
+Muchos problemas prácticos tratan datos categóricos que conllevan al análisis
+de un conjunto de tablas de contingencia. Ejemplos importantes se pueden
+encontrar en problemas de meta-análisis (Glass 1976, Hedges & Olkin 1985), en
+el
+
+
+                                        2
+
+    análisis de datos de panel (Hsiao 1995, Hamerle & Honning 1995), en los
+estudios de casos y controles multicentro (Lubin, Blot, Berrino, Flamant, Gillis,
+Kunze, Schmäwhl & Visco 1984, Fears & Brown 1986, Breslow & Zhao 1988)
+y en problemas de estimación en áreas pequeñas (Rudas 1986). En todos estos
+casos, los individuos se seleccionan de diferentes grupos y es posible reconocer
+que las observaciones pertenecientes a un mismo grupo son más parecidas entre
+sí que las que se encuentran en grupos diferentes. Ignorar la estructura de
+grupos puede provocar serios problemas inferenciales (Snijders & Bosker 1999).
+    Cuando se analizan datos en un conjunto de tablas de contingencia es posi-
+ble establecer una estructura jerárquica de datos de dos niveles, en la que los
+grupos que conforman las tablas se reconocen como las unidades de nivel-2 y
+los individuos anidados dentro de los grupos se identifican como las unidades
+de nivel-1. Un enfoque que distingue los diferentes niveles de las variables ex-
+plicativas y toma en cuenta explícitamente la varianza dentro y entre grupos es
+la modelación multinivel (Goldstein 1995). En los modelos multinivel, también
+conocidos como modelos jerárquicos (Brik & Raudenbush 1992) o modelos de
+coeficientes aleatorios (Longford 1995), algunos parámetros varían de grupo a
+grupo, lo que permite tratarlos como efectos aleatorios.
+    Frecuentemente, el interés del estudio en tablas de contingencia se centra en
+el análisis de un gran número de funciones de las probabilidades de las celdas.
+Uno de los modelos más utilizados es el de regresión logística multinivel (Efron
+1996, Hartzel, Liu & Agresti 2001, Lee & Nelder 2002); sin embargo, la aparición
+de problemas cada vez más complejos exige que otras funciones (Forthofer &
+Lehnen 1981) diferentes de las conocidas funciones logit o probit, también sean
+tomadas en consideración.
+    La idea básica del enfoque descrito en este artículo es usar funciones de las
+probabilidades como las variables dependientes en un modelo lineal multinivel
+(Montero 2006). Este enfoque se basa en el uso de los mínimos cuadrados pon-
+derados o mínimos cuadrados generalizados para datos categóricos. El empleo
+de esta metodología, presentada por primera vez por Grizzle, Starmer & Koch
+(1969) se había limitado sólo al caso donde los parámetros del modelo son fi-
+jos (Grizzle et al. 1969). En este artículo esta estrategía se extiende al caso
+multinivel.
+    La aplicación del método se ilustra a través de un ejemplo de meta-análisis,
+que puede considerarse como un problema estadístico multinivel, ya que la in-
+formación dentro de los estudios se combina en presencia de una heterogeneidad
+potencial entre los estudios.
+
+
+3    El modelo lineal multinivel para proporciones
+En esta sección se describe la estructura jerárquica impuesta por un conjunto
+de tablas de contingencia y se formula un modelo multinivel para proporciones.
+Para simplicar la futura discusión de la teoría de estimación que se presenta en
+la sección 4 el modelo se expresa en términos matriciales.
+    Sea Y una variable respuesta con R categorías. Sean X1 , X2 , . . . , Xt , un con-
+
+
+                                          3
+
+junto de variables explicativas. Sea G un factor de estratificación en J grupos
+(unidades de nivel-2). Sea A el conjunto formado por las diferentes combina-
+ciones de los valores de X1 , X2 , . . . Xt . Sean I el cardinal del conjunto A y
+C = {1, 2, · · · I}. A cada elemento de A se le hace corresponder biunívoca-
+mente un elemento c de C. Todos los individuos (unidades de nivel-1) con la
+misma combinación de valores (x1 , x2 , . . . xt ) se tratan como un subgrupo dentro
+de los grupos determinados por G. De cada subgrupo se seleccionan muestras
+aleatorias independientes de tamaño nji . Sea njir el número de individuos en
+la muestra del i-ésimo subgrupo del j-ésimo grupo, clasificados en la r-ésima
+categoría de respuesta (i = 1, 2, . . . , I; j = 1, 2, . . . , J; r = 1, 2, . . . R).
+    Sea πr|ji = P (Y = r | c = i, g = j). Se supone que (nji1 , nji2 , . . . , njir ) para     
+i− j fijos sigue una distribución multinomial con probabilidades π1|ji , π2|ji , . . . , πR|ji
+y que las muestras correspondientes a diferentes subgrupos y/o diferentes gru-
+pos son independientes. La estructura de datos descrita anteriormente puede
+resumirse en J tablas de contingencia I × R como la que se muestra en la tabla
+1.
+    TABLA 1: Tabla de contingencia para el j-ésimo grupo.
+
+
+          Categorías de la respuesta
+                  Subgrupo                     1        2     ···      R      Total
+
+                         1                   nj11     nj12    ···    nj1R       nj1
+
+                         2                   nj21     nj22    ···    nj2R       nj2
+
+                          ..                    ..      ..      ..      ..       ..
+                           .                     .       .       .       .        .
+
+                          I                  njI1     njI2    ···    njIR       njI
+
+
+    El vector de probabilidades, πj , asociado a la j-ésima tabla se puede es-
+                                                ′                                          ′
+cribir como π j = π ′j1 , π ′j2 , . . . , π ′jI , donde π ji = π1|ji , π2|ji , . . . , πR|ji con
+PR
+   r=1 πr|ji = 1 , para cada (i, j). Cada conjunto de probabilidades tiene R − 1
+elementos funcionalmente independientes. Los J vectores de probabilidades en
+                                                                                               ′
+cada tabla de contingencia conforman un único vector π = (π ′1 , π ′2 , . . . , π ′J ) .
+    Sea F m (π j ) , m = 1, 2, . . . , a un conjunto de funciones de π j . Defínase
+                                                         ′
+F (π j ) = [F 1 (π j ) , F 2 (π j ) , . . . , F a (π j )] el vector de funciones de π j para
+j = 1, 2, . . . , J y a ≤ I(R − 1). Estas funciones expresan la estructura relevante
+de los datos dentro de los grupos. La estructura entre grupos se toma en cuenta
+                                                       ′        ′            ′ ′
+al definir un único vector F (π) = F (π 1 ) , F (π 2 ) , . . . , F (π J ) de funciones
+de probabilidades de orden (aJ × 1). Ya que se supone que la estructura dentro
+de los grupos es la misma para todos los grupos, se aplican las mismas funciones
+a cada uno de ellos.
+
+
+
+                                               4
+
+   Diferentes tipos de funciones pueden representarse en una manera relativa-
+mente simple usando notación matricial (Grizzle et al. 1969, Forthoper & Koch
+1973). En la sección [6] se presenta un ejemplo con la función logit.
+   Para investigar acerca de la relación de la función de las probabilidades
+con las variables explicativas consideradas sobre la misma población objeto de
+estudio, Montero et al. (2007) proponen el siguiente modelo lineal multinivel.
+   Para cada uno de los J grupos se postula un modelo de nivel-1:
+
+                           F (π j ) = X j β j ,    j = 1, 2, . . . , J
+                                                                                                ′
+     donde X j es una matriz de diseño de orden (a×t) y rango t; β j = (β1j , β2j , . . . , βtj )
+es un vector de parámetros aleatorios de orden (t×1), donde βkj es el coeficiente
+de la variable Xk en la la ecuación j.
+     La variabilidad de los J coeficientes (βk1 , βk2 , . . . , βkJ ) de la k-ésima variable
+(k = 1, . . . , t) puede explicarse a través de un conjunto adicional de variables
+Z1 , Z2 , . . . , Zq , medidas a nivel de grupo, así:
+
+                βkj = Z ′kj Γk + ukj ,     k = 1, . . . , t,   j = 1, 2, . . . , J
+   donde Γk es el vector de orden (qk × 1) de coeficientes asociados a las vari-
+ables medidas en el nivel-2, Zkj representa las observaciones de las qk variables
+en el nivel-2, en la j-ésima tabla y ukj son los errores aleatorios no observables.
+   La ecuación en (1) puede describirse de una forma más compacta, de manera
+que el modelo en el nivel-2 se define como:
+
+                           β j = Z j Γ + uj ,      j = 1, 2, . . . , J
+                                             ′
+    donde Z j = diag Z ′1j , Z ′2j , . . . , Z tj es una matriz diagonal en bloques de
+                                               
+
+orden (t × Q), con Q = q1 + q2 + . . . + qt y cuyos elementos son los valores de
+las variables explicativas en el nivel-2; Γ es el vector de efectos fijos de orden
+(Q× 1) y uj es el vector de errores aleatorios de orden (t × 1). Se asume
+E (uj ) = 0 y Cov (uj ) se denota por Ωuj . En la matriz de covarianza Ωuj se
+utilizará σukk∗ (k, k ∗ = 1, 2, . . . , t) para denotar las componentes de la varianza
+del nivel-2. Además, Cov (uj , uj ∗ ) = 0, para (j, j ∗ = 1, 2, . . . , J).
+    Una forma conveniente de expresar el modelo es mediante la formulación
+matricial dado en 2
+
+                                  F (π) = AΓ + Xu
+                                                      ′
+   donde A = Z ′1 X ′1 , Z ′2 X ′2 , . . . , Z ′J X ′J , con X j = X j ∗ para todo j ̸= j ∗ ,
+es una matriz de dimensión (aJ × Q) y X = diag (X 1 , X 2 , . . . , X J ) es una
+matriz de dimensión (aJ × tJ). El vector Γ está formado por los Q efectos fijos
+                             ′
+y u = (u1 , u2 , . . . , uJ ) .
+   Se supone que los efectos aleatorios de grupos diferentes             son mutuamente
+                                                                               
+independientes, E(u) = 0 y Cov(u) = Ωu , con Ωu = IJ ⊗ Ωuj , donde ⊗
+representa el producto de Kronecker. De aquí que E[F (π)] = AΓ y Var[F (π)] =
+V F (π) , donde: V F (π) = XΩu X ′ .
+
+
+                                              5
+
+    Es importante destacar que, a diferencia del caso en el que los parámetros
+del modelo son fijos y las inferencias conciernen sólo a los grupos especificados
+(clases, regiones, etc.), en el modelo multinivel para proporciones el interés de
+las inferencias se dirige hacia la población de grupos, no sólo a aquellos que
+pasan a representar la muestra. Los grupos de individuos que conforman las
+tablas pueden considerarse como unidades anónimas, de la misma forma que lo
+son las observaciones elementales.
+    Una vez formulado el modelo multinivel, es posible aplicar la teoría asintótica
+en el marco del modelo lineal general. En la próxima sección se muestran los
+resultados teóricos que permiten demostrar la validez de este enfoque.
+
+
+4     Estimación
+Para estimar los efectos fijos y los componentes de la varianza de modelos multi-
+nivel del tipo definido en la ecuación (2), se propone aplicar un enfoque basado
+en los mínimos cuadrados generalizados.
+    Supóngase que se han hecho observaciones en J grupos diferentes según la
+estructura de datos definida en la sección [3. Asociado a la muestra del i-
+ésimo subgrupo de la j-ésima tabla existe un vector de proporciones                muestrales      ′
+                                   ′
+pji = (pji1 , pji2 , . . . , pjiR ) , donde pjir = njir /nji . Sea pj = p′j1 , p′j2 , . . . , p′jI
+                                                                          
+
+la estimación muestral de π j . Cuando las muestras de los I subgrupos son
+independientes, la matriz de covarianza de pj está dada por V πj , la cual es una
+matriz diagonal en bloques           de dimensión (IR × IR), con las matrices V πji =
+1/nji D πji − π ji π ′ji , para i = 1, 2, . . . , I y j = 1, 2, . . . , J, sobre la diagonal
+                             
+
+principal, donde D πji es una matriz diagonal de dimensión (I ×I) con elementos
+del vector π ji sobre la diagonal principal.
+    Los J vectores de proporciones observadas en cada tabla de contingencia
+                                                          ′
+conforman un único vector p = [p′1 , p′2 , . . . , p′J ] con media π y matriz de co-
+varianza Vπ , la cual involucra a las matrices de covarianza de pj . Cuando las
+observaciones de diferentes grupos son independientes, la covarianza entre ob-
+servaciones de diferentes grupos es cero, por tanto, la matriz de covarianza de
+p tiene forma de una matriz diagonal en bloques con las matrices V πj sobre la
+diagonal principal.
+    Se puede demostrar por el teorema central del límite multivariado (Rao
+1973, p. 128) que las propociones muestrales (y las proporciones muestrales
+condicionadas) tienen distribución asintóticamente normal. Por el método delta
+(Agresti 2002, p. 577 ), las funciones (y funciones condicionales) de tales pro-
+porciones, son también asintóticamente normales. El teorema 1 a continuación,
+especifica las distribuciones de tales funciones.
+    Teorema 1. Sea F (p) la estimación muestral de F (π). Se supone que F
+tiene derivadas parciales continuas de segundo orden en una región abierta que
+contiene a π. Sea H la matriz jacobiana de la función F (π), evaluada corre-
+spondientemente, la cual se supone no nula.
+    Entonces:
+
+
+
+                                                 6
+
+                                  d
+                      i)F (p) | u → N AΓ + Xu, HV π H ′
+                                                              
+                             d
+                    ii)F (p) → N AΓ, XΩu X ′ + HV π H ′
+                                                              
+
+    La demostración del teorema es consecuencia directa de aplicar el método
+delta.
+    En esta fase del análisis es posible postular el siguiente modelo en términos
+de las proporciones observadas:
+
+                              F (p) = AΓ + Xu + e
+     donde e se reconoce como el vector de errores aleatorios en el nivel-1. A, Γ, X
+y u se definen como en la ecuación en (2). La parte aleatoria del modelo com-
+prende dos errores: uno para cada nivel. Se supone que u ∼ N (0, Ωu ) y
+e ∼ N 0, HV π H ′ , donde las matrices de covarianza para los errores de nivel-
+2 y los errores de nivel-1 son funciones de los parámetros u y π, respectivamente.
+Sin embargo, como sugirió Goldstein (1987), se puede introducir una simplifi-
+cación y requerir simplemente que las varianzas de los errores en el nivel-1 sean
+inversamente proporcional es a nji . Si además de la reparametrización se supone
+una variación simple aleatoria a través de las tablas, entonces se puede suponer
+que la varianza entre tablas es la misma para cada uno de los I subgrupos. En
+este caso e ∼ N (0, Ωe ), donde Ωe es una matriz diagonal con los elementos
+σe2 /nji en la diagonal principal.
+     El hecho de que hay más de un término de error añade una complicación a
+los procedimientos de estimación. Existen tres tipos de parámetros que pueden
+ser estimados: los efectos fijos, los coeficientes aleatorios del primer nivel (que
+pueden ser estimados o no, porque el modelo general que resulta de sustituir los
+modelos del nivel-2 en el modelo de nivel-1 no depende de ellos) y los compo-
+nentes de la varianza y covarianza. A continuación se proponen los estimadores
+para los efectos fijos y los componentes de la varianza. El desarrollo para los
+efectos fijos y los componentes de la varianza hace uso de las ideas presentadas
+en Castells (1985).
+
+4.1    Efectos fijos
+Bajo las suposiciones de los errores del modelo en (3), éste se puede escribir
+como un modelo lineal con parámetros no aleatorios, tal que:
+
+                     F (p) = AΓ + e∗ donde e∗ = Xu + e
+   Dado el modelo en (4) y de acuerdo con (Rao 1973, p. 306), se tiene que el
+mejor estimador lineal de Γ es el estimador mínimo cuadrado generalizado:
+
+                         b = A′ V −1 A −1 A′ V −1 F (p)
+                                      
+                         Γ        λ            λ
+
+   donde V λ = XΩu X ′ + Ωe .
+
+
+
+
+                                         7
+
+   La existencia del estimador Γb está sujeta a la existencia de las inversas
+involucradas. Siendo el estimador Γ
+                                  b de la forma dada, está claro (Rao 1973, p.
+307) que es insesgado para Γ y que
+                                                    −1
+                                  b = A′ V −1 A
+                              Var(Γ)       λ
+        −
+        →
+    Sea C el vector que resulta de escribir las columnas de una matriz cualquiera
+C, una debajo   de las otras. Entonces la matriz V λ depende del parámetro
+         −→ !
+         Ωu
+λ =      −→     y si éste fuese conocido, Γ  b y su matriz de covarianza serían
+         Ωe
+calculables. Suponer λ conocido significaría una restricción para la aplicación
+práctica de estos estimadores. Una situación mucho más realista sería suponer
+λ desconocido, estimar éste y sustituir las expresiones de sus estimadores en Γ b
+logrando así un estimador en dos etapas para Γ de la forma:
+                                         −1
+                          b = A′ Vb −1             −1
+                             
+                          Γ            A     A′ Vb λ F (p)
+                          b
+                                    λ
+
+   donde Vb λ es la estimación de V λ .
+
+4.2    Componentes de la varianza
+Un procedimiento para estimar las componentes de la varianza es el siguiente:
+el vector de errores e∗ se puede escribir en la forma: e∗ = ϖ1 ξ1 + ϖ2 ξ2 , donde:
+ϖ1 = X, ϖ2 = I aJ , ξ1 = u y ξ2 = e, con: E (ξ i ) = 0∀i = 1, 2; Cov (ξ 1 ) =
+Ωu ; Cov (ξ 2 ) = Ωe ; Cov (ξ 1 , ξ 2 ) = Cov (ξ 2 , ξ 1 ) = 0; por tanto: Var (e∗ ) =
+ϖ1 Ωu ϖ1′ + Ωe .
+    Queda claro que éste es un modelo de componentes de la varianza.
+                                                                                   ⊥
+    Sea L(A) el espacio generado por las columnas    h                    i [L(A)] el
+                                                            de la matriz A;
+                                                                     −1
+espacio complemento ortogonal de L(A); R = I − A A′ A                   A′ el proyector
+                                                                   
+
+sobre [L(A)]⊥ , y r(C) el rango de una matriz cualquiera C. Entonces r(R) =
+aJ − r(A) = n. Sea M una matriz de orden n × aJ tal que r(M ) = n y
+M A = 0.
+            e = M F (p); se tiene que
+   Defínase F
+
+                       E(Fe ) = E(M F (p)) = M AΓ = 0
+                          e ) = Cov(M F (p)) = M V λ M ′
+                      Cov(F
+                 d                           d
+                                               N 0, M V λ M ′
+                                                                        
+                                       e (p) →
+   Como F (p) → N (AF , V λ ) entonces F
+   Se tiene que:
+
+        −−→
+                 −−−−−−→ −−−−−−−−→ −−−−→                      −→ !
+           e ′ = M V λ M ′ = M ϖ1 ϖ ′ M ′ : M M ′               Ωu
+       E F
+         eF
+                                   1                            −→   = Z ∗λ
+                                                                Ωe
+              −−−−−−−−→ −−−−→          −→ − → ′
+   donde z ∗ = M ϖ1 ϖ1′ M ′ : M M ′ y λ = Ωu : Ωe
+
+
+                                          8
+
+                                  −−→                       −−→         
+   Sea el modelo lineal dado por: FgF ′ = Z ∗ λ + µ, con µ = FgF ′ − Z ∗λ ,
+E(µ) = 0 y Cov(µ) = V ∗λ , donde V ∗λ tiene la expresión:
+                     −−→′  −−→′ ′             −−→ −−→′ ′
+                  "                   # "                    #
+            ∗                                       ′
+          V =E F
+                     eF
+                     F   e     F
+                               eFe       − E F   eF E F   eF
+                                                           e
+
+   pero
+
+
+
+          f es la i-ésima columna de la matriz F
+    donde f i
+                                                       e.
+                               ′
+                                
+    Calculando E f   i j F F , empleando el momento de orden 4 de una dis-
+                    ffe ee
+tribución normal multivariada (ver Anderson 1958), se obtiene:
+                            
+                           ′
+                         ′
+           E f if j F F
+                f f  e f       = τij R + [τi1 R(j), τi2 R(j), . . . , τin R(j)]
+
+             + [τj1 R(i), τj2 R(i), . . . , τjn R(i)]
+             = τij R + R′ (i) ⊗ R(j) + R′ (j) ⊗ R(i)
+   En la expresión anterior, y con el objetivo de simplificar la formulación
+matemática, se ha denotado: M V λ M ′ = R y R(i) una columna cualquiera de
+R.
+   Se ve fácilmente que:
+
+
+    −−→ −−−→′ ′
+  "          !#
+E   FgF′ eF
+         F f′    = R ⊗ R + [R ⊗ R(1), R ⊗ R(2), . . . , R ⊗ R(n)]
+                           h         −
+                                     →           −
+                                                 →                   −i
+                                                                     →
+                          + R′ (1) ⊗ R, R′ (2) ⊗ R, . . . , R′ (n) ⊗ R
+                                                                              → →
+                                                                              −    −
+                           = R ⊗ R + [R ⊗ R(1), R ⊗ R(2), . . . , R ⊗ R(n)] + R′ ⊗ R
+
+   Por otra parte:
+                   −−→′  −−→′ ′
+               "                  #
+                                        − →
+                                        →   −      → →
+                                                   −    −
+                 E F
+                   eFe E F eFe       = ( R)( R)′ = R′ ⊗ R
+
+   Entonces:
+
+             −−→
+          Cov FgF ′ = [R ⊗ R] + [R ⊗ R(1), R ⊗ R(2), . . . , R ⊗ R(n)]
+
+                        = V ∗λ0
+                                       −−→′
+   Minimizando, respecto a λ, la norma F
+                                       eFe − Z ∗λ                 con:
+                                                             ∗−
+                                                            Vλ
+                                                              0
+
+
+
+
+                                              9
+
+ V ∗λ0 =  M V λ0 M ′ ⊗ M V λ0 M ′
+                                
+
+       + M V λ0 M ′ ⊗ M V λ0 M ′ (1) . . . M V λ0 M ′ ⊗ M V λ0 M ′ (n)
+                                                                  
+
+    donde λ0 es un valor inicial para λ. Este valor podría obtenerse de la sigu-
+iente manera: se puede buscar el estimador mínimo cuadrado generalizado para
+Γ, suponiendo Cov (ξ 1 ) = 0, y luego, examinando los residuos, obtener un valor
+inicial para λ.
+    El estimador para los componentes de la varianza tendrá la forma:
+                                                −−→
+                     λb = Z ∗′ V ∗− Z ∗ Z ∗′ V ∗− F eFf′
+                                   λ0          λ0
+
+
+    (se ha utilizado el símbolo B − para indicar la inversa generalizada de una
+matriz B cualquiera). La expresión de λ b se da en función de la inversa general-
+izada porque las inversas involucradas nunca existen.
+
+4.3      Propiedades de los estimadores
+
+λ0 -MINQUE 1 propuesto por Kleffe (1976).
+    Teorema 2. El estimador λb λ es un estimador del tipo λ0 -MINQUE.
+                                0
+    Demostración. Sólo hay que considerar el resultado del teorema 3 del anexo
+(dado por Castells 1985) y probar que λb λ es una solución de la ecuación:
+                                          0
+
+
+
+                               SZ (λ0 ) λ = U (λ0 , F(p))
+   donde
+
+                                         −1                           −1
+         U i = F (p)′ M ′ M V λ0 M ′            e iM ′ M V λ M ′
+                                               MF           0
+                                                                              e jM′
+                                                                             MF
+
+   con
+
+                                −1                             −1
+  SM (λ0 )ij = tr M V λ0 M ′            e iM ′ M V λ M ′
+                                       MF           0
+                                                                       e j M ′,
+                                                                      MF          j = 1, 2
+  F
+  e 1 = I aJ ,   e 2 = ω1 ω′
+                 F         1
+
+
+                                              e e′
+                                                    
+   El elemento i del vector           A′ V ∗−
+                                           λ0 F F        se puede escribir de la siguiente
+forma:
+
+
+
+
+                                               10
+
+              −−→    −−−−−−→′       −−→
+          ′
+         A V ∗− e ′
+             λ0 F F
+                           e i M ′ V ∗− F
+                      = M iF         λ0
+                                        eF′
+                          −−−−−−→′      −−→′
+                      =    MF e i M ′ Θ−1 F
+                                          eFe
+
+                       1 h              −1
+                                               e i M ′ M V λ M ′ −1 F
+                                                                         i
+                         tr M V λ0 M ′                                f′
+                                                                 
+                      =                     MF               0
+                                                                    eF
+                       2
+                       1 e′            −1
+                                              e i M ′ M V λ M ′ −1 F
+                            M V λ0 M ′
+                                                               
+                    = F                    MF              0
+                                                                   e
+                       2
+    El elemento i − j de la matriz A′ V −
+                                             
+                                         λ0 A viene expresado por:
+
+
+                   −−−−−−→′      −−−−−−→
+ A′ V −                fi M ′ V ∗− M F fj M ′
+          
+      λ0 A ij =     MF          λ0
+
+                1 h f ′                   −1          
+                                                   fj M ′ M V ∗ M ′ −1
+                                                                         i
+               =  tr M F i M    M V ∗λ0 M ′       MF                λ0
+                2 
+                1                        −1               −1          
+               = tr M V ∗λ0 M ′ M Ffi M ′        M V ∗λ0 M ′       MFejM ′
+                2
+
+                       bλ es un estimador del tipo definido λ0 -MINQUE.
+    lo cual prueba que λ 0
+
+
+
+
+5     Validación del algoritmo de estimación
+Como parte de la estrategia de estimación, en este artículo se presentan (ver
+anexo) los pasos básicos de un algoritmo de mínimos cuadrados generalizados
+iterativos siguiendo el enfoque propuesto. La validez del procedimiento se ha
+venido explorando a través de varios estudios de simulación para conjuntos de
+datos balanceados (el tamaño de las muestras es el mismo para todos los subgru-
+pos) y desbalanceados (el tamaño de las muestras de los subgrupo es diferente).
+En todos los casos se utilizó un modelo de regresión logística donde los logarit-
+mos de la razón de riesgo (log odds ratios) se reconocen como efectos aleatorios
+de una población de grupos. El interés de la investigación se centró en el análisis
+de las estimaciones de los dos parámetros fijos y la varianza al nivel de grupo.
+    En el caso balanceado (Montero, Castell & Ojeda 2008) se examinó la influen-
+cia de diferentes tamaños de muestras y magnitudes de la varianza de los efectos
+aleatorios sobre la precisión de las estimaciones. Se consideraron setenta diseños
+diferentes, dados por las combinaciones de cinco números de tablas de contin-
+gencia (10, 25, 50, 75, 100), siete tamaños de muestra (10, 25, 50, 75, 100, 200, 300)
+de los subgrupos y dos magnitudes de varianza, una grande y otra pequeña.
+Los resultados indican que las estimaciones de los parámetros fijos son precisas
+para muestras de tamaño moderadamente pequeñas, pero se necesita un mayor
+    1 En inglés: minimum norm quadratic unbiased estimation.
+
+
+
+
+                                          11
+
+número de observaciones para alcanzar un comportamiento razonable del esti-
+mador para la varianza de nivel-2. En general, para alcanzar mayor precisión en
+las estimaciones es más importante un número grande de individuos por subgru-
+pos (⩾ 200) que un número grande de grupos. La diferencia en precisión de las
+estimaciones para diseños con 50 o más tablas de contingencia no es sustancial.
+    En el caso desbalanceado se encontró que en ciertas situaciones, las estima-
+ciones de la varianza producen sesgos grandes y estimaciones negativas. Para
+mejorar los resultados se propuso corregir el algoritmo aplicando una técnica
+basada en la descomposición de valores singulares truncados en la solución de
+los mínimos cuadrados generalizados para estimar los componentes de la var-
+ianza. Mediante simulación se mostró la efectividad de la técnica en cuanto
+a la reducción del sesgo de los estimadores (Montero & Guerra 2005). En el
+estudio se fijó el número de tablas. Los tamaños muestrales en los subgrupos se
+generaron a partir de tres distribuciones uniformes diferentes, dando lugar a tres
+tipos de diseños (ligeramente desbalanceado, moderadamente desbalanceado y
+muy desbalanceado). Se consideraron dos magnitudes de varianza de nivel-2,
+las mismas que en el caso balanceado. Para las especificaciones consideradas los
+resultados mostraron niveles aceptables de sesgo y precisión. Se observó además
+que la calidad de las estimaciones no se afectó por el grado de desbalance de los
+datos.
+    Para todos los casos se encontró que el método de estimación se comporta
+mejor cuando la varianza de los efectos aleatorios es pequeña.
+
+
+6    Ejemplo
+Para ilustrar el enfoque discutido en este artículo, se usaron los datos repor-
+tados en Turner, Omar, Yang, Goldstein & Thompson (2000), consistentes en
+22 ensayos clínicos realizados para investigar el efecto de descontaminación se-
+lectiva del tracto digestivo, sobre el riesgo de infección del tracto respiratorio.
+Se seleccionaron aleatoriamente pacientes de unidades de cuidados intensivos,
+ya sea para recibir un tratamiento de combinación de antibióticos o para no
+recibir tratamiento. En la tabla 3 (ver anexo) se presenta la proporción de pa-
+cientes infectados en cada tratamiento para cada uno de los ensayos, así como
+los logaritmos de la razón de riesgo (log odds ratios) y sus varianzas.
+    Los datos pueden considerarse dentro de una estructura jerárquica, donde los
+subgrupos de pacientes (tratamiento y control) se anidan dentro de los ensayos.
+De esta manera, los subgrupos de pacientes se consideran como las unidades del
+nivel-1 y los ensayos, las unidades de nivel-2.
+    El meta-análisis de los ensayos con respuesta binaria se realizó ajustando un
+modelo de regresión logística en el que se fijan los efectos de los tratamientos
+y se permite que los logaritmos de la razón de riesgo (log odds ratios) varíen a
+través de los J ensayos (Turner et al. 2000):
+
+
+
+
+                                        12
+
+                            J
+                            X
+  logit (πij ) =β0j xij +          βk Dkij   en el nivel-1 ( "dentro" de los ensayos)
+                            k=1
+           β0j = θ + uj            en el nivel-2 ("entre" los ensayos)
+                      0, σu2
+                               
+            uj ∼ N
+
+    donde πij es la probabilidad de infectarse para los individuos del i-ésimo sub-
+grupo en el j-ésimo ensayo, xij = 0/1 indica su subgrupo control/tratamiento,
+y el conjunto de D1ij , . . . , DJij = 0/1, su pertenencia al ensayo.
+    Sustituyendo 7 en 6 se obtiene el siguiente modelo:
+                                                         J
+                                                         X
+                      logit (πij ) = (θ + uj ) xij +           βk Dkij
+                                                         k=1
+
+    donde θ (log odds ratio) representa el efecto promedio de interés. Las
+estimaciones de los parámetros del modelo en (8), obtenidas mediante el en-
+foque de mínimos cuadrados generalizados (GLS2) propuesto en este artículo,
+se comparan con las mostradas por Turner et al. (2000), utilizando otros
+métodos disponibles en el sistema de programas MLwiN (Goldstein, Rasbash,
+Plewis, Draper, Browne, Yang, Woodhouse & MJR 1998): el método de cuasi-
+verosimilitud marginal (MQL), el método de cuasi-verosimilitud penalizada (PQL)
+y un método Bootstrap paramétrico (ver Goldstein & Rasbash 1996, Kuk 1995,
+para una discusión detallada de los métodos).
+    En la tabla 2] se muestran los valores estimados de θ y σu2 y los correspondi-
+entes intervalos de confianza Wald. Nótese que la estimación GLS de θ es muy
+similar a la obtenida por el método Bootstrap de corrección de sesgos. En el
+caso de σu2 , la estimación GLS de σu2 es la más extrema.
+    TABLA 2: Estimaciones del meta-análisis de los datos de infección del tracto
+respiratorio.
+
+
+     Método          Log OR              ( IC 95 %)      Varianza entre ensayos     (IC 95 %)
+                        θ                                          σu2
+ MQL                  −1, 43          (−1, 80, −1, 07)            0,46             (0, 08, 0, 84)
+ PQL                  −1, 49          (−1, 90, −1, 07)            0,64             (0, 14, 1, 14)
+ PQL-Bootstrap        −1, 66          (−2, 26, −1, 05)            0,71             (0, 00, 1, 13)
+ GLS                  −1, 63          (−2, 06, −1, 04)            1,06             (0, 44, 1, 69)
+
+    Para completar la comparación de enfoques, las estimaciones GLS se com-
+paran con las obtenidas aplicando un método completamente bayesiano, que
+utiliza el muestreador Gibbs para Monte Carlo mediante Cadena de Markov
+(MCMC) (Schmidt, Spiegelhalter & Thomas 1995), y con las obtenidas me-
+diante aproximaciones al modelo completamente bayesiano (Abrams & Sansó
+1998), propuestas para reducir los cálculos requeridos. Estos métodos se pueden
+implementar en sistemas como el BUGS (Gilks, Thomas & Spiegelhalter 1994).
+
+
+                                               13
+
+    La estimación GLS de θ se presenta con el valor más extremo ( −1, 63 com-
+parado con el −1, 49 del completamente bayesiano y el −1, 50 del bayesiano
+aproximado) y la estimación de σu2 exhibe un valor muy cercano al obtenido
+mediante los otros métodos (1,06 comparado con el 1,09 del completamente
+bayesiano y 0,96 del bayesiano aproximado).
+    Como se ha podido observar, el procedimiento propuesto produjo estima-
+ciones de los parámetros, razonablemente cercanas a las obtenidas por otros
+métodos ya conocidos. De esta forma, se pretende poner de manifiesto las im-
+portantes posibilidades que ofrece un método de estimación computacionalmente
+muy simple de aplicar en comparación con otros métodos basados en estrategias
+más complejas.
+
+
+
+7     Conclusiones
+El procedimiento de estimación presentado en este artículo ubica al análisis de
+un conjunto de tablas de contingencia en una clase de problemas que pueden
+tratarse utilizando mínimos cuadrados generalizados.
+    Una de las principales ventajas del enfoque propuesto es que puede usarse
+en situaciones donde otros métodos imponen la solución de complicadas expre-
+siones matemáticas. Otra ventaja importante es la facilidad que le ofrece al
+investigador para construir una amplia familia de funciones de particular in-
+terés para el análisis multinivel de las proporciones esperadas en un conjunto
+de tablas de contingencia.
+    En general, el enfoque propuesto ofrece una herramienta muy útil para mod-
+elar una gran variedad de situaciones que ocurren frecuentemente en la práctica,
+constituyendo así una eficaz alternativa a la modelación multinivel para datos
+categóricos jerárquicos.
+    [Recibido: abril de 2009 - Aceptado: octubre de 2010]
+
+
+
+
+
+9    Apéndice A.
+Teorema 3. Sean las matrices:
+
+           V ∗λ = R ⊗ R + [R ⊗ R(1), R ⊗ R(2), . . . , R ⊗ R(n)] y
+             Θ = 2(R ⊗ R),
+   y AyB dos matrices simétricas cualesquiera de orden n × n, entonces se
+cumple:
+                                         −
+                                         →    −
+                                              →
+                                 i) V ∗λ B = Θ B
+                               −
+                               →         −
+                                         →   − ′ −1 →
+                                             →      −
+                           ii) A ′ V ∗−
+                                     λ B = A Θ      B
+
+
+                                       16
+
+10        Algoritmo de mínimos cuadrados generaliza-
+          dos iterativos
+TABLA 3: Infecciones del tracto respiratorio en los grupos tratamiento y control
+de 22 ensayos para la descontaminación selectiva del tracto digestivo.
+
+
+ Ensayo        Infección/Total       Odds ratio    Log OR    Varianza (Log OR)
+            Tratamiento Control
+     1          7/47       25/54        0,20       −1, 59            0,24
+     2          4/38       24/41        0,08       −2, 48            0,38
+     3         20/96       37/95        0,41       −0, 89            0,11
+     4          1/14       11/17        0,04       −3, 17            1,33
+     5         10/48       26/49        0,23       −1, 46            0,21
+     6         2/101       13/84        0,11       −2, 20            0,60
+     7        12/161      38/170        0,28       −1, 27            0,12
+     8          1/28       29/60        0,04       −3, 23            1,10
+     9          1/19        9/20        0,07       −2, 69            1,26
+     10        22/49       44/47        0,06       −2, 89            0,44
+     11       25/162      30/160        0,79       −0, 23            0,09
+     12       31/200      40/185        0,66       −0, 41            0,07
+     13         9/39       10/41        0,93       −0, 07            0,28
+     14       22/193      40/185        0,47       −0, 76            0,08
+     15         0/45        4/46        0,10       −2, 27            2,27
+     16       31/131      60/140        0,41       −0, 88            0,07
+     17         4/75       12/75        0,30       −1, 22            0,36
+     18       31/220      42/225        0,71       −0, 34            0,07
+     19         7/55       26/57        0,17       −1, 75            0,23
+     20         3/91       17/92        0,15       −1, 89            0,42
+     21        14/25       23/23        0,03       −3, 62            2,20
+     22         3/65        6/68        0,50       −0, 69            0,53
+
+  1. Obtener estimaciones iniciales de los parámetros fijos utilizando un ajuste
+     de mínimos cuadrados generalizados para datos categóricos, asumiendo
+     que los errores aleatorios en el nivel-2 tienen varianza 0 .
+
+  2. A partir de estas estimaciones formar los residuos "crudos"
+
+
+                              e (p) = F (p) − AΓ
+                              F                b
+
+  3. Calcular la matriz de productos cruzados: F (p)∗ = F    e (p)′ .
+                                                        e (p)F
+                                 −−−−→
+  4. Formar el vector: F (p)∗∗ = F (p)∗ .
+                                        −→
+  5. Similarmente, construir el vector V λ . 6. La relación entre los vectores
+     definidos en los pasos 4 y 5 se puede expresar mediante el modelo lineal:
+
+
+                                      17
+
+      E (F (p)∗∗ ) = Z ∗ λ, donde z ∗ es la matriz de diseño para los parámetros
+      aleatorios (o sea, los elementos de Ωu y Ωe ). Luego, en este paso es
+      posible postular el modelo: F (p)∗∗ = Z ∗ λ + R.
+  6. Para estimar λ se aplica mínimos cuadrados generalizados, o sea:
+
+                                       −1 ′
+                      b = Z ∗′ V ∗− Z ∗
+                      λ                    Z ∗ V ∗−      ∗∗
+                                 λ               λ F (p)
+
+   donde V ∗λ = Vb λ ⊗ Vb λ .
+
+  8. Las estimaciones de Ωu y Ωe obtenidas en el paso anterior se sustituyen
+     en:
+
+
+                                V λ = XΩu X ′ + Ωe
+
+  9. Se calculan nuevas estimaciones de los efectos fijos mediante el estimador
+     mínimo cuadrado generalizado, utilizando la estimación en el paso 8 para
+     la matriz de varianza y covarianza, obteniéndose así:
+
+                                        −1
+                         b = A′ Vb −1 A           −1
+                            
+                         Γ                  A′ Vb λ F (p)
+                         b
+                                   λ
+
+
+                                         b en lugar de Γ.
+ 10. Retornar al paso 2, pero utilizando Γ
+                                         b             b
+
+   El algoritmo alterna entre las estimaciones de los parámetros fijos y aleatorios
+hasta que el procedimiento converja.
+
+
+
+
+Referencias
+Abrams, K. & Sansó, B. (1998), ’Approximate Bayesian Inference for Random Effects meta-analysis’, Statistics in Medicine 17, 201-218.
+Agresti, A. (2002), Categorical Data Analysis, Wiley, New York.
+Anderson, T. W. (1958), An Introduction to Multivariate Statistical Analysis, Wiley, New York.
+Breslow, N. E. & Zhao, L. P. (1988), ’Logistic Regression for Stratified CaseControl Studies’, Biometrics 44, 891-899.
+Brik, A. S. & Raudenbush, S. W. (1992), Hierarchical Linear Models: Applications and Data Analysis Methods, Sage Publications, California.
+Castells, E. (1985), Estimación en un modelo con parámetros aleatorios, Tesis de maestría, Facultad de Matemática, Universidad de La Habana, La Habana.
+Efron, B. (1996), ’Empirical Bayes Methods for Combining Likelihoods’, Journal of the American Statistical Association 96(434), 538-565.
+Fears, T. R. & Brown, C. C. (1986), ’Logistic Regression Methods for Retrospective Case-Control Dtudies using Complex Sampling Procedures’, Biometrics 42, 955-960.
+Forthofer, R. N. & Lehnen, R. G. (1981), Public Program Analysis: A New Categorical Data Approach, Lifetime Learning Publications, Belmont, California.
+Forthoper, R. N. & Koch, G. G. (1973), ’An Analysis for Compounded Functions of Categorical Data’, Biometrics 29, 143-157. Fotouhi, A. R. (2003), ’Comparisons of Estimation Procedures for Nonlinear Multilevel Models’, Journal of Statistical Software 8(9), 1-39.
+Gilks, W. R., Thomas, A. & Spiegelhalter, D. J. (1994), ’A language and Program for Complex Bayesian Modelling’, Statistician 43, 169-177.
+Glass, G. V. (1976), ’Primary, Secondary and Meta-Analysis of Research’, Educational Researcher 5, 3-8.
+Goldstein, H. (1987), Multilevel Models in Educational and Social Research, Charles Griffin, London.
+Goldstein, H. (1995), Multilevel Statistical Models, 2 edn, Halsted Press, New York.
+Goldstein, H. & Rasbash, J. (1996), ’Improved Approximations for Multilevel Models with Binary Responses’, Journal of the Royal Statistical Society. Series A (57), 395-407.
+Goldstein, H., Rasbash, J., Plewis, I., Draper, D., Browne, W., Yang, M., Woodhouse, G. & MJR, H. (1998), A usert’s guide to MLwiN, Institute of Education.
+Grizzle, J. E., Starmer, C. F. & Koch, G. G. (1969), ’Analysis of Categorical Data by Linear Models’, Biometrics 25, 489-504.
+Hamerle, A. & Honning, G. (1995), Panel analysis for qualitative variables, in G. Arminger, C. C. Clogg & M. E. Sobel, eds, ’A Handbook for Statistical Modeling in the Social and Behavioral Sciences’, Plenum, New York, pp. 401451. 
+Hartzel, J., Liu, I.-M. & Agresti, A. (2001), ’Describing Heterogeneous Effects in Stratified Ordinal Contingency Tables, with Application to MultiCCenter clinical trials’, Computational Statistics and Data Analysis 35, 429-499.
+Hedges, L. V. & Olkin, I. (1985), Statistical Methods for Meta-analysis,Academic Press, New York.
+Hsiao, C. (1995), Analysis of Panel Data, Cambridge University Press, New York.
+Kleffe, J. (1976), ’A Note on MINQUE for Normal Models’, Mathematische Operationsforschung und Statistik 7, 107-114.
+Kuk, A. Y. C. (1995), ’Asymtotically Unbiased Estimation in Generalized Linear Models with Random Effects’, Journal of the Royal Statistical Socity 57, 395407.
+Lee, Y. & Nelder, J. A. (2002), ’Analysis of Ulcer data Using Hierarchical Generalized Linear Models’, Statistics in Medicine 21, 191-202.
+Longford, N. (1995), Random coefficient models: Handbook of Statistiscal Modeling for the Social and Behavioral Sciences, Plenum Press, New York.
+Lubin, J. H., Blot, W. J., Berrino, F., Flamant, R., Gillis, C. R., Kunze, M., Schmäwhl, D. & Visco, G. (1984), ’Patterns of Lung Cancer Risg According to Type of Cigarrette Smoked’, International Journal of Cancer 33, 569-576.
+Montero, M. (2006), Análisis de tablas de contingencia: un enfoque multinivel, Tesis de doctorado, Facultad de Matemática, Universidad de La Habana, La Habana.
+Montero, M., Castell, E. & Ojeda, M. M. (2007), ’Fitting a Multilevel Model to a Sample of Contingency Tables using the GSK Approach’, Revista Investigación Operacional 28(3), 204-214.
+Montero, M., Castell, E. & Ojeda, M. M. (2008), ’Analysis of a Contingency Tables sample: A Simulation Study’, Revista Ciencias Matemáticas 24, 83-92.
+Montero, M. & Guerra, V. (2005), ’Estimating Multilevel Models for Categorical Data via Generalized Least Squares’, Revista Colombiana de Estadistica. 21(8), 63-76.
+Rao, C. R. (1973), Linear Statistical Inference and Its Applications, segunda edn, John Wiley & Sons, Inc., New York.
+Rudas, T. (1986), ’A Monte Carlo Comparison of the Small Sample Behavior of the Pearson, the Likelihood Ratio and the Cressie-Read Statistics’, Journal of Statistical Computation and Simulation (24), 107-120.
+Schmidt, T. C., Spiegelhalter, D. J. & Thomas, A. (1995), ’Bayesian Approaches to Random’effects Meta-analysis: A Comparative Study’, Statistics in Medicine 14, 2685-2699.
+Snijders, T. A. B. & Bosker, R. (1999), Introduction to Basic and Advanced Multilevel Modelling, Sage, London.
+Turner, R. M., Omar, R. Z., Yang, M., Goldstein, H. & Thompson, S. G.
+(2000), ’Multilevel models for meta-analysis of clinical trials with binary outcomes’, Statistics in Medicine 19, 3417-3432.

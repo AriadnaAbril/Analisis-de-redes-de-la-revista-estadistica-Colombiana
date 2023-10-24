@@ -1,0 +1,931 @@
+Estimación de datos faltantes en medidas repetidas con respuesta binaria
+Universidad Pedagógica y Tecnológica de Colombia;Universidad Nacional de Colombia
+Resumen
+Se propone una metodología para la estimación de datos faltantes en condiciones longitudinales con respuesta binaria, desde una perspectiva univariada, basada en máxima verosimilitud. Suponiendo que las respuestas son faltantes de forma aleatoria (FFA), en cada una de las ocasiones se emplea el algoritmo EM de dos formas distintas: en la primera, el paso E se expresa como una log-verosimilitud ponderada de la respuesta, condicionada a las anteriores ocasiones tomadas como covariables adicionales, con base en el método de Ibrahim (1990) para covariables categóricas faltantes, obteniendo de esta forma estimadores máximo verosímiles. En la segunda, en el paso E se realiza la estimación e imputación de datos faltantes basada en el método Ancova de Bartlett (1937). La metodología propuesta es aplicada en un caso de estudio relacionado con factores de riesgo coronario, presentado en Fitzmaurice et al. (1994).
+Palabras clave: datos longitudinales, regresión logística, máxima verosimilitud, algoritmo EM.
+1. Introducción
+    En cualquier tipo de análisis estadístico se desea hacer inferencias válidas sobre
+una población de interés. La presencia de información faltante en una matriz de
+datos lleva consigo ciertos inconvenientes, dentro de los cuales, según Horton &
+Lipsitz (2001), se encuentran: pérdida de eficiencia, complicaciones en el análisis
+de datos faltantes, y además estimadores sesgados que ponen en riesgo la validez
+del proceso.
+    Yates (1933), uno de los precursores en el manejo de datos faltantes, señaló que
+si éstos fueran remplazados por sus estimadores de mínimos cuadrados aplicados a
+datos completos, se produciría un estimador de mínimos cuadrados correcto, teoría
+que no fue muy acogida por la desventaja de producir un estimador de la varianza
+menor de la real. Bartlett (1937), en cambio, propuso un método de estimación de
+datos faltantes basado en indicadores faltantes, tomados a través de covariables,
+el cual tiene la ventaja de obtener estimadores y errores estándares correctos. Pos-
+teriormente, varios autores, entre ellos Healy & Wesmacott (1956), proponen la
+estimación iterativa de información faltante, teoría profundizada más adelante por
+Dempster et al. (1977), con el algoritmo EM (Esperanza, Maximización). Srivasta-
+va & Carter (1986) presentan un método de estimación e imputación a través del
+análisis de máxima veromisilitud en datos continuos. Little & Rubin (2002) hacen
+un gran aporte al análisis estadístico con la recopilación de algunas metodologías
+relacionadas con la estimación y el análisis de información con datos faltantes.
+    En algunos diseños de experimentos es más común la presencia de información
+faltante que en otros, como es el caso de los relacionados con medidas repetidas; es-
+tos diseños en el campo de la experimentación son frecuentes, especialmente en las
+ciencias médicas, biológicas y agronómicas; no obstante, presentan ciertas dificul-
+tades con su manejo, debido no solo a la ocurrencia de observaciones faltantes, sino
+a la característica de dependencia entre las observaciones repetidas hechas sobre la
+misma unidad experimental, pues este tipo de diseños son raramente balanceados
+y completos. Estas dificultades llevan consigo complicaciones en el modelamiento,
+pérdida de precisión en estimaciones, y además la inferencia se ve afectada ya que
+se pueden presentar funciones no estimables.
+    Entre los aportes más recientes en estudios con medidas repetidas con respues-
+ta binaria, teniendo en cuenta información faltante, se tiene el de Ibrahim (1990),
+quien propone un método por ponderaciones para modelos lineales generalizados
+cuando las covariables son faltantes de forma aleatoria y las respuestas son com-
+pletamente observadas; Park & Davis (1993) tratan mecanismos de datos faltantes
+en diseños de medidas repetidas con respuesta categórica. De igual forma, Lipsitz
+
+                                     Revista Colombiana de Estadística 30 (2007) 265–285
+
+Estimación de datos faltantes en medidas repetidas con respuesta binaria            267
+
+et al. (1999), en datos longitudinales aplican métodos de verosimilitud ponderada
+para modelos de medidas repetidas incompletos (respuestas y covariables parcial-
+mente observadas). Yang et al. (2005) proponen un método para el manejo de
+datos faltantes creando un conjunto de estrategias de imputación, analizadas a
+través de la imputación múltiple.
+   En este artículo se presenta un método alternativo para el manejo de informa-
+ción faltante en medidas repetidas con respuesta binaria, desde una perspectiva
+univariada, asumiendo que el mecanismo faltante es de forma aleatoria (FFA).
+Según Lipsitz et al. (1999), un mecanismo FFA se tiene cuando dados los datos
+observados, la probabilidad que los datos sean faltantes es condicionalmente inde-
+pendiente de los datos no observados, lo cual permite la estimación de información
+basada únicamente en los datos observados.
+    El problema de los datos faltantes merece especial atención en el contexto de
+modelos que hacen uso de las ecuaciones de estimación generalizada (EEG), debido
+a la inconveniencia de su aplicación en información bajo el mecanismo FFA. Ya que
+los datos bajo un mecanismo de faltante de forma completamente aleatoria (FFCA)
+no tienen problema, se han desarrollado pruebas que aseguran este mecanismo de
+datos faltantes (Diggle et al. 1994), dentro de las cuales se encuentran la de Chen
+& Little (1999) basado en patrones de datos faltantes y la de Park & Lee (1997),
+quienes prueban la significancia del indicador faltante. Según Zorn (2001), si los
+datos no son FFCA hay varias opciones para los investigadores: una de ellas usa
+correcciones basadas en imputación, donde los datos faltantes son imputados a
+partir de los datos disponibles y el análisis es conducido sobre datos completados
+(empleando métodos de datos completos).
+   En este artículo se asume que los datos son FFA, suposición que es empleada
+en el momento de la imputación, ya que está basada en la información observada
+(modelos condicionales). Para el análisis de la información con datos completa-
+dos, como lo describen algunos autores mencionados anteriormente, no se tiene en
+cuenta el mecanismo de información faltante.
+    En la metodología propuesta en este artículo, en cada una de las ocasiones,
+iniciando por la primera, se emplea el algoritmo EM en dos formas: en la primera
+se encuentra un estimador máximo verosímil, en el cual el paso E del algoritmo
+se expresa como una log-verosimilitud de datos completos ponderada, similar al
+propuesto por Ibrahim (1990) para covariables faltantes. En el segundo ciclo, el
+estimador obtenido en la fase anterior se emplea como estimador inicial para deter-
+minar la estimación de datos faltantes en el paso E, teniendo en cuenta el modelo
+con una covariable adicional relacionada con el indicador faltante, como el pro-
+puesto por Bartlett (1937); se realiza la imputación de datos faltantes estimados
+y se efectúa la maximización (paso M) con datos imputados.
+    La revisión de la notación y los supuestos para Y matriz de respuestas binarias,
+y X matriz de covariables categóricas se contemplan en la segunda sección; la
+especificación paso a paso de la metodología propuesta de estimación e imputación
+de datos faltantes está dada en la tercera sección. En la cuarta, se muestra una
+aplicación de la metodología propuesta en un caso de estudio relacionado con
+factores de riesgo coronario, presentado en Fitzmaurice et al. (1994).
+
+                                     Revista Colombiana de Estadística 30 (2007) 265–285
+
+268                                                             Yolima Ayala & Óscar Orlando Melo
+
+2. Notación y supuestos
+   Sea Y = (Y1 , Y2 , . . . , YT ) la matriz de respuestas, observadas parcialmente en
+tiempos igualmente espaciados t = 1, 2, . . . , T , en donde Yt = (y1t , y2t , . . . , yN t )′
+hace referencia al vector de observaciones en el tiempo t de los N individuos.
+   Se considera además que el vector de N observaciones en el tiempo t, Yt , se
+puede escribir como una partición de nt datos completamente observados y N − nt
+datos faltantes, así
+
+             Yt = (y1t , y2t , . . . , ynt t , y(nt +1)t , . . . , yN t )′ = (Yobs,t , Yf al,t )′
+
+donde yi(obs),t , componente de Yobs,t , hace referencia al valor del i-ésimo indivi-
+duo en el tiempo t, cuando i = 1, 2, . . . , nt , y yi(f al),t , componente de Yf al,t , hace
+referencia al valor del i-ésimo individuo en el tiempo t, cuando i = nt + 1, . . . , N .
+    Adicionalmente, se tiene una matriz Xt = (x1t , x2t , . . . , xjt , . . . , xpt ) de p co-
+variables completamente observadas, fijas en el tiempo asociadas a Yt . Particular-
+mente, cada elemento xijt de la matriz corresponde al valor de la j-ésima covaria-
+ble (j = 1, 2, . . . , p), del i-ésimo individuo (i = 1, 2, . . . , N ) en el t-ésimo tiempo
+(t = 1, 2, . . . , T ) y xit corresponde al vector de covariables del i-ésimo individuo
+en el tiempo t. Esta matriz se puede escribir también de forma particionada
+                                                       
+                                                Xobs,t
+                                        Xt =
+                                                Xf al,t
+
+donde Xobs,t de tamaño nt × p hace referencia a los valores de las p covariables
+correspondientes a los nt individuos de las Yobs,t completamente observados en el
+tiempo t y Xf al,t de tamaño (N − nt ) × p hace referencia a los valores de las p
+covariables correspondientes a los N − nt individuos de las Yf al,t en el tiempo t.
+    Además, se define la matriz Ct−1 de covariables adicionales relacionada con los
+tiempos previamente imputados, con ci(t−1) correspondiente al vector asociado al
+i-ésimo individuo. Esta matriz se puede escribir en forma particionada como
+                                                   
+                                          Cobs,t−1
+                                Ct−1 =
+                                          Cf al,t−1
+
+donde Cobs,t−1 hace referencia a los valores de las covariables que relacionan los
+tiempos anteriores, correspondientes a los nt individuos de las Yobs,t en el tiempo
+t y Cf al,t−1 hace referencia a los valores correspondientes a los N − nt individuos
+de las Yf al,t en el tiempo t.
+
+
+3. Estimación de datos faltantes con respuesta
+   binaria
+   Se considera el vector de observaciones en el tiempo t de los N individuos,
+Yt = (y1t , y2t , . . . , yN t )′ donde la variable aleatoria binaria yit = 1 si el i-ésimo
+
+                                               Revista Colombiana de Estadística 30 (2007) 265–285
+
+Estimación de datos faltantes en medidas repetidas con respuesta binaria                                269
+
+sujeto en el tiempo t tiene respuesta 1 y yit = 0 si el i-ésimo sujeto en el tiempo t
+tiene respuesta 0.
+    La distribución marginal de yit dado el vector de covariables xit con vector de
+parámetros β es Bernoulli y se modela en términos del log-odds, tomando la forma
+(Ayala 2006)
+
+                f (yit |xit , β) =[p(yit = 1|xit )]yit [1 − p(yit = 1|xit )]1−yit
+                                    exp(yit x′it β)
+                               =                    ,               yit = 0, 1                          (1)
+                                   1 + exp(x′it β)
+
+   La expresión (1) se tiene en cuenta tanto para la estimación de parámetros
+como en la estimación de los datos faltantes.
+
+
+3.1. Estimación del vector de parámetros vía algoritmo EM
+    Partiendo del conjunto de observaciones para el tiempo t, teniendo en cuenta
+tanto observados como faltantes Yt = (y1t , y2t , . . . , ynt ,t , y(nt +1),t , . . . , yN t ), con
+el empleo del algoritmo EM se realiza la estimación del vector de parámetros,
+θ(0)t = (β(0)t , δ(0)t ), con β(0)t y δ(0)t correspondientes a los parámetros relacionados
+con Xt y Ct , respectivamente. El paso E del algoritmo se expresa como una log-
+verosimilitud de datos completos ponderada, como lo muestra Ibrahim (1990).
+    Para la t-ésima ocasión, con Xt y Yt−1 , Yt−2 , . . . , Y2 , Y1 (completadas y reor-
+denadas convenientemente) como covariables relacionadas, el modelo elemento a
+elemento es                               
+                                    πit
+                            log              = x′it β(0)t + c′i(t−1) δ(0)t                      (2)
+                                  1 − πit
+o equivalentemente:
+                          h                         i β              h               i
+                    πit                                      (0)t
+            log            = x′it          c′i(t−1)                     = x′it   c′i(t−1) θ(0)t
+                  1 − πit                                 δ(0)t
+
+con πit = E(yit ).
+    Siguiendo el proceso para el algoritmo EM introducido por Dempster et al.
+(1977), a continuación se especifica el paso E de esperanza y el paso M de ma-
+ximización, los cuales conducen a la estimación del vector de parámetros para el
+t-ésimo tiempo.
+    Paso E: Para la iteración (m + 1) del algoritmo en el t-ésimo tiempo, con
+ ′
+θ(0)t = (β(0)t , δ(0)t ) la log-verosimilitud esperada dados los datos observados se
+escribe como:
+                      XN  h                                          i
+                  (m)                                             (m)
+        Qt θ(0)t θ(0)t =   E l(θ(0)t ; yit ) xit , cit , θ(0)t = θ(0)t
+                               i=1
+                               N
+                               X       X                                                           
+                                                                                               (m)
+                           =                      l θ(0)t ; yit )p(yi(f al),t (k) xit , cit , θ(0)t     (3)
+                               i=1 yi(f al) (k)
+
+
+
+                                             Revista Colombiana de Estadística 30 (2007) 265–285
+
+270                                                       Yolima Ayala & Óscar Orlando Melo
+
+Esta suma se extiende sobre todos los posibles valores de las componentes faltantes
+de los vectores respuesta, con k = 0, 1 indicando los dos posibles patrones de
+respuesta que el sujeto i podría tener dadas las covariables. Por ejemplo, si la
+observación para el tercer individuo y3t es faltante, la cual está relacionada con el
+vector de covariables x3t = (1, 0, 0), los dos patrones posibles para (y3t , x3t ) están
+dados por (0, 1, 0, 0) y (1, 1, 0, 0), manteniendo fijos los valores de las covariables
+para cada patrón.
+    Para la estimación del vector de parámetros inicial del algoritmo, bajo el modelo
+de covarianza (2), empleando mínimos cuadrados se tienen las siguientes ecuaciones
+normales:
+                                   (0)                   (0)
+                    ′
+                   Xobs,t Xobs,t βb(0)t + X ′ Ct−1,obs δb(0)t = Xobs,t
+                                                                 ′
+                                                                       Yobs,t
+                            (0)                        (0)
+               Cobs,t−1 X βb(0)t + Cobs,t−1
+                                    ′
+                                            Cobs,t−1 δb(0)t = Cobs,t−1
+                                                               ′
+                                                                       Yobs,t
+
+   Con las anteriores ecuaciones se obtiene la estimación del parámetro inicial
+ (0)
+θ(0)t para el tiempo t en el modelo de covarianza con datos observados:
+
+         (0)                 −1 ′                             −1 ′           (0)
+      βb(0)t = Xobs,t
+                  ′
+                      Xobs,t                       ′
+                                Xobs,t Yobs,t − Xobs,t  Xobs,t    X Cobs,t−1 δb(0)t      (4)
+         (0)    ′                         −1 ′
+       δb(0)t = Cobs,t−1 (I − Px )Cobs,t−1    Cobs,t−1 (I − Px )Yobs,t                   (5)
+
+                   ′
+                                   −1    ′
+donde Px = Xobs,t Xobs,t Xobs,t          Xobs,t .
+   Dado este estimador inicial, se especifica la función Q teniendo en cuenta los
+dos posibles patrones, con ponderación para el i-ésimo individuo en el t-ésimo
+tiempo, determinada por:
+                                                                 
+                      (m)                                    (m)
+                    witk = p yi(f al),t (k) ci(t−1) , xit ; θ(0)t             (6)
+
+De esta forma, la expresión (3) está dada por
+
+                                XN                X                        (m)
+                            (m)
+                  Qt θ(0)t θ(0)t =                             l θ(0)t ; yit witk        (7)
+                                          i=1 yi(f al),t (k)
+
+
+expresión correspondiente a una log-verosimilitud de datos completos ponderada,
+basada en un nuevo conjunto de datos que tiene en cuenta, para cada faltante, las
+dos posibles respuestas en este caso binario. De esta forma, el nuevo número de
+observaciones está dado por Nt = nt + 2(N − nt ) = 2N − nt , donde la ponderación
+  (m)
+witk para la i-ésima observación, en el t-ésimo tiempo, del k-ésimo patrón de
+respuesta, se especifica de la siguiente forma (Ayala 2006):
+                        
+                        1,
+                                   si 1 ≤ i ≤ nt ;
+                   (m)     (m)
+                  witk = πeit ,     si nt < i < Nt para k = 0;                           (8)
+                        
+                               (m)
+                          1−π eit , si nt < i < Nt para k = 1.
+
+                                          Revista Colombiana de Estadística 30 (2007) 265–285
+
+Estimación de datos faltantes en medidas repetidas con respuesta binaria                             271
+                                
+                            (m)
+            exp x′i(f al)t θ(0)t
+      (m)
+con π
+    eit =                         .
+                               (m)
+          1 + exp x′i(f al)t θ(0)t
+   Paso M: Maximiza la función (7), lo cual es equivalente a aplicar máxima
+verosimilitud a un conjunto de datos completos, con cada observación incompleta
+remplazada por un conjunto de observaciones ponderadas (Ibrahim 1990).
+                                                                            
+                        (m)                                                (m)
+   Con ∇Qt θ(0)t θ(0)t correspondiente al vector gradiente de Qt θ(0)t θ(0)t
+con respecto
+               (0)t , el paso M encuentra el valor de θ(0)t que satisface
+             a θ
+                (m)                                                (m+1)
+∇Qt θ(0)t θ(0)t = 0, el cual se denota por θ(0)t                           :
+
+                                              N                                         
+                                 (m)
+                                                X       X          ∂l β(0)tj , δ(0)t ; yit (m)
+                ∇Qt θ(0)t       θ(0)t       =                                           witk         (9)
+                                                i=1 yi(f al) (k)
+                                                                     ∂ β(0)tj , δ(0)t
+
+con j = 1, . . . , p.
+    Partiendo de (1) la ecuación
+                                de log-verosimilitud, teniendo en cuenta datos
+                                             πit
+binarios, con x′it β = ηi = log             1−πit    , es:
+
+                                                N 
+                                                X                               
+                                                            πit
+                l(πi ; yit , . . . , yN t ) =     yit log          + log(1 − πit )
+                                              i=1
+                                                          1 − πit
+
+    Derivando la función de  log-verosimilitud con respecto a cada uno de los pará-
+         ′
+metros θ(0)t = β(0)t , δ(0)t , por regla de la cadena y teniendo en cuenta que l está
+en función de πit , se obtiene (Ayala 2006):
+
+                                         XN
+                                ∂li          (yit − πit )∂πit
+                                       =                      xijt
+                               ∂β(0)tj      π (1 − πit )∂ηi
+                                         i=1 it
+                                        N
+                                        X
+                                 ∂li       (yit − πit )∂πit
+                                      =                      ci(t−1)
+                                ∂δ(0)t i=1 πit (1 − πit )∂ηi
+
+lo que conlleva a ecuaciones no lineales que deben ser resueltas por métodos ite-
+rativos. Siguiendo el proceso de estimación en modelos lineales generalizados de
+McCullagh & Nelder (1989) y teniendo presente el método por ponderaciones de
+Ibrahim (1990), en la m-ésima iteración del algoritmo EM y la s-ésima iteración
+del algoritmo de Scoring, la ecuación iterativa de estimación para θ(0)t toma la
+forma (Ayala 2006):
+                        h                             i−1        
+               (s)             et−1 ′ W (m) Mt X
+                            et C                  et−1
+                                               et C            et−1 W (m) Mt z
+                                                            et C
+             θ(0)t =        X                               X                                        (10)
+                             
+                         (m)
+donde W (m) = diag witk es una matriz de tamaño Nt × Nt , Mt = diag(πit (1 −
+                                                                                          ′
+             et β (s−1) + ν (s−1) , con ν = (y1t − π1t ) ∂η1 , . . . , (yN1 t − π1t ) ∂ηNt .
+πit )) y z = X   (0)                                    ∂π1t                         ∂πN t       1
+
+
+
+
+                                                  Revista Colombiana de Estadística 30 (2007) 265–285
+
+272                                                          Yolima Ayala & Óscar Orlando Melo
+
+     et−1 son matrices aumentadas de tamaño Nt × p y Nt × (t − 1) respectiva-
+et y C
+X
+mente, conformadas cada una por dos submatrices:
+                                                                  
+                              et =        Xt            et−1 = Ct−1
+                              X                    ,    C        ∗
+                                         Xf al,t                Ct−1
+con Xt y Ct−1 correspondientes a Yt , anteriormente definidas, Xf al,t como se
+                               ∗
+especificó en la sección 2 y Ct−1  matriz conformada por las últimas N − nt filas
+de Ct−1 .
+    En cada una de las iteraciones se tiene a X       et−1 , Mt y W (m) matrices fijas,
+                                                 et , C
+mientras que las demás cambian con cada iteración. De esta forma, se obtiene
+el estimador máximo verosímil de θ(0)t en la s-ésima iteración del paso M, de la
+m-ésima iteración del algoritmo EM.
+    En las anteriores condiciones se itera entre paso E y M hasta lograr un nivel de
+convergencia deseado en las ponderaciones y en las estimaciones de los parámetros.
+
+
+3.2. Estimación de datos faltantes vía algoritmo EM
+    Se hace uso del algoritmo EM partiendo nuevamente del conjunto de observa-
+ciones Yt = (yit )i = (y1t , y2t , . . . , y(nt +1),t , . . . , yN t ), con el fin de estimar e imputar
+los datos faltantes. En el paso E del algoritmo se realiza la estimación e imputación
+de los datos faltantes basada en el método ANCOVA de Bartlett (1937), tomando
+como estimador inicial θ(0)t descrito en la sección 3.1. Luego en el paso M se hace
+el proceso de maximización con los datos completados por medio del algoritmo de
+estimación de Scoring.
+    Paso E: El paso de esperanza imputa los valores de los datos faltantes bajo
+el supuesto FFA, es decir éstos son remplazados por sus esperanzas condicionales
+dados los observados y unos parámetros iniciales (Fitzmaurice et al. 1994). Para
+dicho fin, se adecúa el modelo propuesto por Bartlett (1937), teniendo en cuenta
+el modelo de regresión logística de la forma:
+
+                              Logit(πt ) = Xt βt + Ct−1 δt + Zt γt                               (11)
+
+donde        t ) es un vector de tamaño N cuyo elemento i-ésimo es logit(πit ) =
+     Logit(π
+      πit
+log 1−π  it
+             , Zt es una matriz de tamaño N × (N − nt ) correspondiente a N − nt
+covariables de valor faltante en el t-ésimo tiempo y γt es el vector columna de los
+N −nt coeficientes de regresión para las covariables de valor faltante. Particionando
+las matrices entre observados y faltantes en (11), se obtiene
+                                                                         
+                  Logit(πobs,t )     Xobs,t          Cobs,t−1          0obs,t
+                                  =           βt +              δt +              γt
+                  Logit(πf al,t )   Xf al,t         Cf al,t−1          −If al,t
+
+donde Logit(πobs,t ) hace referencia al vector logit correspondiente a los nt indi-
+viduos de las Yobs,t en el tiempo t, y Logit(πf al,t ) hace referencia al vector logit
+correspondiente a los N − nt individuos de las Yf al,t en el tiempo t; 0obs,t es una
+matriz de ceros de tamaño nt × (N − nt ) relacionada con la información observada
+
+                                                Revista Colombiana de Estadística 30 (2007) 265–285
+
+Estimación de datos faltantes en medidas repetidas con respuesta binaria                    273
+
+y −If al,1 es una identidad negativa de tamaño (N − nt ) × (N − nt ) relacionada
+con los datos faltantes.
+   Con base en lo anterior, para el t-ésimo tiempo la log-verosimilitud esperada
+dados los datos observados se escribe como
+                              h                                                 i
+                    (m)                                                    (m)
+            Qit θt θt     = E l(θi ; yit ) xit , ci(t−1) , yi(obs)t , θt = θt     (12)
+
+donde θt = (βt , δt , γt ).
+   De acuerdo con la descripción original del método de Bartlett y teniendo en
+cuenta las características de un modelo lineal generalizado, la suma de los cuadra-
+dos de los errores a ser minimizada sobre γt dados βbt y δbt es
+
+                      nt
+                    X                                      2
+  SCE γt /βbt , δbt =    logit(πit ) − xit βbt − ci(t−1) δbt +
+                         i=1
+                                          N
+                                          X                                                 2
+                                                   logit(πit ) − xit βbt − ci(t−1) δbt + γt
+                                         i=nt +1
+
+
+    Al suponer que el resultado sobre la respuesta inicial en los datos faltantes
+es equiprobable, es decir πit = 0.5, se encuentra que logit(πit ) = 0, entonces el
+estimador de mínimos cuadrados de γt para la m-ésima iteración se escribe como
+                        
+             (m)
+           π
+           bi(f al),t        (m)              (m)                     ′ (m)
+    log       (m)
+                           bt = x′i(f al),t βbt + ci(f al)(t−1) − ct−1 δbt
+                         =γ                                                 (13)
+          1−π bi(f al),t
+
+que por las características propias de las respuestas faltantes, es transformado a
+partir del log-odds, obteniendo
+                               h                                     ′ (m) i
+                                             (m)
+                           exp x′i(f al),t βbt + ci(f al)(t−1) − ct−1 δbt
+              (m)
+            bi(f al),t =
+            π                    h                                     ′ (m) i (14)
+                                               (m)
+                         1 + exp x′i(f al),t βbt + ci(f al)(t−1) − ct−1 δbt
+
+          (m)
+donde π bi(f al),t hace referencia al valor de la media correspondiente al individuo i
+en el tiempo t con nt + 1 ≤ i ≤ N , dada en la m-ésima iteración.
+    Teniendo en cuenta el siguiente criterio
+                                      (
+                                        0, si π
+                                              bi(f al),t < p0 ;
+                        ybi(f al),t =                                                      (15)
+                                        1, si π
+                                              bi(f al),t ≥ p0 .
+
+se obtiene la imputación de los datos faltantes dados los observados y el estimador
+ (m)
+βt , donde p0 hace referencia a un valor particular que va de acuerdo con las con-
+diciones del experimento o con el juicio del experto. Sería necesario la realización
+de simulaciones para identificar cómo el valor de p0 afecta el proceso de estimación
+de los parámetros, pero este proceso está fuera del contexto de este artículo.
+
+                                       Revista Colombiana de Estadística 30 (2007) 265–285
+
+274                                                          Yolima Ayala & Óscar Orlando Melo
+
+    Paso M: imputadas las observaciones, se procede a la maximización partiendo
+del conjunto de datos completos, utilizando para ello algún método de maximiza-
+ción: Scoring o Newton Raphson.
+   Se itera entre paso E y M hasta lograr convergencia en las estimaciones de los
+datos faltantes y parámetros.
+
+
+3.3. Procedimiento
+    Para ser aún más explícito el procedimiento en la estimación e imputación de
+información faltante, se establecieron los siguientes pasos que muestran aspectos
+específicos para cada una de las ocasiones con base en las dos secciones anteriores.
+Se trata de la descripción para las tres primeras ocasiones (paso 1 al paso 3) y una
+descripción generalizada para la t-ésima ocasión (paso 4).
+
+  1. Estimación e imputación de información faltante en la primera ocasión (t =
+     1). Inicialmente se encuentra la estimación del vector de parámetros basada
+     en la información observada, siguiendo el proceso desarrollado en la sección
+     3.1, para de esta forma obtener el estimador inicial θ(0)1 = β(0)1 . Con (2), el
+     modelo propuesto para t = 1 es
+                                            
+                                       πi1
+                               log             = x′i1 β(0)1
+                                     1 − πi1
+
+      por lo cual siguiendo a (3) y (6), la log-verosimilitud esperada dados los datos
+      observados se escribe como
+                                  X                                                  
+                          (m)                                                      (m)
+             Qi1 β(0)1 β(0)1 =              l(β(0)1 ; yi1 )p yi(f al),1 (k) xi1 , β(0)1
+                                    yi(f al) (k)
+                                       X                               (m)
+                                =                  l(β(0)1 ; yi1 )wik
+                                    yi(f al) (k)
+
+
+      En general, se puede escribir el paso E del algoritmo EM para todas las
+      observaciones en el primer tiempo como:
+
+                                   XN                    X
+                               (m)                                                    (m)
+                     Q1 β(0)1 β(0)1 =                                 l(β(0)1 ; yi1 )wik    (16)
+                                                   i=1 yi(f al) (k)
+
+
+                                                                  (0)
+      El estimador inicial sugerido para este caso β(0)1 es el estimador de mínimos
+      cuadrados para un modelo lineal general, o cualquier otra estimación que
+      tenga sentido.
+      Para el paso M, la ecuación iterativa de β(0)1 en la m-ésima iteración del
+      algoritmo EM y la s-ésima iteración del algoritmo de Scoring toma la forma
+                                               −1
+                          (s)                e1
+                                 e1 W (m) M1 X      e ′ W (m) M1 z
+                         β(0) = X                   X 1                                     (17)
+
+
+                                         Revista Colombiana de Estadística 30 (2007) 265–285
+
+Estimación de datos faltantes en medidas repetidas con respuesta binaria            275
+
+      En (17) las matrices relacionadas son como se definen en la sección 3.1. Con
+      estas especificaciones para el primer tiempo, se realiza el proceso mostrado
+      en la sección 3.1 para t = 1.
+      Siguiendo el proceso de la sección 3.2, relacionado con la estimación e impu-
+      tación de datos faltantes en la primera ocasión, para el paso E del algoritmo
+      el modelo propuesto es
+                                Logit(π1 ) = X1 β1 + Z1 γ1                         (18)
+
+      y la log-verosimilitud esperada dados los datos observados se escribe como
+                                   h                                           i
+                            (m)                                              (m)
+                  Qi1 θ1 θ1       = E l(θ1 ; yi1 ) | xi1 , yi(obs),1 , θ1 = θ1
+
+      donde θ1 = (β1 , γ1 ).
+      Análogo a (14), la estimación de los datos faltantes está dada por
+                                                              
+                                                           (m)
+                                          exp x′i(f al),1 β1
+                             (m)
+                           bi(f al),1 =
+                           π                                                     (19)
+                                                             (m)
+                                        1 + exp x′i(f al),1 β1
+
+      Según el mismo criterio opcional dado en (15), se obtiene la imputación de
+      los datos faltantes para t = 1.
+  2. Estimación e imputación de datos faltantes en la segunda ocasión (t = 2).
+     En particular, se considera el siguiente modelo de regresión logística
+                                         
+                                    πi2
+                            log             = x′i2 β2 + ci1 δ2              (20)
+                                  1 − πi2
+      donde πi2 = E(yi2 ), ci1 = yi1 completado y δ2 es el parámetro correspon-
+      diente a la covariable relacionada con el primer tiempo. Lo demás es como
+      se establece en la sección 3.1.
+      Se continúa con el proceso dado en la sección 3.2 para la estimación e impu-
+      tación de datos faltantes en la segunda ocasión.
+  3. Estimación e imputación de datos faltantes en la tercera ocasión (t = 3).
+     Como se describe en la sección 3.1, dados los datos observados e imputados
+     en el primer y segundo tiempo, se estiman los parámetros bajo el modelo (2)
+     de covarianza para t = 3, donde Y3 es la variable respuesta, X3 las variables
+     explicativas, y Y1 y Y2 las covariables. Por la presencia de multicolinealidad
+     debida a la correlación entre Y1 y Y2 , es necesario hacer una descomposición
+     de las variables de tal forma que se ortogonalicen. Debido a la característica
+     categórica de la respuesta se emplea un análisis de correspondencias entre
+     las dos variables Y1 y Y2 , el cual permite obtener una nueva covariable, C2 ,
+     que retiene la máxima variabilidad contenida en Y1 y Y2 .
+      En el análisis de correspondencias simples se especifica una matriz F de
+      densidades o frecuencias relativas (fij ) de 2 × 2 cuyas filas corresponden a
+      las dos categorías de Y1 y las columnas corresponden a las dos categorías de
+      Y2 . De acuerdo con este criterio, la tabla de contingencia está dada por
+
+      Siguiendo a Peña (2002), se especifica la matriz R de frecuencias relativas
+      condicionadas al total de la fila dada por
+
+                                                 R = Df−1 F
+
+      donde Df es una matriz diagonal de 2 × 2 con los términos fi .
+      Adicionalmente, se especifica la matriz G de frecuencias relativas condicio-
+      nadas al total de la fila estandarizadas por su variabilidad
+
+                                                G = RDc−1/2
+
+                          de 2 
+      con Dc matriz diagonal    × 2 con los términos fj , cuyo elemento ij-ésimo
+                                   fij
+      está dado por gij =               1/2    con i = 0, 1 y j = 0, 1.
+                                 fi fj
+
+      Ahora, se obtiene un vector a de norma la unidad, tal que el vector de puntos
+      proyectados sobre esta dirección Ga tenga variabilidad máxima (Peña 2002).
+      Al proyectar los puntos sobre las direcciones de máxima variabilidad, de
+      forma similar que en componentes principales, el vector a es un vector propio
+      de la matriz G′ G ponderada, es decir de G′ Df G. Con lo anterior, la nueva
+      covariable que retiene la máxima variabilidad es
+
+                                               C2 = [Y1 Y2 ]a
+
+      donde a′ = (a1 a2 ). Con C2 se realiza el proceso de estimación (sección 3.1)
+      partiendo del modelo
+                                          
+                                     πi3
+                             log             = x′i3 β3 + ci2 δ3                (21)
+                                   1 − πi3
+
+      se continua el proceso de la sección 3.2 para la estimación e imputación de
+      datos faltantes en la tercera ocasión.
+  4. Estimación del vector de parámetros en la t-ésima ocasión. Dados los datos
+     completados en Y1 , Y2 , . . . , Yt−1 , se estiman los parámetros en Yt , según un
+     modelo de covarianza, en donde Yt corresponde al vector de respuestas, Xt y
+
+                                              Revista Colombiana de Estadística 30 (2007) 265–285
+
+Estimación de datos faltantes en medidas repetidas con respuesta binaria                277
+
+      Ct−1 son las covariables. Como en el paso 3 para Y3 , en Yt también hay pre-
+      sencia de multicolinealidad por la correlación dada por Y1 , Y2 , . . . , Yt−1 , y por
+      ello, en este caso de varias variables se aplica el análisis de correspondencias
+      múltiples.
+      La matriz de covariables está dada por
+
+                      Ct−1 = (Y1 Y2 · · · Yt−1 )A;         t = 2, 3, . . . , T
+
+      donde A = (a1 a2 · · · at−2 ) es la matriz de vectores propios correspondientes
+      a valores propios diferentes de 1, obtenidos de
+
+                                               1 ′
+                                         S=      B BD
+                                               k
+
+      donde B es la matriz conformada por los elementos de la tabla disyuntiva
+      completa que comprende N filas y t−1 columnas, las cuales describen las dos
+      posibles respuestas de los N individuos a través de un código binario (0 o 1)
+      y, D es una matriz diagonal, cuyos elementos de la diagonal están asociados
+      a los de B ′ B. Con esta matriz de covariables para el modelo dado en (2)
+      se realiza la estimación de parámetros descrita para el t-ésimo tiempo en la
+      sección 3.1 y luego se hace la estimación e imputación de datos faltantes en
+      la t-ésima ocasión, siguiendo el proceso de la sección 3.2.
+
+
+4. Aplicación
+    En esta sección se presenta un ejemplo para ilustrar el método propuesto en
+las anteriores secciones. En 1970, investigadores de la Universidad de Iowa inicia-
+ron un estudio sobre la relación entre factores de riesgo coronario en jóvenes y
+enfermedades coronarias en adultos. Para tal fin se comenzó con un estudio sobre
+un grupo de niños con el objeto de examinar el desarrollo y la persistencia de los
+factores de riesgo de enfermedades coronarias en jóvenes (Fitzmaurice et al. 2004).
+    El estudio contiene registros de 1014 niños, 493 hombres y 521 mujeres a quienes
+se les midió la altura y el peso en tres ocasiones: 1977, 1979 y 1981. Se calculó
+el peso relativo (índice de masa corporal) como medida de obesidad, teniendo en
+cuenta la razón del peso observado de cada niño y el peso mediano con respecto a
+edad, género y altura. Los niños con un peso relativo mayor que el 110 % del peso
+mediano fueron clasificados como obesos (Wolson & Clarke 1984), obteniendo de
+esta forma respuestas binarias que describen si el niño es obeso o no (1 si es obeso
+y 0 si no lo es) en cada ocasión. La tabla de observaciones para todos los niños
+que participaron en este estudio está dada en Fitzmaurice et al. (2004).
+    Los datos incompletos corresponden únicamente a la variable peso relativo
+de los niños, quienes no participaron en todos los años de observación. Como lo
+menciona Fitzmaurice et al. (2004), más del 50 % de los niños tuvieron por lo menos
+una respuesta faltante. Además, comparando la cantidad de información completa,
+es decir, la relacionada con los niños que se midieron en las tres ocasiones, con la
+
+                                       Revista Colombiana de Estadística 30 (2007) 265–285
+
+278                                                    Yolima Ayala & Óscar Orlando Melo
+
+cantidad de información total correspondiente a completos y faltantes, se tiene que
+de 1014 niños tan solo 460 fueron medidos en las tres ocasiones.
+   En las condiciones anteriores, Y = (Y1 , Y2 , Y3 ) es la matriz de respuestas me-
+didas en tres ocasiones (1977, 1979 y 1981), la cual es parcialmente faltante. Cada
+uno de los elementos de dicha matriz está dado por
+         (
+           1, si el i-ésimo niño en el t-ésimo tiempo se clasifica como obeso;
+   yit =
+           0, si se clasifica como no obeso.
+para i = 1, . . . , 1014 y t = 1, 2, 3.
+    La metodología propuesta se implementó en dos paquetes: MatLab y SAS (pro-
+gramas que se pueden descargar de la página web de la Revista Colombiana de
+Estadística). En el primero se desarrolla el programa encargado de hacer la impu-
+tación de la información, mientras que en el segundo se desarrolla un programa
+para la estimación de parámetros basada en información completada.
+
+
+4.1. Estimación de datos faltantes
+    Siguiendo los pasos dados en la sección 3.3 se tiene:
+
+   1. Se considera el modelo de regresión logística para el primer tiempo
+                                        
+                                   πi1
+                           log             = β(0)11 + β(0)21 gi
+                                 1 − πi1
+
+      con el cual se obtiene la matriz aumentada, teniendo en cuenta el primer tiem-
+      po como respuesta y el género como única covariable, con g = 1 si es mujer
+      y g = 0 si es hombre. Como en el primer tiempo hay 306 datos faltantes, la
+      matriz aumentada queda determinada por N1 = 1014 + 306 = 1320 obser-
+      vaciones, con la cual se realiza el proceso de maximización (Paso M) para la
+      estimación de parámetros, obteniéndose θb(0)1
+                                                  ′
+                                                      = βb(0)1
+                                                          ′
+                                                               = (0.1648, 0.0234).
+      Con este estimador inicial de β, se estiman los datos faltantes de acuerdo
+      con (19) y se realiza la imputación de datos, según el criterio
+                                          (
+                                            0, si π
+                                                  bi(f al),1 < p0 ;
+                            ybi(f al),1 =
+                                            1, si π
+                                                  bi(f al),1 ≥ p0 .
+
+      donde p0 = ȳobs,1 = 0.1765, el cual corresponde al valor medio de los datos
+      observados.
+
+   2. Se considera el modelo de regresión logística para el segundo tiempo
+                                    
+                               πi2
+                       log             = β(0)12 + β(0)22 gi + δ(0)2 ci1
+                             1 − πi2
+
+      con una matriz aumentada determinada por N2 = 1014 + 272 = 1286 ob-
+      servaciones, y teniendo en cuenta el estimador inicial para θ2 dado por
+
+                                          Revista Colombiana de Estadística 30 (2007) 265–285
+
+Estimación de datos faltantes en medidas repetidas con respuesta binaria            279
+
+      (4) y (5), se realiza el proceso de maximización (Paso M), obteniéndose
+      θb(0)2
+        ′
+             = (−1.55, −1.1782, 2.3402). Con esta estimación inicial, se estiman los
+      datos faltantes de acuerdo con (14), y se realiza la imputación de datos ba-
+      sada en el criterio (15) con p0 = y obs,2 = 0.22.
+
+  3. Con la matriz aumentada para el tercer tiempo, determinada por N3 =
+     1014 + 264 = 1278 se realiza el proceso de maximización (Paso M), en donde
+     se tiene en cuenta la introducción de Y1 y Y2 completadas como covaria-
+     bles adicionadas en el modelo, para lo cual se aplica el análisis de corres-
+     pondencias (sección 3.3 paso 3). Después de 7 iteraciones la estimación de
+     θb(0)3
+       ′
+            = (1.9865, −0.8739, 3.2937).
+
+      Desarrollando el proceso iterativo EM, tomando como estimador inicial θb(0)3
+                                                                              ′
+                                                                                   ,
+      se obtienen las estimaciones para la imputación de los datos faltantes, te-
+      niendo de nuevo en cuenta el criterio presentado en la expresión (15) con
+      p0 = yobs,3 = 0.243.
+      El seguimiento de los pasos anteriores trae consigo la estimación e imputación
+      de información faltante, como se muestra en la tabla 1, en donde los números
+      en negrilla indican la información imputada, es necesario aclarar que estos
+      resultados pueden cambiar si las condiciones del modelo son diferentes.
+      Agrupando la información de observados e imputados, en 23 perfiles de res-
+      puesta por género, se obtiene la tabla 2 de datos completados.
+      A continuación, se presenta el análisis longitudinal del estudio mencionado,
+      basado en el conjunto de observaciones completadas, en donde se tiene una
+      respuesta binaria que indica si el niño es obeso de acuerdo con ciertos pará-
+      metros de peso y edad mencionados anteriormente. El objetivo del análisis es
+      determinar si el riesgo de obesidad se incrementa con la edad y si los patrones
+      de cambio en la obesidad son los mismos para hombres y mujeres. La pro-
+      babilidad marginal de obesidad se modela como una función logística de las
+      covariables género, edad lineal y cuadrática, de igual forma que lo propuesto
+      en Fitzmaurice et al. (1994), con fines de comparación de resultados.
+      El modelo considerado es
+
+                 logit(π) = β0 + β1 g + β2 EL + β3 EC + β4 gEL + β5 gEC            (22)
+
+      donde g = 1 si es mujer y g = 0 si es hombre; EL y EC son los factores
+      lineal y cuadrático, respectivamente, relacionados con la edad, y gEL y gEC
+      son las interacciones entre los factores anteriormente mencionados. Se asume
+      que el log-odds de obesidad cambia curvilíneamente con la edad (tendencia
+      cuadrática) de forma diferente en niños que en niñas.
+      Los coeficientes de regresión estimados con sus correspondientes errores es-
+      tándares, obtenidos a través del paquete SAS usando la aproximación de
+      ecuaciones de estimación generalizada (EEG) con datos completados (ob-
+      servados e imputados), empleando una matriz de correlación de trabajo no
+      estructurada, se presentan en la tabla 3. Como se observa en los resultados,
+  Tabla 1: Estimación de datos faltantes en respuestas de obesidad en niños.
+
+      Tabla 2: Datos obtenidos después de aplicar la metodología propuesta.
+
+       los coeficientes de regresión asociados a las variables género, edad lineal, in-
+       teracción entre género y edad lineal, y la interacción entre género y edad
+       cuadrática son significativos en el modelo, como lo muestra el estadístico Z
+       y los valores p correspondientes, a un nivel de significancia del 5 %.
+
+Tabla 3: Estimaciones de los parámetros para el modelo con datos observados y
+         estimados.
+
+4.2. Comparación ilustrativa del método propuesto con otras
+     metodologías
+   En esta sección se presenta una comparación de tres métodos para el manejo de
+datos faltantes, empleando la información del estudio de riesgos de enfermedades
+coronarias en niños.
+
+  1. Método de caso completo. Se realiza la estimación de parámetros con sus
+     correspondientes errores estándares usando la aproximación EEG, a partir
+     de los datos de los individuos que fueron completamente observados. En este
+     caso en particular, de 1014 individuos de estudio, se realiza el proceso de
+     estimación con 460, resultado de la eliminación de los individuos con por lo
+     menos una observación faltante.
+      Los resultados obtenidos, partiendo del modelo (22) con 460 observaciones,
+      a través del programa en SAS, se muestran en la tabla 4.
+
+   Tabla 4: Estimadores de parámetros usando análisis de casos completos.
+
+  2. Metodología propuesta por Fitzmaurice et al. (1994). Esta metodología para
+     el manejo de información faltante está fundamentada en modelos marginales.
+     La esperanza marginal de la respuesta µit , se modela como una función lo-
+     gística de covariables, basada en Zhao & Prentice (1990), quienes describen
+     un conjunto de ecuaciones scoring para la estimación conjunta de los pa-
+     rámetros marginales y los parámetros de asociación condicional, empleando
+     máxima verosimilitud a través del algoritmo EM. La aplicación presentada
+     en dicho artículo corresponde al mismo utilizado en este artículo, lo cual
+     permite una comparación ilustrativa de los dos métodos. Teniendo en cuenta
+     el modelo dado en (22), se presentan los resultados en la tabla 5.
+
+Tabla 5: Estimadores de parámetros empleando modelos marginales de acuerdo
+         a Fitzmaurice et al. (1994).
+
+  3. Metodología propuesta en este artículo. Los resultados bajo esta metodología
+     están dados en la tabla 3.
+
+    Las tablas 3 y 5 presentan los estimadores de los parámetros y los errores están-
+dares para el modelo (22) basado en 1014 individuos, a diferencia de lo presentado
+en la tabla 4, la cual está basada en tan solo 460 individuos con datos completos.
+Esta supresión de información en el método de caso completo, por la falta de pre-
+cisión en las estimaciones, puede llevar a conclusiones erradas acerca de los efectos
+del género y la edad en el riesgo de obesidad.
+    Uno de los supuestos que tiene en cuenta la metodología propuesta por Fitz-
+maurice et al. (1994) es la ocurrencia de faltantes bajo un patrón monótono, su-
+puesto que condiciona ciertos conjuntos de datos. En la metodología propuesta no
+se condiciona el patrón de datos faltantes, lo cual permite su aplicación en una
+más amplia gama de conjuntos de datos.
+   Los resultados de los anteriores análisis sugieren que hay un crecimiento lineal
+(sobre la escala logit) en la razón de obesidad en el tiempo, excepto en el método
+de caso completo. No existen diferencias estadísticas entre niños y niñas a través
+de las metodológicas de caso completo y de Fitzmaurice et al. (1994), pero sí en
+el método de imputación propuesto (ver figura 1). Esto último se debe posible-
+mente a la estrategia de imputación planteada, ya que en los diferentes tiempos la
+covariable género está presente. Sin embargo, es necesario resaltar que debido al
+desconocimiento del valor poblacional de los datos, sin un proceso de simulación
+no es posible hacer recomendaciones acerca de cuál método usar.
+   Para hacer un estudio comparativo más justo de la metodología propuesta con
+otras existentes, sería necesario recurrir a procesos de simulación que conlleven a
+conclusiones generales, que caractericen propiedades estadísticas del método con
+respecto a sesgo y error cuadrático medio, lo cual será evaluado en futuras publi-
+caciones.
+
+
+5. Conclusiones
+    En este artículo se propuso una metodología para la estimación de información
+faltante en diseños de medidas repetidas con respuesta binaria basada en máxi-
+ma verosimilitud, desde un enfoque univariado, lo cual permite un manejo de la
+     Figura 1: Gráfico del logit(proporción de obesos estimada) contra la edad.
+
+información más sencillo con respecto a las desarrolladas en forma multivariada.
+    El método propuesto es útil en conjuntos de datos con porcentajes altos de
+información faltante, debido al proceso de estimación e imputación univariada, en
+donde los faltantes dependen de las covariables, las cuales son completamente ob-
+servadas. No obstante, es necesario tener cuidado, ya que estos altos porcentajes
+podrían ocasionar demora en los procesos iterativos, y posiblemente se podrían
+tener problemas de convergencia y poca precisión en las estimaciones. Además,
+la metodología propuesta no está condicionada a un patrón particular de datos
+faltantes, permitiendo su aplicación en una más amplia gama de información fal-
+tante.
+    Un análisis de sensibilidad, explorando los resultados en las estimaciones usan-
+do análisis de correspondencias u omitiendo el problema de multicolinealidad, no
+se evaluó en este artículo, por lo cual es necesario realizar un proceso investigativo
+más detallado al respecto.
+
+
+Agradecimientos
+   Este artículo se deriva de la tesis de maestría en estadística del primer autor
+Ayala (2006).
+   Agradecemos a los evaluadores por sus valiosas y oportunas observaciones que
+permitieron mejorar el artículo y, al licenciado en Matemáticas y Física Luis Jaime
+Salazar R. por su valiosa colaboración en el desarrollo del programa en MatLab.
+Este trabajo está enmarcado dentro del proyecto de investigación “Estadística apli-
+cada a la investigación experimental, industria y biotecnología”.
+Referencias
+Ayala, S. Y. (2006), Estimación e Imputación de Datos Faltantes en Diseños de Medidas Repetidas con Respuesta Binaria o Poisson, Tesis de Maestría, Estadística, Universidad Nacional de Colombia, Facultad de Ciencias, Departamento de Estadística, Bogotá.
+Bartlett, M. S. (1937), ‘Some Examples of Statistical Methods of Research in Agricultura and Applied Botany’, Journal of Royal Statistical 4, 137–170.
+Chen, H. Y. & Little, R. (1999), ‘A Test of Missing Completely at Random for Generalised Estimating Equations with Missing Data’, Biometrika 86(1), 1–13.
+Dempster, A. P., Laird, N. M. & Rubin, D. B. (1977), ‘Maximum Likelihood from Incomplete Data Via the EM Algorithm’, Journal of the Royal Statistical 39, 1–38.
+Diggle, P. J., Liang, K. Y. & Zeger, S. L. (1994), Analysis of Longitudinal Data, Oxford.
+Fitzmaurice, G., Laird, N. & Lipsitz, S. (1994), ‘Analysis Incomplete Longitudinal Binary Responses: A Likelihood-Based Approach’, Biometrics 50(3), 601–612.
+Fitzmaurice, G., Laird, N. & Ware, J. (2004), Applied Longitudinal Analysis, Wiley Series in Probability and Statistics, New York.
+Healy, M. & Wesmacott, M. (1956), ‘Missing Values in Experiments Analized on Automatic Computers’, Applied Statistic 5, 203–206.
+Horton, N. & Lipsitz, S. (2001), ‘Multiple Imputation in Practice: Comparison of Software Packages for Regression Models With Missing Variables’, American Statistical Association 55(3), 244–254.
+Ibrahim, J. (1990), ‘Incomplete Data in Generalized Linear Models’, Journal of American Statistical Association 85(411).
+Lipsitz, S., Ibrahim, J. & Fitzmaurice, G. (1999), ‘Likelihood Methods for Incomplete Longitudinal Binary Responses with Incomplete Categorical Covariates’, Biometrics 55, 214–223.
+Little, R. & Rubin, D. (2002), Statistical Analysis with Missing Data, Wiley & Son, New York.
+McCullagh, P. & Nelder, J. (1989), Generalized Linear Models, second edn, CRC Press, New York.
+Park, T. & Davis, C. (1993), ‘A Test of the Missing Data Mechanism for Repeated Categorical Data’, Biometrics 49(2), 631–638.
+Park, T. & Lee, S. Y. (1997), ‘A Test of Missing Completely at Random for Longitudinal Data with Missing Observations’, Statistics in Medicine 16, 1859–1871.
+Peña, D. (2002), Análisis de datos multivariantes, McGraw-Hill, Madrid.
+Srivastava, M. & Carter, E. (1986), ‘The Maximum Likelihood Method for Non Response in Sample Surveys’, Statistics Canada 12, 61–72.
+Wolson, R. F. & Clarke, W. R. (1984), ‘Analysis of Categorical Incomplete Longitudinal Data’, Royal Statistical Society 147, 87–99.
+Yang, X., Li, J. & Shoptaw, S. (2005), ‘Multiple Partial Imputation for Longitudinal Data with Missing Values in Clinical Trials’. Paper 2005010102.
+Yates, F. (1933), ‘The Analysis of Replicate Experiments When the Field Results are Incomplete’, Empire Journal of Experimental Agriculture 1, 129–142.
+Zhao, L. P. & Prentice, R. L. (1990), ‘Correlated Binary Regression Using a Quadratic Exponential Model’, Biometrika 77, 642–648.
+Zorn, C. J. (2001), ‘Generalized Estimation Equation Model for Correlated Data: A Review with Application’, American Journal of Political Science 45(2), 470–490.

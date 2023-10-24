@@ -1,0 +1,1008 @@
+Visualizing Gait Patterns of Able bodied Individuals and Transtibial Amputees with the Use of Accelerometry in Smart Phones. Visualización de patrones de paso de individuos con y sin discapacidad con el uso de acelerometría en teléfonos inteligentes
+Ateneo de Manila University, Quezon City, Philippines
+Abstract
+Human gait analysis is used to indirectly monitor the rehabilitation of patients affected by diseases or to directly monitor patients under orthotic care. Visualization of gait patterns on the instrument are used to capture the data. In this study, we created a mobile application that serves as a wireless sensor to capture movement through a smartphone accelerometer. The application was used to collect gait data from two groups (able-bodied and unilateral transtibial amputees). Standard gait activities such as walking, running and climbing, including non-movement, sitting were captured, stored and analyzed. This paper discusses different visualization techniques that can be derived from accelerometer data. Removing gravity data, accelerometer data can be transformed into distribution data using periodicity; features were derived from histograms. Decision tree analysis shows that only three significant features are necessary to classify subject activity, namely: average of minimum peak values, student t-statistics of minimum peak values and mode of maximum peak values. We found that the amputee group had a higher acceleration and a lower skewness period between peaks of accelerations than the able-bodied group.
+Key words: Decision Tree Analysis, Feature Selection, Gait Monitoring, Transtibial Amputees, Wireless Sensors.
+Resumen
+Análisis del paso de humanos es usado como una manera indirecta de monitorear la rehabilitación de pacientes afectados por enfermedades o bajo el cuidado ortopédico. La visualización de patrones de paso se usa para captura de datos. En este estudio, se creó una aplicación móvil que sirve como un sensor inalámbrico para capturar el movimiento a través de un acelerómetro en un teléfono móvil. Se recolectaron datos de dos grupos (con y sin discapacidad tibial). Datos de actividades de paso estándar tales como caminar, correr y escalar, incluso moverse o sentarse fueron recogidos, grabados y analizados. Este artículo discute diferentes técnicas de visualizaciíon que fueron derivadas de estos datos de acelerómetro. Removiendo datos de gravedad, los datos del acelerómetro pueden ser transformados en datos de distribución usando periodicidad a partir de histogramas. Análisis del árbol de decisión muestra que sólo tres características significativas son necesarios para clasificar la actividad de los sujetos: promedio estadísticas t-student y moda de valores altos mínimos. Se encontró que el grupo de personas con discapacidad tibial tienen una aceleración alta, y un período de sesgo más bajo entre picos de aceleración que el grupo de no discapacitados.
+Palabras clave: análisis de árboles de desición, discapacitados, monitores de paso, selección de característica, sensores inalámbricos.
+
+
+1. Introduction
+1.1. Defining Gait
+    Gait is defined as a cycle of limb movements meant to safely advance the body
+with minimum effort; where the act of walking involves periodic movement of
+each foot and ground reaction forces (Baritz, Cotoros, Cristea & Rogozea 2010).
+A gait cycle is defined as consecutive movements of the same leading extrem-
+ity during locomotion (Khan 2010). Simply put, gait can be defined as a man-
+ner or style of walking (Kishner & Monroe 2013). Between periodic movement
+and ground reaction forces, the periodic movement defines the cyclic nature of
+a human gait (Arnold 2007). One cycle consist of eight events including initial
+contact (0%), loading response (0-10%), midstance (10-30%), terminal stance (30-
+50%), pre-swing(50-60%), initial swing (60-70%), mid-swing(70-85%), and termi-
+nal swing(85-100%) (Baritz et al. 2010). However, the definitions of these terms
+are not universally accepted. For instance, there is no universal definition for mid-
+stance and mid-swing when describing the gait cycle thus hindering comparison
+between different gait studies (Gibson, Jeffery & Bakheit 2006). Therefore, other
+dimensions are used in defining and measuring gait.
+
+
+1.2. Gait Detection and Analysis in Rehabilitation
+   Gait detection and analysis is an essential component in rehabilitation (Howell,
+Kobayashi, Hayes, Foreman & Bamberg 2013). For example, there are studies that
+look into how particular diseases affect gait such as in stroke patients (Maidan,
+
+
+                                       Revista Colombiana de Estadística 37 (2014) 471–488
+
+Visualizing Gait Patterns                                                          473
+
+Freedman, Tzemah, Giladi, Mirelman & Hausdorff 2014)(Ferrarello, Bianchi, Bac-
+cini, Rubbieri, Mossello, Cavallini, Marchionni & Di Bari 2013) and diabetes
+(de Bruin, Hubli, Hofer, Wolf, Murer & Zijlstra 2012), to name a few. Other
+studies compare parameters such as location, training over ground or treadmill
+(Bonnyaud, Pradon, Zory, Bensmail, Vuillerme & Roche 2013), wearable or non-
+wearable systems (Muro-de-la Herran, Garcia-Zapirain & Mendez-Zorrilla 2014),
+age such as children (Gibson et al. 2006), elders (Maidan et al. 2014) aging adults
+(Salvendy 2012), and type of footwear (Najafi, Khan, Fleischer & Wrobel 2013).
+Gait detection is also crucial in prosthesis use (Buckley, De Asha, Johnson &
+Beggs 2013) because amputees adapt a new form of ambulation with the use of a
+prosthesis (Kishner & Monroe 2013). In unilateral transtibial patients, gait mea-
+sures the correctness of form and fit of a prosthesis (Kishner & Monroe 2013).
+Correct alignment is captured and viewed to see whether ambulation is achieved
+with minimum amount of energy (the spatial, n.d.).
+
+
+1.3. Measuring Gait
+    Gait is measured to understand the way a person moves. Gait measurement
+tools usually comprise a detection device, similar to a treadmill, where a person
+performs gait activity such as walking. Such devices provide visual reports on
+various features of gait such as acceleration, velocity, stride length and cadence,
+among others. Although this equipment provides gold standards in gait detec-
+tion and analysis, its cost makes access very limited (Macleod, Conway, Allan &
+Galen 2014). For home rehabilitation for example, it is necessary to come up
+with low cost alternatives. Without a gait machine, gait analysis can be done
+by observation using a scale (Bella, Rodrigues, Valenciano, Silva & Souza 2012).
+For example, five of the most common gait observation tools include: New York
+Medical School Orthotic Gait Analysis (NYMSOGA), the Hemiplegic Gait Anal-
+ysis Form (HGAF), the Wisconsin Gait Scale (WGS), the Gait Assessment and
+Intervention Tool (GAIT), and the Rivermead Visual Gait Assessment (RVGA)
+(Ferrarello et al. 2013). In particular, GAIT is preferred over the other tools, in
+the context of stroke victim rehabilitation, as it has proven to be reliable, com-
+prehensive, valid and sensitive to change (Ferrarello et al. 2013). Video data is
+another way of collecting spatio-temporal information for gait analysis (Okusa &
+Kamakura 2013). Video data can be processed using a segmentation method to
+single out each pedestrian without the background. Then the pattern of move-
+ment of pedestrians can be captured by observing the cycle behavior of segmented
+pedestrians. Video recording and a detailed observational tool for gait analysis is
+often used to further validate findings (Ferrarello et al. 2013).
+    An alternative way to measure gait is the development of simple gait analysis
+devices taking advantage of the affordance and affordability of wireless sensors.
+Wi-Gat is an example of a portable wireless gait assessment tool that measures
+spatio-temporal gait parameters, proving to be a possible candidate for those in
+search of a low cost assessment tool (Macleod et al. 2014). Such devices would be
+very useful in remote areas in developing countries, where monitoring pathological
+gait requires development of low-cost alternatives.
+
+
+                                    Revista Colombiana de Estadística 37 (2014) 471–488
+
+474                                           Kardi Teknomo & Maria Regina Estuar
+
+
+    In this study the accelerometer in a mobile phone for is used to gather data
+for gait analysis. Specifically, we created a mobile and cloud application using
+the phone’s accelerometer to collect raw gait information later sent to the cloud
+for data transformation, analysis, modeling and prediction. The web component
+provides a visualization and a report on the gait pattern. The mobile phone
+receives the predicted gait movement (currently able to detect walking, running,
+climbing and stationary movement).
+    This paper presents gait analysis between able-bodied and transtibial patients
+studied in three dimensions. The first dimension is detecting gait. In gait detec-
+tion, instruments are attached to the human subject, usually in the limb section,
+as the subject performs specific activities such as walking or stair climbing. In
+this dimension, the goal is to detect whether the action performed falls under the
+definition of gait, as opposed to simply moving the device (pretending to per-
+form a gait motion). The next dimension is gait identification. Gait identification
+involves analyzing the movement and determining what kind of movement was
+performed, validating it against expected movement. For example, if the subject
+walks, gait movement should be detected and movement should be classified as
+walking, as opposed for example, to running. Using periodicity, raw accelerometer
+data was transformed to generate spatio-temporal features. A decision tree was
+used to classify four movements, namely: sitting, walking, climbing and running.
+The third dimension of gait analysis is visualization which allows physicians to
+monitor progress. This paper presents different visualization techniques on the
+patient collected gait data.
+
+
+2. Methodology
+2.1. Participants
+   The study included a total of 26 participants, 18 abled bodies and 6 transitibial
+amputees. In the able body group, 8 females with age range of 22 to 45 and 10
+females in an age range between 22 to 40 participated. The transtibial amputee
+group, was composed of 3 male participants in an age range of 18 to 50 and 5
+females in an age range of 23 to 50. There was no inclusion criteria for able bodied
+persons. Transtibial amputation was the inclusion criteria for amputees.
+
+
+2.2. Capture of Accelerometer Data
+   An android based application was developed to capture motion data using the
+built-in 3D accelerometer sensor in the phone. The unit used was an HTC One
+Android phone with a built in Bosch BMA250 3 - axis accelerometer Version 1
+with a power of .1 mA, resolution .038 SU and maximum range of 39.23 SU. Sensor
+Tester, a free software, was used to calibrate the accelerometer.
+    The phone was placed in a pouch which was attached to the calf. The applica-
+tion requires the following input: name of the Participant and the Type of Motion
+(sit, walk, run, climb). The mobile phone is placed on the participant’s calf and
+
+
+                                    Revista Colombiana de Estadística 37 (2014) 471–488
+
+Visualizing Gait Patterns                                                             475
+
+the start button indicates the start of capture. The stop button indicates the end
+of data capture.
+    The data collected is stored in an array with the following values: ax (t), ay (t),
+az (t) and the number of steps at that given time. Figure 1 shows an example of
+the raw acceleration data.
+
+                               -1.2   -0.207      3.72         1
+                               -1.2   -0.207      3.72         1
+                               -1.2   0.0847        3.8        1
+                             -6.01       2.35   -0.601         1
+                             -1.47     0.243      3.13         1
+                             -1.47     0.243      3.13         1
+                              2.55       9.68     5.25         1
+                              2.55       9.68     5.25         1
+                             0.876    0.0601    -0.649         1
+                              5.68       10.9     11.4         1
+                              1.13     0.764     -1.48         1
+                              1.13     0.764     -1.48         1
+                             0.893     0.692     -1.18         1
+                             -5.14       9.05    0.147         2
+                             -5.14       9.05    0.147         2
+                             -5.14       9.05    0.147         2
+                             0.754    -0.358    -0.865         2
+                            Figure 1: Raw acceleration data.
+
+
+
+2.3. Gait Experiments
+    Gait experiments were conducted to capture motion data for two main groups
+of subjects, the able-bodied group and the amputee group. All subjects performed
+four types of activities. Figure 2 shows the list of experiments. The eight categories
+of subject-activities are included in the right column.
+
+                                                                   Sit     1
+                                                                   Walk    2
+                                         Able Bodied
+                                                                   Climb   3
+                                                                   Run     4
+                  Gait
+               Experiment                                          Sit     5
+                                                                   Walk    6
+                                         Amputees
+                                                                   Climb   7
+                                                                   Run     8
+                              Figure 2: Experiment guide.
+
+
+
+
+                                       Revista Colombiana de Estadística 37 (2014) 471–488
+
+476                                                Kardi Teknomo & Maria Regina Estuar
+
+
+      Procedure for the experiment is shown in Figure 3.
+
+                                                                 Enter personal
+               Attach device to     Run the application on
+                                                                information and
+                 person’s calf            the device
+                                                                     activity
+
+
+                                                                 Perform motion
+                                    Stop the application     activities (sit, walk, run,
+                                                              climb) for 30 seconds
+
+
+                            Figure 3: Procedure of Experiment.
+
+
+    Experiments were performed in covered walkways and corridors. The device is
+attached to the person’s calf securely fastened with strong adhesive. The applica-
+tion is launched and person’s name and the type of gait (sit, walk, run or climb)
+was selected. Participants were instructed to perform assigned gait for 30 seconds
+after which the application is set to stop. Figure 4 shows an image of the actual
+walking experiment.
+
+
+
+
+Figure 4: Image of smartphone attached to leg or prosthesis during the walking
+          experiment.
+
+
+
+
+3. Results
+   The motion data set was derived from two main groups: Motion captured from
+able bodied individuals and transtibial amputees. Each subject in the experiment
+was asked to walk, sit, climb, or run. We registered 8 categories according to the
+subject and the activities performed:
+
+                                        Revista Colombiana de Estadística 37 (2014) 471–488
+
+Visualizing Gait Patterns                                                           477
+
+  1. Able-bodied subject sit
+  2. Able-bodied subject walk
+  3. Able-bodied subject climb
+  4. Able-bodied subject run
+  5. Amputee subject sit
+  6. Amputee subject walk
+  7. Amputee subject climb
+  8. Amputee subject run.
+
+    The number of datasets (each data set consists of approximately 30 seconds
+acceleration values gathered at a frequency of approximately 30 Hertz) is not equal
+for all categories owing to availability of volunteer subjects for the experiments.
+Table 1 shows the number of participants per activity.
+
+                    Table 1: Number of participants per activity.
+                    Number of data               Activity
+                    Subject              Sit   Walk  Run     Climb
+                    Able Bodied Person     7     19     5        7
+                    Amputees Person        5      7     1        1
+
+
+
+
+3.1. Data Transformation
+   The goal of the study is to detect gaits based on acceleration data. Our ap-
+proach is to use the distribution of the peaks in terms of their magnitude and
+period between two consecutive peaks.
+    The data consists of 3 directions of acceleration ax (t), ay (t), az (t). The grav-
+ity value of 9.81 m/s2 was removed from the data to ensure that the data only
+comprised acceleration. The acceleration value for each point is computed as a
+modulus of the three acceleration directions.
+                                 q
+                           at = a2x (t) + a2y (t) + a2z (t)
+
+   Each data set was obtained at a frequency of approximately 30 Hertz (30
+sample points per second).
+     To filter out possible noise value, the data was smoothed clean using low pass
+filter:
+                                āt = αāt−1 + (1 − α)at
+
+    The value of the smoothing parameter α = 0.1 was chosen such that the data
+and smoothed value peaked at almost the same time. Figure 5 shows an example
+of smoothed data (blue) and the actual data (red). The horizontal axis is the time
+
+                                     Revista Colombiana de Estadística 37 (2014) 471–488
+
+478                                                                              Kardi Teknomo & Maria Regina Estuar
+
+
+stamp and the vertical axis represents acceleration. The value of the smoothed
+data is slightly lower than actual acceleration. Our goal is to keep the periods of
+the peak and the magnitude of the peak as close as possible to the original data.
+
+                                                                   Data and Smoothing
+                                    1
+
+
+                                   0.9
+
+
+                                   0.8
+
+
+                                   0.7
+
+
+                                   0.6
+               Acceleration m/s2
+
+
+
+
+                                   0.5
+
+
+                                   0.4
+
+
+                                   0.3
+
+
+                                   0.2
+
+
+                                   0.1
+
+
+                                    0
+                                         0   100   200   300          400       500        600   700   800   900
+                                                               Time (sampling data number)
+
+                       Figure 5: Example of raw data and smoothed data.
+
+
+
+
+3.2. Peaks and Peak Magnitude Distribution
+   Once the data was smoothed, the peaks of the smoothed data were found by
+searching the neighboring values of each data point. A point t is considered to
+have maximum peak value ât if the neighboring points have lower value than ât ,
+that is ât > at−1 > at−2 > L > at−h and ât > at+1 > at+2 > L at−h . The window
+length of the neighbors h represents the strength of the peak. Similarly, we can
+obtain minimum peak value ăt if the neighboring points have higher value than yp ,
+that is ă < at−1 < at−2 < · · · < at−h and ăt < at+1 < at+2 < L < at+h . Setting
+the minimum window length h = 1 will obtain any maximum and minimum peaks
+higher than its immediate neighbors. The left figure in Figure 6 shows a typical
+peak finding of the same smoothed data in Figure 5. The green circles are the
+identified maximum peaks and the red circles are the identified minimum peaks.
+Connecting only the maximum peaks and the minimum peaks the right figure in
+Figure 6 is obtained.
+    Based on peak values, we also derive the distribution of the magnitude of
+acceleration peaks. The distribution is separated between maximum peak values
+and minimum peak values. An example of peak value distribution from Figure 6
+is given in Figure 7.
+   The distribution tends to be skewed towards the left and the values on the
+horizontal axes show that maximum peaks supposedly have higher values than
+minimum peaks. These values represent the magnitude of acceleration during the
+peaks.
+
+
+                                                               Revista Colombiana de Estadística 37 (2014) 471–488
+
+Visualizing Gait Patterns                                                                                                                                                                                                       479
+
+                                                     Smoothing and its peaks                                                                                            connecting peaks
+                       0.9                                                                                                     0.9
+
+
+                       0.8                                                                                                     0.8
+
+
+                       0.7                                                                                                     0.7
+
+
+                       0.6                                                                                                     0.6
+   Acceleration m/s2
+
+
+
+
+                                                                                                           Acceleration m/s2
+                       0.5                                                                                                     0.5
+
+
+                       0.4                                                                                                     0.4
+
+
+                       0.3                                                                                                     0.3
+
+
+                       0.2                                                                                                     0.2
+
+
+                       0.1                                                                                                     0.1
+
+
+                         0                                                                                                      0
+                             0   100   200   300          400       500        600    700     800   900                              0   100     200         300          400       500        600          700         800   900
+                                                   Time (sampling data number)                                                                                     Time (sampling data number)
+
+
+                                                                                     Figure 6: Peak values.
+
+                                             histogram of maximum peaks values                                                                               histogram of minimum peaks values
+                       160                                                                                                 160
+
+
+
+                       140                                                                                                 140
+
+
+
+                       120                                                                                                 120
+
+
+
+                       100                                                                                                 100
+   Frequency
+
+
+
+
+                                                                                                          Frequency
+
+
+
+
+                        80                                                                                                     80
+
+
+
+                        60                                                                                                     60
+
+
+
+                        40                                                                                                     40
+
+
+
+                        20                                                                                                     20
+
+
+
+                         0                                                                                                      0
+                             0   0.1   0.2   0.3         0.4        0.5        0.6    0.7     0.8   0.9                             0     0.05         0.1             0.15          0.2             0.25         0.3         0.35
+                                                                          2                                                                                                            2
+                                                        Acceleration m/s                                                                                                Acceleration m/s
+
+
+                                                                               Figure 7: Peak distribution.
+
+
+3.3. Deriving Distribution of Period Peaks
+   In addition to acceleration peak magnitude distribution, we must obtain accel-
+eration peak period distribution.
+   Suppose maximum peak of acceleration âp happens at time p. A maximum
+period is defined as the difference between two immediate maximum peaks, that
+is
+                                  T̂p = âp − âp−1
+
+   Similarly, minimum peak of acceleration ăp happens at time p. A minimum
+period is defined as the difference between two immediate minimum peaks, that is
+
+                                                                                            T̆p = ăp − ăp−1
+
+           Period is the union of maximum period sets and minimum period sets, that is
+
+                                                                               T = {T̂p } ∪ {T̆p } for ∀ p
+
+
+
+
+                                                                                              Revista Colombiana de Estadística 37 (2014) 471–488
+
+480                                                                      Kardi Teknomo & Maria Regina Estuar
+
+
+   Having the periods of acceleration peaks, we can derive the distribution of the
+periods. Figure 8 shows the distribution of the periods of the peaks identified in
+the aforementioned figures.
+                                                       histogram of periods
+                               200
+
+
+                               180
+
+
+                               160
+
+
+                               140
+
+
+                               120
+                   Frequency
+
+
+
+
+                               100
+
+
+                                80
+
+
+                                60
+
+
+                                40
+
+
+                                20
+
+
+                                 0
+                                     2   3   4   5     6          7            8   9   10   11   12
+                                                           Acceleration m/s2
+
+
+                        Figure 8: Distribution of period of the peaks.
+
+
+
+3.4. Derived Features
+   The following statistics of the histogram were used as the derived features to
+represent the histogram itself:
+
+  1. Average of T
+  2. Median of T
+  3. Mode of T
+  4. N = Number of data in set { T }
+  5. Ratio of the Number of data in set and the number of data in acceleration
+  6. Student t statistics of period =         √
+     Average of T / (Standard deviation of T / N )
+  7. Minimum of T
+  8. Maximum of T
+  9. Range of T
+ 10. Standard deviation of T
+ 11. Skewness of T
+ 12. Kurtosis of T
+
+
+                                                     Revista Colombiana de Estadística 37 (2014) 471–488
+
+Visualizing Gait Patterns                                                                      481
+
+   Similar statistics also were used as derived features for the magnitude his-
+togram, that is the histogram of minimum peak values and the histogram of max-
+imum peak values. Since we have three histograms and 12 derived features, each
+dataset is now represented by 36 values.
+
+
+3.5. Feature Selection
+   The purpose of feature selection analysis is to find the derived features that
+can be clearly used to cluster subject-activities categories.
+   Table 2 indicates the derived features in the columns and the last column is
+the subject-activity category. Each row represents one dataset of an experiment.
+The contents of this table stem from the derived features of the histograms as
+explained in the previous section.
+                             Table 2: Features of Subject-Activity.
+                                                                                       Category
+              Number of       Average          Average of           Average of
+  Subject                                ...                  ...                ...   of
+              acceleration    of               min                  max
+  ID                                                                                   subject
+              data            T                peak                 peak
+                                                                                       -activity
+        1                                                                                       1
+        2                                                                                        1
+      ...                                                                                      ...
+      51                                                                                         8
+
+
+    Table 3 shows the average maximum and minimum peak values. The accel-
+eration of sitting is very low. Walking has lower acceleration than climbing and
+the climbing activity has a lower acceleration value than running. An amputee, in
+general, has higher acceleration than able-bodied subjects for all activities except
+sitting. Similar results were obtained for the median of maximum and minimum
+peak values, as shown in Table 4.
+                 Table 3: Average Maximum and Minimum Peak Values.
+                               Able Bodied                            Amputees
+     Activity
+                    max peak value      min peak value      max peak value   min peak value
+    Sitting                   0.06                0.03                0.02             0.01
+    Walking                      3.6              1.42                7.19              5.68
+    Climbing                    4.29              1.82                16.9             10.67
+    Running                     5.87              2.99                18.5             13.97
+
+
+   The median period of walking is higher for both able-bodied and amputee
+individuals (Table 5). Other activities are not distinguishable in terms of median
+periods between peaks.
+   The t statistics of maximum and minimum peak values are presented in Table
+6. A transtibial amputee has higher t-statistics than an able bodied individual.
+Amongst activities, however, the values are not distinguishable.
+
+                                           Revista Colombiana de Estadística 37 (2014) 471–488
+
+482                                                Kardi Teknomo & Maria Regina Estuar
+
+                 Table 4: Median of Maximum and Minimum Peak Values.
+                           Able Bodied                             Amputees
+      Activity
+                   max peak value     min peak value     max peak value   min peak value
+      Sitting               0.038              0.017              0.024            0.008
+      Walking               3.215              1.209              6.912            5.642
+      Climbing              3.843              1.632             16.499           10.259
+      Running               5.469              2.938             18.675           14.886
+
+
+                                Table 5: Median Period.
+                          Activity      Able Bodied       Amputees
+                         Sitting                 3.57                 4
+                         Walking                 5.37            4.58
+                         Climbing                3.43                 4
+                         Running                  3.6                 4
+
+
+           Table 6: t statistics of the Maximum and Minimum peak values.
+                           Able Bodied                             Amputees
+      Activity
+                   max peak value     min peak value     max peak value   min peak value
+      Sitting              19.084             17.596             36.458           27.429
+      Walking              25.088             23.796             73.677           92.701
+      Climbing             25.578             27.004             47.763           39.142
+      Running              35.117             41.664              89.15           62.596
+
+
+
+   Table 7 presents the skewness of period between peaks. It shows that the
+skewness of sitting is higher than walking and walking is higher than climbing;
+and climbing is higher than running. A transtibial amputee has a lower skewness
+period than an able bodied person.
+
+                       Table 7: Skewness of Period between Peaks.
+                           Activity      Able Bodied       Disable
+                           Sitting                3.88        1.835
+                           Walking               2.206        1.072
+                           Climbing              1.221        0.983
+                           Running               1.078         0.71
+
+
+   Table 8 shows that the average period of peak acceleration has no distinguish-
+able values among the categories. In fact, the average period of a transtibial
+amputee is almost equal regardless of the activities performed longer Walking, in
+general, has a period between peaks than other activities.
+   As occurs with the average period of peak acceleration, no distinguishable
+values were obtained for all other derived features.
+
+                                         Revista Colombiana de Estadística 37 (2014) 471–488
+
+Visualizing Gait Patterns                                                                                483
+
+                          Table 8: Number of participants per activity.
+                               Activity        Able Bodied             Amputee
+                              Sitting                           4            4.54
+                              Walking                        5.67            4.78
+                              Climbing                       3.85            4.33
+                              Running                        4.24            4.33
+
+
+
+3.6. Decision Tree Analysis
+    Decision Tree analysis was performed on all 36 derived features. Figure 9
+presents the results of the decision tree analysis. Results show that only 3 derived
+features are necessary to classify subject-activities, namely:
+
+  1. Average of minimum peak values
+  2. Student t statistics of minimum peaks values
+  3. Mode of maximum peaks values
+
+
+                           < 0.499606      Average of         >= 0.499606
+                                           minimum
+                                          peaks values
+
+
+                   Average of                            <1.77209    Average of     >= 1.77209
+                   minimum                                           minimum
+                  peaks values                                      peaks values
+
+
+
+                                                     Mode of                        t statistics of
+            < 0.0146762    >= 0.0146762             minimum                           minimum
+                                                   peaks values                     peaks values
+
+
+                                              < 0.383084 <= 0.383084          < 69.9493     >= 69.9493
+
+          Amputees         Able Bodied    Able Bodied        Able Bodied Able Bodied         Amputees
+           Sitting           Sitting       Climbing           Walking     Running            Walking
+
+
+                           Figure 9: Results of decision tree analysis.
+
+
+    The decision tree analysis, however, failed to classify amputee climbing and
+disabled running, probably due to lack of data (only one observation for each
+category).
+
+
+3.7. Visualization of Features
+   Based on the three derived features identified by the decision tree, we visualize
+each observation as one point. The points are then colored based on the label
+category (See Figure 10).
+
+                                                Revista Colombiana de Estadística 37 (2014) 471–488
+
+484                                                                                                                                                                                                                                    Kardi Teknomo & Maria Regina Estuar
+
+                                                                                                                                                 1                                                                                                                                                                                  1
+                                 10                                                                                                              2                        120                                                                                                                                                       2
+                                                                                                                                                 3                                                                                                                                                                                  3
+                                                                                                                                                 4                                                                                                                                                                                  4
+                                   9                                                                                                             5                                                                                                                                                                                  5
+                                                                                                                                                 6                                                                                                                                                                                  6
+                                   8                                                                                                             7                        100                                                                                                                                                       7
+                                                                                                                                                 8                                                                                                                                                                                  8
+
+
+
+
+                                                                                                                                                         t statistics of minimum peaks values
+  Mode of maximum peaks values
+
+                                   7
+
+                                                                                                                                                                                           80
+                                   6
+
+
+                                   5
+                                                                                                                                                                                           60
+                                   4
+
+
+                                   3
+                                                                                                                                                                                           40
+                                   2
+
+
+                                   1
+                                                                                                                                                                                           20
+
+                                   0
+
+                                                                        0       2       4             6          8            10       12       14                                                                                      0                       2       4               6          8          10         12     14
+                                                                                            Average of minimum peaks values                                                                                                                                                 Average of minimum peaks values
+
+                                                                                                                                                                                                                                       140
+                                                                                                                                                     1
+                                                  120                                                                                                2
+                                                                                                                                                                                                                                       120
+                                                                                                                                                     3
+
+
+
+
+                                                                                                                                                                                                t statistics of minimum peaks values
+                                                                                                                                                     4
+                                                                                                                                                     5                                                                                 100
+                                                                                                                                                     6
+                                                  100                                                                                                7
+                                                                                                                                                                                                                                        80
+                                                                                                                                                     8
+                                 t statistics of minimum peaks values
+
+
+
+
+                                                                                                                                                                                                                                        60
+                                                                   80
+                                                                                                                                                                                                                                        40
+
+
+                                                                                                                                                                                                                                        20
+                                                                   60
+                                                                                                                                                                                                                                            0
+                                                                                                                                                                                                                                       15
+                                                                                                                                                                                                          es
+                                                                                                                                                                                                                          valu
+
+
+                                                                   40
+                                                                                                                                                                                                                                           ks
+
+
+
+                                                                                                                                                                                                                                            10
+                                                                                                                                                                                                                                       pea
+                                                                                                                                                                                                                                            um
+
+
+
+
+                                                                   20
+                                                                                                                                                                                                                                                axim
+
+
+
+
+                                                                                                                                                                                                                                                       5
+                                                                                                                                                                                                                                                 of m
+
+
+
+
+                                                                                                                                                                                                                                                                                                                          12   14
+                                                                                                                                                                                                                                                   de
+
+
+
+
+                                                                                                                                                                                                                                                            0                                           8          10
+                                                                            0   1   2        3        4      5       6        7    8        9   10                                                                                                                                  4          6
+                                                                                                                                                                                                                                                       Mo
+
+
+
+
+                                                                                                                                                                                                                                                                    0   2
+                                                                                                 Mode of maximum peaks values                                                                                                                                                               Average of minimum peaks values
+
+
+                                                                                                     Figure 10: Visualization of derived features.
+
+
+
+    The visualization reveals possible derived features to overcome the weakness of
+the decision tree. Average minimum peak values higher than 8.510 m/s2 and lower
+than 12.321 m/s2 are related to class 7 which is the disabled-climbing activity and
+average minimum peak value higher than 12.321 m/s2 corresponds to class 8 which
+is the amputee-running activity.
+
+   We revised the decision tree in Figure 9 into the following figure to accommo-
+date all categories.
+
+   Table 9 shows the confusion matrix as a percentage to total respondents (51
+persons). The strong values on the diagonal of the confusion table show that
+the majority of subjects are correctly classified. The off diagonal elements are
+the errors. The percentage of correctly classified is 92.16%. This is obtained by
+summing the diagonal elements of Table 9. The majority of error (6%) comes from
+misclassifying able-bodied-climbing as able-bodied-running. Another case of error
+(2%) is associated with misclassifying able-bodied-running as able-bodied-walking.
+
+    To elaborate error analysis, we take the percentage of the total predicted
+further, Table 10 shows the error of misclassifying able-bodied-running as able-
+bodied-walking is only 5% but the error of that misclassifying able-bodied-climbing
+as able-bodied-running is actually 43%.
+
+
+                                                                                                                                            Revista Colombiana de Estadística 37 (2014) 471–488
+
+Visualizing Gait Patterns                                                                                                 485
+
+                   < 0.499606           Average of
+                                        minimum                       Between                        Between       >0 12.321
+                                       peaks values                  < 0.499606                       8.510
+                                                                         and                           and
+                                                                        8.510                         12.321
+          Average of                                           Average of
+          minimum                                 <1.77209                        >= 1.77209
+                                                               minimum
+         peaks values                                         peaks values
+
+
+                                               Mode of                       t statistics of
+   < 0.0146762          >= 0.0146762          minimum                          minimum
+                                             peaks values                    peaks values
+
+                                        < 0.383084 <= 0.383084           < 69.9493 >= 69.9493
+
+
+ Amputees         Able Bodied Able Bodied              Able Bodied Able Bodied         Amputees Amputees       Amputees
+  Sitting           Sitting    Climbing                 Walking     Running            Walking Climbing         Running
+
+                                           Figure 11: Revised decision tree.
+
+                               Table 9: Confusion Matrix (percentage to total).
+                                                             True Values
+            Count                                                                                          Total
+                                   1          2         3        4           5         6        7    8
+                          1     14%                                                                         14%
+                          2               37%                  2%                                           39%
+                          3                           8%                                                     8%
+            Predicted
+
+
+
+
+                          4                           6%       8%                                           14%
+                          5                                             10%                                 10%
+                          6                                                         12%                     12%
+                          7                                                                    2%            2%
+                          8                                                                         2%       2%
+              Total             14%       37%         14%     10%       10%         12%        2%   2%     100%
+
+
+
+3.8. Validation of Derived Features
+    To further validate the derived features, we run Analysis of Variance on the 8
+categories. Results show that there are significant differences in the 8 categories
+regarding the following features: minimum Peak Values (mean, median, mode, t-
+statistic, minimum, maximum, range, standard deviation, skewness and kurtosis)
+at p = .001 and maximum peak values (mean, median and mode) at p = .001.
+
+
+4. Conclusion
+    “A multidisciplinary approach is a definite benefit in the diagnosis and treat-
+ment of pathologic gait. An amputation is supposed to optimize the overall func-
+tion of the patient. This is accomplished through the proper prescription of a pros-
+thetic and appropriate rehabilitation training” (Kishner & Monroe 2013). Since
+
+                                                             Revista Colombiana de Estadística 37 (2014) 471–488
+
+486                                                    Kardi Teknomo & Maria Regina Estuar
+
+                      Table 10: Confusion Matrix (Percentage to total columns).
+                                             True Values
+      Count                                                                         Total
+                           1     2       3     4        5       6       7       8
+                  1    100%                                                         100%
+                  2            95%            5%                                    100%
+                  3                  100%                                           100%
+      Predicted
+
+
+
+
+                  4                   43%    57%                                    100%
+                  5                                 100%                            100%
+                  6                                         100%                    100%
+                  7                                                 100%            100%
+                  8                                                         100%    100%
+          Total         14%    37%    14%    10%     10%     12%      2%      2%    100%
+
+
+
+
+most studies on prosthesis use focus on the design of the device rather than how
+it is used (Sawers, Hahn, Kelly, Czerniecki & Kartin 2012), visualization of gait
+data and identification of important parameters or features for gait classification
+can facilitate the rehabilitation process.
+
+    In the study, we show that through visualization of the statistics of derived
+features we were able to revise the decision tree that originally could not produce
+the classification of certain categories. It is good to note that exhaustive plotting
+between two derived features may not reveal which features can actually be used to
+classify subject-activity. Only after we use the decision tree and cross tabulation
+to select possible features we can use the visualization. The visualization may
+help to reveal clear clusters of missing categories based on two or three derived
+features.
+
+    We can also conclude that the period between peaks (which we suspect to
+present the pace of activities) apparently does not reveal any significant derived
+features to classify subject-activity. However, individual features, namely: average
+of minimum peak values, mode of maximum peak values and t-statistic of mini-
+mum peak values are sufficient for predicting subject-activity, distinguishing gait
+between able bodied and transtibial amputee individuals.
+
+    In general, transtibial amputee have higher acceleration than able bodied sub-
+jects for all activities except sitting. Transtibial amputee also have a lower skew-
+ness period between peaks of acceleration than able bodied subjects. Such findings
+can further improve identification and classification of gait patterns between able
+bodied persons and transtibial amputees.
+
+    Further studies include validation of wireless sensor applications with standard
+gait analysis tools. There is also a need to increase the sample size and conduct
+experiments on gait measurement with location of the sensor as an independent
+variable.
+
+
+                                             Revista Colombiana de Estadística 37 (2014) 471–488
+
+Visualizing Gait Patterns                                                           487
+
+5. Acknowledgments
+    The first author would like to thank the Department of Science and Technol-
+ogy (DOST) and the Philippine Higher Education Research Network (PHERNET).
+The second author would like to thank the Engineering Research and Development
+for Technology (ERDT), Ms. Nadia Leetian for providing us with gait data and
+images, Mr. Nico Canoy for assistance in running statistical analysis, Mr. John
+Noel Victorino for assistance in LATEX, Dr. Maricor Soriano and UP National In-
+stitute of Physics, Physicians for Peace and the Ateneo Java Wireless Competency
+Center (AJWCC) and Smart Communications, Inc for use of ASCENT, the data
+collection tool and assistance during the conduct of the experiments.
+                                                                 
+             Recibido: mayo de 2014 — Aceptado: septiembre de 2014
+
+
+References
+Baritz, M., Cotoros, D., Cristea, L. & Rogozea, L. (2010), ‘Assessment of human bio-behavior during gait process using lifemod software’, BRAIN. Broad Research in Artificial Intelligence and Neuroscience 1, 169–177.
+Bella, G. P., Rodrigues, N. B., Valenciano, P. J., Silva, L. M. & Souza, R. C. (2012), ‘Correlation among the visual gait assessment scale, Edinburgh visual gait scale and observational gait scale in children with spastic diplegic cerebral palsy’, Brazilian Journal of Physical Therapy 16(2), 134–140.
+Bonnyaud, C., Pradon, D., Zory, R., Bensmail, D., Vuillerme, N. & Roche, N. (2013), ‘Does a single gait training session performed either overground or on a treadmill induce specific short-term effects on gait parameters in patients with hemiparesis? a randomized controlled study’, Topics in Stroke Rehabilitation 20(6), 509–518.
+Buckley, J. G., De Asha, A. R., Johnson, L. & Beggs, C. B. (2013), ‘Understanding adaptive gait in lower-limb amputees: Insights from multivariate analyses’, Journal of Neuroengineering and Rehabilitation 10(1), 98.
+de Bruin, E. D., Hubli, M., Hofer, P., Wolf, P., Murer, K. & Zijlstra, W. (2012), ‘Validity and reliability of accelerometer-based gait assessment in patients with diabetes on challenging surfaces’, Journal of Aging Research 2012.
+Ferrarello, F., Bianchi, V., Baccini, M., Rubbieri, G., Mossello, E., Cavallini, M., Marchionni, N. & Di Bari, M. (2013), ‘Tools for observational gait analysis in patients with stroke: A systematic review’, Physical Therapy 93(12), 1673–850.
+Gibson, T., Jeffery, R. & Bakheit, A. (2006), ‘Comparison of three definitions of the mid-stance and mid-swing events of the gait cycle in children’, Disability & Rehabilitation 28(10), 625–628.
+Howell, A. M., Kobayashi, T., Hayes, H. A., Foreman, K. B. & Bamberg, S. J. M. (2013), ‘Kinetic gait analysis using a low-cost insole’, Biomedical Engineering, IEEE Transactions on 60(12), 3284–3290.
+Khan, M. (2010), ‘Analysis of gait of amputees’. *http://ausimkhan.blogspot.com/posted
+Kishner, S. & Monroe, J. (2013), ‘Gait analysis after amputation’. *http://emedicine.medscape.com/article/1237638-overview
+Macleod, C. A., Conway, B. A., Allan, D. B. & Galen, S. S. (2014), ‘Development and validation of a low-cost, portable and wireless gait assessment tool’, Medical Engineering & Physics 36(4), 541–546.
+Maidan, I., Freedman, T., Tzemah, R., Giladi, N., Mirelman, A. & Hausdorff, J. (2014), ‘Introducing a new definition of a near fall: Intra-rater and inter-rater reliability’, Gait & Posture 39(1), 645–647.
+Muro-de-la Herran, A., Garcia-Zapirain, B. & Mendez-Zorrilla, A. (2014), ‘Gait analysis methods: An overview of wearable and non-wearable systems, highlighting clinical applications’, Sensors 14(2), 3362–3394.
+Najafi, B., Khan, T., Fleischer, A. & Wrobel, J. (2013), ‘The impact of footwear and walking distance on gait stability in diabetic patients with peripheral neuropathy’, Journal of the American Podiatric Medical Association 103(3), 165–173.
+Okusa, K. & Kamakura, T. (2013), ‘Gait parameter and speed estimation from the frontal view gait video data based on the gait motion and spatial modeling’, IAENG International Journal of Applied Mathematics 43(1), 37–44.
+Salvendy, G. (2012), Handbook of Human Factors and Ergonomics, John Wiley & Sons.
+Sawers, A., Hahn, M., Kelly, V., Czerniecki, J. & Kartin, D. (2012), ‘Beyond componentry: How principles of motor learning can enhance locomotor rehabilitation of individuals with lower limb loss–A review’, Journal of Rehabilitation Research & Development 40(10), 1431–1442.

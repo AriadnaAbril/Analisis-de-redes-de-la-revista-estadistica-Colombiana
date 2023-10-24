@@ -1,0 +1,1376 @@
+Using an Anchor to Improve Linear Predictions with Application to Predicting Disease Progression. Usando un ancla je para mejorar predicciones lineales con aplicación a la predicción de progresión de enfermedad
+University of Kansas Medical Center, Kansas City, United States
+Abstract
+Linear models are some of the most straightforward and commonly used modelling approaches. Consider modelling approximately monotonic response data arising from a time-related process. If one has knowledge as to when the process began or ended, then one may be able to leverage additional assumed data to reduce prediction error. This assumed data, referred to as the anchor, is treated as an additional data-point generated at either the beginning or end of the process. The response value of the anchor is equal to an intelligently selected value of the response (such as the upper bound, lower bound, or 99     percentile of the response, as appropriate). The anchor reduces the variance of prediction at the cost of a possible increase in prediction bias, resulting in a potentially reduced overall mean-square prediction error. This can be extremely eective when few individual data-points are available, allowing one to make linear predictions using as little as a single observed data-point. We develop the mathematics showing the conditions under which an anchor can improve predictions, and also demonstrate using this approach to reduce prediction error when modelling the disease progression of patients with amyotrophic lateral sclerosis.
+Key words : Anchor; Amyotrophic lateral sclerosis; Biased regression; Linear models; Ordinary least squares.
+Resumen
+Modelos lineales son los modelos más fáciles de usar y comunes en modelamiento.   Si se considera el modelamiento de una respuesta aprosimadamente monótona que surge de un proceso relacionado al tiempo y se sabe cuándo el proceso inició o terminó, es posible asumir datos adicionales como palanca para reducir el error de predicción. Estos datos adicionales son llamados de anclaje y son datos generados antes del inicion o después del nal del proceso. El valor de respuesta del anclaje es igual a un valor de respuesta escogido de manera inteligente (como por ejemplo la cota superior, iferior o el percentil 99, según conveniencia). Este anclaje reduce la varianza de la predicción a costo de un posible sesgo en la misma, lo cual resulta en una reducción potencial del error medio de predicción. Lo anterior puede ser extremadamente efectivo cuando haypocos datos individuales, permitiendo hacer predicciones con muy pocos datos. En este trabajo presentamos en desarrollo matemático demostrando las condiciones bajo las cuales el anclaje puede mejorar predicciones y también demostramos una reducción del error de predicción aplicando el método a la modelación de progresión de enfermedad en pacientes con esclerosis lateral amiotróca.
+Palabras clave   : Anclaje; esclerosis lateral amiotróca; modelos lineales; mínimos cuadrados ordinarios; regresión sesgada.
+
+
+
+
+1. Introduction
+      Prediction has always been an important part of statistical modeling.               With
+the advent of big data and the rise of machine learning, one may think that
+researchers have moved beyond prediction via simple linear models. This is not
+the case, however, especially in the eld of medical research: a quick search of
+PubMed results in over 1000 publications which utilize linear (but not generalized
+linear) models from January 2016  July 2017. This is because linear models are
+usually one of the rst attempted approaches when analyzing new data, and they
+are sucient surprisingly often. Linear models are simple to calculate, requiring
+tiny amounts of computing power compared to some of the more complex machine-
+learning algorithms (such as neural networks). Most importantly, linear models
+are very straightforward to interpret and explain, a direct contrast to the more
+sophisticated black-box methods that are dependent on large datasets.                   The
+ability to interpret and understand statistical models, or model intelligibility, is
+especially important in the eld of healthcare (Caruana, Lou, Gehrke, Koch, Sturm
+& Elhadad 2015).
+
+      Yet linear models have their failings, especially when modelling a bounded
+response.    Consider attempting to model the disease progression over time of a
+patient with amyotrophic lateral sclerosis (ALS), also known as Lou Gehrig's dis-
+ease. This is measured by the instrument known as the ALS Functional Rating
+Scale  Revised, or ALSFRS-R (Cedarbaum, Stambler, Malta, Fuller, Hilt, Thur-
+mond & Nakanishi 1999). The ALSFRS-R is always an integer between 0 and 48,
+with 48 representing no spread of the disease and 0 being the theoretical maxi-
+mal spread of the disease.       The progression of the ALSFRS-R tends to be very
+linear (Armon, Graves, Moses, Forté, Sepulveda, Darby & Smith 2000, Magnus,
+Beck, Giess, Puls, Naumann & Toyka 2002), but because of its bounded nature,
+simple linear models have the inherent structural defect of creating predictions
+that violate these lower and upper bounds.           Many adjustments to this problem
+
+
+
+                                         Revista Colombiana de Estadística 41 (2018) 137155
+
+Using an Anchor to Improve Linear Predictions with Application to Predicting...     139
+
+
+
+exist: examples include truncating the prediction to 48 if the prediction is too
+large (0 if too small) (Amemiya 1973) or performing a logistic transform on the
+data (Lesare, Rizopoulos & Tsonaka 2007).
+
+   If the goal is prediction, say of the patient's ALSFSR-R at one year, these
+adjustments may not perform well when small amounts of observed data exist.
+The small number of data-points can result in the variance of the prediction being
+very large, producing a large mean-squared-prediction-error (MSPE). Recall the
+MSPE is equivalent to the sum of the variance and squared bias of the prediction.
+In this paper we consider a simple method to reduce the variability of linear
+predictions at the cost of potentially increasing the predictive bias. Biased linear
+regression itself is not new (ridge regression (Hoerl & Kennard 2000) is one well-
+known example), but we do this in a unique way: by exploiting our knowledge
+of when the process we are modelling (e.g. the patient's disease progression) rst
+began.
+
+   Tracking the date when a patient rst began noticing symptoms of ALS (their
+disease onset time) is common practice in ALS clinics and trials. From a modelling
+perspective, one could use this information in a variety of ways: the most obvious
+way is using it as a covariate in the model.     Let us try a dierent approach: if
+we were to assume their ALSFRS-R score at roughly the time of their disease
+onset, what might their ALSFRS-R be? One could argue that the patient has had
+minimal, if any, disease progression at time of disease onset. It seems reasonable
+then that one could assume their ALSFRS-R to be 48 (meaning the minimum
+possible disease progression) at this time. We could then create a new observation
+with ALSFRS-R score of 48 at the time of disease onset, and include that as one
+of the observations (data-points) used to build our linear model.
+
+   In this paper we consider utilizing knowledge of when a process starts to cre-
+ate an assumed data-point, which then can be used to reduce variability of linear
+model predictions. We found no previous literature on this technique in our litera-
+ture search. We rst show how the inclusion of this point mathematically reduces
+variance component of the MSPE under the assumptions of ordinary least-squares
+(OLS) linear regression; then we calculate the bias component it brings to the
+MSPE; we deduce the condition under which this approach can reduce the MSPE
+in predication combined variance and bias. Afterwards we give an example of uti-
+lizing this approach in the context of modeling ALS disease progression, showing
+how it improves the MSPE when compared to a linear model lacking the extra
+data-point. We show how it is also superior to a logit transform approach. We
+stress that this method is a simple to understand, easy to perform, and inexpen-
+sive to implement approach.     It is our hope that this idea may be utilized by
+pragmatic researchers to improve their linear predictions and estimations at very
+little additional cost.
+
+
+
+
+                                     Revista Colombiana de Estadística 41 (2018) 137155
+
+140                                         Alex G. Karanevich, Jianghua He & Byron J. Gajewski
+
+
+
+2. The Eect of Using an Anchor on the Mean
+   Square Prediction Error in Simple Linear
+   Regression
+      Here we develop the theoretical results that justify the creation and use of an
+extra assumed data-point to improve modelling. We shall refer to this data-point
+as the anchor. Consider n − 1 ordered pairs {(xi , yi )}, i ∈ 1, . . . , n − 1, where yi
+is some response corresponding to xi . As per ordinary linear regression (Kutner,
+Nachtsheim & Neter 2004), assume that                              xi and yi have a linear relationship,
+meaning that for some constants β0 and β1 , yi = β0 + β1 xi + i , with independent
+                          
+error terms i ∼ N  0, σ 2 . Furthermore, assume an additional observation referred
+to as the anchor given by (xn , yn ), where yn is some xed constant in R.
+
+     Consider the problem of predicting a new value y0 corresponding to a given
+x0 , which is typically obtained by using the OLS estimates for β0 and β1 , denoted
+as a and b. Denote the resultant prediction for y0 which utilizes the rst n − 1
+
+coordinate pairs by Y  b (n−1) = a(n−1) + b(n−1) x0 , and the prediction which also
+                        0
+includes the anchor by Y   b (n) = a(n) + b(n) x0 . Denote the errors between our
+                            0
+                                  (n−1)            (n−1)       (n)          (n)
+prediction and the truth to be e        = y0 − Yb
+                                               0         and e     = y0 − Yb . Recall
+                                                                      0          0                 0
+                                  (n−1)
+that the variance of e0                   (which was built from n − 1 ordered pairs of data in
+standard OLS regression) is equivalent to:
+
+
+                                                                                            2   !
+        
+             (n−1)
+                                 
+                                              (n−1)
+                                                      
+                                                               2         1     x̄(n−1) − x0
+ V ar       e0           = V ar       y0 − Yb0            =σ        1+      +
+                                                                       n − 1 Pn−1 xi − x̄(n−1) 2
+                                                                                               
+                                                                                     i=1
+
+                                     
+                     (n)            (n)
+where V ar        = V ar y0 − Yb0
+                   e0                     represents the variance of the prediction er-
+
+ror obtained from utilizing all n datapoints (meaning we include the anchor).
+                                                   
+                               (n)              (n−1)
+    We rst show that V ar e0        ≤ V ar e0          , meaning any choice of anchor
+
+will decrease the variance component of the MSPE. We then derive an upper bound
+for the bias of the anchor such that the MSPE will decrease; in other words, how
+far away from the true line can the anchor be before it makes the MSPE worse.
+
+      Without loss of generality, we will assume the following for the observed data:
+                                                                                                       Pn−1
+                                                                                           (n−1)              xi
+      Assume that x1 , . . . , xn−1 have been normalized such that x̄                              =    i=1
+                                                                                                                   =
+        qP                                                                                              n−1
+          n−1 2
+0 and     i=1 xi = 1. Any collection of (xi , yi ) can be linearly transformed in the
+x-coordinate by subtracting from each xi the mean of the x's and dividing by the
+Euclidean norm to achieve this normalization. Explicitly, each xj is transformed
+                            xj − x̄(n−1)
+by applying g (xj ) = q                        . It is interesting to point out that
+                                         (n−1) 2
+                        Pn−1
+                          i=1   x i − x̄
+                                                                   2
+this transformation has no impact on the OLS estimators for σ .
+
+
+
+                                                      Revista Colombiana de Estadística 41 (2018) 137155
+
+Using an Anchor to Improve Linear Predictions with Application to Predicting...                          141
+
+
+
+     Then the following hold:
+
+                                                          n−1
+                                                          X
+                                        SSX (n−1) =             x2i = 1,
+                                                          i=1
+
+                                         xn    n − 1  (n−1)  xn
+                                   x̄(n) =   +         x̄       =      ,
+                                          n      n                  n
+                                             n−1
+                                             X                      2
+                                   SSX (n) =     x2i + x2n − n x̄(n)
+                                              i=1
+
+                                                               x2n
+                                             = 1 + x2n −           .
+                                                               n
+
+2.1. Utilizing an Anchor Reduces Predictive Variability
+
+     Here we show that inclusion of an anchor in an OLS regression will always
+reduce the variance of newly predicted responses. Intuitively, it makes sense that
+the variance for the slope and intercept estimates will shrink as more points are
+included in the OLS regression: consider a simulation where one draws two obser-
+vations and obtains the OLS estimates for the slope and intercept as compared to
+a simulation where one draws three observations. The latter will have less vari-
+ance on the OLS estimates, resulting in less variance on newly predicted responses.
+The variance is then reduced even further when one assumes that the additional
+observation is an anchor and has a variance of zero.
+                                                                                                        
+Theorem 1.          For any anchor point (xn , yn ), with yn a xed constant, V ar e(n)
+                                                                                    0   ≤
+           
+      (n−1)
+V ar e0       .
+
+Proof . Let a, b be the OLS estimated intercept and slope through the points
+(x1 , y1 ) , . . . , (xn , yn ).    a and b are the regression
+                                   In other words,
+                                                              estimatesfor
+                           (n)                     (n)                 (n)
+β0 and β1 . Since y0 and Y0 are independent,Var e0
+                         b                               = Var y0 − Yb0    =
+Var (y0 ) + Var (a + bx0 ). Utilizing our assumptions on x1 . . .,xn−1 , the inequality
+                        
+        (n)          (n−1)
+Var    e0     ≤ Var e0       holds if and only if:
+
+                                                                                                       2 !
+                                             
+                                                  (n−1)
+                                                                          1    x̄(n−1) − x0
+ V ar (y0 ) + V ar (a + bx0 ) ≤ V ar             e0           = σ2     1+     +                               .
+                                                                          n−1     SSX (n−1)
+
+                                                                         (n−1)             (n−1)
+     This can be simplied using our assumptions on x̄                           and SSX           to obtain
+                                                                                           !
+                                                                                       2
+                                                                        1    (0 − x0 )
+                  V ar (y0 ) + V ar (a + bx0 ) ≤ σ 2           1+          +                ,
+                                                                       n−1       1
+
+which simplies as follows using properties of variance:
+                                                                                           
+                                                                                    1
+           σ 2 + V ar (a) + x20 V ar (b) + 2x0 Cov (a, b) ≤ σ 2 1 +                    + x20 ,
+                                                                                   n−1
+
+                                                 Revista Colombiana de Estadística 41 (2018) 137155
+
+142                                    Alex G. Karanevich, Jianghua He & Byron J. Gajewski
+
+                                                                                              
+                                                                                       1
+               V ar (a) + x20 V ar (b) + 2x0 Cov (a, b) ≤ σ 2                             + x20 .
+                                                                                      n−1
+      We next consider the individual terms V ar (a) , V ar (b) , and Cov (a, b).                      For
+                                         (n)                                (n)
+convenience SSX denotes SSX                    and x̄ denotes x̄                  .
+
+
+Part 1: variance of slope
+
+
+                                      n
+                                                              !       n           2
+                                      X (xi − x̄)                     X (xi − x̄)
+               V ar (b) = V ar                           yi       =                       V ar(yi ).
+                                      i=1
+                                            SSX                       i=1
+                                                                             SSX 2
+
+                              2
+      Recall V ar (yi ) = σ       if i ≤ n − 1 and V ar (yn ) = 0 since yn is a constant. Thus
+the nth term of the summation is zero and we can write V ar (b) as:
+
+                             n−1                   n−1
+                        σ2 X              2   σ2 X 2
+                                                       x + x̄2 − 2xi x̄ .
+                                                                       
+            V ar (b) =           (xi − x̄) =
+                       SSX 2 i=1             SSX 2 i=1 i
+
+                                            Pn−1                        Pn−1
+      Utilizing the assumption that            i=1       x2i = 1 and that i=1 (xi ) = 0,
+
+                                             σ2
+                                                  1 + (n − 1) x̄2 .
+                                                                 
+                              V ar (b) =
+                                            SSX 2
+
+      Or equivalently (multiply top and bottom by n)
+
+
+                                                     n2 + nx2n − x2n
+                                   V ar (b) = σ 2                             2.
+                                                    (nx2n + n − x2n )
+
+Part 2: variance of intercept
+                                                     2
+      Since V ar (yn ) = 0 and V ar (yi ) = σ            for i ∈ 1, . . . , n − 1, we use properties of
+the variance to nd:
+
+                         n                       !          n−1
+                                                              X1                    2
+                         X   1          x̄ (xi − x̄)                    x̄ (xi − x̄)
+       V ar (a) = V ar                −           yi = σ 2            −
+                         i=1
+                                    n       SSX               i=1
+                                                                    n       SSX
+                     n−1
+                                                                 !
+                                               2
+                     X 1         x̄2 (xi − x̄)      x̄ (xi − x̄)
+                = σ2         2
+                               +          2
+                                                 −2               .
+                     i=1
+                           n         SSX               nSSX
+
+      Distributing the summation to each term results in
+                                                                               !
+                                                                             2
+                                                              
+                              2     n − 1 x̄2 1 + (n − 1) x̄2      (n − 1)x̄
+              V ar (a) = σ               +                      +2              ,
+                                     n2         SSX 2               nSSX
+
+which, after multiplying as needed to get a common denominator, is equivalent to
+
+
+                                         nx4n + 2nx2n + n − x4n − x2n − 1
+                      V ar (a) = σ 2                                              2        .
+                                                    (nx2n + n − x2n )
+
+
+                                               Revista Colombiana de Estadística 41 (2018) 137155
+
+Using an Anchor to Improve Linear Predictions with Application to Predicting...                          143
+
+
+
+Part 3: covariance of intercept and slope
+
+                                                        ci yi , di yi ) = σ 2 (ci di )
+                                                               P             PP
+      Consider Cov (a, b). We use the property that Cov (
+and the fact that any covariance or variance term involving yn is 0, since yn is a
+constant.
+
+                                          n                                     n
+                                                                                                     !
+                                          X   1         x̄ (xi − x̄)              X (xi − x̄)
+               Cov (a, b) = Cov                       −                    yi ,                 yi
+                                           i=1
+                                                    n       SSX                   i=1
+                                                                                        SSX
+                                          n−1                        n−1                  !
+                                          X     1     x̄ (xi − x̄)        X (xi − x̄)
+                                = Cov              −                  yi ,              yi
+                                          i=1
+                                                n          SSX             i=1
+                                                                                SSX
+                                       n−1
+                                       X1                                   
+                                                   x̄ (xi − x̄)      (xi − x̄)
+                                = σ2            −
+                                       i=1
+                                             n         SSX             SSX
+                                           n−1
+                                                                             !
+                                                                           2
+                                    σ 2 X xi − x̄ x̄(xi − x̄)
+                                =                          −
+                                  SSX i=1            n           SSX
+                                       2
+                                                                                       
+                                   −σ        n−1              x̄                    2
+                                                                                      
+                                =                   (x̄) +           1 + (n − 1) x̄
+                                  SSX          n            SSX
+
+      Or equivalently (after multiplying as needed to get a common denominator)
+                                                                                        
+                                                     2 xn   nx2n + 2n − x2n − 1
+                              Cov (a, b) = −σ                                      2        .
+                                                            (nx2n + n − x2n )
+                                                                               
+                                                              (n)           (n−1)
+Part 4: proving the inequality V ar                          e0     ≤ V ar e0
+                                               
+                          (n)               (n−1)
+      Recall, V ar       e0         ≤ V ar e0       is equivalent to the following:
+
+                                                                                           
+                                                                                    1
+                V ar (a) + x20 V ar (b) + 2x0 Cov (a, b) ≤ σ 2                         + x20 .
+                                                                                   n−1
+
+      Substituting the previously derived terms on the left hand side results in a
+                                                     2
+statement which is trivially true if σ                   = 0. Otherwise, this statement is equivalent
+to
+
+                                                !                                     !
+                      n + nx2n − x2n                            xn nx2n + 2n − x2n − 1
+     0 ≤ x20   1−                           2       + x0    2                               2
+                     (nx2n + n − x2n )                             (nx2n + n − x2n )
+                                                                                                         !
+                                                       1    nx4n + 2nx2n + n − x4n − x2n − 1
+                                                +         −                         2                        .
+                                                      n−1          (nx2n + n − x2n )
+
+                                                              2
+    The right hand side of the inequality is quadratic in x0 with form g (x0 ) =
+    2
+Ax0 + Bx0 + C . Note the coecients A, B, C simplify to single terms in the
+following way:
+                                                          
+                           (n − 1) x2n nx2n + 2n − x2n − 1
+                     A=                             2       ,
+                                   (nx2n + n − x2n )
+
+                                                     Revista Colombiana de Estadística 41 (2018) 137155
+
+144                                   Alex G. Karanevich, Jianghua He & Byron J. Gajewski
+
+                                                                             
+                                        2xn nx2n + 2n − x2n − 1
+                                B=                                   2           ,
+                                            (nx2n + n − x2n )
+                                                                         
+                                          nx2n + 2n − x2n − 1
+                                   C=                                        2.
+                                        (n − 1) (nx2n + n − x2n )
+      Since A > 0 for n > 2, then g(x0 ) is an upward-facing parabola.                           Also, the
+                               2
+discriminant, given by B           − 4AC is equal to zero:
+
+                                                2
+        2               4x2n nx2n + 2n − x2n − 1
+      B − 4AC =                                   4
+                             (nx2n + n − x2n )
+                                                                                           
+                         (n − 1) x2n nx2n + 2n − x2n − 1                 nx2n + 2n − x2n − 1
+                    −4                                2                                              2
+                                 (nx2n + n − x2n )               (n − 1) (nx2n + n − x2n )
+                                                  2                                 2
+                        4x2n nx2n + 2n − x2n − 1             4x2n nx2n + 2n − x2n − 1
+                    =                             4        −                       4      = 0,
+                             (nx2n + n − x2n )                    (nx2n + n − x2n )
+
+    meaning there is exactly one root in g(x0 ). Therefore, it must be true that
+                                           
+                        (n)             (n−1)
+g (x0 ) ≥ 0 and V ar Yb0      ≤ V ar Yb0       as desired.
+
+      Thus we see that any choice of anchor will necessarily result in a reduction
+in the variance of the prediction of y0 , which is equivalent to a reduction of the
+variance component of the MSPE. However, we still need to consider the bias.
+Recall that the typical OLS estimators for slope and intercept are unbiased, but
+this is not necessarily true when including an anchor.                               We next consider how
+much bias will be introduced by an anchor to the estimators for the slope and
+intercept, and the eect this has on the MSPE (compared to the MSPE that does
+not include an anchor).         It will be shown that any choice of an anchor (xn , yn )
+such that yn 6= β0 + β1 xn will introduce bias to the model. Note that the bias is
+a direct function of β0 and β1 , which are rarely known in practice. Again, let x̄
+            (n)                             (n)
+                                                      Pn       2
+denote x̄         and SSX denote SSX              =       i=1 xi .
+
+
+2.2. Predictive Bias Caused by Utilizing an Anchor
+
+      There is no such thing a free lunch, and while using an anchor brings the benet
+of predictive variance reduction, it can potentially inject bias into the predictions.
+Here we quantify this bias in terms of the true regression slope (Theorem 2) and
+                                                                                               (n)
+intercept (Theorem 3). These biases propagate in to the prediction of Y
+                                                                      b
+                                                                       0                             directly.
+
+Theorem 2.         Using anchor point (xn , yn ) results in biasing the slope by
+                                        (n − 1) xn (yn − β0 ) + β1 n
+                        E (b − β1 ) =                                − β1 .
+                                                  nSSX
+    This result shows that an anchor will almost always bias the estimate for the
+slope, however we will show that no bias is added when the anchor lies directly on
+the true regression line as a corollary.
+
+                                            Revista Colombiana de Estadística 41 (2018) 137155
+
+Using an Anchor to Improve Linear Predictions with Application to Predicting...          145
+
+
+
+Proof . Recall yi = β0 + β1 xi + i and that the OLS estimate for β1 , denoted by
+b, is given by            Pn                         Pn
+                                                               xi − xnn yi
+                                                                       
+                              i=1 (xi − x̄) yi           i=1
+                     b=                          =                         .
+                                 SSX                           SSX
+   We rst derive E(b):
+
+                                Pn            !
+                                     xi − xnn yi
+                                    i=1
+                  E (b) = E
+                                     SSX
+                                Pn−1       xn
+                                                            !
+                                                   xn − xnn yn
+                                              
+                                 i=1 xi − n yi
+                        =E                       +             .
+                                     SSX              SSX
+
+   Recall that yn is a nonrandom constant, and hence E (yn ) = yn . Then we can
+partition the expectation of the summation:
+
+                        n−1
+                                                 !
+             1          X            yi xn       1       xn 
+    E (b) =     E             xi yi −                + xn −      yn
+            SSX         i=1
+                                        n         SSX        n
+                        n−1                          !
+                 1      X                         n−1         1        xn 
+            =       E       {xi yi } − ȳn−1 xn          +         xn −      yn .
+                SSX     i=1
+                                                   n        SSX         n
+
+   Note that the OLS estimate for β0 when not using the anchor point is given
+    (n−1)
+by a
+Pn−1       = ȳ (n−1) − b(n−1) x̄(n−1) = ȳ (n−1) since x̄(n−1) = 0. Similarly, b(n−1) =
+  i=1 {xi yi }. Since these are the unbiased OLS estimators for β0 and    β1 when ig-
+                                                                   (n−1)
+noring the anchor point, then it must be that E ȳ                          = β0 and
+  P              
+      n−1
+E     i=1 {xi yi } = β1 . Using these values and the linearity of expectation, we
+then have
+                                            
+                    1                  n−1             1         xn 
+            E(b) =      β1 − β0 x n               +         xn −       yn
+                   SSX                  n           SSX            n
+                                                              
+                    1                           n−1        xn yn
+                 =      β1 + x n y n − β0 x n            −
+                   SSX                            n         n
+                                                             
+                    1           n−1                        n−1
+                 =      β1 +             xn yn − β0 xn
+                   SSX             n                        n
+                                                     
+                    1               n−1
+                 =      β1 + x n              (yn − β0 ) .
+                   SSX                n
+
+   Or equivalently
+
+                                    (n − 1) xn (yn − β0 ) + β1 n
+                          E (b) =                                ,
+                                              nSSX
+which means the bias of b is given by
+
+                                    (n − 1) xn (yn − β0 ) + β1 n
+                    E (b − β1 ) =                                − β1 .
+                                              nSSX
+
+
+
+                                          Revista Colombiana de Estadística 41 (2018) 137155
+
+146                                 Alex G. Karanevich, Jianghua He & Byron J. Gajewski
+
+
+
+      We next quantify the bias added to the estimate of the intercept parameter
+when using an anchor.
+
+Theorem 3.         Using anchor point (xn , yn ) results in biasing the intercept by
+                                                   
+                                 β0 (n − 1) x2n + 1 − β1 x2n + yn
+                   E (a − β0 ) =                                  − β0 .
+                                              nSSX
+    Similarly to Theorem 2, this result shows that an anchor will almost always
+bias the estimate for the intercept. Again, this bias is minimized when choosing an
+anchor that is closer to being on the true regression line. No bias is added when
+the anchor lies directly on the true regression line.
+Proof . Recall that the OLS estimate for β0 , denoted by a, is given by
+                                                              bxn
+                                a = ȳ (n) − bx̄ = ȳ (n) −       .
+                                                               n
+      We rst calculate E (a) :
+                                      x
+                                           n
+                     E(a) = E ȳ (n) −       E (b)
+                                          n
+                             1                       x
+                                                             n
+                          = E (n − 1) ȳ (n−1) + yn −          E (b) .
+                             n                              n
+                              (n−1)
+                                    
+      Again, recall that E ȳ         = β0 and that E (yn ) = yn . We derived E(b) in
+Theorem 2. Thus:
+
+                     (n − 1)      yn     xn
+           E (a) =           β0 +    − 2    ((n − 1) xn (yn − β0 ) + β1 n) ,
+                        n         n   n SSX
+which can be reduced to
+                                                   
+                                 β0 (n − 1) x2n + 1 − β1 xn + yn
+                         E (a) =                                 .
+                                              nSSX
+      Therefore the bias of the intercept is
+                                                     
+                                   β0 (n − 1) x2n + 1 − β1 xn + yn
+                   E (a − β0 ) =                                   − β0 .
+                                                nSSX
+
+
+      With Theorems 2 and 3, we can combine these using the linearity of expected
+                                                                         (n)
+values to determine the bias when predicting a new response Y
+                                                            b
+                                                             0                 .
+
+Corollary 1.       The overall bias induced by using anchor point (xn , yn ) is given by
+                      
+                  (n)
+             E Yb0 − y0 = E (a + bx0 − β0 − β1 x0 )
+                                              
+                           β0 (n − 1) x2n + 1 − β1 xn + yn
+                         =
+                                       nSSX                          
+                                     (n − 1) xn (yn − β0 ) + β1 n
+                         − β0 + x0                                − β1 ,
+                                                nSSX
+
+
+                                          Revista Colombiana de Estadística 41 (2018) 137155
+
+Using an Anchor to Improve Linear Predictions with Application to Predicting...           147
+
+
+
+which can be reduced algebraically to
+                          1 + (n − 1) x x
+                     (n)                 n 0
+                E Yb0 − y0 =                 (yn − β0 − β1 xn ).
+                                 nSSX
+    We next show when no bias is added when using an anchor. As mentioned
+previously, this typically happens only when the anchor lies directly on the true
+regression line; in other words when the anchor (xn , yn ) is such that yn = β0 +
+β1 x n .
+Corollary 2.     When using an anchor to predict y0 for any given x0 6= (n−1)x
+                                                                          −1
+                                                                               n
+                                                                                 ,
+                                                             
+no bias is introduced by the anchor, meaning E Yb0(n) = y0 , if and only if yn =
+β0 + β1 x n .
+
+Proof . Recall the overall bias is given by E Yb0(n) − y0
+                                                                        
+                                                                                  1+(n−1)xn x0
+                                                                              =      nSSX
+(yn − β0 − β1 xn ). This is zero if and only if either yn − β0 − β1 xn = 0 or
+                                                                        −1
+1 + (n − 1) xn x0 = 0, which is equivalent to yn = β0 + β1 xn or x0 = (n−1)x n
+                                                                               .
+Thus the overall bias is zero if and only if the anchor point is on the true regres-
+                                                                    −1
+sion line, given that you are not predicting where x0 =
+                                                                  (n−1)xn .
+
+
+2.3. Using an Anchor to Reduce the Mean Square Predictive
+       Error
+
+    We combine the previous theorems to deduce exactly when using an anchor
+will improve the MSPE of predicting a new response. If the variability is reduced
+more than the square of the bias is increased, the MSPE will shrink, which is
+desired. In Theorem 4 we derive an exact bound for when this occurs.
+
+Theorem 4.     Utilizing anchor point (xn , yn ) reduces the overall MSPE when the
+following inequality holds:
+                                                                                    !2
+     β0 (n − 1) x2n + 1 − β1 xn + yn
+                                               
+                                                  (n − 1) xn (yn − β0 ) + β1 n
+                                      − β0 + x0                                − β1        ≤
+                  nSSX                                      nSSX
+                                             !                                 !
+          2  (n − 1) x2n nx2n + 2n − x2n − 1          2xn nx2n + 2n − x2n − 1
+         x0                                     + x0
+                          n2 SSX 2                             n2 SSX 2
+                                                                   nx2n + 2n − x2n − 1
+                                                                                       
+                                                               +                         .
+                                                                    (n − 1) n2 SSX 2
+
+    Note that this bound is a function of the true regression slope and intercept,
+β1 and β0 . In practice, these are rarely known, which makes this bound dicult
+to use as a decision rule for including the use of an anchor (at least, outside of a
+simulation).
+
+Proof . Consider the following inequality
+                               M SP E (n) ≤ M SP E (n−1) .
+
+
+                                        Revista Colombiana de Estadística 41 (2018) 137155
+
+148                                          Alex G. Karanevich, Jianghua He & Byron J. Gajewski
+
+
+
+      This is equivalent to
+                                                               
+                   (n)           (n)            (n−1)           (n−1)
+            Bias2 e0     + V ar e0     ≤ Bias2 e0       + V ar e0
+
+                                                          
+                             (n)           (n−1)           (n)
+                      Bias2 e0     ≤ V ar e0       − V ar e0     .
+                                                                           
+                        2        (n−1)               (n−1)               1
+      But recall Bias         = 0, and that V ar e0
+                                e0                           = σ 2 1 + n−1 + x20 .
+                                                 
+                           2    (n)             (n)
+The remaining pieces, Bias     e0     and V ar e0     , were derived in Theorem 2
+
+and Theorem 3, and substituting them in to this inequality results in the formula
+given in the statement of Theorem 4.
+
+
+
+
+      Thus we see that any choice of anchor point will reduce the variance of predic-
+tion, but will almost always increase the bias of the prediction depending on how
+far away the anchor point is from the true regression line. To see why the bias
+increases based on how far the anchor is from the true regression line, observe that
+the square of the total bias is quadratic in yn , which must have exactly one root at
+                                  −1
+the vertex. Given that x0 6=
+                               (n−1)xn , this root occurs only when yn = β0 + β1 xn .
+Because it is quadratic in yn , the square of the bias will increase as (xn , yn ) moves
+further away from the true regression line.                  Therefore, using an anchor may be
+benecial or not, depending on how much bias is added.
+
+      The bound calculated in Theorem 4 could potentially be used as a decision
+rule for determining if using an anchor is benecial or not.                    Unfortunately, one
+needs to know the true values of β0 and β1 in order to use Theorem 4's result.
+In practice, one tends to not know the true regression parameters (which would
+result in no need of including an anchor), although with suciently informed prior
+knowledge, precise estimates may exist. Thus, when deciding whether to use an
+anchor or not, we suggest comparing the anchor model to a standard model by
+validating the model in some way (perhaps via a cross-validation approach). We
+show an example of this in Section 3.
+
+      Before moving to the application section, we note that many of the ideas
+in this paper have Bayesian connections.                    For example, consider performing a
+Bayesian analysis of classical regression. When utilizing the standard noninforma-
+tive prior distribution, the posterior mean estimates for the slope and intercept
+terms (and their standard errors) are equivalent to those obtained under frequen-
+tist OLS (Gelman 2014). It follows that Theorems 1-4 still hold under the Bayesian
+paradigm, meaning that an anchor can be utilized to reduce the variance of pos-
+terior predictions.
+
+
+
+
+3. Application to ALS Prediction
+      We next consider using an anchor to improve linear models that pertain to pre-
+dicting disease progression in patients with ALS. Note that the theory developed
+
+
+
+                                                  Revista Colombiana de Estadística 41 (2018) 137155
+
+Using an Anchor to Improve Linear Predictions with Application to Predicting...      149
+
+
+
+in part (2) applies to a single OLS regression (prediction for the individual). The
+following example expands on this by showing how utilizing an anchor can improve
+the average prediction error across several OLS regressions (prediction for each of
+several individuals).
+
+   Our data comes from the Pooled Resource Open-Access ALS Clinical Tri-
+als (PRO-ACT) database (Atassi, Berry, Shui, Zach, Sherman, Sinani, Walker,
+Katsovskiy, Schoenfeld, Cudkowicz & Leitner 2014). In 2011, Prize4Life, in col-
+laboration with the Northeast ALS Consortium, and with funding from the ALS
+Therapy Alliance, formed the PRO-ACT Consortium. The data available in the
+PRO-ACT Database has been volunteered by PRO-ACT Consortium members
+(https://nctu.partners.org/PRO-ACT/).
+
+   Recall ALS disease progression is tracked by the ALSFRS-R (see Section 1),
+our outcome variable, which is an integer value between 0 and 48, where 48 rep-
+resents the minimal amount of disease progression and 0 represents the maximal
+progression.   For each patient, we model the ALSFRS-R versus time (in days).
+Specically, time is measured in days from trial baseline, meaning x = 0 corre-
+                                                                           th
+sponds to the beginning of the trial and x = 365 corresponds to the 365         day after
+the trial began. On this scale, a patient's disease onset time is typically negative,
+as it happened before the trial began. We required patients to have the following:
+(1) at least two recorded ALSFRS-R scores before 3 months, for model building
+purposes; (2) non-missing value for time of disease onset; (3) at least one year be-
+tween the baseline and last ALSFRS-R score for MSPE-validation purposes. This
+resulted in 1606 patients, with an average ± standard error of 12±4.54 time-points
+per patient (and 3 ± 0.96 visits in the rst three months).
+
+   Note that we are now considering data on several distinct patients, each with
+their own ALSFRS-R trajectory. To demonstrate how utilizing the anchor-point
+improves OLS regression, we will simply model each patient independently with (1)
+a standard OLS regression model and (2) with an OLS regression model utilizing
+an anchor. Note that the ALSFRS-R follows a fairly linear decline, with wildly
+varying between-patient progression rates, justifying using linear models (Figure
+1). The assumed data-point, or anchor, utilized in the anchor model comes from
+assuming minimal disease progression at the time of disease onset. In other words,
+each patient's data is augmented with the additional data point given by the
+ordered pair   (xonset , 48), since 48 is the ALSFRS-R corresponding to minimal
+progression.
+
+   Our validation method is as follows:      we will compare the standard model
+                                                                                       0
+versus the anchor model by comparing their ability to predict each patient k s
+rst ALSFRS-R score after 365 days (1 year), observed at time xk,0 , using only
+ALSFRS-R scores measured before 92 days (3 months). Specically for both mod-
+els we calculate (for the 1606 patients)
+
+
+                                       v
+                                       uP           2
+                                       u 1606 b
+                        √              t k=1 Yk − Yk
+                            M SP E =                         ,
+                                                1606
+
+                                     Revista Colombiana de Estadística 41 (2018) 137155
+
+150                                                            Alex G. Karanevich, Jianghua He & Byron J. Gajewski
+
+
+
+                                    Subject ID #721819                            Subject ID #795938                                  Subject ID #4752
+
+
+
+
+                        50
+
+
+
+
+                                                                     50
+
+
+
+
+                                                                                                                        50
+                        40
+
+
+
+
+                                                                     40
+
+
+
+
+                                                                                                                        40
+                        30
+
+
+
+
+                                                                     30
+
+
+
+
+                                                                                                                        30
+                        20
+
+
+
+
+                                                                     20
+
+
+
+
+                                                                                                                        20
+                        10
+
+
+
+
+                                                                     10
+
+
+
+
+                                                                                                                        10
+                             −400    −200      0       200     400         −300      −100       100         300               −100     0      100    200    300       400
+
+                                    Subject ID #121870                            Subject ID #147882                                 Subject ID #382569
+       ALSFRS−R Score
+                        50
+
+
+
+
+                                                                     50
+
+
+
+
+                                                                                                                        50
+                        40
+
+
+
+
+                                                                     40
+
+
+
+
+                                                                                                                        40
+                        30
+
+
+
+
+                                                                     30
+
+
+
+
+                                                                                                                        30
+                        20
+
+
+
+
+                                                                     20
+
+
+
+
+                                                                                                                        20
+                        10
+
+
+
+
+                                                                     10
+
+
+
+
+                                                                                                                        10
+                             −300    −100      100       300               −400    −200     0         200         400        −300     −100          100         300
+
+                                    Subject ID #722036                            Subject ID #17035                                  Subject ID #121345
+                        50
+
+
+
+
+                                                                     50
+
+
+
+
+                                                                                                                        50
+                        40
+
+
+
+
+                                                                     40
+
+
+
+
+                                                                                                                        40
+                        30
+
+
+
+
+                                                                     30
+
+
+
+
+                                                                                                                        30
+                        20
+
+
+
+
+                                                                     20
+
+
+
+
+                                                                                                                        20
+                        10
+
+
+
+
+                                                                     10
+
+
+
+
+                                                                                                                        10
+
+
+
+
+                             −600       −200       0   200   400          −200        0     100 200 300                      −800      −400          0    200         600
+
+
+                                                       Time (days): Trial baseline is at day 0
+Figure 1: For nine randomly selected subjects, we plotted their ALSFRS-R versus time.
+                         The leftmost black square is the anchor, the rightmost square is the observed
+                         value Yk , and the gray triangles are observed scores. The dashed black lines
+                         denote days 0 and 92 of the trial, meaning observations between the two
+                         dashed lines were used for model tting.
+
+
+
+
+      bk is the predicted ALSFRS-R score for patient k at time xk,0 and Yk is the
+where Y
+true ALSFRS-R score at time xk,0 . Because we know the ALSFRS-R is bounded
+between 0 and 48, any model prediction that falls outside these bounds will be
+truncated to the closest boundary value before evaluating the MSPE. To assist
+in visualizing this data, Figure 1 shows the progression of the ALSFRS-R versus
+time for nine subjects (simple random sample without replacement).
+
+
+      The anchor model results in slightly more biased predictions compared to those
+of the standard model, as expected.                                                However, as demonstrated in the methods
+section, the variance of these errors is much smaller for the anchor model (Figure
+2). The resulting root MSPE of the anchor model is 7.8 while the standard model's
+MSPE is 13.0:                        we observe a large drop in prediction error when including the
+anchor.
+
+
+
+                                                                            Revista Colombiana de Estadística 41 (2018) 137155
+
+Using an Anchor to Improve Linear Predictions with Application to Predicting...                                         151
+
+
+
+                   Boxplot of prediction errors                        Kernel density of errors
+                              ^                                                 ^
+                              Yk − Yk                                           Yk − Yk
+
+
+
+
+                                                             0.08
+                                         ●                                     Anchor model
+                                         ●
+                                                                               Standard model
+
+
+
+
+             40
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                        ●                ●
+
+                        ●
+                        ●
+                        ●
+                        ●
+                        ●
+
+
+
+
+                                                             0.06
+                        ●
+                        ●
+                        ●
+                        ●
+                        ●
+             20         ●
+                        ●
+                        ●
+                        ●
+                        ●
+                        ●
+
+
+
+
+                                                   Density
+
+                                                             0.04
+             0
+
+
+
+
+                        ●
+                        ●
+                        ●
+                        ●
+                        ●
+
+
+
+
+                                                             0.02
+                        ●
+             −20
+
+
+
+
+                        ●
+                        ●
+                        ●
+
+                        ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+                                         ●
+             −40
+
+
+
+
+                                                             0.00
+
+
+                                         ●
+
+
+
+
+Figure 2: The raw prediction error for the anchor and standard model. The models'
+                                     bk −Yk was 3.1 and 2.1 respectively, with standard
+           mean error as measured by Y
+           deviations of 7.1 and 12.7.
+
+
+
+
+   It can be shown that for some patients, the prediction from the standard model
+is closer to the truth than the prediction from the anchor model. Perhaps we should
+only use the anchor model when the increase in bias is negligible? We could explore
+                                                                                                                         (a)
+this by taking the dierence between the prediction from the anchor model Y
+                                                                          b
+and the standard model Y       b (s)    ; if this dierence is suciently small in magnitude
+then the increase in bias from using the anchor model is negligible on average.
+                                                                                                  (a)       (s)
+In other words, for each patient consider calculating Tk = Y
+                                                           b
+                                                            k                                           − Ybk     , and then
+dening the prediction for patient k as
+
+                                             (
+                                                     (a)
+                                                  Ybk               if |Tk | ≤ Γ
+                                  Ybk =              (s)
+                                                  Ybk                otherwise
+
+for some constant Γ. Figure 3 shows how this changes the MSPE for various values
+                                                                                                (a)
+of Γ, as well the result from changing the rule to be Y
+                                                      bk = Yb
+                                                             k                                        if |Tk | ≥ Γ instead
+(meaning choose the anchor model if the dierence in the model predictions is
+large). From Figure 3 we see that naively using the anchor model for all patients
+outperforms any of the Γ and Tk decision-rule hybrids for this dataset.
+
+   Finally, we compare the anchor model to that of a logit transform model.
+The logit transform is a model which is more advanced, yet also more dicult to
+calculate and interpret. The logit transform model was chosen because it is one
+of the easier-to-understand models for modelling bounded data. We t the logit
+transform model by taking each ALSFRS-R score, dividing it by its maximum
+
+
+
+                                                  Revista Colombiana de Estadística 41 (2018) 137155
+
+152                                  Alex G. Karanevich, Jianghua He & Byron J. Gajewski
+
+
+
+of 48, and tting the resultant data (which is bounded between 0 and 1) with a
+regression model. In other words, for a given patient we t the following model:
+      yi
+         
+logit 48   = β0 + β1 xi + ij , where ij are independent errors that follow N (0, σ 2 ),
+β0 and β1 are the intercept and slope parameters, xi is the time-point associated
+with ALSFRS-R score yi . The MSPE of this model comes to be 14.65, signicantly
+higher than the MSPE for either the standard OLS model (12.95) or the anchor
+model (7.78).
+
+
+
+
+                                          Γ and Tk decision rule
+                         14
+                         12
+                         10
+                  MSPE
+                         8
+                         6
+
+
+
+
+                                  Standard model             Anchor if Tk ≥ Γ
+                                  Anchor model               Anchor if Tk ≤ Γ
+
+
+                              0      10        20       30         40           50
+
+                                                    Γ
+Figure 3: Shows the resulting MSPE for various cutos
+                                                √
+                                                      of Γ. Note that since the MSPE
+
+             is bounded below by the anchor model (          M SP E = 7.78), √
+                                                                             this shows that the
+             anchor model is uniformly better than the linear model (          M SP E = 12.95)
+             for this data.
+
+
+
+
+4. Discussion
+      In this paper, we discussed a simple and computationally inexpensive technique
+that may improve the predictive power in linear models. This method consists of
+creating an additional assumed data-point, referred to as an anchor, and including
+it in the OLS regression.         This is dierent than xed-intercept regression, as it
+allows the more weight to be put on the data with respect to parameter estimation.
+It has been shown in this paper that including an anchor theoretically decreases
+prediction variance at the cost of potentially increased bias. We demonstrated how
+using an anchor can improve linear predictions from modelling disease progression
+in ALS patients.
+
+
+
+                                             Revista Colombiana de Estadística 41 (2018) 137155
+
+Using an Anchor to Improve Linear Predictions with Application to Predicting...        153
+
+
+
+   Fitting the anchor model can be performed as easily and eciently as a stan-
+dard OLS regression, yet has the potential to be a much stronger predictive model.
+Furthermore, the interpretations of the anchor model's parameters remain largely
+unchanged from that of OLS regression, which is a huge advantage over other mod-
+els: the interpretability of the parameters is arguably one of the most attractive
+parts of linear models.
+
+   We imagine that utilizing an anchor in the way we have demonstrated will be
+of particular use when modelling a bounded linear process when one can obtain
+a measure of when the process rst began and/or ended.               The bounds give a
+justication for choosing the y -value of the anchor; without bounds it may be
+dicult to justify a value without rst looking at the data, potentially leading to
+overtting. However, as long as monotonicity approximately holds, one could still
+                               th
+use something such as the 99        percentile of the response in lieu if no bound exists.
+
+   While the results in this paper are done under the assumptions of frequentist
+OLS regression, it is in no way limited to this.        The idea of utilizing this addi-
+tional data-point can easily extend to other families of models such as generalized
+linear models, hierarchical models, and mixed models. For example, one can dra-
+matically improve the model performance in the ALS example by switching from
+independent linear regressions for each patient to a Bayesian hierarchical model;
+this allows patients to borrow information from one another and results in im-
+proved estimators due to shrinkage (Morris & Lysy 2012). This model is improved
+even further when it becomes a Bayesian hierarchical model that utilizes an an-
+chor for each patient (Karanevich, Statland, Gajewski & He 2018).              While less
+straightforward than OLS regression, one could also include additional random
+error associated with the anchor (either on the xn ,      yn , or both) in their model to
+allow for more exibility to the approach.
+
+   Deciding when to include an anchor for modelling is not straightforward.              If
+the goal is estimation, the induced bias may not be worth the reduced variability
+in estimates.   While we developed a theoretical bound for when an anchor will
+improve the MSPE, it depends on having theoretical knowledge of the underlying
+linear process, which is rarely possible in practice.       Thus we recommend using
+some sort of prediction validation (such as cross-validation) to compare utilizing
+an anchor versus a more standard approach. The validation scheme used in our
+ALS example is one way of doing this.          Other models might benet more from
+cross-validation, which builds a model on a training set and tests the model on a
+withheld validation set. Because some sort of validation is good standard practice
+when evaluating predictive models, we feel that this is a very small price to pay
+for a potentially dramatic improvement in predictive error.
+
+
+
+
+Acknowledgment
+   Study Funded by the Mabel A. Woodyard Fellowship in Neurodegenerative
+Disorders and the Roofe Fellowship in Neuroscience Research.              This work was
+supported by a CTSA grant from NCRR and NCATS awarded to the University
+of Kansas Medical Center for Frontiers: The Heartland Institute for Clinical and
+
+
+
+                                        Revista Colombiana de Estadística 41 (2018) 137155
+
+154                             Alex G. Karanevich, Jianghua He & Byron J. Gajewski
+
+
+
+Translational Research # UL1TR000001 (formerly #UL1RR033179).                  The con-
+tents are solely the responsibility of the authors and do not necessarily represent
+the ocial views of the NIH, NCRR, or NCATS.
+
+
+                   Received: October 2017  Accepted: March 2018
+                   
+
+
+
+References
+Amemiya, T. (1973), `Regression analysis when the dependent variable is truncated normal',   Econometrica 41(6), 9971016.
+Armon, C., Graves, M., Moses, D., Forté, D., Sepulveda, L., Darby, S. & Smith, R. (2000), `Linear estimates of disease progression predict survival in patients with amyotrophic lateral sclerosis',   Muscle & Nerve 23(6), 874882.
+Atassi, N., Berry, J., Shui, A., Zach, N., Sherman, A., Sinani, E., Walker, J., Katsovskiy, I., Schoenfeld, D., Cudkowicz, M. & Leitner, M. (2014), `The pro-act database: design, initial analyses, and predictive features.',   Neurology 83(19), 17191725.
+Caruana, R., Lou, Y., Gehrke, J., Koch, P., Sturm, M. & Elhadad, N. (2015), Intelligible models for healthcare:    Predicting pneumonia risk and hospital 30-day readmission,   in `Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining', ACM, pp. 17211730.
+Cedarbaum, J., Stambler, N., Malta, E., Fuller, C., Hilt, D., Thurmond, B. & Nakanishi, A. (1999), `The alsfrs-r: a revised als functional rating scale that incorporates assessments of respiratory function',   Journal of the Neurological Sciences 169(1), 1321.
+Gelman, A. (2014),     Bayesian data analysis, tercera edn, CRC Press, Boca Raton, FL.
+Hoerl,   A. & Kennard,      R. (2000),   `Ridge regression:    Biased estimation for nonorthogonal problems',   Technometrics 42(1), 8086.
+Karanevich, A., Statland, J., Gajewski, B. & He, J. (2018), `Using an onsetanchored bayesian hierarchical model to improve predictions for lateral sclerosis disease progression',   BMC Medical Research Methodology 18(1), 19.
+Kutner, M., Nachtsheim, C. & Neter, J. (2004), Applied linear regression models, cuarta edn, McGraw-Hill, New York.
+Lesare, E., Rizopoulos, D. & Tsonaka, R. (2007), `The logistic transform for bounded outcome scores',   Biostatistics 8(1), 7285.
+Magnus, T., Beck, M., Giess, R., Puls, I., Naumann, M. & Toyka, K. (2002), `Disease progression in amyotrophic lateral sclerosis: Predictors of survival', Muscle & Nerve 25(5), 709714.
+Morris, C. & Lysy, M. (2012), `Shrinkage estimation in multilevel normal models', Statistical Science 27(1), 115134.

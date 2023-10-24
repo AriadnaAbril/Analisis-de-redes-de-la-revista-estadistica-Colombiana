@@ -1,0 +1,434 @@
+Comparación de pruebas diagnósticas desde la curva ROC
+Fundación Caubet-Cimera Illes Balears
+Resumen
+Se aborda el problema de comparar el poder de clasificación de métodos diferentes a partir de la curva ROC. Por un lado, se propone un método de comparación basado en la medida del supremo y, por otro, una solución al problema de comparar más de dos pruebas diagnósticas a través del área bajo la curva ROC (AUC) a partir de sus propiedades asintóticas. También se comprueba la validez de los estimadores propuestos para muestras pequeñas a partir del método bootstrap. Finalmente, se aplican los métodos propuestos en la predicción de diagnósticos sépticos (infecciosos) en pacientes admitidos en la Unidad de Cuidados Intensivos Pediátricos (UCIP) del Hospital Central de Asturias.
+Palabras clave: curvas ROC, sensibilidad, especificidad, AUC, bootstrap.
+Introducción
+Un problema que se da en muchos ámbitos es el de clasificar individuos con base en una o varias variables predictoras. Cuando el número de grupos es dos, a partir de los modelos de regresión logística, y dada una colección de variables, se pueden obtener pesos para cada variable cuyos valores pueden interpretarse como las probabilidades de pertenencia a uno de los grupos fijado como objetivo. En este tipo de problemas, hay dos fuentes de error: el que se comete cuando a un individuo no séptico se le clasifica erróneamente (la proporción de individuos no positivos clasificados correctamente se conoce como especificidad), y por otro, el que se comete cuando a un individuo séptico (infectado por un virus) se le clasifica como no séptico, siendo la sensibilidad la proporción de individuos positivos clasificados de forma adecuada. Un buen sistema de clasificación será aquel que maximice la sensibilidad y la especificidad; obviamente, hay que tener en cuenta que los errores cometidos no tienen siempre la misma importancia, siendo labor del experto valorar el efecto de los mismos. Uno de los métodos utilizados habitualmente para determinar la calidad diagnóstica es la conocida curva ROC, que representa sobre un sistema de coordenadas la sensibilidad y la especificidad, y que ha sido ampliamente estudiada por autores como Lloyd (1998, 1999), Zhou & Castelluccio (2003) o Cai & Pepe (2002), entre muchos otros.
+    En este trabajo se hace un repaso de algunos de los métodos utilizados para
+la estimación de la curva ROC (sección 2). La sección 3 se dedica al estudio del
+área bajo la curva ROC (AUC). En la sección 4 se propone un método para la
+comparación de k-pruebas diagnósticas que se aplica a un caso práctico en la
+sección 5. Finalmente, en la sección 6 se propone y estudia la medida del supremo
+para comparar dos pruebas curvas ROC.
+
+
+2. La curva ROC
+    Se tiene una medida determinada X (recordar que esta medida puede resultar
+de realizar una regresión logística sobre varias variables de distintas naturalezas)
+realizada sobre una población de positivos XP , y otra de negativos XN , con función
+de distribución G y F , respectivamente. Suponiendo que E(XN ) ≤ E(XP ), para
+clasificar a los individuos en uno u otro grupo, se debe fijar un criterio, punto de
+corte, a partir del cual un individuo será considerado positivo. Por tanto, fijado
+un punto de corte t, la sensibilidad de la prueba vendrá determinada por 1 − G(t),
+siendo F (t) su especificidad y quedando por tanto determinada la curva ROC por
+las coordenadas del vector (1 − F (t), 1 − G(t)), o, equivalentemente, por la función
+1 − G(F −1 (1 − t)), t ∈ [0, 1]. A modo de ejemplo, en la figura 1 se presenta un
+modelo de dos distribuciones para una hipotética muestra de positivos y otra de
+negativos y la curva ROC resultante.
+    Como siempre, el problema surge cuando se desconocen las distribuciones de
+la variable en las poblaciones de positivos y negativos y deben estimarse a partir
+de muestras aleatorias. Una de las posibilidades es suponer que las poblaciones
+siguen algún modelo paramétrico, el gaussiano usualmente, o bien, aplicar algún
+
+Figura 1: En la gráfica de la izquierda se ven las densidades de las poblaciones de origen.
+          En la gráfica de la derecha se muestra la curva ROC resultante.
+
+
+método no paramétrico, siendo los más frecuentes sustituir las funciones de dis-
+tribución desconocidas por sus Funciones de Distribución Empíricas (FDE) o por
+las Funciones de Distribución Empírica Suavizadas (FDES).
+
+
+2.1. El modelo binormal
+    El modelo binormal es introducido inicialmente por Dorfman & Alf (1969) y
+tratado más recientemente por Hsieh & Turnbull (1996). En él se supone que existe
+una función monótona H de modo que transforme a las dos poblaciones de origen
+en normales, esto es, tanto H(XN ) como H(XP ) siguen una distribución normal
+con medias µ1 y µ2 , y varianzas σ12 y σ22 , respectivamente. Así las cosas, si se
+denota por Φ la función de distribución normal estándar, la curva ROC tiene la
+expresión
+                               
+     ROC(t) =1 − G F −1 (1 − t)
+                                                                          
+                         −1 −1                    µ1 + σ1 Φ−1 (1 − t) − µ2
+            =1 − GHH F (1 − t) = 1 − Φ                                         (1)
+                                                            σ2
+
+   Su estimador natural sustituye las medias y varianzas involucradas en (1) por
+sus estimadores máximo verosímiles, resultando
+                                                             
+                                     µ    b1 Φ−1 (1 − t) − µ
+                                     b1 + σ                b2
+                 ROCp (t) = 1 − Φ                                            (2)
+                                               σ
+                                               b2
+
+                                          Revista Colombiana de Estadística 30 (2007) 163–176
+
+166                                                                 Pablo Martínez-Camblor
+
+   Algunas de las propiedades del estimador “semiparamétrico” de la curva ROC
+son tratadas en Hsieh & Turnbull (1996). Cai & Pepe (2002) también estudian las
+posibilidades de los métodos paramétricos y semiparamétricos, realizando estudios
+de simulación y construyendo bandas de confianza en ambos casos.
+
+
+2.2. Estimación empírica de la curva ROC
+   Si no se hace ninguna suposición sobre la distribución de las variables, el método
+más frecuente de estimación consiste en sustituir las funciones de distribución
+desconocidas por sus correspondientes Funciones de Distribución Empíricas. De la
+expresión (1), se tiene que, dadas muestras de positivos XP y de negativos XN de
+tamaños m y n y distribuciones G y F , respectivamente, la estimación empírica
+para la curva ROC viene dada por
+                                                         
+                          \
+                          ROC(t) = 1 − G b m Fb − (1 − t)
+                                                n                                  (3)
+
+donde G b m es la función de distribución empírica asociada a la muestra XP y
+Fbn− = inf {y : Fn−1 (y)}, siendo Fbn la función de distribución empírica asociada
+a la muestra XN . Cuando las distribuciones de origen F y G son absolutamen-
+te continuas con densidades f y g, respectivamente,
+                                                      se tiene que para cualquier
+subintervalo (a, b) de (0, 1) f G−1 (t) /g G−1 (t) está acotada y n/m → λ > 0.
+Hsieh & Turnbull (1996) prueban la consistencia fuerte de la curva ODC1 (Ordi-
+nal Dominance Curve) y que existe un espacio probabilístico en el que se pueden
+                                                  (n)     (n)
+definir dos puentes brownianos independientes B1 y B2 de modo que
+  √                               
+             b− (t)) − F (G−1 (t)) =
+      n Fbn (Gm
+                                             
+              √ (n)        −1
+                                  f G−1 (t) (n)                        
+               λB1 F (G (t) +                 B (t) + o n−1/2 (log n)2   c.s. (4)
+                                    g G−1 (t) 2
+
+uniformemente en [a, b]. Este resultado es extendible directamente a la curva ROC.
+
+
+2.3. Estimación suavizada de la curva ROC
+    Si se supone que las variables aleatorias en estudio son continuas, y se desea que
+la estimación de la distribución conserve estas propiedades, se remplaza la función
+de distribución real por la Función de Distribución Empírica Suavizada (FDES)
+en lugar de su FDE. La FDES propuesta por Nadaraya (1964) queda definida por
+                                        n Z       x − s
+                                   1 X t             i
+                        Fen (t) =               K           ds                     (5)
+                                  nhn i=1 −∞          hn
+
+donde K es una función núcleo y hn una secuencia de números positivos usualmente
+denominada “ancho de banda”. Un amplio estudio de este tipo de estimaciones
+puede verse en Silverman (1986) o Wand & Jones (1995).
+   1 Curva resultante de invertir los ejes de la curva ROC, definida por Bamber (1975) y con las
+
+mismas propiedades y forma que la curva ROC pero de expresión más sencilla.
+
+
+                                         Revista Colombiana de Estadística 30 (2007) 163–176
+
+Comparación de pruebas diagnósticas desde la curva ROC                              167
+
+   Así las cosas, la estimación suavizada de la curva ROC tiene la expresión
+                                                        
+                          ^ =1−G
+                          ROC(t)         em Fe−1 (1 − t)
+                                               n                             (6)
+Lloyd & Yong (1999) estudian las propiedades de este estimador y calculan su
+esperanza y varianza bajo ciertas condiciones. Hall & Hyndman (2003) plantean
+criterios para optimizar la elección del parámetro hn y Hall et al. (2004) muestran
+métodos para construir bandas de confianza para el estimador suavizado de la
+curva ROC.
+
+
+3. El área bajo la curva ROC
+    Una vez fijado un criterio de pertenencia, la curva ROC da una medida de
+la calidad de clasificación que se obtiene con la variable aleatoria en estudio. Así
+pues, considerando todos los puntos conjuntamente, se obtiene una medida de la
+“bondad global” de las predicciones realizadas. El área bajo la curva ROC (AUC)
+se define como:                  Z 1
+                                                       
+                         AU C =      1 − G F −1 (1 − t) dt                       (7)
+                                 0
+Nótese que solo haciendo un cambio de variable se obtiene
+                Z 1
+   AU C = 1 −       G(F −1 (t)) dt
+                Z0                 ZZ y
+         = 1 − G(s) dF (s) = 1 −          dG(x) dF (y) = P{XP > XN } = θ
+                                         −∞
+
+    En función de la estimación usada para la curva ROC, se obtiene una estimación
+diferente para el AUC, cuando la estimación es la dada en (3), el estimador resul-
+tante para el área bajo la curva es proporcional al estadístico de Mann-Whitney,
+                          Z                       Xm X n
+                  [
+                  AU  C = Fbn (s) dGbm (s) = 1           I{Xi <Yj }            (8)
+                                              nm i=1 j=1
+
+    Hsieh & Turnbull (1996) demuestran que, bajo las condiciones pedidas para
+(5), se da la siguiente igualdad:
+                          √
+                               [
+                            n(AU  C − θ) = N(0, σ) + oP (1)               (9)
+                                             R 1          R 1 2
+donde σ 2 = kF G−1 k∗ + kGF −1 k∗ y khk∗ = 0 h2 dt − 0 h dt .
+    Por otro lado, si se utiliza la función de distribución suavizada como estimador
+de la función de distribución real, el estimador para el AUC es
+                                         Z
+                                ]
+                                AU C = Fen (s) dG   em (s)                      (10)
+
+
+   En condiciones bastante generales, se comprueba que AU  ]  C y AU[  C tienen la
+misma distribución asintótica. Basta tener en cuenta el siguiente resultado:
+
+                                     Revista Colombiana de Estadística 30 (2007) 163–176
+
+168                                                                 Pablo Martínez-Camblor
+
+Proposición 1. Dada una muestra aleatoria simple de tamaño n procedente de
+una variable aleatoria, X, cuya función de densidad f , está acotada, se anula fuera
+de un intervalo compacto y tiene segunda derivada continua y acotada. Dada Fen la
+FDES definida en (5). Si la función núcleo K es de variación acotada y se anula
+fuera de un intervalo compacto y hn cumple
+                                           log h−1
+                                                n
+                                                   →0
+                                                   −
+                                             nh3n n
+entonces,
+                          sup Fen (X, t) − Fn (X, t) = o(hn )       c.s.                 (11)
+                          t∈R
+
+Demostración. Se supondrá que f (x) = 0 ∀x ∈      / [a, b] y que K(x) = 0 ∀x ∈
+                                                                             / [−s, s]
+luego si J = (a − shn , b + shn ) se da la igualdad
+
+                  sup Fen (X, t) − Fn (X, t) = sup Fen (X, t) − Fn (X, t)
+                  t∈R                             t∈J
+
+por otro lado, siempre es cierta la desigualdad
+                                                            
+  sup Fen (X, t) − Fn (X, t) ≤ sup Fen (X, t) − E Fen (X, t)
+   t∈J                               t∈J
+                                                         
+         + sup E Fen (X, t) − E Fn (X, t) + sup E Fn (X, t) − Fn (X, t)                  (12)
+            t∈J                                         t∈J
+
+aplicando la desigualdad de Smirnov, y de la relación entre hn y n impuesta en el
+enunciado de la proposición, se tiene que
+                                                      
+                  sup E Fn (X, t) − Fn (X, t) ≤ o h2n        c.s.            (13)
+                        t∈J
+
+dado que la segunda derivada de f es continua y acotada, se verifica que
+                                                
+                   sup E Fen (X, t) − E Fn (X, t) ≤ o(hn )                               (14)
+                          t∈J
+
+del teorema de Fubini y el del valor medio del cálculo integral se tiene que existe
+un ξt ∈ (a − sh, t) tal que
+
+donde L = supn (b − a + 2shn ) < ∞.
+   Dado que la derivada F esta acotada, se tiene que
+
+la función es de variación acotada y se anula fuera de un intervalo acotado, sa-
+tisfaciendo así (15), luego se podrá aplicar la ley del logaritmo iterado dada por
+Stute (1982) para obtener
+
+quedando demostrado el resultado.
+
+
+4. Comparación de k-curvas ROC
+    En esta sección se aborda el problema de comparar simultáneamente dos o más
+curvas ROC. Para ello se construye un estadístico basado en los AUC y se estudia
+su distribución asintótica. Posteriormente, se realizan algunas simulaciones que
+muestran su comportamiento.
+    Dados m individuos postivos y n negativos, se toman k-medidas sobre cada uno
+de ellos cuyas distribuciones k-dimensionales vienen dadas por F y G, respecti-
+vamente. Si F1 , . . . , Fk y G1 , . . . , Gk son las funciones de probabilidad marginales,
+se tiene que, si cada curva ROC es Fi (G−1         i (t)) y se denota por θi a su AU C, el
+objetivo será contrastar             (
+
+√ En el siguiente resultado se demuestra la normalidad asintótica de la expresión
+   am,n (k) − ~
+ n(b          a(k)).
+Teorema 1. Dada una variable k-dimensional, X, una muestra de m positi-
+vos, XP = {XP 1 , . . . , XP m }, donde para cada i ∈ 1, . . . , m se tiene XP i =
+{xP i,1 . . . , xP i,k }, y una muestra de n negativos XN = {XN 1 , . . . , XN n }, nue-
+vamente, para cada i ∈ 1, . . . , n se tiene XN i = {xN i,1 . . . , xN i,k }. Sean F y G
+
+                                                 Revista Colombiana de Estadística 30 (2007) 163–176
+
+170                                                                        Pablo Martínez-Camblor
+
+las funciones de distribución en los positivos y en los negativos, respectivamente,
+entonces, según las hipótesis de la proposición 1,
+                          √                    L
+                             am,n (k) − ~
+                           n(b          a(k)) −→ Nk (0, Σ)                                         (21)
+
+donde Σ es la matriz de varianzas y covarianzas definida por
+
+sin más que aplicar el teorema del límite central k-dimensional se tiene que si
+lı́mn n/m = λ,
+                          √              L
+                            n Pb
+                               am,n (k) −→ Nk (0, Σ)                       (26)
+
+con un poco de cálculo y desde la independencia de los sumandos involucrados en
+(25) se obtiene que Σ es la matriz de varianzas y covarianzas definida en (22).
+
+                                                                √ la proposición 1 se
+    Por otro lado, para cada i ∈ 1, . . . , k y directamente desde
+tiene que la matriz de varianzas y covarianzas del estadístico n(b  am,n (k)−~a(k)−
+Pbam,n (k)) tiende a ser la matriz nula y, por tanto,
+                        √                                P
+                         n(b          a(k) − Pb
+                           am,n (k) − ~       am,n (k)) −→ 0                                       (27)
+
+Aplicando el lema de Slutsky se tiene que
+                           √                    L
+                              am,n (k) − ~
+                            n(b          a(k)) −→ Nk (0, Σ)                                        (28)
+
+concluyendo así la demostración del resultado.
+
+                                           Revista Colombiana de Estadística 30 (2007) 163–176
+
+Comparación de pruebas diagnósticas desde la curva ROC                              171
+
+   Nótese que si I k es la matriz identidad k-dimensional y se define la matriz
+                                                        
+                                         1 1 ··· 1
+                                      1                 
+                           U = I k −  ... ... . . . ...                     (29)
+                                      k
+                                         1 1 ··· 1
+U es una matriz simétrica de rango k − 1 y, por tanto, bajo las condiciones del
+teorema 1 y, directamente de este,
+                   √                      L
+                       am,n (k) − ~
+                     n(b          a(k))U −→ Nk−1 (0, U ΣU )                (30)
+                                                   a(k)U = 0; por tanto, asumiendo
+Según la hipótesis nula dada en (18), se tiene que ~
+esta hipótesis y si U ΣU − denota la matriz pseudoinversa de U ΣU , se sigue que
+                     √                   √              L
+                        am,n (k)U ΣU − nb
+                       nb                    am,n (k)t −→ χ2k−1                (31)
+deduciéndose así que
+
+  R.C. =
+                                 b m,n (k)U ΣU − a
+  {XP ∈ Rm×k , XN ∈ Rn×k tal que a               b m,n (k)t > χ2k−1,α }            (32)
+es una región crítica asintótica con significación α para contrastes del tipo (18).
+   Para ilustrar los resultados que la aplicación de este test puede tener, se dan a
+continuación los resultados de algunas simulaciones realizadas.
+    En el problema H1 las k poblaciones de negativos proceden de distribucio-
+nes normales estandarizadas y las k poblaciones de positivos de poblaciones cuya
+función de densidad viene determinada por ϕ1,1 (siendo ϕµ,σ la densidad de una
+normal con media µ y varianza σ 2 ); por tanto, la hipótesis nula es cierta. En el pro-
+blema H2, las k poblaciones de negativos vuelven a proceder de una distribución
+gaussiana estandarizada pero, en este caso, una de las poblaciones de positivos
+procede de una distribución con densidad ϕ2,1 mientras que las k − 1 restantes
+proceden de poblaciones con densidades ϕ1,1 . En la tabla 1 se muestran las pro-
+porciones de rechazos observadas en 2000 repeticiones para distintos valores de k
+y siendo todos los tamaños muestrales iguales a n.
+    En las simulaciones realizadas se observa que el estadístico sobreestima el ta-
+maño del test y que el cómputo de la aproximación se hace lento cuando aumenta
+el número de curvas, si bien para la hipótesis alternativa propuesta, se obtiene una
+potencia elevada.
+
+
+5. Aplicación práctica
+    Se presenta a continuación una de las múltiples aplicaciones prácticas que tie-
+nen los métodos descritos en este trabajo; en concreto, el problema que inicialmente
+lo motivó, fruto de la colaboración entre el Departamento de Estadística de la Uni-
+versidad de Oviedo y la Unidad de Cuidados Intensivos Pediátricos del Hospital
+Central de Asturias (Rey et al. 2007).
+
+    El objetivo es determinar qué variable, entre tres propuestas, discrimina mejor
+a los pacientes sépticos de los no sépticos. Dos de las variables son usualmente
+utilizadas para este propósito; la Procalcitonina (PCT) y la Proteína C-Reactiva
+(PCR), la tercera es el nivel de Leucocitos (LEU). Se trata de determinar si estas
+variables tienen la misma capacidad de determinar si un paciente tiene o no sepsis.
+    La muestra de la que se dispone consta de 115 pacientes sépticos y 215 no
+infecciosos. Algunas de las estadísticas descriptivas para la muestra son:
+
+                           Tabla 2: Estadísticas descriptivas.
+
+   Las áreas bajo las curvas ROC construidas a partir de las variables PCT, PCR
+y LEU son de 0.913, 0.755 y 0.528, respectivamente. La matriz de varianzas y
+covarianzas definida en (22) para este caso viene dada por
+
+    Utilizando los resultados obtenidos en la sección 4, se obtiene que el valor del
+estadístico es 140.768 para una significación asintótica menor de 0.0001; por tanto,
+la hipótesis nula será rechazada. Las diferencias encontradas entre los métodos son
+significativas; el método basado en la PCT es mejor que el resto ya que su AUC
+es notablemente mayor que el de los otros dos biomarcadores estudiados.
+            Figura 2: Curvas ROC para los biomarcadores considerados.
+6. Comparación de dos curvas ROC
+    La curva ROC es una herramienta útil para determinar la calidad diagnóstica
+de un grupo de variables. En ocasiones, se plantea el problema de comparar dos
+métodos diagnósticos. En la sección anterior se vio cómo el área bajo la curva
+ROC puede utilizarse para este propósito, considerándose la diferencia entre estas
+áreas para determinar la calidad diagnóstica. Con este método no se comparan
+directamente las curvas ROC sino que se hace a través de sus respectivos AUC,
+existiendo funciones muy diferentes con idénticos AUC. Una posible solución sería
+el uso de la distancia del supremo (Kolmogorov-Smirnov) entre las curvas. Como
+se puede ver en las siguientes simulaciones, este método es menos potente en el
+caso de que las curvas sean iguales, pero diferencia casos “patológicos” en los que
+las curvas sean diferentes pero sus AUC iguales.
+    A continuación, se muestra la proporción de rechazos obtenidos en 2000 simu-
+laciones por la distancia del supremo, SUP y por la diferencias entre las áreas bajo
+la curva ROC, AUC, cuando se estima la función de distribución real mediante la
+función de distribución empírica aproximando la distribución de los estadísticos
+mediante el método bootstrap. En los tres problemas que se proponen, la función
+de densidad de la población de negativos viene determinada por ϕ0,1 (t). En H1
+las dos distribuciones de positivos, G1 y G2 , proceden de variables con función
+de densidad ϕ1,1 (t) siendo ambas curvas iguales. En el problema H2, G1 proce-
+de de una variable con densidad ϕ1,1 (t) y siendo ϕ2,1 la densidad de G2 . Ambas
+tienen diferentes AUC. Por último, en H3 se han buscado curvas que, a pesar de
+tener el mismo AUC, son distintas, viniendo determinadas por distribuciones con
+densidades, 0.6ϕ0.5,2 (t) + 0.4ϕ3.426,1 (t) y ϕ1,1 . En todos los casos se ha hecho que
+n1 = n2 = n realizando las simulaciones para distintos valores de n.
+    En los resultados de las simulaciones, mostrados en la tabla 3 se aprecia cómo
+el test basado en el área bajo la curva ROC no detecta curvas distintas del tipo
+
+Figura 3: En las gráficas de la izquierda se ven las densidades de las dos poblaciones de
+          negativos en H2 (arriba) y las dos poblaciones de negativos en H3 (abajo).
+          A la derecha se muestran las respectivas curvas ROC resultantes.
+
+dado en la hipótesis H3 (caso patológico en el que dos curvas distintas tienen el
+mismo AUC), siendo más potente cuando los AUC son realmente distintos (hipó-
+tesis H2). Cabe destacar también que los tamaños obtenidos cuando se utilizan la
+aproximación bootstrap (caso en el que la hipótesis nula es cierta, considerado en la
+hipótesis H1) para la distancia del supremo son bastantes menores de lo esperado.
+
+7. Conclusiones
+    En este trabajo se revisan algunos de los métodos comúnmente utilizados en
+la estimación y comparación de las curvas ROC. Se presenta un método para la
+comparación de dos o más curvas construidas desde varios biomarcadores para un
+mismo diagnóstico estudiándose la distribución asintótica del estadístico resultan-
+                           Tabla 3: Potencias estimadas.
+
+te. Se muestra el rendimiento que mediante esta técnica se obtiene en un pequeño
+estudio de simulación y, posteriormente, se aplica a un problema real. Finalmente,
+se estudia la utilidad y el rendimiento de la medida de Kolmogorov-Smirnov para
+comparar curvas ROC.
+Referencias
+Bamber, D. (1975), ‘The Area Above the Ordinal Dominance Graph and the Area Below the Receiver Characteristic Graph’, Journal of Mathematical Psychology 12, 387–415.
+Cai, T. & Pepe, M. S. (2002), ‘Semiparametric Receiver Operating Characteristic Analysis to Evaluate Biomarkers for Disease’, Journal of the American Statistical Association 97(460), 1099–1107.
+Dorfman, D. D. & Alf, E. (1969), ‘Maximum Likelihood Estimation of Parameters of Signal Detection Theory and Determination of Confidence Interval–Rating Method Data’, Journal of Mathatematical Psychology 6, 487–496.
+Hall, P. G. & Hyndman, R. J. (2003), ‘An Improved Method for Bandwidth Selection When Estimating ROC Curves’, Statistics and Probability Letters 64(2), 181–189.
+Hall, P. G., Hyndman, R. J. & Fan, Y. (2004), ‘Nonparametric Confidence Interval for Receiver Operating Characteristic Curve’, Biometrika 91(3), 743–750.
+Hsieh, F. & Turnbull, B. W. (1996), ‘Nonparametric and Semiparametric Estimation of the Receiver Operating Characteristic Curve’, Annals of Statistics 24(1), 25–40.
+Lloyd, C. J. (1998), ‘Using Smoothed Receiver Operating Characteristic Curves to Summarize and Compare Diagnostic System’, Journal of the American Statistical Association 93(444), 1356–1365.
+Lloyd, C. & Yong, Z. (1999), ‘Kernel Estimators of the ROC Curve are Better than Empirical’, Statistics Probability Letters 44(3), 221–228.
+Nadaraya, E. A. (1964), ‘Some New Estimates for Distributions Functions’, Theory Probability Application 9, 497–500.
+Rey, C., Los Arcos, M., Concha, A., Medina, A., Prieto, S., Martínez-Camblor, P. & Prieto, B. (2007), ‘Procalcitonin and C-reactive Protein as Markers of Systemic Inflammatory Response Syndrome Severity in Critically ill Children’, Intensive Care Medicine 33(3), 477–484.
+Silverman, B. W. (1986), Density Estimation for Statistics and Data Analysis, Chapman and Hall, Londres.
+Stute, W. (1982), ‘A Law of the Logarithn for Kernel Density Estimatiors’, Annals of Probability 10(2), 414–422.
+Wand, M. P. & Jones, M. C. (1995), Kernel Smoothing, Chapman and Hall.
+Zhou, X. & Castelluccio, P. (2003), ‘Nonparametric Analysis for the ROC Areas of two Diagnostic Test in the Presence of Nonignorable Verification Bias’, Journal of Statistics Planning and Inference 115, 193–213.

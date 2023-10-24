@@ -1,0 +1,1220 @@
+Estimación de las componentes de un modelo de coeficientes dinámicos mediante las ecuaciones de estimación generalizadas
+Universidad Nacional de Colombia 
+Resumen
+Se propone una metodología para estimar las componentes de un modelo de coeficientes dinámicos mediante las ecuaciones de estimación generalizadas (Liang & Zeger 1986), con el propósito de incluir directamente en la estimación la posible correlación de las medidas repetidas de cada individuo. La expansión de los coeficientes dinámicos del modelo se lleva a cabo a través de regresión spline (Huang et al. 2002). También se propone utilizar el criterio de información de Akaike en las ecuaciones de estimación generalizadas (QIC) (Pan 2001) como selector de modelos. Mediante simulación se compara la metodología propuesta con la metodología presentada por Wu & Zhang (2006), donde se estiman las componentes del modelo mediante mínimos cuadrados ponderados y se utiliza el criterio de información de Akaike (AIC) como selector de modelos, obteniéndose que en los escenarios simulados la metodología propuesta presenta mejores resultados con relación al error cuadrático medio promedio. Para ilustrar la estrategia de estimación propuesta, se considera el conjunto de datos ACTG 315 (Liang et al. 2003) asociado con un estudio de sida, en el que se modela dinámicamente la relación entre la carga viral y el conteo de células CD4+.
+Palabras clave: criterio de información de Akaike, ecuaciones de estimación generalizadas, mínimos cuadrados ponderados, modelo de coeficientes dinámicos, regresión spline.
+
+
+
+Abstract
+a Estudiante de doctorado. E-mail: jcsosam@unal.edu.co
+b Profesor asociado. E-mail: lgdiazm@unal.edu.co
+
+
+
+
+                                          89
+
+90                                              Juan Camilo Sosa & Luis Guillermo Díaz
+
+          A methodology to estimate time-varying coefficient model’s components
+      through generalized estimation equations (Liang & Zeger 1986) is proposed,
+      in order to include directly in the estimation the possible correlation between
+      repeated measurements of each subject. Expansion of the time-varying coef-
+      ficients is done by means of regression spline methods (Huang et al. 2002).
+      Furthermore, is proposed the use of the Akaike’s information criterion in
+      generalized estimating equations (QIC) proposed by Pan (2001) like model
+      selector. Through simulation are compared the proposed methodology and
+      the methodology presented by Wu & Zhang (2006), where model’s compo-
+      nents are estimated through weighted least squares and Akaike’s informa-
+      tion criterion (AIC) is used like model selector. It resulted that the proposed
+      methodology gives a better behavior in relation with the average mean squa-
+      re error. In order to illustrate the methodology, is taken into account the
+      data base ACTG 315 (Liang et al. 2003) related to a AIDS study, where it
+      is investigated the relationship between the viral charge and the CD4+ cell
+      count.
+      Key words: AIC, Generalized estimation equations, Regression spline, Lon-
+      gitudinal data, Time-varying coefficient model, Weighted least squares.
+
+
+
+1. Introducción
+   El análisis de datos longitudinales surge cuando un conjunto de n individuos
+es observado reiteradamente a través del tiempo, registrando los valores de la
+respuesta de interés junto con las respectivas covariables que pueden depender o
+no del instante en que sean medidas. Debido a la naturaleza misma de este tipo
+de datos, una característica fundamental que los distingue, y que debe tenerse en
+cuenta en el modelamiento, es la posible correlación dada entre las mediciones
+repetidas de la variable respuesta en cada individuo, considerando las mediciones
+entre los individuos independientes. Esto es, las mediciones son correlacionadas
+dentro e independientes entre individuos. Así, se quiere identificar la evolución de la
+variable respuesta y determinar cómo es afectada por las covariables. Por ejemplo,
+en estudios de medicina, interesa evaluar el efecto de la dosis de un medicamento
+u otros factores asociados, como el género del paciente, sobre el progreso de alguna
+enfermedad en el tiempo.
+    Las técnicas paramétricas para el análisis de datos longitudinales han sido
+estudiadas extensivamente en la literatura (Diggle et al. 1994, Davis 2002, Verbeke
+& Molenberghs 2000, Fitzmaurice et al. 2009). Aunque el enfoque paramétrico es
+útil, siempre surgirán dudas sobre la adecuación de los supuestos del modelo y
+el impacto potencial de la falta de especificaciones del modelo sobre el análisis
+(Hoover et al. 1998).
+    Las técnicas no paramétricas han sido introducidas recientemente en el análisis
+de datos longitudinales ya que permiten una dependencia funcional más flexible de
+la variable respuesta sobre las covariables. Hart & Wehrly (1986), Altman (1990) y
+Hart (1991) desarrollaron métodos utilizando funciones kernel para la estimación
+de la esperanza de la variable respuesta, sin la presencia de covariables, y propu-
+sieron algunas técnicas de selección de parámetros de suavizamiento a través de
+
+                                        Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos                         91
+
+la validación cruzada. Estos métodos consideran solo el posible efecto del tiempo
+sobre la variable respuesta. Para tener en cuenta la influencia de covariables, Zeger
+& Diggle (1994) estudiaron un modelo semiparamétrico de la forma
+
+              yij = µ(tij ) + xTij (tij )β + eij , j = 1, . . . , ni , i = 1, . . . , n     (1)
+
+donde n es el número de individuos en estudio, ni es la cantidad de mediciones del
+i-ésimo individuo, y tij , yij ≡ yi (tij ),
+
+                        xi (tij ) = [xi0 (tij ), xi1 (tij ), . . . , xid (tij )]T
+
+y eij ≡ ei (tij ) son respectivamente el instante, la variable respuesta de valor real, el
+vector de covariables en Rd+1 y el error aleatorio, asociados con la j-ésima medición
+del i-ésimo individuo. Además µ(t) es una función de t, y β = [β0 , β1 , . . . , βd ]T en
+Rd+1 es un vector de parámetros. En el contexto de los datos longitudinales ei (t)
+es asumido como un proceso estocástico con media cero y función de covarianza
+ρei (s, t) = Cov(ei (s), ei (t)).
+    Hoover et al. (1998) proponen una extensión del modelo (1) donde los paráme-
+tros pueden variar con el tiempo. La extensión es de la forma
+
+                 yij = xTij (tij )β(tij ) + eij , j = 1, . . . , ni , i = 1, . . . , n      (2)
+
+donde β(t) = [βi0 (tij ), βi1 (tij ), . . . , βid (tij )]T es un vector de funciones de t lla-
+madas coeficientes dinámicos. Este modelo, denominado modelo de coeficientes
+dinámicos (MCD), ha sido estudiado por Wu & Zhang (2006) quienes implemen-
+tan el método de mínimos cuadrados ponderados junto con la reparametrización
+de las componentes dinámicas del modelo mediante regresión spline. Una de las
+limitaciones de esta metodología es que no incorpora directamente en el estimador
+la posible correlación de las mediciones de cada individuo, característica primor-
+dial de los datos longitudinales que sí incorpora el estimador propuesto mediante
+una matriz de correlación de trabajo.
+    Este artículo está estructurado como sigue. En la sección 2 se revisa brevemente
+la regresión spline y la reparametrización de un MCD utilizando esta técnica. En la
+sección 3 se revisa la estimación de los parámetros asociados a través del método de
+mínimos cuadros ponderados y el AIC como selector de modelos. En la sección 4 se
+propone una alternativa de estimación de los coeficientes mediante las ecuaciones
+de estimación generalizadas (Liang & Zeger 1986) y el QIC (Pan 2001) como
+selector de modelos, metodología que no había sido considerada en la estimación
+de las componentes dinámicas de un MCD. En la sección 5 se muestra un estudio
+de simulación donde se comparan las metodologías consideradas con base en el
+error cuadrático medio promedio. En la sección 6 se considera el conjunto de datos
+ACTG 315 (Liang et al. 2003) asociado con un estudio de sida, en el que se modela
+dinámicamente la relación entre la carga viral y el conteo de células CD4+. En la
+sección 7 se discuten los resultados obtenidos y otras alternativas de estimación.
+
+                                              Revista Colombiana de Estadística 33 (2010) 89–109
+
+92                                                    Juan Camilo Sosa & Luis Guillermo Díaz
+
+2. Regresión spline
+   En esta sección se presenta la estrategia de estimación de las componentes
+de un MCD utilizando regresión spline (RS). Primero se muestran los conceptos
+básicos involucrados en la RS y en seguida la estrategia de estimación.
+
+
+2.1. Conceptos básicos
+Polinomio a trozos. Una RS es considerada como un polinomio a trozos. Una
+función de valor real f (·) definida sobre el intervalo [a, b], es un polinomio a trozos
+de orden k, o de grado k − 1, k ≥ 1, si es obtenida dividiendo el intervalo [a, b]
+en subintervalos contiguos, de tal modo que se pueda representar la función f (·)
+mediante un polinomio de orden k en cada subintervalo. Cada subintervalo es de
+la forma
+                                 [τl , τl+1 ), l = 0, . . . , K
+donde
+                          a = τ0 < τ1 < . . . < τK < τK+1 = b
+y K + 1 es el número de subintervalos. Los puntos τl , l = 0, . . . , K, se llaman nodos
+interiores o simplemente nodos. Note que
+                                                K
+                                                [
+                                     [a, b) =       [τl , τl+1 ).
+                                                l=0
+
+
+Regresión spline. Una RS de orden k + 1, o de grado k, k ≥ 0, con nodos
+interiores τl , l = 0, . . . , K, es un polinomio a trozos de orden k + 1, y tiene hasta
+k − 1 derivadas continuas.
+    Ya que el espacio de funciones de RS es un espacio vectorial de dimensión finita,
+hay muchas bases para representar dichas funciones, entre otras, se encuentran:
+la base de polinomios, la base de potencias truncadas y la base de B-splines. Una
+revisión completa y detallada acerca de B-splines se encuentra en de Boor (1978).
+
+Base de B-splines. Siguiendo a Hastie et al. (1990), antes de definir una base
+de B-splines (BBS), es necesario refinar la secuencia de nodos
+
+                          a = τ0 < τ1 < . . . < τK < τK+1 = b
+
+   Una secuencia de nodos aumentada se define como una secuencia de nodos tal
+que
+
+     • ξ1 ≤ ξ2 ≤ . . . ≤ ξM ≤ τ0 ;
+
+     • ξj+M = τj para j = 1, . . . , K;
+
+     • τK+1 ≤ ξK+M+1 ≤ ξK+M+2 ≤ . . . ≤ τk+2M .
+
+                                           Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos                      93
+
+Los valores de los nodos adicionales más allá de la frontera del intervalo [a, b] son
+arbitrarios, y usualmente están dados por
+
+      ξ1 = ξ2 = . . . ξM = τ0    y    τK+1 = ξK+M+1 = ξK+M+2 = . . . = τk+2M
+
+   Sea Bi,m la i-ésima función B-spline de orden k + 1, o grado k, 0 ≤ k ≤ M − 1,
+asociado a la secuencia de nodos
+
+                                {ξj : j = 1, . . . , k + 2M },
+
+para i = 1, . . . , K + 2m − k − 1. Los B-splines se definen recursivamente como
+sigue:                                (
+                                        1, si x ∈ [ξi , ξi+1 ]
+                           Bi,1 (x) =                                         (3)
+                                        0, si x 6∈ [ξi , ξi+1 ]
+para i = 1, . . . , K + 2M − 1. Y para k ≥ 1 se define
+                               x − ξi               ξi+k+1 − x
+              Bi,k+1 (x) =             Bi,k (x) +               Bi+1,k (x)               (4)
+                             ξi+k − ξi            ξi+k+1 − ξi+1
+para i = 1, . . . , K + 2M − k − 1.
+    Como puede haber algunos nodos duplicados, se debe tener cuidado con las
+posibles divisiones por cero en (3) y (4). Por lo tanto se adopta la convención
+Bi,1 = 0 si ξi = ξi+1 , o si ξi+1 = ξi+k+1 .
+   Así, una RS de orden m + 1, o de grado m, m ≥ 0, con nodos interiores τr ,
+r = 1, . . . , K, puede expresarse usando el siguiente conjunto de splines base:
+
+                    B = {Bi,m+1 : i = 1, . . . , K + 2M − m − 1}                         (5)
+
+   El conjunto (5) de K + 2M − m − 1 funciones base se conoce como BBS de
+orden m + 1, o grado m, con nodos ξj , j = K + 2M − m − 1. Usando las funciones
+de este conjunto, es posible expresar una RS de orden k + 1 como
+                                           G
+                                           X
+                                 f (t) =         βi Bi,m+1 (t)                           (6)
+                                           i=1
+
+donde β1 , . . . , βG son los escalares asociados y G = K + 2M − m − 1. Una revisión
+completa y detallada acerca de B-splines se encuentra en de Boor (1978).
+
+
+2.2. Estimación utilizando regresión spline
+   La idea fundamental de la estrategia de estimación a través de RS es expresar
+cada componente de β(t) como una RS, escribiendo cada coeficiente dinámico
+como una combinación lineal de funciones base, de BBS por ejemplo (Huggins &
+Loesch 1998, Huang et al. 2002).
+   La idea básica consiste en expresar cada βr (t), r = 0, 1, . . . , d, como
+
+                βr (t) = φr1 (t)αr1 + · · · + φrpr (t)αrpr = Φrpr (t)T αr                (7)
+
+                                           Revista Colombiana de Estadística 33 (2010) 89–109
+
+94                                                      Juan Camilo Sosa & Luis Guillermo Díaz
+
+donde Φrpr (t) = [φr1 (t), . . . , φrpr (t)]T es un vector de pr × 1 splines base, que pue-
+den ser elementos de (5), y αr = [αr1 , . . . , αrpr ]T es el vector de pr × 1 coeficientes
+asociados.
+   Remplazando en el MCD (2) cada βr (t) por su expresión equivalente empleando
+funciones base y acomodando los vectores de una forma apropiada se tiene que:
+                                                                          
+                                                           Φ0p0 (tij )T α0
+                                                                 ..       
+                  yij = [xi0 (tij ), . . . , xid (tij )]          .        + eij
+                                                           Φdpd (tij )T αd
+                                                                     
+                                                                     α0
+                                     T                        T      .. 
+                 ⇒ yij = [xi0 (tij )h0ij , . . . , xid (tij )hdij ]  .  + eij
+                                                                    αd
+                                                       
+                                                 α0
+                           T              T      .. 
+                 ⇒ yij = [x0ij , . . . , xdij ]  .  + eij
+                                                   αd
+                 ⇒ yij = xTij α + eij
+para cada j = 1, . . . , ni y cada i = 1, . . . , n, donde
+            hrij = Φrpr (tij ), xij = [xT0ij , . . . , xTdij ]T , xrij = xri (tij )hrij
+para cada r = 0, 1, . . . , d, con xri (t) la r-ésima componente de xi (t), y
+α = [αT0 , . . . , αTd ]T
+                                                            Pd
+   Note que si el vector de coeficientes α de p × 1, con p = r=1 pr , está comple-
+tamente especificado en el modelo equivalente
+                      yij = xTij α + eij , j = 1, . . . , ni , i = 1, . . . , n            (8)
+entonces cada uno de los parámetros dinámicos del modelo (2) también está deter-
+minado. Así, el objetivo es estimar el vector α a través de algún método apropiado.
+     El modelo (8) escrito en forma vectorial es
+                               y i = XTi α + ei , i = 1, . . . , n                         (9)
+donde
+                                     y i = [yi1 , . . . , yini ]T
+es el vector de medidas repetidas,
+                                     ei = [ei1 , . . . , eini ]T
+es el vector de errores y
+                                    Xi = [xi1 , . . . , xini ]T
+es la matriz de diseño, asociados con el i-ésimo individuo. Además, el modelo (9)
+puede escribirse en forma matricial como
+                                          y = Xα + e,                                     (10)
+
+                                            Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos                           95
+
+donde y = [y T1 , . . . , yTn ]T , X = [XT1 , . . . , XTn ]T y e = [eT1 , . . . , eTn ]T .
+    En este punto, debido a la expresión de las componentes dinámicas del modelo
+(2) a través de B-splines, este es equivalente a un modelo de regresión lineal en el
+que se requiere estimar el vector de parámetros α.
+   Una vez obtenida una estimación de los parámetros del modelo (10), denotada
+por α                   b Td ]T , la estimación de los coeficientes βr (t) está dada por
+         b T0 , . . . , α
+    b = [α
+
+                               βbr (t) = Φrpr (t)T α
+                                                   b r , r = 0, 1, . . . , d                 (11)
+
+donde Φrpr (t) es el vector de splines base asociados con el r-ésimo parámetro
+dinámico.
+   La elección de los parámetros de suavizamiento está relacionada directamente
+con el conjunto de splines base con que se expresen los coeficientes dinámicos del
+MCD (2). Por ejemplo, trabajando con BBS, están dados por
+
+                                pr = Kr − kr − 1, r = 0, 1, . . . , d                        (12)
+
+donde Kr es el número de nodos y kr es el grado de la base asociada con la
+estimación del r-ésimo coeficiente dinámico. Entonces, seleccionar el valor de los
+parámetros de suavizamiento es equivalente a seleccionar los Kr y los kr . Para
+ello, es costumbre fijar el grado de la base kr , por ejemplo 1, 2 ó 3, es decir, lineal,
+cuadrático o cúbico, y en seguida elegir mediante un criterio adecuado el número
+de nodos Kr para determinar el valor del parámetro de suavizamiento pr .
+   Cuando se usa una BBS para expresar los parámetros dinámicos del MCD (2),
+una vez fijado el número de nodos Kr de cada base a través de algún criterio
+apropiado, se deben ubicar en el rango de interés, que en el caso de los datos
+longitudinales es sobre el conjunto de los tiempos de medición
+
+                                 {tij : i = 1, . . . , n; j = 1, . . . , ni }
+
+    En cuanto a la ubicación de los nodos se distinguen dos métodos:
+
+Método 1. Consiste en ubicar los Kr nodos igualmente espaciados en el intervalo
+    de interés [a, b]. En el caso de los datos longitudinales, los valores que definen
+    este intervalo son el mínimo y el máximo de todos los tiempos, esto es
+
+                               a = mı́n{tij : i = 1, . . . , n; j = 1, . . . , ni }
+                               b = máx{tij : i = 1, . . . , n; j = 1, . . . , ni }
+
+Método 2. Para ubicar los Kr nodos, según este método, se deben considerar los
+    M tiempos diferentes
+                               t1 < t2 < . . . < tM                      (13)
+       El método consiste en ubicar los nodos igualmente espaciados sobre los cuan-
+       tiles de los tiempos (13).
+
+
+                                                Revista Colombiana de Estadística 33 (2010) 89–109
+
+96                                              Juan Camilo Sosa & Luis Guillermo Díaz
+
+3. Estimación a través del método de mínimos
+   cuadrados ponderados
+    Una alternativa de estimación de los parámetros del modelo (10) es a través
+del método de mínimos cuadrados ponderados (MCP). Este método consiste en
+estimar α minimizando la suma de cuadrados
+                                 ni
+                               n X
+                               X
+                                         wi (yij − xTij α)2                           (14)
+                               i=1 j=1
+
+donde los wi son pesos dados usando alguno de los siguientes esquemas de ponde-
+ración:
+
+        1. En el que los pesos están dados por wi = 1/N , i = 1, . . . , n, donde
+Esquema P
+    N = ni=1 ni .
+
+Esquema 2. En el que los pesos están dados por wi = 1/(nni ), i = 1, . . . , n.
+
+El esquema 1 usa el mismo peso para todos los individuos y fue implementado
+por Hoover et al. (1998). El esquema 2 es considerado por Huang et al. (2002) y
+usa diferentes pesos para los individuos. Huang et al. (2002) demuestran que el
+esquema 1 puede llevar a estimaciones inconsistentes de α.
+   Minimizando la función objetivo (14) trabajando con el modelo (10), se obtiene
+un estimador de α dado por
+
+                           b MCP = (XT WX)−1 XT Wy
+                           α                                                          (15)
+
+donde W = diag[W1 , . . . , Wn ], con Wi = wi Ini la matriz de pesos del i-ésimo
+individuo, i = 1, . . . , n, e Ini la matriz identidad de ni × ni .
+
+Criterio de información de Akaike (AIC). La idea básica del AIC, concebi-
+do para la estrategia de estimación que involucra el método de MCP, es encontrar
+la combinación de parámetros de suavizamiento, determinados por la cantidad de
+nodos, que minimicen la expresión
+
+                             AIC(ρ) = −2Loglik + 2df,                                 (16)
+
+donde ρ = [p0 , p1 , . . . , pd ]T es el vector conformado por los parámetros de suavi-
+zamiento,                                                        
+                                             n       2πe
+                                 Loglik = − log          SCEρ                      (17)
+                                             2        n
+con
+                                            Xn X ni
+                                  SCEρ =            (yij − ybij )2
+                                         i=1 j=1
+y
+                                     df = tr(A)                                       (18)
+
+                                         Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos                        97
+
+donde A es la matriz de suavizamiento asociada con el estimador, que en el caso
+del estimador (15) está dada por
+
+                                A = X(XT WX)−1 XT W
+
+   Se elige el modelo que minimice la cantidad AIC(ρ). Esta medida permite
+encontrar un equilibrio entre la bondad de ajuste del modelo, representada por
+Loglik, y la complejidad del modelo, representada por df . Es decir, la bondad de
+ajuste del modelo es penalizada con la complejidad del mismo (Wu & Zhang 2006).
+    Una de las desventajas de este método es que no tiene en cuenta directamen-
+te la posible correlación de las medidas repetidas de cada individuo, una de las
+características más importantes de la estructura de los datos longitudinales. En
+la siguiente sección se propone una alternativa de estimación que considera la
+estructura de correlación de las medidas repetidas.
+
+
+4. Estimación a través de las ecuaciones de
+   estimación generalizadas
+    Aquí se propone otra alternativa de estimación de los parámetros del mode-
+lo (10) empleando las ecuaciones de estimación generalizadas (EEG) de Liang
+& Zeger (1986), en las que se asume una matriz de correlación de trabajo es-
+pecifica para la componente del error, con el fin de incluir directamente la posi-
+ble correlación de las medidas repetidas de cada individuo. Una de las ventajas
+de este método es que, sin importar la matriz de correlación de trabajo selec-
+cionada, las EEG siempre llevan a estimaciones consistentes y asintóticamente
+normales, aunque elegir una estructura de correlación adecuada incrementa la efi-
+ciencia del método (Davis 2002, pág. 296).
+
+
+4.1. Metodología
+    El método de estimación empleando las EEG requiere la selección de una fun-
+ción de enlace, una función de varianza y una matriz de correlación de trabajo. Una
+vez seleccionadas estas componentes, según lo indique la naturaleza de los datos,
+la estimación de los parámetros del modelo (10), denotada por α b EEG , corresponde
+a la solución para α del sistema de ecuaciones
+
+                             n 
+                             X      T
+                                 ∂µ    i
+                                             Vi−1 (y i − µ) = 0                           (19)
+                             i=1
+                                    ∂α
+
+donde µi = [µi1 , . . . , µini ]T es el vector de medias asociado con las medidas repe-
+                                                                                           b es
+tidas del i-ésimo individuo, esto es, µij = E(yij ), i = 1, . . . , n, j = 1, . . . , ni , θ
+un estimador consistente de θ, el vector de parámetros asociado con la matriz de
+correlación de trabajo del i-ésimo individuo Ri ≡ Ri (θ),
+                                           1/2         1/2
+                     Vi ≡ Vi (θ) = φAi Ri (θ)Ai , i = 1 . . . , n                         (20)
+
+                                           Revista Colombiana de Estadística 33 (2010) 89–109
+
+98                                                 Juan Camilo Sosa & Luis Guillermo Díaz
+
+es la matriz de covarianzas de trabajo, con φ un parámetro de escala posiblemente
+desconocido, y
+
+                   Ai = diag[V (µi1 ), . . . , V (µini )], i = 1 . . . , n
+
+con V (·) la función de varianza correspondiente.
+    En Davis (2002, pág. 300) se presenta el proceso correspondiente para resolver el
+sistema de ecuaciones (19) y también un procedimiento para hallar una estimación
+consistente de la varianza estimada de α b EEG .
+
+
+Criterio de información de Akaike en las ecuaciones de estimación ge-
+neralizadas (QIC). Considere el conjunto de datos
+
+                    D = {(yij , xij ) : i = 1, . . . , n; j = 1, . . . , ni }
+
+donde yij y xij son el valor de la variable respuesta y el vector de covariables
+asociados con la j-ésima medición del i-ésimo individuo, y α es el vector de pará-
+metros, que puede estimarse a través de las EEG usando cualquier estructura de
+correlación de trabajo.
+   Siguiendo a Pan (2001), bajo el modelo de independencia, la cuasiverosimilitud
+conjunta, basada en el conjunto de datos D, está dada por
+                                             ni
+                                           n X
+                                           X
+                      Q(α, φ; I, D) =                Q(α, φ; yij , xij )               (21)
+                                           i=1 j=1
+
+
+donde φ es un parámetro de escala posiblemente desconocido y
+                                                      Z µ
+                                                          y−t
+               Q(α, φ; y, x) = Q(g −1 (xT α), φ; y) =           dt                     (22)
+                                                       y φV (t)
+
+
+con V(y) = φV (µ), V (·) una función de varianza, µ = E(y) = g −1 (xT α), g(·) una
+función de enlace, y x un vector de covariables.
+   La idea básica del criterio, concebido para la estimación utilizando las EEG,
+es minimizar una medida basada en Q(α,      b I, D), la cuasiverosimilitud bajo el
+                                         b φ;
+modelo de trabajo de independencia con una estimación de α, usando cualquier
+matriz de correlación de trabajo empleada en las EEG.
+    El modelo de independencia es asumido para la construcción de la cuasive-
+rosimilitud conjunta, aunque en las EEG se puede emplear cualquier estructura
+de correlación. Este criterio se puede generalizar utilizando cualquier matriz de
+correlación en la construcción de la cuasiverosimilitud conjunta, pero puede que
+esta no sea única (Pan 2001).
+   El QIC consiste en encontrar la combinación de parámetros de suavizamiento,
+determinados por la cantidad de nodos, que minimicen la expresión
+
+                       QIC = −2Q(α, b I, D) + 2tr(Ω,
+                                 b φ;             b Vb r)                              (23)
+
+                                          Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos                            99
+
+donde αb ≡ α b (R) es un estimador del vector de parámetros α del modelo (10),
+obtenido a través del método de las EEG usando cualquier estructura de corre-
+          b r es cualquier estimación consistente de V(α),
+lación R, V                                            b como el estimador del
+sandwich (Liang & Zeger 1986) y
+
+                                      b I, D)/∂α∂αT |α=α
+                        b = −∂ 2 Q(α, φ;
+                        Ω                              b d
+
+
+
+4.2. Propiedades
+       b
+   Sea β                                                                T
+         EEG (t) el estimador de β(t) = [β0 (t), β1 (t), . . . , βd (t)] utilizando la me-
+todología propuesta apoyada en las EEG. Este estimador está dado por
+                 b            b       b               b      T      T
+                 β EEG (t) = [β0 (t), β1 (t), . . . , βd (t)] = Φ(t) αb EEG
+                                       Pd
+     donde Φ(t) es la matriz de          r=0 pr × (d + 1) dada por
+                                                                               
+                                       Φ0p0 (t)           0p0    ···    0p0
+                                                                  .            
+                               0p1                     Φ1p1 (t) ..     0p1 
+                   Φ ≡ Φ(t) = 
+                               .                                         ..
+                                                                                
+                                                                                
+                               ..                               ..             
+                                                         ···         .     .
+                                0pd                      0pd     · · · Φdpd (t)
+
+con 0pr un vector columna constituido por pr ceros, r = 0, 1, . . . , d.
+    En un tiempo dado, como β    b                                         b EEG ,
+                                   EEG (t) es una transformación lineal de α
+el siguiente corolario derivado del teorema 2 de Liang & Zeger (1986, pág. 16)
+                                        b
+establece la distribución asintótica de β EEG (t).
+
+Corolario 1. Bajo condiciones de regularidad y dado que:
+        b es un estimador   √
+    (i) θ                n-consistente de θ dados α y φ;
+                        √
+ (ii) φb es un estimador n-consistente de φ dado α; y
+          b
+(iii) k ∂ θ(α, φ)/∂φ k= Op (1),
+                         √ b
+entonces asintóticamente n (β  EEG (t) − β(t)) tiene una distribución normal mul-
+tivariada con media cero y matriz de covarianza
+
+                                lı́m n ΦM−1    −1 T
+                                         0 M1 M0 Φ
+                                n→∞
+
+donde
+                                       n 
+                                       X      T                            
+                                           ∂µ       i                  ∂µi
+                            M0 =                            Vi−1                              (24)
+                                       i=1
+                                                 ∂α                    ∂α
+y
+                             n 
+                             X      T                                            
+                                 ∂µ          i                               ∂µi
+                     M1 =                           Vi−1 V(y i )Vi−1                          (25)
+                             i=1
+                                        ∂α                                   ∂α
+
+
+                                                 Revista Colombiana de Estadística 33 (2010) 89–109
+
+100                                              Juan Camilo Sosa & Luis Guillermo Díaz
+
+                                       b
+   Así, un estimador de la varianza de β EEG (t) está dado por
+
+                           b βb             c −1 c c −1 T
+                           V(   EEG (t)) = ΦM0 M1 M0 Φ
+
+
+donde M c0 y M c 1 son obtienen como en las expresiones (24) y (25) remplazando
+V(y i ) por (y i − µ         b )T y α, φ y θ por sus respectivos estimadores. Este
+                   b )(y i − µ
+estimador de la varianza de β   b                                          b
+                                  EEG (t) es un estimador consistente de V(β EEG (t))
+aunque la matriz de correlación de trabajo Ri no corresponda a la verdadera
+matriz de correlación de y i (ver la prueba en el apéndice A).
+
+
+5. Simulación
+    Con el fin de evaluar el desempeño de los métodos de estimación, la compa-
+ración entre ellos se hace a través del error cuadrático medio promedio (ECMP)
+dado por
+                                     n      ni
+                                  1X 1 X                          2
+                    ECM P (κ) =                           b(tij )]
+                                               [κ(tij ) − κ                (26)
+                                  n i=1 ni j=1
+
+donde κ(·) es una función que corresponde a cualquier coeficiente dinámico del
+modelo.
+   La estrategia de simulación utilizada es similar a la presentada en Wu & Liang
+(2004). El modelo empleado en la simulación es de la forma
+
+                           yi (t) = β0 (t) + xi1 (t)β1 (t) + ei (t)                    (27)
+
+donde β0 (t) y β1 (t) son los coeficientes dinámicos del modelo, xi (t) es la única cova-
+riable del modelo, asociada con β1 (t), y ei (t) es el error en el tiempo t. Note que este
+modelo corresponde a un MCD dado por (2) donde el vector de parámetros diná-
+micos es β(t) = [β0 (t), β1 (t)]T y el vector de covariables es xi (t) = [xi0 (t), xi1 (t)]T
+con xi0 (t) ≡ 1.
+   En el MCD simulado la covariable xi1 (t) está dada por
+                                              
+                                             i
+                xi1 (t) = 1 − exp −0.5t −        , i = 1, . . . , n                    (28)
+                                             n
+
+y los parámetros dinámicos se definen como
+
+                 β0 (t) = 3 exp(t), y β1 (t) = 1 + cos(2πt) + sen(2πt)                 (29)
+
+En la figura 1 se muestran los coeficientes dinámicos simulados.
+   El término de error correspondiente al modelo (27) se simula bajo dos estruc-
+turas de correlación:
+
+Estructura de correlación 1. En la que se considera a ei (t) distribuido normal-
+     mente con media 0 y varianza σe2 x2i1 (t), donde las medidas repetidas entre
+     individuos y dentro de cada individuo son independientes.
+
+                                         Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos                         101
+
+
+                             Intercepto                            Pendiente
+
+                                                       2.5
+                 8
+
+                                                       2.0
+                 7
+
+                                                       1.5
+
+                 6
+
+                                                       1.0
+
+                 5
+                                                       0.5
+
+
+                 4
+                                                       0.0
+
+
+                 3
+                                                      −0.5
+
+                     0.0       0.4       0.8                 0.0    0.4       0.8
+
+                                     x                                    x
+
+
+                           Figura 1: Coeficientes dinámicos simulados.
+
+
+
+Estructura de correlación 2. En la que se considera al vector de errores asocia-
+     dos con las medidas repetidas de un individuo distribuido normalmente con
+     vector de medias 0 y matriz de covarianzas asociada con una estructura de
+     correlación autoregresiva de primer orden, esto es, una matriz de correlación
+     R = [Rkl ] donde
+                                     (
+                                       α|k−l| , si k 6= l
+                               Rkl =
+                                       1,       si k = l
+     con 0 < α < 1.
+
+   Los tiempos simulados son de la forma
+
+                      tij = j/(m + 1), i = 1, . . . , n, j = 1, . . . , m
+
+siendo m un entero positivo, y para simular conjuntos de datos no balanceados1,
+una característica propia de la estructura de los datos longitudinales, en cada
+individuo se remueven aleatoriamente medidas repetidas con una tasa rm . Así,
+en promedio hay m(1 − rm ) medidas repetidas por cada individuo y nm(1 − rm )
+medidas en total.
+    Los parámetros de suavizamiento de los métodos respectivos se eligen por medio
+del AIC y el QIC.
+   El estudio de simulación se hace en R considerando seis escenarios:
+
+Escenario 1 n = 25, m = 8, rm = 20 %, y σe2 = 0.01 en la estructura de correla-
+    ción 1.
+  1 El número de medidas repetidas varia de individuo a individuo.
+
+
+
+
+                                               Revista Colombiana de Estadística 33 (2010) 89–109
+
+102                                             Juan Camilo Sosa & Luis Guillermo Díaz
+
+Escenario 2 n = 25, m = 8, rm = 20 %, y σe2 = 0.04 en la estructura de correla-
+    ción 1.
+Escenario 3 n = 25, m = 8, rm = 20 %, y σe2 = 0.09 en la estructura de correla-
+    ción 1.
+Escenario 4 n = 25, m = 8, rm = 20 %, y φ = 1 y α = 0.335 en la estructura de
+    correlación 2.
+Escenario 5 n = 25, m = 8, rm = 20 %, y φ = 1 y α = 0.665 en la estructura de
+    correlación 2.
+Escenario 6 n = 25, m = 8, rm = 20 %, y φ = 1 y α = 0.820 en la estructura de
+    correlación 2.
+
+    Cada escenario se replicó N = 200 veces y en cada ocasión se calculó ECM P (β0 )
+y ECM P (β1 ), con el fin de comparar el desempeño relativo de la estimación a
+través de las ecuaciones de estimación generalizadas (EEEG) con la estimación a
+través de mínimos cuadrados ponderados (EMCP). Para ello se definen los indica-
+dores
+                                 N
+                               1 X ECM Pk (κ, EM CP )
+                 ECM P R =                                 × 100 %            (30)
+                              N     ECM Pk (κ, EEEG)
+                                   k=1
+y
+                      PN
+                           k=1 I{ECMPk (κ,EMCP )>ECMPk (κ,EEEG)}
+        ECM P G =                                                   × 100 %   (31)
+                                         N
+donde ECM Pk (κ, EM CP ) y ECM Pk (κ, EEEG) denotan el valor de ECM P (κ)
+obtenido en la k-ésima réplica de la simulación, k = 1, . . . , N , usando EMCP y
+EEEG respectivamente, y IA denota la función indicadora del conjunto A.
+
+                          Tabla 1: Resultados de la simulación.
+             Escenario      ECM P R0     ECM P R1     ECM P G0     ECM P G1
+            Escenario 1       451.6 %     1358.7 %      100.0 %      100.0 %
+            Escenario 2       388.0 %      979.5 %      100.0 %      100.0 %
+            Escenario 3       285.1 %      542.1 %       99.0 %      100.0 %
+            Escenario 4        97.6 %      165.4 %       38.5 %       43.0 %
+            Escenario 5       170.3 %      401.7 %       62.0 %       64.0 %
+            Escenario 6       180.8 %      483.4 %       58.5 %       69.5 %
+
+
+    El ECM P R representa la eficiencia relativa promedio asociada con las N répli-
+cas (N = 200 en este caso), y ECM P G es el porcentaje de estimadores obtenidos
+a través de EEG, que son mejores que los obtenidos a través de las MCP en cuanto
+al ECMP en las N réplicas.
+    Note que: si ECM P R ≈ 1 y ECM P G = 50 %, la EEEG y la EMCP se
+desempeñan similarmente; si ECM P R > 1 y ECM P G > 50 %, la EEEG se
+desempeña mejor que la EMCP; y si ECM P R < 1 y ECM P G < 50 %, la EEEG
+se desempeña peor que la EMCP.
+    En la tabla 1 se presentan los resultados obtenidos en la simulación. En todos
+los escenarios considerados, menos el número 4, se obtuvo que ECM P R > 1 y
+
+                                         Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos               103
+
+ECM P G > 50 %, por lo que la EEEG se desempeña mejor que la EMCP con re-
+lación al error cuadrático medio promedio. En el escenario 4, como ECM P R ≈ 1
+y ECM P G ≈ 50 %, se tiene que la EEEG y la EMCP se desempeñan similar-
+mente. Esta similitud se debe a que el parámetro de correlación entre las medidas
+repetidas α no es suficientemente grande para marcar diferencias entre la estruc-
+tura de correlación autorregresiva de primer orden y la estructura de correlación
+de independencia. Por ejemplo, note que en el escenario 4 la correlación existente
+entre la primera medida repetida y la tercera es de apenas R13 =0.037.
+
+
+
+6. Aplicación
+    En esta sección se presentan los resultados del análisis del conjunto de datos
+ACTG 315 (Liang et al. 2003). Este conjunto de datos corresponde a un estudio
+del síndrome de inmunodeficiencia adquirida (sida), llevado a cabo para investigar
+la relación entre carga viral y número de células CD4+ en individuos infectados
+con el virus de inmunodeficiencia humana (VIH).
+
+
+6.1. Introducción
+
+    La carga viral (plasma VIH RNA copies/mL) y el conteo de células CD4+ son
+actualmente indicadores decisivos para evaluar tratamientos de sida en investiga-
+ción clínica. Inicialmente se consideró el conteo de células CD4+ como un indicador
+inmunológico primario de sida, pero últimamente se ha encontrado que la carga vi-
+ral es más predictiva en los resultados clínicos. Sin embargo, recientemente algunos
+investigadores han sugerido que la combinación de estos dos indicadores puede ser
+más apropiada para evaluar los tratamientos de VIH y sida. Por ello es pertinente
+estudiar la relación entre la carga viral y el conteo de células CD4+ durante el
+tratamiento (Liang et al. 2003).
+    En la figura 2 se presentan algunos gráficos de una regresión lineal de la carga
+viral (log10 (RNA)) frente al conteo de células CD4+ en algunos tiempos de un
+estudio clínico de sida (ACTG 315). En este, se trata de 46 pacientes infectados,
+con una terapia antiviral que consistía de ritonavir, 3TC y AZT. Una vez iniciado
+el tratamiento, la carga viral y el conteo de células CD4+ fueron observados simul-
+táneamente los días 0, 2, 7, 10, 14, 28, 56, 84, 168 y 336. En total se obtuvieron
+361 observaciones, y el número de medidas repetidas por individuo varía de 4 a
+10.
+    En general, se observa que la respuesta virológica (medida por la carga viral)
+y la respuesta inmunológica (medida por el conteo de células CD4+) del paciente
+están correlacionadas negativamente, y que su relación es aproximadamente lineal
+durante el tratamiento antiviral. En la figura 3 se presentan los dispersogramas del
+conteo de células CD4+ y de la carga viral. Se utiliza el logaritmo de la carga viral
+para estabilizar la varianza en los procedimientos de estimación de los modelos
+ajustados en las secciones siguientes.
+
+                                     Revista Colombiana de Estadística 33 (2010) 89–109
+
+104                                                                                  Juan Camilo Sosa & Luis Guillermo Díaz
+
+
+                                 Día 0                                        Día 2                                      Día 7
+
+
+
+
+                   6
+
+
+
+
+                                                                6
+
+
+
+
+                                                                                                             6
+      log10(RNA)
+
+
+
+
+                                                   log10(RNA)
+
+
+
+
+                                                                                                log10(RNA)
+                   4
+
+
+
+
+                                                                4
+
+
+
+
+                                                                                                             4
+                   2
+
+
+
+
+                                                                2
+
+
+
+
+                                                                                                             2
+                   0
+
+
+
+
+                                                                0
+
+
+
+
+                                                                                                             0
+                         0   2      4      6   8                    0     2      4      6   8                    0   2      4      6   8
+
+                                 CD4/100                                      CD4/100                                    CD4/100
+
+
+
+                                 Día 10                                       Día 14                                     Día 28
+                   6
+
+
+
+
+                                                                6
+
+
+
+
+                                                                                                             6
+      log10(RNA)
+
+
+
+
+                                                   log10(RNA)
+
+
+
+
+                                                                                                log10(RNA)
+                   4
+
+
+
+
+                                                                4
+
+
+
+
+                                                                                                             4
+                   2
+
+
+
+
+                                                                2
+
+
+
+
+                                                                                                             2
+                   0
+
+
+
+
+                                                                0
+
+
+
+
+                                                                                                             0
+                         0   2      4      6   8                    0     2      4      6   8                    0   2      4      6   8
+
+                                 CD4/100                                      CD4/100                                    CD4/100
+
+
+
+                                 Día 56                                       Día 84                                 Día 168
+                   6
+
+
+
+
+                                                                6
+
+
+
+
+                                                                                                             6
+      log10(RNA)
+
+
+
+
+                                                   log10(RNA)
+
+
+
+
+                                                                                                log10(RNA)
+                   4
+
+
+
+
+                                                                4
+
+
+
+
+                                                                                                             4
+                   2
+
+
+
+
+                                                                2
+
+
+
+
+                                                                                                             2
+                   0
+
+
+
+
+                                                                0
+
+
+
+
+                                                                                                             0
+                         0   2      4      6   8                    0     2      4      6   8                    0   2      4      6   8
+
+                                 CD4/100                                      CD4/100                                    CD4/100
+
+
+Figura 2: Gráficos de una regresión lineal de la carga viral (log10 (RNA)) frente al conteo
+          de células CD4+ en algunos tiempos. El modelo ajustado en cada caso es de
+          la forma log10 (RN A) = β0 + β1 (CD4/100) + e.
+
+
+
+   En la figura 2, note que la pendiente de cada regresión lineal cambia con el
+tiempo. Esto motiva a modelar la carga viral con un MCD.
+    El conjunto de datos ACTG 315 ya ha sido estudiado ampliamente por Liang
+et al. (2003), donde se evidencia principalmente una fuerte relación inversa entre
+la carga viral y el conteo de células CD4+.
+
+
+6.2. Modelamiento
+    En esta sección se presentan los resultados del análisis del conjunto de da-
+tos ACTG 315 usando un MCD. Se ajusta un MCD para investigar la relación
+dinámica entre la carga viral (en escala logarítmica) y el conteo de células CD4+.
+   El MCD ajustado es de la forma
+
+                       yij = β0 (tij ) + β1 (tij )xi1 (tij ) + eij , j = 1, . . . , ni , i = 1, . . . , 46                                 (32)
+
+                                                                        Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos                                  105
+
+
+
+
+                           5
+                                                                         6
+
+
+                           4
+                                                                         5
+
+
+
+
+                                                         log10(RNA mL)
+                           3
+
+
+            CD4/100
+                                                                         4
+
+                           2
+
+                                                                         3
+
+                           1
+
+                                                                         2
+
+                           0
+                                0   50   100     200                         0   50   100      200
+
+                                         Día                                          Día
+
+
+      Figura 3: Dispersograma del conteo de células CD4+ y de la carga viral.
+
+
+
+donde yij , xi1 (tij ), y eij son la carga viral (en escala logarítmica), el conteo de
+células CD4+ y el error asociados con la j-ésima medición del i-ésimo individuo,
+respectivamente, y β0 (t) y β1 (t) son los coeficientes dinámicos del modelo. Note
+que β1 (t) es el coeficiente relacionado con la relación dinámica entre la carga viral
+y el conteo de células CD4+.
+   Las componentes dinámicas del modelo se estiman a través de la metodología
+propuesta utilizando RS y las EEG. La base de splines empleada en la RS es una
+BBS de segundo grado, y en la selección del número de los nodos se emplea el
+QIC. La ubicación de los nodos se hace según el método 1 en el que se ubican los
+nodos igualmente espaciados en el intervalo de interés.
+
+Tabla 2: Parámetros de suavizamiento que minimizan el criterio de selección bajo una
+         estructura de correlación de trabajo dada.
+                      p0       p1       Estructura              ECM P (β0 )            ECM P (β0 )
+                      11       10   Independencia             7.450128e+166            8.706318e-02
+                       4        4   Intercambiable            7.450128e+166            8.701916e-02
+                       8        7   Autorregresiva (1)        7.450128e+166            8.698554e-02
+
+
+    Como se muestra en la tabla 2, la estructura de correlación de trabajo que
+minimiza el ECMP es la estructura intercambiable. Note que el ECMP de todas
+las estructuras es similar, así que por simplicidad se eligió la estructura de inde-
+pendencia, donde los parámetros de suavizamiento asociados con β0 (t) y β1 (t) que
+
+                                                   Revista Colombiana de Estadística 33 (2010) 89–109
+
+106                                           Juan Camilo Sosa & Luis Guillermo Díaz
+
+minimizan el QIC son p0 = 11 y p1 = 10, respectivamente. En este caso, la estruc-
+tura de correlación no tiene mayor incidencia en la estimación de las componentes
+del modelo, porque la cantidad de medidas repetidas de cada individuo es pequeña
+comparada con la cantidad de mediciones total.
+    En la figura 4 se muestra la estimación del coeficiente dinámico asociado con
+la pendiente del MCD ajustado. Note que al principio del tratamiento la relación
+entre la carga viral y el conteo de células CD4+ no es tan fuerte hasta aproxima-
+damente el día 90 del tratamiento donde se evidencia una relación directa hasta
+el día 100. Entre los días 100 y 140 se nota una relación claramente inversa. Entre
+los días 140 y 150 parece que la relación es directa, pero se nota que vuelve a ser
+débil. Estos resultados son similares a los obtenidos por Liang et al. (2003).
+
+
+                                         Pendiente
+
+
+                       0.15
+
+
+                       0.10
+
+
+                       0.05
+               beta1
+
+
+
+
+                       0.00
+
+
+                   −0.05
+
+
+                   −0.10
+
+
+                   −0.15
+
+
+                              0   50        100        150        200
+
+                                            Día
+
+
+Figura 4: Estimación del coeficiente dinámico asociado con la pendiente del MCD ajus-
+          tado.
+
+
+
+
+7. Discusión
+    La metodología propuesta permite involucrar en la estimación de los coefi-
+cientes dinámicos y en la selección de los parámetros de suavizamiento la posible
+correlación de las medidas repetidas de cada individuo en estudio. Por ello en los
+escenarios simulados donde el grado de correlación es significativo se obtuvo que
+utilizar las EEG y el QIC da mejores resultados con relación al error cuadrático
+medio que utilizar el método de MCP y el AIC.
+    Incluir en el estimador de las componentes del MCD la posible correlación entre
+las medidas repetidas no tiene un costo computacional importante, puesto que los
+
+                                       Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos               107
+
+procesos computacionales se pueden implementar fácil y eficientemente utilizando
+software como la función geese.fit del paquete geepack de R.
+    En la metodología propuesta se aproximan los coeficientes dinámicos mediante
+regresión spline, pero cabe notar que no es la única alternativa. También es posible
+llevar a cabo la aproximación mediante suavizamiento spline, polinomios locales
+kernel (Wu & Zhang 2006) o mediante funciones radiales kernel (Sosa & Díaz
+2009), técnicas a comparar en futuros estudios de simulación.
+    Utilizando regresión spline, también es posible emplear bases diferentes de B-
+splines en la aproximación de los coeficientes dinámicos, por ejemplo bases de
+potencias truncadas (Ramsay & Silverman 1997). Esta alternativa también es sus-
+ceptible de investigación en estudios de simulación posteriores.
+                                                                 
+               Recibido: agosto de 2009 — Aceptado: abril de 2010
+
+
+Apéndice
+    Sea VbEEG un estimador consistente de la varianza de α
+                                                         b EEG , como el estimador
+del sandwich, que es un estimador consistente aunque la matriz de correlación de
+trabajo Ri (α) no corresponda a la verdadera matriz de correlación de y i (Davis
+2002, pág. 300).
+    Como VbEEG es un estimador consistente de la varianza de α   b EEG entonces se
+                  P
+tiene que VbEEG − → V(α b EEG ), es decir, para cualquier  > 0 y para cualquier
+η > 0, existe un entero positivo n0 ≡ n0 (, η), tal que
+               h                          i
+             P k VbEEG − V(α  b EEG ) k>  < η siempre que n ≥ n0 .
+
+
+                                     Revista Colombiana de Estadística 33 (2010) 89–109
+
+Estimación de las componentes de un modelo de coeficientes dinámicos                109
+
+   Sea ∗ tal que
+                                           ∗
+                                 =
+                                      k Φ kk ΦT k
+por lo que
+              h                        i
+             P k VbEEG − V(α
+                           b EEG ) k>  < η siempre que n ≥ n0 ,
+
+es equivalente a
+           h                             i
+         P k ΦVbEEG ΦT − V(Φα
+                            b EEG ) k> ∗ < η siempre que n ≥ n0 ,
+
+            b βb          P   b
+y por tanto V(            → V(β
+                 EEG (t)) −     EEG (t)).
+                 
+Referencias
+Altman, N. S. (1990), ‘Kernel Smoothing of Data with Correlated Errors’, Journal of the American Statistical Association 85(411), 749–759. 
+Davis, C. S. (2002), Statistical Methods for the Analysis of Repeated Measurements, Springer.
+de Boor, C. (1978), A Practical Guide to Splines, Springer.
+Diggle, P. J., Liang, K. Y. & Zeger, S. L. (1994), Analysis of Longitudinal Data, Oxford University Press.
+Fitzmaurice, G., Davidian, M., Verbeke, G. & Molenberghs, G. (2009), Longitudinal Data Analysis, Champman & Hall.
+Hart, J. D. (1991), ‘Kernel Regression Estimation with Time Series Errors’, Journal of the Royal Statistical Society. Series B (Methodological) 53(1), 173–187.
+Hart, J. D. & Wehrly, T. E. (1986), ‘Kernel Regression Estimation using Repeated Measurements Data’, Journal of the American Statistical Association 81(396), 1080–1088.
+Hastie, T., Tibshirani, R. & Friedman, J. (1990), The Elements of Statistical Learning, Springer.
+Hoover, D. R., Rice, J. A., Wu, C. O. & Yang, L. P. (1998), ‘Nonparametric Smoothing Estimates of Time-Varying Coefficient Models with Longitudinal Data’, Biometrika 85(4), 809–822.
+Huang, J. Z., Wu, C. O. & Zhou, L. (2002), ‘Varying-coefficient Models and Basis Function Approximations for the Analysis of Repeated Measurements’, Biometrika 89(1), 111–128.
+Huggins, R. M. & Loesch, D. Z. (1998), ‘On the Analysis of Mixed Longitudinal Growth Data’, Biometrics 54(2), 583–595.
+Liang, H., Wu, H. & Carroll, R. J. (2003), ‘The relationship between Virologic and Immunologic Responses in AIDS Clinical Research using Mixed-Effects Varying-Coefficient Models with Measurement Error’, Biostatistics 4(2), 297–312.
+Liang, K. Y. & Zeger, S. L. (1986), ‘Longitudinal Data Analysis using Generalized Linear Models’, Biometrika 73(1), 13–22.
+Pan, W. (2001), ‘Akaike’s Information Criterion in Generalized Estimating Equations’, Biometrics 57(1), 120–125.
+Ramsay, J. O. & Silverman, B. W. (1997), Applied Functional Data Analysis, Springer.
+Sosa, J. C. & Díaz, L. G. (2009), Desarrollo de un modelo de coeficientes dinámicos y aleatorios para el análisis longitudinales, Tesis de maestría, Departamento de Estadística, Universidad Nacional de Colombia, Bogotá, Colombia.
+Verbeke, G. & Molenberghs, G. (2000), Linear Mixed Models for Longitudinal Data, Springer.
+Wu, H. & Liang, H. (2004), ‘Backing Random Varying-Coefficient Models with Time-Dependent Smoothing Covariates’, Scandinavian Journal of Statistics 31, 3–19.
+Wu, H. & Zhang, J. T. (2006), Nonparametric Regression Methods for Longitudinal Data Analysis, Wiley.
+Zeger, S. L. & Diggle, P. J. (1994), ‘Semiparametric Models for Longitudinal Data with Application to CD4 Cell Numbers in HIV Seroconverters’, Biometrics 50(3), 689–699.

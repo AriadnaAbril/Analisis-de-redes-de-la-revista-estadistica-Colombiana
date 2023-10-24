@@ -1,0 +1,920 @@
+Spatial MCUSUM Control Chart.  Carta de control MCUSUM espacial
+Universidad Nacional de Colombia, Bogotá, Colombia
+Abstract
+This paper proposes a spatial multivariate CUSUM control chart in order to monitor the mean of a single characteristic of a product or process, when the measurements are taken in diﬀerent locations on each sampled item. To estimate the variance and covariance matrix some tools from the geostatistics are used, taking into account the spatial correlation between the measurements. The performance of this control chart is explored by simulation and its use is illustrated with an example.
+Key words: Mutivariate control charts; Multivariate CUSUM; Spatial correlation; Semivariogram.
+Resumen
+Este documento propone una carta de control CUSUM multivariada espacial para monitorear la media de una sola característica de un producto o proceso, cuando las mediciones se toman en diferentes ubicaciones en cada elemento muestreado. Para estimar la matriz de varianza y covarianza, se utilizan algunas herramientas de la geoestadística, teniendo en cuenta la correlación espacial entre las mediciones. El desempeño de esta carta de control se explora por simulación y su uso se ilustra con un ejemplo.
+Palabras clave: Cartas de control multivariadas; CUSUM multivariada; Correlación espacial; Semivariograma.
+
+
+
+1. Introduction
+   Statistical process control (SPC) is a set of tools for monitoring a production
+process, useful to achieve the stability of the process and reduce its variability,
+  a Statistician. E-mail: judrojasgo@unal.edu.co
+  b PhD. E-mail: rdguevarag@unal.edu.co
+
+
+
+
+                                             49
+
+50                        Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+among which are included the control charts. The processes always have varia-
+tion, which can be inherent or natural to the characteristics of the process, called
+common cause variation; or obey special circumstances that are not permanent
+in the process, called assignable (or special) cause variation. When a process is
+operating in the presence of special causes, it is considered to be unstable or out
+of statistical control (OC); otherwise, the process is considered to be stable or in
+statistical control (IC). A fundamental objective of a control chart is to analyze
+the variability of the process and quickly detect assignable causes when they occur.
+Readers interested in this topic can consult the following textbooks: Ryan (2011),
+Qiu (2013) and Montgomery (2019), among others.
+    Generally, the statistical process control can be divided in two phases called
+phase I or retrospective phase and phase II or prospective phase. In phase I a
+set historical process data is used to learn about the process. Among the main
+goals of phase I are: to understand the sources of process variability, to evaluate
+the process stability searching unusual results and removing assignable causes of
+variation, and to estimate the in-control process parameters. The major goal of
+the phase II is to detect any change from the assumed in-control model. Technical
+details, comments on some of the important aspects of phase I analysis and review
+about this area can be found in Chakraborti, Human & Graham (2008) and Jones-
+Farmer, Woodall, Steiner & Champ (2014).
+    In industry there are many processes characterized for two or more quality
+characteristics, generally correlated. Several multivariate control charts have been
+proposed for monitoring these processes, among which are the proposals elabo-
+rated by Hotteling (1947), Alt & Smith (1988), Crosier (1988), Pignatiello Jr &
+Runger (1990), Lowry, Woodall, Champ & Rigdon (1992), Khoo, Wu, Castagliola
+& Lee (2013), (Lee, Khoo & Xie 2014) and Nezhad & Niaki (2013). The traditional
+multivariate control charts ignore the correlation between adjacent sample loca-
+tions, a situation common in some modern manufacturing processes. For example,
+the problem of monitoring at diﬀerent locations bottle-wall thickness used for soft
+drinks and other beverages (Grimshaw, Blades & Miles 2013), or the identification
+of local distortions surrounding the cylinder bores in a deck face on an automotive
+engine head, which impact the sealing performance of engine assemblies and reflect
+cutting force dynamics during machining processes, Suriano, Wang, Shao, Hu &
+Sekhar (2015). Some proposals that consider the correlation of adjacentes sites
+have been recently developed by Wang, Jiang & Li (2016) and Zhang, Liu & Jung
+(2019). Some recent review papers about multivariate control charts are Woodall
+& Montgomery (2014), Capizzi (2015), Bersimis, Sgora & Psarakis (2018), and
+Peres & Fogliatto (2018).
+    Most multivariate control charts seek to monitor multiple quality characteris-
+tics simultaneously, however Grimshaw et al. (2013) propose a spatial T 2 control
+chart and a multivariate EWMA chart (MEWMA) in order to monitor the mean
+of spatial data (a single quality characteristic at diﬀerent spatial locations), that is,
+instead of measuring multiple quality characteristics, only one quality character-
+istic is measured in multiple sites of the product or process. These control charts
+are based on multivariate control charts where the sample covariance matrix is
+replaced with a parametrized covariance matrix based on the semivariogram that
+
+
+                                        Revista Colombiana de Estadística 43 (2020) 49–70
+
+Spatial MCUSUM Control Chart                                                        51
+
+models the spatial correlation, under the assumption that the process is isotropic
+stationary Gaussian. While the proposals presented by Grimshaw et al. (2013)
+monitor the mean of a spatial process, Garthoﬀ & Otto (2015) recently considered
+the problem of simultaneously monitoring the mean and covariance of multivariate
+spatial processes using conventional MEWMA and multivariate cumulative sums
+(MCUSUM) control charts. It is important to highlight that the proposals pre-
+sented by Grimshaw et al. (2013) deal with the detection of changes in the mean
+of the spatial process over time, while the proposal presented by Garthoﬀ & Otto
+(2015) searches to detect changes in the mean and covariance of the spatial process
+in terms of the distance from a known centre of the spatial process; therefore, the
+run length is not anymore a point of time but a distance in space.
+    In many manufacturing processes the quality of a process or product is best
+described by a function, called a profile, this is, a functional relationship between
+a variable and a set of explanatory variables. In these cases, the point of interest
+are the changes in the profile over time. Profile monitoring is an example of multi-
+variate monitoring and it also includes the monitoring of two-dimensional shapes
+and three-dimensional surfaces, Woodall & Montgomery (2014). Some control
+charts proposed for monitoring processes characterized for profiles are based on
+multivariate control charts, among which are the approaches proposed by Kang &
+Albin (2000) and Williams, Woodall & Birch (2007). Among the control charts
+proposed for monitoring surface that consider the spatial correlation are the pro-
+posals made by Wang, Wang & Tsung (2014) and Colosimo, Cicorella, Pacella
+& Blaco (2014). Wang et al. (2014) proposed a control chart in phase II, that
+describes the spatial correlations among variables in 2-D surface data. This chart
+is based on the Gaussian-Kriging model, in which the spatial correlations within
+the 2-D surface profile are represented by a parametric function. The proposal
+presented by Colosimo et al. (2014) models the manufactured surface via Gaus-
+sian processes models and monitoring the deviations of the actual surface from
+the target pattern estimated in phase I. In this sense, the control charts pro-
+posed by Grimshaw et al. (2013) may be extendend for monitoring profiles with
+spatial dependence. Readers interested in reading about profile monitoring can
+consult Woodall, Spitzner, Montgomery & Gupta (2004), Woodall (2007), and
+Noorossana, Saghaei & Amiri (2011), among others.
+    The control charts proposed by Grimshaw et al. (2013), based on the T 2 and
+multivariate EWMA control charts, allow to monitor the mean of a spatial process.
+The first is designed to detect great shifts in the mean of the spatial process while
+the last is designed to detect smaller shifts. Although Grimshaw et al. (2013) pro-
+posed these two new control charts taking account the spatial dependence, only the
+performance of the control chart based on the T 2 statistic is evaluated in the simu-
+lations and illustrated in the example. Other well-known and eﬀective alternative
+to the multivariate EWMA control chart for detecting small sustained shifts in the
+mean vector is the multivariate cumulative sum control chart, Montgomery (2019).
+According to our knowledge, there is no MCUSUM control chart in the literature
+to monitor the mean of a spatial process. In this paper, we propose an extension
+of a multivariate CUSUM chart that takes into account the spatial dependence
+between the measurements of a single quality characteristic in diﬀerent product
+
+                                      Revista Colombiana de Estadística 43 (2020) 49–70
+
+52                         Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+locations, where the covariance matrix is determined by the semivariogram that
+models the spatial correlation.
+    This paper is organized as follows: Section 2 presents some basic concepts of
+spatial statistics. Section 3 describes the control charts proposed by Grimshaw
+et al. (2013) for monitoring the mean of a spatial process. In Section 4, the spatial
+multivariate CUSUM control chart is proposed. Section 5 presents a simulation
+study to evaluate the performance of the spatial T 2 , EWMA charts and the new
+spatial MCUSUM control chart, to detect changes in the mean of a spatial process
+in phase II. An example that illustrates the use of the control chart proposed is
+given in Section 6. Finally, a summary of results, conclusions and some recom-
+mendations are presented in Section 7.
+
+
+2. Spatial Data Analysis
+    Spatial data analysis is the set of statistical techniques for the proper analy-
+sis of spatial data, which makes use of the spatial referencing and Geographical
+Information Systems (GIS) techniques and methods. In this context, the spatial
+dependence is considered a fundamental property (Haining 2003), where spatially
+near observations tend to be more similar than distant observations, property
+known as Tobler’s law of geography (Tobler 1970). In this sense, the strength
+of the relationships between spatially distributed quantities is a function of their
+spatial separation, (Schabenberger & Pierce 2001).
+    Let s ∈ D be a generic location data in d-dimensional Euclidean space and
+suppose the potential datum Z(s) at spatial location s is a random quantity,
+where s varies over index set D ⊂ Rd generating the multivariate random field
+{Z(s) : s ∈ D}, with Z(s) = [Z(s)1 , . . . , Z(sp )]′ . The characteristics of the index
+set D determine the type of spatial data: Geostatistical data, if D is continuous
+and fixed; lattice data, if D is discrete and fixed; and point patterns, if the set of
+locations is itself random, (Cressie 2015).
+    Stationarity means that the random fields looks similar in diﬀerent parts of the
+domain D, (Schabenberger & Pierce 2001). There are three types of stationarity:
+strict, second-order and intrinsic. The process is strict (or strong) stationarity if
+the spatial distribution is invariant under translation of the coordinates by the
+vector h, that is, P (Z(s1 ) < z1 , . . . , Z(sp ) < zp ) = P (Z(s1 + h) < z1 , . . . , Z(sp +
+h) < zp ). The process {Z(s) : s ∈ D ⊂ Rd } is called second-order stationary if:
+
+     a. The expected value (mean of the random field) exists and does not depend
+        on locations E[Z(s)] = µ, for all s ∈ D
+
+     b. The covariance function is finite and only depends on the distance between
+        the locations, that is, Cov(Z(s), Z(s + h)) = C(h). The function C(·) is
+        called covariogram or covariance function.
+
+     c. The variance function is defined by the literal b when h = 0, therefore
+        V ar(Z(s)) = C(0) = σ 2 < ∞ does not depend on the location.
+
+                                           Revista Colombiana de Estadística 43 (2020) 49–70
+
+Spatial MCUSUM Control Chart                                                           53
+
+   The process {Z(s) : s ∈ D ⊂ Rd } is called intrinsically stationary if E[Z(s)] =
+µ and V ar(Z(s) − Z(s + h)) = 2γ(h). The function γ(h) is called the semivari-
+ogram of the spatial process.
+   If a random field is strictly stationary it is also second-order stationary, but
+the reverse is not necessarily true. A Gaussian random field is defined as a ran-
+dom function whose finite-dimensional distributions are multivariate Gaussian. If
+a Gaussian random field is second-order stationary it is also strictly stationary,
+(Schabenberger & Pierce 2001).
+    A second-order stationary process is also intrinsically stationary, but intrinsic
+stationarity does not imply second-order stationarity, (Schabenberger & Gotway
+2017). Second-order stationarity implies the following relationship between the
+semivariogram function and the covariogram function:
+
+
+                                γ(h) = C(0) − C(h).                                   (1)
+
+    Whereas in a stationary random field the absolute coordinate diﬀerences are
+immaterial, the orientation (angle) of the lag vector h matters. If the semivari-
+ogram or covariance function do not depend on the direction of the lag vector h,
+but these depends only on the absolute distance between points, the random field
+is termed isotropic, (Schabenberger & Gotway 2017).
+   In a second-order isotropy stationary random field with isotropic covariogram
+the covariance between any two points Z(s) and Z(s + h) is only a function of
+the Euclidean distance between the two points, Cov(Z(s), Z(s + h)) = C(∥h∥),
+Schabenberger & Pierce (2001).
+    For a second-order stationary random field, the isotropic semivariogram has a
+typical form showed in the Figure 1, where one can observe the following elements:
+nugget eﬀect, sill and range. The nugget eﬀect, denoted by τ 2 , represents the
+discontinuity at the origin of the semivariogram, which may be due to the fact
+that part of the spatial structure is concentrated at distances less than observed.
+The sill, denoted by σ 2 , corresponds to the upper asymptote of the semivariogram
+and it represents the V ar[Z(s)] = C(0). The range, denoted by ϕ, refers to the
+distance from which two observations are spatially uncorrelated.
+    The semivariogram is a function of the spatial process and as such satisfies
+certain properties, among these, the semivariogram must be conditionally negative-
+definite, this is
+
+                             p ∑
+                             ∑ p
+                                       αi αj γ(si − sj ) ≤ 0,                         (2)
+                             i=1 j=1
+
+for any number of spatial locations {si : i = 1, . . . , p} and constants α1 , . . . , αp
+          ∑
+          p
+such that   αi = 0. For more details about the properties of the semivariogram,
+           i=1
+the readers can consult Schabenberger & Pierce (2001), Waller & Gotway (2004)
+and Cressie (2015), among others.
+
+                                         Revista Colombiana de Estadística 43 (2020) 49–70
+
+54                         Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+
+
+     Figure 1: Semivariogram of a second-order stationary process with nugget eﬀect.
+
+
+    The goal of semivariogram estimation is to estimate the unknown parameters
+of a theoretical semivariogram model γ(h, θ). Estimation of the semivariogram is
+not easy because it must be conditionally negative definite. Estimating a semi-
+variogram is usually a two-step process: (i) to derive an empirical estimate of the
+semivariogram from the data and (ii) to fit a theoretical semivariogram model to
+the empirical estimate, Schabenberger & Pierce (2001).
+    The semivariogram conveys information of the spatial dependence of a random
+field. An unbiased estimator of the semivariogram, called the classical semivari-
+ogram estimator or Matheron estimator, is given by
+
+                                  1            ∑
+                     γ̂(h) =                            (Z(si ) − Z(sj ))2                (3)
+                               2|N (h)|
+                                          (si ,sj )∈N (h)
+
+where N (h) is the set of locations pairs that are separated by the lag vector h and
+|N (h)| denotes the cardinality of this set.
+    Estimation of the semivariogram by parametric statistical methods requires the
+selection of a semivariogram model γ(h, θ), where θ is a vector of parameters that
+is estimated from the data by direct or indirect methods (methods that process the
+data in some form generating summary amounts, and then fit the semivariogram
+model to these summaries). Functions that serve as semivariogram models must
+be conditionally negative definite, Schabenberger & Pierce (2001). Among the
+semivariogram models more common we found the linear, spherical, exponential,
+Matern and Gaussian model. In particular, the exponential model is given by
+                               {
+                                   0                            ∥ h ∥= 0,
+                   γ(h, θ) =                (             )                               (4)
+                                   τ 2 + σ 2 1 − e−3∥h∥/ϕ       ∥ h ∦= 0.
+
+   For the exponential semivariogram to be valid we need to have τ 2 ≥ 0, σ 2 ≥ 0,
+and ϕ ≥ 0. The covariance function of the exponential model without nugget eﬀect
+is                              {
+                                  σ2 ,             ∥ h ∥= 0,
+                     C(h, θ) =                                                 (5)
+                                  σ 2 (e−3∥h∥/ϕ ), ∥ h ∥> 0.
+
+                                             Revista Colombiana de Estadística 43 (2020) 49–70
+
+Spatial MCUSUM Control Chart                                                                55
+
+   The more flexible Matern semivariogram model is given by
+                                        [        √                  ]
+                                               (2 kh/ϕ)k      √
+                              2
+                 γ(h, θ) = τ + σ    2
+                                            1 − k−1      Kk (2 kh/ϕ) ,                     (6)
+                                                2   Γ(k)
+
+    where Γ(·) is the gamma function and Kk (·) is the modified Bessel function
+of order k. This function is valid for ϕ > 0 and k > 0. The case when k = 0.5
+reducing to the exponential model.
+   The readers interested in explore more about spatial data analysis can consult
+(Schabenberger & Pierce 2001), (Haining 2003),(Cressie 2015), and (Schabenberger
+& Gotway 2017) among other textbooks.
+
+
+3. Control Charts for the Mean of a Spatial
+   Process
+    Grimshaw et al. (2013) proposed two control charts for monitoring the mean of
+a spatial process, based on the classical multivariate T 2 control chart and MEWMA
+control chart. In these control charts instead of measuring multiple quality charac-
+teristics, only one quality characteristic is measured in multiple sites of the product
+or process, where the spatial dependendency sctructure of the process is repre-
+sented by the parametrized covariance matrix based on the semivariogram that
+models the spatial correlation, under the assumption that the process is isotropic
+stationary Gaussian.
+     Let Zj,t = [Zj,t (s1 ), . . . , Zj,t (sp )]′ be a p × 1 vector with the measurements of
+the quality characteristic on the jth product, j = 1, . . . , n, at the time t, from the
+spatial process {Z(s) : s ∈ D}. When the process is in control, µ(s) = µ0 , for all
+s, but when the process is out of control, µ(s) ̸= µ0 for at least one location s. Let
+Z̄ t be mean vector of the n sampled products at each of the p locations, at the
+time t. Under the assumption that Zj,t is an isotropic stationary Gaussian process
+with mean E(Z(s)) = µ(s) = µ0 , the T 2 control chart produces an out-control
+signal when
+                          Tt2 = n(Z̄ t − µ0 )′ Σ(θ0 )−1 (Z̄ t − µ0 )                     (7)
+
+   exceeds the upper control limit χ2 (1/ARL0 ; p), where ARL0 denotes the in-
+control ARL, µ0 = [µ0 , . . . , µ0 ]′ is the in-control mean vector and Σ(θ0 ) is the
+covariance matrix based on the semivariogram that models the spatial correlation
+with parameters θ0 .
+    The spatial multivariate EWMA control chart proposed by Grimshaw et al.
+(2013) detects small and medium shifts, sustained over time, in the mean of a
+spatial process, based on the classical MEWMA control chart. This new chart
+signals a process is out of control at time t when
+
+                                    Qt = W ′t Σ−1
+                                               W Wt                                        (8)
+
+                                              Revista Colombiana de Estadística 43 (2020) 49–70
+
+56                           Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+exceeds the upper control limit, where
+
+                            W t = λ(Z̄t − µ0 ) + (1 − λ)W t−1                                  (9)
+
+with 0 < λ ≤ 1 and
+                                       (                              )
+                                1           λ[1 − (1 − λ)2t ]
+                           ΣW =                                           Σ(θ 0 ),            (10)
+                                n                2−λ
+
+where Σ(θ 0 ) is constructed from the semivariogram.
+
+
+
+4. Spatial multivariate CUSUM Control Chart
+    Grimshaw et al. (2013) proposed two control charts for monitoring the mean
+of a spatial process based on the classical T 2 and MEWMA control charts. The
+spatial control chart is a straighforward application of the T 2 control chart, there-
+fore this control chart is relatively insensitive to small and moderate shifts in the
+mean vector because it uses information only from the current sample. The spa-
+tial control chart can be used in both phase I and phase II situations. The spatial
+MEWMA control chart is a modified version of the classical MEWMA chart, was
+designed to detect small and medium shifts that persist over time, and as in the
+MEWMA chart, this version is a phase II procedure.
+    Other well-known and eﬀective alternative to the multivariate EWMA chart
+for detecting small sustained shifts in the mean is the multivariate cumulative sum
+chart, Montgomery (2019). In this paper, we propose an extension of a multivari-
+ate CUSUM chart that takes into account the spatial dependence between the
+measurements of a single quality characteristic in diﬀerent product locations for
+monitoring the mean of a spatial process. In this new chart, under the assumption
+that the process is isotropic stationary Gaussian, the spatial dependendency sc-
+tructure of the process is represented by the parametrized covariance matrix based
+on the semivariogram that models the spatial correlation. We will call this new
+chart as spatial MCUSUM, which is based on the classical MCUSUM proposed by
+Crosier (1988).
+    Let Z j,t (s) = [Zj,t (s1 ), . . . , Zj,t (sp )]′ , j = 1, . . . , n, be an vector in phase II,
+at a time t, with the measurements on the jth product of the quality charac-
+teristic of interest taken at the locations s1 , . . . , sp . We assume that Z j,t is an
+isotropic stationary Gaussian process with mean vector µ0 = [µ0 (s1 ), . . . , µ0 (sp )]′ ,
+E(Zj (si )) = µ0 (si ) = µ0 , and covariance matrix determined by the semivariogram
+that models the spatial correlation, Σ(θ 0 ). The in-control mean vector µ0 de-
+scribes the mean of a single quality characteristic measured at diﬀerent locations.
+The statistic plotted on the control chart at that point of time is
+                                      [          (             )−1        ]1/2
+                                                     Σ(θ 0 )
+                               Ut =       S ′t                       St                       (11)
+                                                       n
+
+
+                                                 Revista Colombiana de Estadística 43 (2020) 49–70
+
+Spatial MCUSUM Control Chart                                                                 57
+
+where                
+                      0,                       (             )       if Ct ≤ k
+              St =                              k                                           (12)
+                      (S t−1 + Z̄ t − µ0 ) 1 −                   ,   otherwise,
+                                                Ct
+                           ∑
+                           n
+where S 0 = 0, Z̄ t = n1         Z j,t (s) is the mean vector of the n sample products at
+                           j=1
+each of the p locations at the time t, k = 0.5 is an allowance constant, and
+                 [                        (             )−1                          ]1/2
+                                              Σ(θ 0 )
+           Ct = (S t−1 + Z̄ t − µ0 )′                         (S t−1 + Z̄ t − µ0 )          (13)
+                                                n
+
+   The chart gives a signal of spatial process mean shift at the t-th time point
+when Ut > h, where h > 0 is the control limit chosen to reach a pre-specified
+ARL0 value, Σ(θ 0 ) is constructed from the semivariogram, and θ 0 contains the
+parameters of the semivariogram of a second-order stationary random field, for
+example, θ 0 = (σ 2 , ϕ) for an exponential semivariogram model without nugget
+eﬀect. When Ct is less than or equal to k, St is set to be 0, because there is little
+evidence of process mean shift in such cases, Qiu (2013).
+    The spatial MCUSUM control chart is based on the assumption that the pro-
+cess is isotropic stationary Gaussian, therefore the assumptions of normality, con-
+stant variance at all s, and isotropy must be guaranteed. Qiu (2008) and Qiu
+(2013) showed that the actual IC ARL values of the traditional MCUSUM chart
+are far away from their nominal IC ARL value for some non-normal distributions.
+If the number of locations is larger than the number of observations, (p ≫ n),
+the central limit theorem is not applicable, therefore the distribution of the sam-
+ple mean vector may be multivariate non-normal when the observations from a
+multivariate non-normal process. Therefore, it is important to ensure that the
+process is Gaussian. Initially, we would test the multivariate normality for the
+finite-dimensional distribution at the specific locations where the quality charac-
+teristic is measured, using some tests such as Mardia’s, Henze-Zirkler’s, or Roys-
+ton’s test or some graphical approaches such as chi-square Q-Q plot; but this
+does not guarantee that the spatial process is Gaussian. Some tests have been
+designed to determine whether a spatial process is Gaussian. Yuan (2000) derived
+tests of Gaussianity for stationary random fields on Z d (d ≥ 1) based on the es-
+timated kth-order spectrum (k > 2) at all the discrete frequencies. He used the
+likelihood-ratio principle. Di Bernardino, Estrade, León et al. (2017) dealt with
+a real-valued stationary isotropic random field and used the information given by
+level functionals of a single realization of the process to build a test of Gaussianity.
+The level functional is the Euler characteristic (EC) of the excursion sets above
+some levels. More research is required to study the robustness of the proposed
+spatial MCUSUM chart, as well as the development of new robust control charts
+to monitor the mean of a single characteristic of a product or process, when the
+measurements are taken in diﬀerent locations on each sampled item.
+   An user may use graphical diagnostics, such as directional sample variograms,
+rose diagrams, and empirical semivariogram contour plot to decide whether the
+
+
+                                           Revista Colombiana de Estadística 43 (2020) 49–70
+
+58                       Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+assumption of isotropy is reasonable. These graphical techniques can be diﬃcult
+to assess, open to subjective interpretations, and misleading. Hypothesis tests of
+the assumption of isotropy may be more objective. To this end, we found among
+others, the proposals formulated by Cabaña (1987), Maity & Sherman (2012), and
+Weller & Hoeting (2020).
+   There are only few papers that discuss hypothesis tests of stationarity, among
+these, Fuentes (2005) presented a test of stationarity for spatial random fields
+based on spatial spectral analysis (spectral functions which are space dependent),
+under the assumption that the spatial random field is on a regular grid. The
+proposed method consists essentially in testing the homogeneity of a set of spatial
+spectra evaluated at diﬀerent locations.
+    Because the assumption of isotropic stationary spatial process, when the pro-
+cess is in control, the mean of the quality characteristic that describes the spatial
+process is constant for all location. If the spatial MCUSUM chart exhibits an
+out-of-control signal, at least one of the physical locations departs from the spec-
+ifications. Because the spatial correlation, using kriging the users can predict the
+quality charateristic at locations where measurements were not taken. Therefore,
+the sample unit can be diagnosed with a graphic representing measurements at all
+locations, and thus detect defective regions.
+   Because the assumption of stationarity of the spatial process and to the fact
+that the in-control covariance matrix is a function of the parameters of the semi-
+variogram and the distances for each pair of points, the spatial MCUSUM control
+chart can be computed even if the spatial measurement locations and/or the num-
+ber of spatial measurements p change.
+    The eﬃcient estimation of semivariogram parameters is aﬀected by the se-
+lected sampling design, this is, the number of sites and the spatial configuration
+where measurements are taken. Grimshaw et al. (2013) pointed out, the optimal
+allocation scheme depends on the type of defects that are of concern: the best
+performance is obtained when the measurement grid is chosen to cover the loca-
+tions and types of anticipated defects and then the sample size maximized subject
+to resource constraints. In this paper, we do not study the eﬀect that the imple-
+mentation of some sample design criteria would have on the performance of the
+proposed control chart. It would be interesting to investigate this issue. Some
+design criteria, among others, have been proposed by Bogaert & Russo (1999),
+Müller & Zimmerman (1999), Marchant & Lark (2007). An interesting review
+about this issue is presented by Zimmerman & Buckland (2019).
+    In the spatial MCUSUM chart the covariance matrix is determined by the
+semivariogram that models the spatial correlation. The semivariogram is a pa-
+rameter of the spatial process that generally must be estimated from the data in
+phase I, usually in a procedure of two steps: (1) derive an empirical estimate of the
+semivariogram from the data and (2) fit a theoretical semivariogram model to the
+empirical estimate. There are various methods of fitting semivariogram models,
+such as least squares, maximum likelihood, and robust methods (Cressie 2015).
+These techniques require a large number of variogram points. Another alternative
+is a visual fit of the variogram points to a few standard models. A visual check
+
+
+                                      Revista Colombiana de Estadística 43 (2020) 49–70
+
+Spatial MCUSUM Control Chart                                                        59
+
+against a fitted theoretical model is appropriate (Hohn 1998). Studying both the
+impact of the misspecifying the semivariogram model and the eﬀect of estimating
+the parameters of the semivariogram on the performance of the spatial MCUSUM
+chart in phase II are issues of great importance that are not addressed in this
+paper, which deserve further investigation.
+
+
+5. Simulations
+    In this section, we present some simulation results to evaluate, in phase II, the
+numerical performance of the proposed spatial MCUSUM chart. We have orga-
+nized these results in three subsections: in the first, the spatial T 2 , MCUSUM and
+MEWMA control charts are compared and the eﬀects of sample sizes and mag-
+nitude of the non-centrality parameter are analyzed; in the second, the eﬀects of
+the range of the semivariogram model in the performance of the spatial MCUSUM
+chart are evaluated, and finally the third subsection evaluates the robustness of
+the performance of the spatial MCUSUM control chart under deviations in the
+normality assumption.
+    The simulations are carried out under the hypothesis that the spatial corre-
+lations come from a exponential model without a nugget eﬀect with parameters
+σ 2 = 0.03 and ϕ = 1. A spatial measurement grid density of 12 points is consid-
+ered, with 1.5 units between points.
+
+
+5.1. Performance Comparison Between the Spatial T 2 ,
+     MEWMA and MCUSUM Control Charts
+   We compare the numerical performance of the proposed spatial MCUSUM
+chart with the performance of the spatial T 2 and spatial MEWMA (considering
+λ = 0.1, 0.2, 0.4, 0.8) control charts. In order to measure the numerical perfor-
+mance of the proposed control chart in phase II, we calculate the average run
+length for diﬀerent changes in the mean vector, (ARL1 ). The level of shifts in the
+mean vector is described by the non-centrality parameter (ncp), which is defined
+as                                    ′
+                       δ = ((µ1 − µ0 ) [Σ(θ 0 )]−1 (µ1 − µ0 ))1/2              (14)
+where µ0 represents a vector of means under control and µ1 the new vector of
+means, (Montgomery 2019). Large values of δ represent large shifts in the mean
+vector. When δ = 0, the mean process is under control and the measure of
+performance is denoted as ARL0 .
+   Two sample sizes are explored: n1 = 1 and n6 = 6. For the three spatial
+control charts considerated, the control limits and ARL are calculated using the
+next algorithm:
+
+  1. An initial control limit (h) is established.
+
+
+
+
+                                      Revista Colombiana de Estadística 43 (2020) 49–70
+
+60                         Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+     2. Under the assumption that the spatial process is isotropic, stationary and
+        Gaussian, random vectors from a multivariate normal distribution are sim-
+        ulated with mean vector zero (µ0 = 0) and covariance matrix defined by an
+        exponential semivariogram model (Σ0 ) until the control statistic exceeds the
+        value of the control limit h.
+     3. The run length (RL) is calculated.
+     4. Steps 2 and 3 are repeated 100.000 times and the ARL is estimated.
+                                        \0 > 200, h is decreased) and go to
+           \0 < 200, h is increased (If ARL
+     5. If ARL
+        step 2.
+                 \0 = 200, a mean shift (µ1 = µ0 + ξ) is stablished.
+     6. Once the ARL
+     7. 100.000 random vectors are generated from a multivariate normal distribu-
+        tion with mean vector µ1 and covariance matrix Σ0 .
+     8. To estimate ARL1 .
+
+    The R code for implementing the proposed scheme, including the procedure
+for finding the control limit, is available from the authors upon request.
+
+Table 1: Performance comparison between the spatial T 2 , MEWMA (λ = 0.1, 0.2, 0.4
+         and 0.8) and MCUSUM control charts for processes where the spatial cor-
+         relation from an exponential model without a nugget eﬀect with parameters
+         σ 2 = 0.03 and ϕ = 1.
+        Control Charts            T2              MCUSUM          MEWMA (λ=0.1)
+          Matrix       δ       n1        n6        n1      n6         n1     n6
+                    0.00   200.00    200.00    200.00  200.00     200.00 200.00
+                   0.060   197.15    196.02   185.47  148.13      194.39 163.57
+                   0.121   193.55    185.08   160.18   83.95      173.05 100.87
+                   0.189   192.37    168.59   127.33   50.25      145.21  54.54
+       Σ (0.03,1)  0.312   186.98    129.40    78.70   27.72       95.97  21.97
+                   0.696   136.31     37.26     31.12   11.54     26.32    5.44
+                    1.00    99.62     12.22     20.42    7.99     13.50    3.03
+                    2.02    22.63      1.32      9.71    4.08      4.11    1.17
+                    3.00     6.18     1.00       5.34    2.95      2.18    1.00
+        Control Charts     MEWMA (λ=0.2)      MEWMA (λ=0.4)       MEWMA (λ=0.8)
+          Matrix       δ       n1        n6        n1      n6         n1     n6
+                    0.00   200.00    200.00    200.00  200.00     200.00 200.00
+                   0.060   196.07    178.66    199.14  187.80     195.66 193.76
+                   0.121   184.23    128.57    192.71  156.81     193.92 181.28
+                   0.189   164.77     79.02    180.63  115.23     188.88 158.27
+       Σ (0.03,1)  0.312   122.88     31.60    153.38   56.39     175.85 108.09
+                   0.696    38.48      6.07     67.18    8.17     117.28  22.02
+                    1.00    17.71      3.26     31.42    3.70      73.57   7.05
+                    2.02     4.52      1.21      5.53    1.23      13.05   1.26
+                    3.00     2.34     1.00       2.51   1.00        3.61   1.00
+
+
+    Table 1 shows the performance of the spatial T 2 , MEWMA (with λ = 0.1, 0.2,
+0.4, 0.8) and MCUSUM control charts for processes with spatial correlation, where
+
+                                        Revista Colombiana de Estadística 43 (2020) 49–70
+
+Spatial MCUSUM Control Chart                                                             61
+
+the spatial correlation from an exponential model without nugget eﬀect with
+σ 2 = 0.03 and ϕ = 1. The performace of these control charts is calculated for
+9 values of δ. For small shifts in the mean vector (δ=0.06 to δ=0.312) the spatial
+MCUSUM chart has better performance than the spatial T 2 and MEWMA control
+charts. For moderate shifts in the mean vector (δ = 0.696, 1 and 2.02) the spatial
+MEWMA(λ = 0.1) presents better performance. For large shifts (δ = 3), the
+spatial T 2 and MEWMA control charts show a better performance when n = 6,
+while the MEWMA(λ = 0.1) is better for n = 1.
+
+
+5.2. Eﬀects of the Range of the Exponential Model
+   Table 2 presents a comparison in the performance of the spatial MCUSUM
+chart for n = 6 and diﬀerent values of range (ϕ) in the exponential model consid-
+ered. According to the results, the chart presents a similar behavior for diﬀerent
+values of the range, that is, the spatial MCUSUM chart is not sensitive to changes
+presented by the parameter ϕ.
+
+Table 2: Performance comparison of the spatial MCUSUM chart for n = 6 and processes
+         where the spatial correlation from an exponential model without a nugget eﬀect
+         with parameters σ 2 = 0.03 and diﬀerent values of ϕ.
+                           δ       ϕ=1      ϕ=4     ϕ = 10   ϕ = 20
+                        0.00      200.00   200.00   200.00   200.00
+                        0.06      148.13   147.21   150.06   146.65
+                       0.121       83.95    83.97    83.70    83.21
+                       0.189       50.25    50.16    50.40    49.97
+                       0.312       27.72    27.79    27.73    27.80
+                       0.696       11.54    11.55    11.55    11.55
+                        1.00        7.99     7.96     7.99     7.98
+                        2.02        4.08     4.08     4.08     4.08
+
+
+    Table 3 shows the influence of the sample size in the performance of the spatial
+MCUSUM chart under two range values and two sample sizes. For the two range
+values, the performance of the spatial MCUSUM chart is better when the sample
+size is larger.
+
+Table 3: Influence of the sample size in the performance of the spatial MCUSUM chart
+         for n = 1 and 6 from an exponential model without a nugget eﬀect with
+         parameters σ 2 = 0.03 and ϕ = 1 and 4.
+                     σ 2 = 0.03          ϕ=1               ϕ=4
+                              δ         n1     n6         n1     n6
+                           0.00     200.00 200.00     200.00 200.00
+                           0.06     185.47 148.13     187.11 147.21
+                          0.121     160.18  83.95     160.25  83.95
+                          0.189     127.33  50.25     124.84  50.25
+                          0.312      78.70  27.72      78.72  27.72
+                          0.696      31.12  11.54      30.78  11.54
+                           1.00      20.42   7.99      20.39   7.99
+                           2.02       9.71   4.08       9.70   4.08
+
+
+
+
+                                           Revista Colombiana de Estadística 43 (2020) 49–70
+
+62                             Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+5.3. Robustness of the Performance of the Spatial MCUSUM
+     Control Chart, Under Deviations in the Normality
+     Assumption
+    Both the multivariate t and the multivariate normal are members of the gen-
+eral family of elliptically symmetric distributions. Multivariate t distributions
+are generalizations of the classical univariate Student t distribution. Multivariate
+t-distributions oﬀer a more viable alternative with respect to real-world data, par-
+ticularly because its tails are more realistic than the multivariate normal distribu-
+tion. This distribution has been used in diﬀerent fields such as physics, engineering
+and finance. Its degrees of freedom parameter, υ, is also referred to as the shape
+parameter, because the peakedness of the density function may be diminished,
+preserved, or increased by varying υ (Nadarajah & Kotz 2005). The covariance
+matrix of this distribution is only defined if υ > 2 (Frey 2010). Other family of
+distributions with applications in the real world is the Multivariate generalized
+hyperbolic distributions (MGH distributions). The MGH distributions were intro-
+duced by Barndorﬀ-Nielsen (1978). These distributions in general are skewed and
+represent an attractive family of distributions with exponentially decreasing tails
+for multivariate data modelling (Frey 2010). Under the exponential model con-
+sidered and n = 6, Table 4 shows the performance of the spatial MCUSUM chart
+under three diﬀerent distributions: multivariate normal, multivariate t-student
+with υ = 3 and 10, and M GH(0.5, 0.5, 2, µ0 , Σ(θ0 ), 0).
+
+Table 4: Eﬀect of the distributional assumption in the performance of the spatial
+         MCUSUM chart
+         δ   N (µ0 , Σ(θ0 )   t3 (µ0 , Σ(θ0 ))   t10 (µ0 , Σ(θ0 ))   M GH(0.5, 0.5, 2, µ0 , Σ(θ0 )), 0)
+      0.00      200.00            200.00              200.00                    200.00
+      0.06      148.13            176.71              153.75                    180.44
+     0.121      83.95             132.13              92.99                     128.40
+     0.189      50.25              94.35              57.89                      79.59
+     0.312      27.72              58.70              32.72                      32.13
+     0.696      11.54              26.15              13.80                      8.103
+      1.00       7.99              18.16               9.53                      5.09
+      2.02       4.08               9.09               4.83                      2.40
+
+   According to the obtained results, the performance of the spatial MCUSUM
+control chart is sensitive to the distributional assumption. However, because the
+control limits are found by simulation to guarantee a predetermined ARL in-
+control, no distributional assumptions are required for the data.
+
+
+6. Example
+    To illustrate the application of the proposed spatial MCUSUM control chart,
+we consider the problem of monitoring bottle thickness presented by (Grimshaw
+et al. 2013). The production of bottles is done by a blown model, which can vary
+the thickness of the bottle-wall when the air pressure is not uniform in the time,
+causing the surface of the bottle to curve inward. Bottle-wall thickness is measured
+
+                                                 Revista Colombiana de Estadística 43 (2020) 49–70
+
+Spatial MCUSUM Control Chart                                                          63
+
+using a nondestructive ultrasound micrometer. Bottle is a three-dimensional ob-
+ject, which is represented more simply in two dimensions “unwrapping” the bottle.
+
+    In this example, according to the requirements of the manufacturer, 8 locations
+of the bottles were selected (p), which belongs the phase I sample, with a uniform
+thickness of 0.055 inch. The sample is made up 26 bottles, includes four locations
+around the cylinder at two heights, p = 8. There were m = 4 days where n = 6
+bottles were measured in a thick spatial measurement grid, to improve production
+of semivariogram for distances close to zero were collected in two other denser
+spatial measurement grids, a 5 × 5 grid with dimensions of 0.25 inches away one
+day and a 5 × 5 grid with dimensions of 0.125 inches away the other day. These
+measurements are skewed, but the log transformation produces data that are ap-
+proximately distributed as multivariate normal, according to multivariate version
+of the statistic Shapiro-Wilk (p-value= 0.6832).
+
+      The in-control mean vector is µ0 = ln(0.055)1p = −2.91p , where 1p is an p × 1
+column vector of ones. The in-control covariance matrix is estimated based on
+the semivariogram that models the spatial correlation. Figure 2 shows the plot
+     (Z(si )−Z(sj ))2
+of           2        against the arc distance measured in inches, d(si , sj ), for each
+pair of points on the bottles from the phase I sample (first 4 days), represented
+by circles, which indicate that there is no evidence of a nugget eﬀect. The figure
+also includes the estimated semivariogram based on the exponential model without
+nugget eﬀect (solid line), the Matern model without a nugget efect (black dash-dot
+line) and the Spherical model (gray dotted line). The parameters of the exponential
+semivariogram model without a nugget eﬀect are estimated using n-weighted least
+squares and a numerical minimization algorithm in the geoR package of software
+R, (Ribeiro Jr. & Diggle 2001). Notice in Figure 2 that small d have smaller error
+bars than larger d. Cressie (2015) describes how a simple nonlinear least-squares
+estimator would ignore the fact that the variance is a function of distance and
+a weighted least-squares approach could improve model fit by allowing diﬀerent
+variances. Of the three spatial correlation models the exponential model better
+fit. For the exponential model σ̂ 2 = 0.034 and ϕ̂ = 3.194; for the Matern model
+σ̂ 2 = 0.028, ϕ̂ = 0.167 and k = 52.791, and for the spherical model σ̂ 2 = 0.028 and
+ϕ̂ = 5.
+
+    There is no evidence of a nugget eﬀect because the empirical semivariogram
+cloud approaches zero for small distances. Based on these phase I sample bottles,
+the spatial control chart will use the covariance based on the exponential model
+without a nugget-eﬀect. Figure 3 shows the spatial T 2 , MEWMA and MCUSUM
+control charts using the exponential, Matern and spherical models to estimate the
+semivariogram, where the upper control limit for the spatial T 2 is calculated as the
+percentile χ20.005,8 = 21.95, the control limits for the spatial MCUSUM chart and
+spatial MEWMA (λ = 0.2) chart are h = 12.7 and h = 27.2, respectively, which
+are chosen by simulations to obtain an ARL0 = 200. The spatial MCUSUM chart
+behaviour is similar in the three models; the same situation occurs for the spatial
+T 2 and MEWMA(λ = 0.2) chart. These control charts show 2 out-of-control
+signals, corresponding to the days 7 and 8.
+
+                                        Revista Colombiana de Estadística 43 (2020) 49–70
+
+64                        Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+
+
+                         Figure 2: Estimated Semivariogram.
+
+
+
+
+Figure 3: Spatial T2 control chart: a) using the exponential model without nugget eﬀect
+          (grey solid line), b) using the Matern model without nugget eﬀect (black solid
+          line), and c) the spherical model (grey dash-dot line ); Spatial MCUSUM con-
+          trol chart: d) using the exponential model without nugget eﬀect (grey dotted
+          line), e) using the Matern model without nugget eﬀect (black dotted line), f)
+          the spherical model (black dash-dot line); and Spatial MEWMA(λ = 0.2) con-
+          trol chart: g) using the exponential model without nugget eﬀect (black thick
+          line), h) using the Matern model without nugget eﬀect (black thick dotted
+          line), and i) the spherical model (black thick dash-dot line), for monitoring
+          bottle thickness.
+
+
+   In this example, the three control charts show the same performance, this may
+be because only 4 days are used for the estimation of parameters in phase I.
+
+
+
+
+                                        Revista Colombiana de Estadística 43 (2020) 49–70
+
+Spatial MCUSUM Control Chart                                                         65
+
+7. Conclusions
+    This paper presents a new type of MCUSUM control chart for monitoring, in
+phase II, the mean of a single characteristic with spatial dependence. Under the
+assumption that the observations from an isotropic stationary Gaussian process,
+the control chart proposed taking account the spatial correlation that exists be-
+tween the observations of the characteristic that are measured at diﬀerent sites.
+This new control chart is called spatial MCUSUM. To ensure a good performance
+of the proposed control chart, the assumptions of multivaraite normality, constant
+variance at all location, and isotropy must be verified.
+   Although the spatial MCUSUM chart constitutes an extension of the classical
+multivariate cusum control chart, the control chart proposed diﬀers in three fun-
+damental points: only a single quality characteristic is measured in diﬀerent sites,
+the covariance matrix is estimated based on the semivariogram that takes into
+account the spatial dependence, and the observations from an isotropic Gaussian
+process.
+    According to the simulation study, which considered only the exponential semi-
+variogram, for small shifts in the mean vector the spatial MCUSUM chart has bet-
+ter performance than the spatial T 2 and MEWMA control charts. For moderate
+shifts in the mean vector the spatial MEWMA(λ = 0.1) presents better perfor-
+mance. For large shifts the spatial T 2 (with n > 1) and MEWMA control charts
+show a better performance. It would be interesting to explore the performance of
+these three control charts using other semivariogram models. The performance of
+the spatial MCUSUM control chart is sensitive to the distributional assumption,
+although the control limit can be found by simulation to guarantee a predeter-
+mined ARL in-control. More research is required to study the robustness of the
+proposed spatial MCUSUM chart.
+    The spatial MCUSUM control chart is based on the assumption that the pro-
+cess is isotropic stationary Gaussian, therefore is important verify, in phase I, that
+the spatial process satisfies the assumptions of isotropy, stationarity and normal-
+ity. An user may use graphical diagnostics, such as directional sample variograms,
+rose diagrams, and empirical semivariogram contour plot to decide whether the
+assumption of isotropy is reasonable, or use the proposals presented by Cabaña
+(1987), Maity & Sherman (2012), or Weller & Hoeting (2020) to test this hypoth-
+esis. The stationarity can be verified using the proposal presented by Fuentes
+(2005), for example; while the assumption of normality can be verified using the
+proposals formulated by Yuan (2000) or Di Bernardino et al. (2017).
+    Another interesting research topic could be the extending of this procedure for
+health surveillance. The timely detection of various types of adverse health events
+is very important for the agencies responsible for health surveillance. For example,
+detect disease outbreaks such as asthma or influenza. The delay in the detection
+of and response to an adverse health event can result in the loss of lives and high
+economic costs. The early detection of these events allows preparing contingency
+plans to contain them. Using the spatial information that is given by the location
+can potentially enable localized outbreaks of a disease to be detected, or variations
+
+
+                                       Revista Colombiana de Estadística 43 (2020) 49–70
+
+66                      Juan David Rojas Gordillo & Rubén Darío Guevara Gonzalez
+
+
+in regional patterns to be identified (Unkel, Farrington, Garthwaite, Robertson &
+Andrews 2012). The proposed spatial MCUSUM control chart could help detect
+these outbreaks or changes. This extension must consider, among others, the
+following observations: 1) risk adjust the outcome data before constructing a
+control chart, 2) find measures appropriate to evaluate the performance of the
+control proposed chart in the health care context, 3) adjust the population at
+risk, which it varies over time, 4) capture the space-time dependence presents in
+the data. Some interesting references on this topic are Sonesson & Bock (2003),
+Woodall (2006), and Tsui, Chiu, Gierlich, Goldsman, Liu & Maschek (2008).
+    It would be interesting to investigate a version of the proposed control chart
+for phase I, as well as the eﬀect of the estimation in phase I on the performance
+of the chart in phase II.
+
+
+Acknowledgements
+   The authors thank the two anonymous referees for their many helpful comments
+that have resulted in significant improvements in the article. We especially thank
+the professor Scott Grimshaw, who provided the example data set.
+               [                                                   ]
+                Received: March 2019 — Accepted: December 2019
+
+
+References
+Alt, F. B. & Smith, N. D. (1988), ‘Multivariate process control’, Handbook of statistics 7, 333–351.
+Barndorﬀ-Nielsen, O. (1978), ‘Hyperbolic distributions and distributions on hyperbolae’, Scandinavian Journal of statistics pp. 151–157.
+Bersimis, S., Sgora, A. & Psarakis, S. (2018), ‘The application of multivariate statistical process monitoring in non-industrial processes’, Quality Technology & Quantitative Management 15(4), 526–549.
+Bogaert, P. & Russo, D. (1999), ‘Optimal spatial sampling design for the estimation of the variogram based on a least squares approach’, Water Resources Research 35(4), 1275–1289.
+Cabaña, E. M. (1987), ‘Aﬃne processes: a test of isotropy based on level sets’, SIAM Journal on Applied Mathematics 47(4), 886–891.
+Capizzi, G. (2015), ‘Recent advances in process monitoring: Nonparametric and variable-selection methods for phase i and phase ii’, Quality Engineering 27(1), 44–67.
+Chakraborti, S., Human, S. & Graham, M. (2008), ‘Phase i statistical process control charts: an overview and some results’, Quality Engineering 21(1), 52–62.
+Colosimo, B. M., Cicorella, P., Pacella, M. & Blaco, M. (2014), ‘From profile to surface monitoring: Spc for cylindrical surfaces via gaussian processes’, Journal of Quality Technology 46(2), 95–113.
+Cressie, N. (2015), Statistics for spatial data, John Wiley & Sons.
+Crosier, R. B. (1988), ‘Multivariate generalizations of cumulative sum qualitycontrol schemes’, Technometrics 30(3), 291–303.
+Di Bernardino, E., Estrade, A., León, J. R. et al. (2017), ‘A test of gaussianity based on the euler characteristic of excursion sets’, Electronic journal of statistics 11(1), 843–890.
+Frey, R. (2010), Multivariate distributions, in ‘Encyclopedia of Quantitative Finance’, Wiley Online Library.
+Fuentes, M. (2005), ‘A formal test for nonstationarity of spatial stochastic processes’, Journal of Multivariate Analysis 96(1), 30–54.
+Garthoﬀ, R. & Otto, P. (2015), Simultaneous surveillance of means and covariances of spatial models, in ‘Stochastic Models, Statistics and Their Applications’, Springer, pp. 271–281.
+Grimshaw, S. D., Blades, N. J. & Miles, M. P. (2013), ‘Spatial control charts for the mean’, Journal of Quality Technology 45(2), 130.
+Haining, R. (2003), Spatial data analysis: theory and practice, Cambridge university press.
+Hohn, M. (1998), Geostatistics and petroleum geology, Springer Science & Business Media.
+Hotteling, H. (1947), ‘Multivariate quality control, illustrated by the air testing of sample bombsights’, Techniques of statistical analysis pp. 111–184.
+Jones-Farmer, L. A., Woodall, W. H., Steiner, S. H. & Champ, C. W. (2014), ‘An overview of phase i analysis for process improvement and monitoring’, Journal of Quality Technology 46(3), 265–280.
+Kang, L. & Albin, S. L. (2000), ‘On-line monitoring when the process yields a linear profile’, Journal of Quality Technology 32(4), 418–426.
+Khoo, M. B., Wu, Z., Castagliola, P. & Lee, H. (2013), ‘A multivariate synthetic double sampling T2 control chart’, Computers & industrial engineering 64(1), 179–189.
+Lee, M. H., Khoo, M. B. & Xie, M. (2014), ‘An optimal control procedure based on multivariate synthetic cumulative sum’, Quality and Reliability Engineering International 30(7), 1049–1058.
+Lowry, C. A., Woodall, W. H., Champ, C. W. & Rigdon, S. E. (1992), ‘A multivariate exponentially weighted moving average control chart’, Technometrics 34(1), 46–53.
+Maity, A. & Sherman, M. (2012), ‘Testing for spatial isotropy under general designs’, Journal of statistical planning and inference 142(5), 1081–1091.
+Marchant, B. & Lark, R. (2007), ‘Optimized sample schemes for geostatistical surveys’, Mathematical Geology 39(1), 113–134.
+Montgomery, D. C. (2019), Introduction to statistical quality control, John Wiley & Sons.
+Müller, W. G. & Zimmerman, D. L. (1999), ‘Optimal designs for variogram estimation’, Environmetrics: The oﬃcial journal of the International Environmetrics Society 10(1), 23–37.
+Nadarajah, S. & Kotz, S. (2005), ‘Mathematical properties of the multivariate t distribution’, Acta Applicandae Mathematica 89(1-3), 53–84.
+Nezhad, M. S. F. & Niaki, S. T. A. (2013), ‘A max-ewma approach to monitor and diagnose faults of multivariate quality control processes’, The International Journal of Advanced Manufacturing Technology 68(9-12), 2283–2294.
+Noorossana, R., Saghaei, A. & Amiri, A. (2011), Statistical Analysis of Profile Monitoring, John Wiley & Sons, Hoboken, New Jersey.
+Peres, F. A. P. & Fogliatto, F. S. (2018), ‘Variable selection methods in multivariate statistical process control: A systematic literature review’, Computers & Industrial Engineering 115, 603–619.
+Pignatiello Jr, J. J. & Runger, G. C. (1990), ‘Comparisons of multivariate cusum charts’, Journal of quality technology 22(3), 173–186.
+Qiu, P. (2008), ‘Distribution-free multivariate process control based on log-linear modeling’, IIE Transactions 40(7), 664–677.
+Qiu, P. (2013), Introduction to statistical process control, CRC Press.
+Ribeiro Jr., P. J. & Diggle, P. J. (2001), ‘geoR: a package for geostatistical analysis’, R-NEWS 1(2), 15–18. *http://cran.R-project.org/doc/Rnews
+Ryan, T. P. (2011), Statistical methods for quality improvement, John Wiley & Sons.
+Schabenberger, O. & Gotway, C. A. (2017), Statistical methods for spatial data analysis, CRC press.
+Schabenberger, O. & Pierce, F. J. (2001), Contemporary statistical models for the plant and soil sciences, CRC press.
+Sonesson, C. & Bock, D. (2003), ‘A review and discussion of prospective statistical surveillance in public health’, Journal of the Royal Statistical Society: Series A (Statistics in Society) 166(1), 5–21.
+Suriano, S., Wang, H., Shao, C., Hu, S. J. & Sekhar, P. (2015), ‘Progressive measurement and monitoring for multi-resolution data in surface manufacturing considering spatial and cross correlations’, IIE Transactions 47(10), 1033– 1052.
+Tobler, W. R. (1970), ‘A computer movie simulating urban growth in the detroit region’, Economic geography 46(sup1), 234–240.
+Tsui, K.-L., Chiu, W., Gierlich, P., Goldsman, D., Liu, X. & Maschek, T. (2008), ‘A review of healthcare, public health, and syndromic surveillance’, Quality Engineering 20(4), 435–450.
+Unkel, S., Farrington, C. P., Garthwaite, P. H., Robertson, C. & Andrews, N. (2012), ‘Statistical methods for the prospective detection of infectious disease outbreaks: a review’, Journal of the Royal Statistical Society: Series A (Statistics in Society) 175(1), 49–82.
+Waller, L. A. & Gotway, C. A. (2004), Applied spatial statistics for public health data, Vol. 368, John Wiley & Sons.
+Wang, A., Wang, K. & Tsung, F. (2014), ‘Statistical surface monitoring by spatial structure modeling’, Journal of Quality Technology 46(4), 359–376.
+Wang, K., Jiang, W. & Li, B. (2016), ‘A spatial variable selection method for monitoring product surface’, International Journal of Production Research 54(14), 4161–4181.
+Weller, Z. D. & Hoeting, J. A. (2020), ‘A nonparametric spectral domain test of spatial isotropy’, Journal of Statistical Planning and Inference 204, 177–186.
+Williams, J. D., Woodall, W. H. & Birch, J. B. (2007), ‘Statistical monitoring of nonlinear product and process quality profiles’, Quality and Reliability Engineering International 23(8), 925–941.
+Woodall, W. H. (2006), ‘The use of control charts in health-care and public-health surveillance’, Journal of Quality Technology 38(2), 89–104.
+Woodall, W. H. (2007), ‘Current research in profile monitoring’, Producao 17(3), 420–425.
+Woodall, W. H. & Montgomery, D. C. (2014), ‘Some current directions in the theory and application of statistical process monitoring’, Journal of Quality Technology 46(1), 78–94.
+Woodall, W. H., Spitzner, D. J., Montgomery, D. C. & Gupta, S. (2004), ‘Using control charts to monitor process and product quality profiles’, Journal of Quality Technology 36(3), 309–320.
+Yuan, J. (2000), ‘Testing gaussianity and linearity for random fields in the frequency domain’, Journal of Time Series Analysis 21(6), 723–737.
+Zhang, S., Liu, Y. & Jung, U. (2019), ‘Sparse abnormality detection based on variable selection for spatially correlated multivariate process’, Journal of the Operational Research Society 70(8), 1321–1331.
+Zimmerman, D. L. & Buckland, S. T. (2019), Environmental sampling design, in ‘Handbook of Environmental and Ecological Statistics’, CRC Press, pp. 181–210.

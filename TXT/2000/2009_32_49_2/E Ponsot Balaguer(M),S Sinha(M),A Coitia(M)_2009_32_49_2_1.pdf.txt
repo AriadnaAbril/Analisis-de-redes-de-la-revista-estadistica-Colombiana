@@ -1,0 +1,1468 @@
+Sobre la agrupación de niveles del factor explicativo en el modelo logit binario
+Universidad de Los Andes
+Resumen
+Se discute el efecto que se produce sobre el modelo logit binario con un único factor explicativo cuando el investigador decide agrupar algunos niveles de dicho factor. Con base en la parametrización de referencia y el modelo saturado se sugiere un procedimiento que, aprovechando los cómputos de un primer ajuste logit y corrigiendo el supuesto distribucional sobre la varianza,produce estimaciones más eficientemente y con mayor precisión que las que se producen si solo se decide reiterar un ajuste logit. Una vez colocado el tema en perspectiva, se desarrollan las ecuaciones que sustentan el procedimiento sugerido, apelando a la teoría asintótica. Se ilustra mediante un ejemplo la diferencia entre el procedimiento sugerido y el habitual y, con base en una extensa simulación, se muestran tendencias sólidas a favor del primero, en la medida en que las probabilidades de éxito de la variable respuesta (Y=1),asociadas con las categorías del factor explicativo incluidas en la agrupación,sean más disímiles entre sí.
+Palabras clave: modelo logit, agregación de niveles, datos agregados, tablas de contingencia, modelo lineal generalizado.
+Introducción
+El modelo logit ha sido en las últimas décadas una herramienta de gran utilidad en el análisis estadístico de datos categóricos y tablas de contingencia (véase
+por ejemplo Christensen 1997, Powers & Xie 1999, Hosmer & Lemeshow 2000,
+Agresti 2007, Hilbe 2009). Se desprende como un caso particular del modelo lineal
+generalizado cuando los datos se suponen distribuidos de forma binomial. Bajo
+este supuesto, se utiliza logit como función de enlace canónico entre los compo-
+nentes aleatorio y sistemático del modelo (McCullagh & Nelder 1989, p. 30), y se
+postulan factores o tratamientos explicativos, al estilo del diseño de experimentos
+y el análisis de varianza convencionales.
+    Este modelo propone que el logaritmo de la posibilidad, entendida como el
+cociente entre la probabilidad de éxito y la de fracaso en un ensayo de Bernoulli,
+es igual a una función lineal en los parámetros, denominada usualmente predic-
+tora lineal. Su propósito es estimar y establecer la significancia estadística de los
+factores, frente a una respuesta observada. En el proceso, operando con la inver-
+sa del logaritmo de posibilidad en función de la predictora lineal, se predicen las
+probabilidades de éxito en cada combinación de niveles de los factores.
+   En particular y a efectos de simplificar la exposición, este trabajo supone un
+modelo logit en su formulación más simple. Esto es, una variable respuesta dico-
+tómica y un solo factor explicativo. Adicionalmente, se asume que las respuestas
+correspondientes a los distintos niveles del factor explicativo son binomiales inde-
+pendientes.
+    Es común encontrar en la literatura aplicaciones de este modelo en las más
+diversas áreas de investigación. Interesa particularmente aquí la situación en que
+el investigador cuenta con una tabla de contingencia (obtenida en un estudio pros-
+pectivo o por muestreo, por ejemplo) y, luego de postular y ajustar un modelo
+logit a los datos, él mismo decide agrupar algunos niveles del factor y reiterar el
+análisis, en el sentido de ajustar nuevamente un modelo logit sobre la tabla de
+contingencia resultante de la agrupación.
+   Por ejemplo, este procedimiento es sugerido en Hosmer & Lemeshow (2000, p.
+136) como estrategia para subsanar el inconveniente de respuestas con muy baja
+o ninguna representación en la tabla de contingencia. Esta eventualidad ocasiona
+problemas numéricos ya que, cuando su ajuste se lleva a cabo por medios asintó-
+
+                                      Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                     159
+
+ticos, la estimación de los parámetros del modelo logit es exigente con respecto a
+los tamaños de muestra.
+    También abundan los ejemplos en que el investigador agrega niveles del factor,
+simplemente para disminuir la complejidad del análisis o bien por cuanto le in-
+teresa a posteriori concentrarse en algunos niveles y tratar los restantes de forma
+anónima. Un ejercicio que ilustra este proceder puede verse en Hilbe (2009, pp. 74
+y 88). En su texto, de origen muy reciente, el autor desarrolla modelos a partir del
+Registro Nacional Cardiovascular del Canadá, empleando en una primera oportu-
+nidad la edad con cuatro niveles como factor explicativo, y en otra oportunidad
+agrupando dicho factor hasta alcanzar solo dos niveles.
+    Al reiterar el ajuste de un modelo logit sobre una segunda tabla de contingen-
+cia con niveles agrupados de los factores, en general se incurre en una violación del
+supuesto binomial original, con implicaciones importantes sobre las varianzas esti-
+madas. Este es el centro de la investigación pautada en la tesis doctoral del primer
+autor (Ponsot 2009), uno de cuyos resultados parciales es el presente trabajo.
+    Consecuentemente, el propósito de este artículo es ahondar sobre dicho pro-
+blema y, manteniéndose en el ámbito del modelo logit, sugerir un nuevo curso
+de acción que mejore la precisión de los resultados. La exposición continúa con la
+siguiente sección dedicada a la formulación del problema. La tercera sección se des-
+tina al estudio de las varianzas, tanto cuando se supone que todas las poblaciones
+son binomiales (el procedimiento habitual), como cuando no es así (el procedimien-
+to sugerido). En la cuarta sección se presenta el procedimiento sugerido cuando el
+investigador agrupa los dos últimos niveles, argumentando con base en la teoría
+asintótica. En la quinta sección se comenta la extensión natural del procedimiento
+sugerido, cuando se agrupan en general k niveles (k ≥ 2). La sexta sección del tra-
+bajo contiene una comparación entre ambos procedimientos, ilustrada mediante
+un ejemplo concreto. La séptima sección sintetiza los resultados de una simulación
+extensa sobre 10000 tablas de contingencia generadas seudoaleatoriamente, cuyo
+código fuente R se reproduce en el anexo. Por último, la octava sección se dedica
+a las conclusiones.
+
+
+2. Formulación del problema
+
+                           Tabla 1: Y (0, 1) vs. A(1, . . . , a).
+                                                 Y
+                                A        0      1     Total
+                                 1      n10    n11     n1·
+                                 2      n20    n21     n2·
+                                 .       .      .       .
+                                 ..      ..     ..      ..
+                                 a      na0    na1     na·
+                               Total    n·0    n·1     n··
+
+
+    Sea la tabla 1 un arreglo de la variable categórica Y (respuesta binaria) versus
+los niveles del factor A (nominales u ordinales), en el cual nij (i = 1, . . . , a y
+
+                                       Revista Colombiana de Estadística 32 (2009) 157–187
+
+160                         Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+j = 0, 1) representa la frecuencia simple de aparición del i-ésimo nivel del factor A
+y la j-ésima categoría de la variable respuesta Y , entendiendo Y = 0 como fracaso
+y Y = 1 como éxito.
+    En presencia de una respuesta binaria, la tabla 1 queda completamente especi-
+ficada con los valores ni1 y ni· , ya que ni· = ni0 + ni1 . Para simplificar la notación,
+sea entonces yi ≡ ni1 el número de éxitos observado en el i-ésimo nivel de A, y
+ti ≡ ni· el total de observaciones para dicho nivel.
+    La situación de interés en este trabajo asume que las respuestas correspon-
+dientes a los distintos niveles de A son independientes entre sí. También se supone
+que dichas respuestas, es decir, las frecuencias observadas de los niveles del factor,
+provienen de una población binomial en el número de éxitos (Y = 1), esto es,
+                              Ind
+                           Yi ∼ Bin(ti , pi ), ∀ i = 1, . . . , a
+
+donde Yi es la variable aleatoria que representa el número de éxitos en la i-ésima
+muestra y pi , considerada constante, es la probabilidad de éxito asociada. Se su-
+pondrá además en este trabajo la inexistencia de sobredispersión.
+   Entre muchos modelos que pueden formularse para el caso, es de interés parti-
+cular aquí el modelo logit. Dicho modelo es la versión del tipo análisis de varianza
+(ANOVA) del modelo de regresión logística, y aun cuando se conoce desde hace
+varias décadas, en la actualidad (Hilbe 2009, p. 4) se suele presentar como un caso
+particular del modelo lineal generalizado, originalmente propuesto por Nelder &
+Wedderburn (1972). Su formulación es la siguiente:
+
+                          logit(pi ) = x0i β, i = 1, . . . , a                         (1)
+                                                 0
+    En la ecuación (1), β = β1 β2 · · · βr es un vector columna de parámetros
+desconocidos, con r un número entero fijo que representa la cantidad de dichos
+parámetros que el investigador ha decidido incorporar en su diseño; x0i es el i-
+ésimo vector fila de la matriz de diseño Xa×r la cual, en presencia del modelo
+saturado, como es el caso, resulta en una matriz cuadrada (r = a).
+    La expresión logit(pi ) es la aplicación de la transformación logit(p) = loge [p/(1−
+p)] a las probabilidades de éxito poblacionales supuestas para la i-ésima muestra.
+Para simplificar la notación del modelo en términos matriciales y hacer compati-
+bles los subíndices de los elementos de la matriz X y el vector β, el parámetro
+β1 se corresponde en esta formulación con el intercepto (usualmente denotado por
+β0 ). Las cantidades pi /(1 − pi ) se interpretan como las “posibilidades” (en inglés,
+odds) del éxito frente al fracaso. Consecuentemente logit(pi ) modela el logaritmo
+neperiano de la posibilidad en la i-ésima muestra. Claramente las pi son también
+objeto de estimación, por lo cual el ajuste del modelo se produce generalmente por
+la aplicación del método de Newton-Raphson, entre otros, que implica un cómputo
+iterativo hasta lograr la convergencia. Otro procedimiento de estimación, no ite-
+rativo, se conoce en la literatura como el método GSK, originalmente propuesto
+por Grizzle et al. (1969).
+    En su acepción más simple es común utilizar la parametrización de referencia
+para la matriz X. Sin pérdida de generalidad, sea a el nivel de referencia, entonces
+
+                                        Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                      161
+
+dicha parametrización conduce al modelo siguiente:
+                                                           
+            logit(p1 )        1 1 0 ··· 0          β1     β1 + β2
+           logit(p )      1 0 1 · · · 0  β  β + β 
+                   2                        2   1         3
+                ..                          .              
+                       =  ..                .  =       ..                      (2)
+                 .        .                 .           .  
+                                                           
+          logit(pa−1 )    1 0 0 · · · 1 βa−1  β1 + βa 
+            logit(pa )        1 0 0 ··· 0          βa        β1
+
+   En (2), el modelo es saturado (a = r) y por lo tanto no se cuenta con los
+grados de libertad suficientes para que tenga sentido el cálculo de los estadísticos
+de devianza de Pearson. Sin embargo, aún pueden estimarse sus parámetros (β)
+y determinarse su significación estadística. Nótese además que existe X −1 puesto
+que X es no singular.
+   En efecto, el cálculo del determinante por la descomposición en cofactores
+(Xij ), por simplicidad, pivotando la última fila de la matriz X ya que el único de
+sus elementos diferente de cero es xa1 , resulta |X| = (−1)a+1 |I| = (−1)a+1 6= 0.
+    El modelo logit ha sido profusamente estudiado y caracterizado (véanse por
+ejemplo Cox 1970, McCullagh & Nelder 1989, McCulloch & Searle 2001, Collett
+2002, Agresti 2007, Rodríguez 2008). Sin embargo, poco se ha profundizado en
+las consecuencias que acarrea la violación de sus supuestos. En particular, son
+del interés aquí las consecuencias de la violación del supuesto binomial para las
+poblaciones subyacentes.
+    Así, supóngase que el investigador decide agrupar los niveles a y a−1, haciendo
+ ∗
+ya−1  = ya−1 + ya y t∗a−1 = ta−1 + ta . Claramente, la situación puede extenderse
+a más de dos niveles, simplemente agregando los dos últimos, luego estos con el
+anterior y así sucesivamente. El teorema 1 establece que la suma de dos varia-
+bles aleatorias independientes binomiales, con probabilidades de éxito en general
+distintas, no resulta en una variable aleatoria binomial.
+Teorema 1. Sean X1 y X2 dos variables aleatorias independientes tales que X1 ∼
+Bin(n1 , p1 ) y X2 ∼ Bin(n2 , p2 ) con n1 ≤ n2 . Entonces, la variable aleatoria Z =
+X1 + X2 de distribuye como sigue:
+                                           k
+                                     p1
+                  P[Z = k] =                     (1 − p1 )n1 (1 − p2 )n2 S(k)          (3)
+                                   1 − p1
+
+donde
+                       !      !              i
+          
+           Xk
+                    n      n      p2 (1 − p1 )
+          
+                     1      2
+                                                  , k = 0, . . . , n1
+          
+                                 p1 (1 − p2 )
+          
+                 k−i       i
+          
+          
+            i=0            !      !                i
+           X  k
+                        n1     n2     p2 (1 − p1 )
+   S(k) =                                              , k = n1 + 1, . . . , n2
+          
+                      k−i      i     p1 (1 − p2 )
+          
+           i=k−n 1        !      !                i
+          
+             Xn2
+          
+                       n1     n2     p2 (1 − p1 )
+          
+                                                      , k = n2 + 1, . . . , n1 + n2
+                      k−i      i     p1 (1 − p2 )
+               i=k−n1
+
+
+
+                                       Revista Colombiana de Estadística 32 (2009) 157–187
+
+162                            Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+Demostración.
+
+                                                 0
+                                                 X
+        P[Z = 0] = P[X1 = 0, X2 = 0] =                 P[X1 = 0 − i, X2 = i]
+                                                 i=0
+        P[Z = 1] = P[X1 = 1, X2 = 0] + P[X1 = 0, X2 = 1]
+                      1
+                      X
+                  =         P[X1 = 1 − i, X2 = i]
+                      i=0
+                 ..
+                  .
+       P[Z = n1 ] = P[X1 = n1 , X2 = 0] + · · · + P[X1 = 0, X2 = n1 ]
+                    n1
+                    X
+                  =    P[X1 = n1 − i, X2 = i]
+                      i=0
+  P[Z = n1 + 1] = P[X1 = n1 , X2 = 1] + · · · + P[X1 = 0, X2 = n1 + 1]
+                       1 +1
+                      nX
+                  =           P[X1 = n1 + 1 − i, X2 = i]
+                      i=1
+                 ..
+                  .
+       P[Z = n2 ] = P[X1 = n1 , X2 = n2 − n1 ] + · · · + P[X1 = 0, X2 = n2 ]
+                      n2
+                      X
+                  =        P[X1 = n2 − i, X2 = i]
+                      i=n2 −n1
+
+  P[Z = n2 + 1] = P[X1 = n1 , X2 = n2 − n1 + 1] + · · · + P[X1 = 1, X2 = n2 ]
+                     n2
+                     X
+                =          P[X1 = n2 + 1 − i, X2 = i]
+                      i=n2 −n1 +1
+                 ..
+                  .
+                                                    n2
+                                                    X
+ P[Z = n2 + n1 ] = P[X1 = n1 , X2 = n2 ] =                P[X1 = n1 + n2 − i, X2 = i]
+                                                   i=n2
+                 Pk
+                 
+                 Pi=0 P[X1 = k − i, X2 = i], k = 0, . . . , n1
+                    k
+      ∴ P[Z = k]    i=k−n1 P[X1 = k − i, X2 = i], k = n1 + 1, . . . , n2
+                  P
+                  n2
+                    i=k−n1 P[X1 = k − i, X2 = i], k = n2 + 1, . . . , n1 + n2
+
+
+
+
+Ahora bien, como X1 y X2 son independientes, para r = 0, 1, . . . , n1 y s =
+0, 1, . . . , n2 , se tiene que:
+
+
+                                                             
+                                        n1 r                   n2 s
+          P[X1 = r, X2 = s] =               p1 (1 − p1 )n1 −r     p2 (1 − p2 )n2 −s
+                                        r                      s
+
+                                           Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                              163
+
+   Luego, para un k fijo, llámese i(k) al rango correspondiente de cada sumatoria
+implicada en P[Z = k]. Entonces:
+X                            X  n1                          
+                                           k−i        n1 −k+i n2
+   P[X1 = k − i, X2 = i] =                p (1 − p1 )              pi2 (1 − p2 )n2 −i
+                                  k−i 1                        i
+i(k)                                i(k)
+                                                k
+                                          p1
+                               =                      (1 − p1 )n1 (1 − p2 )n2
+                                        1 − p1
+                                                                 X  n1  n2   p2 (1 − p1 ) i
+                                                                        k−i      i   p1 (1 − p2 )
+                                                                 i(k)
+
+
+       Consecuentemente,
+                               k
+                           p1
+                 P[Z = k] =        (1 − p1 )n1 (1 − p2 )n2 S(k), donde:
+                         1 − p1
+                     !       !              i
+          
+           Xk
+                   n1      n2    p2 (1 − p1 )
+          
+                                                , k = 0, . . . , n1
+          
+                                p1 (1 − p2 )
+          
+                 k−i       i
+          
+          
+            i=0           !      !                i
+           X  k
+                      n1      n2     p2 (1 − p1 )
+   S(k) =                                             , k = n1 + 1, . . . , n2
+          
+                    k−i       i     p1 (1 − p2 )
+          
+           i=k−n1        !      !                i
+          
+             Xn2
+          
+                     n1      n2     p2 (1 − p1 )
+          
+                                                     , k = n2 + 1, . . . , n1 + n2
+                    k−i       i     p1 (1 − p2 )
+                  i=k−n1
+
+
+
+
+    El corolario 1 establece, empleando el teorema 1, que la distribución binomial
+se obtiene cuando las probabilidades de éxito son iguales.
+Corolario 1. p1 = p2 = p ⇒ Z ∼ Bin(n = n1 + n2 , p).
+
+Demostración.
+                                                k
+                                          p1
+                     P[Z = k] =                       (1 − p1 )n1 (1 − p2 )n2 S(k)
+                                        1 − p1
+                                  = pk (1 − p)n−k S(k)
+
+       Y ya que {[p2 (1 − p1 )]/[p1 (1 − p2 )]}i = {[p(1 − p)]/[p(1 − p)]}i = 1 para i finito,
+                          k 
+                             X n1  n2 
+                         
+                                                   , k = 0, . . . , n1
+                         
+                         
+                         
+                                    k−i        i
+                         
+                             i=0
+                                              
+                          X     k
+                                         n1       n2
+             S(k) =                                     , k = n1 + 1, . . . , n2
+                         
+                                       k−i        i
+                         
+                             i=k−n1
+                                              
+                         
+                               n2
+                                X
+                         
+                                        n1       n2
+                         
+                                                       , k = n2 + 1, . . . , n1 + n2
+                                        k−i        i
+                              i=k−n1
+
+
+                                             Revista Colombiana de Estadística 32 (2009) 157–187
+
+164                          Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+    Ahora, haciendo uso de propiedades combinatorias (Rohatgi & Ehsanes 2001,
+Feller 1968), se tiene:
+
+ a) Para k = 0, . . . , n1
+                              k 
+                              X                                           
+                                  n1   n2                     n1 + n2          n
+                     S(k) =                           =                     =
+                                      k−i         i              k             k
+                              i=0
+
+
+ b) Para k = n1 + 1, . . . , n2
+
+               Xk         
+                       n1     n2
+      S(k) =
+                      k−i      i
+             i=k−n1
+                                                                
+               n1 + n2 − n2       n2        n1 + n2 − n2        n2
+           =                            +                                + ···
+                    n1         k − n1          n1 − 1      k − (n1 − 1)
+                                             
+               n1 + n2 − n2    n2       n1 + n2       n
+           +                         =            =
+                    0           k          k          k
+
+  c) Para k = n2 + 1, . . . , n1 + n2
+                Xn2         
+                         n1    n2
+      S(k) =
+                        k−i     i
+              i=k−n1
+                                                                
+                n1 + n2 − n2      n2        n1 + n2 − n2        n2
+            =                           +                                + ···
+                      n1        k − n1         n1 − 1      k − (n1 − 1)
+                                             
+                n1 + n2 − n2    n2      n1 + n2       n
+            +                        =            =
+                    k − n2      n2         k          k
+
+                                                          
+                                  k         n−k           n k
+               ∴ P [Z = k] = p (1 − p)            S(k) =     p (1 − p)n−k
+                                                          k
+
+Corolario 2. E[Z] = n1 p1 + n2 p2 y V[Z] = n1 p1 (1 − p1 ) + n2 p2 (1 − p2 ).
+
+Demostración. Por una parte,
+
+                E[Z] = E[X1 + X2 ] = E[X1 ] + E[X2 ] = n1 p1 + n2 p2
+
+y dado que X1 y X2 son independientes, entonces:
+
+       V[Z] = V[X1 + X2 ] = V[X1 ] + V[X2 ] = n1 p1 (1 − p1 ) + n2 p2 (1 − p2 )
+
+    La ecuación (3) es una generalización de la suma de ensayos de Poisson (Feller
+1968, p. 218), es decir, ensayos independientes de Bernoulli con probabilidades de
+éxito en general diferentes. Se trata de una realización particular de la distribución
+de probabilidades conocida en la literatura como Poisson-Binomial (Wang 1993, p.
+298), y ha sido estudiada desde varios puntos de vista a partir de la aparición de los
+
+                                        Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                    165
+
+trabajos de Neyman (1939). No obstante, al no tener una forma analítica simple,
+ha recibido atención casi exclusivamente por la vía de las aproximaciones numé-
+ricas (Sprott 1958, Hodges & Le Cam 1960, Ollero & Ramos 1991, Weba 1999,
+Roos 1999, Neammanee 2005). En particular, la estimación de sus parámetros no
+presenta problemas desde el punto de vista numérico, menos aún hoy en día con
+la gran capacidad computacional disponible. Sin embargo, su tratamiento analí-
+tico, por ejemplo, como factor en la función de verosimilitud, es de complejidad
+considerable.
+    Claramente, establecidos los supuestos de un primer modelo logit sobre la tabla
+1, un segundo modelo logit sobre una nueva tabla que agrupe los niveles a − 1 y a,
+en el caso en que pa−1 6= pa , violenta el supuesto binomial original en la muestra
+correspondiente al último de los niveles de la variable respuesta, es decir, aquel
+que surge de la agrupación. Además, puede descartarse su pertenencia a la familia
+exponencial, ya que la conformación de la densidad de probabilidades depende del
+recorrido de la variable aleatoria como se aprecia en (3).
+    Este obstáculo es de consideración puesto que el modelo logit, en el contexto
+del modelo lineal generalizado, supone una función de enlace canónico deducida a
+partir de la pertenencia de la distribución de la muestra a la familia exponencial.
+Una alternativa sería entonces proceder con base en la función de cuasiverosimi-
+litud (Wedderburn 1974) en lugar de la función de verosimilitud. Sin embargo,
+tampoco es posible encontrar una relación funcional entre la media y la varian-
+za exclusivamente para la distribución en (3), con lo cual queda descartada esta
+posibilidad (McCullagh & Nelder 1989, p. 337).
+   Procurando mantener el problema en el ámbito del modelo lineal generalizado
+y modelo logit, este trabajo persigue entonces estudiar las dos aristas siguientes:
+
+  1. Cuál es el efecto de la agregación de niveles sobre las estimaciones y las
+     pruebas de hipótesis y, para el caso en que tal efecto resulte importante,
+     cómo pueden mejorarse los resultados en el sentido de la disminución en
+     la longitud de los intervalos de confianza estimados o, equivalentemente,
+     aumentando la precisión de los estimadores.
+
+  2. Cómo puede aprovecharse la información obtenida a partir de un primer
+     modelo logit en el ajuste de un segundo modelo con niveles agregados del
+     factor.
+
+   Para ello se adoptan argumentos de naturaleza asintótica, basados en el teore-
+ma del Límite Central (TLC) (Lehmann 1999, p. 73) y el método delta (Lehmann
+1999, p. 86).
+
+
+3. Estudio de las varianzas
+    Como se dijo, el modelo logit supone una distribución binomial en el número
+de éxitos de la variable respuesta en cada nivel del factor explicativo. Ello implica
+la suposición V[Yi ] = ti pi (1 − pi ) para todo i = 1, . . . , a. Sin embargo, cuando el
+
+                                      Revista Colombiana de Estadística 32 (2009) 157–187
+
+166                           Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+investigador agrupa dos niveles cualesquiera, por ejemplo a − 1 y a, formando una
+                             ∗
+nueva variable aleatoria Ya−1    = Ya−1 + Ya , y nuevamente ejecuta el procedimiento
+                                                                                 ∗
+de ajuste del modelo logit, implícitamente supone la varianza como VBin [Ya−1       ]=
+ ∗     ∗         ∗             ∗                    ∗           ∗     ∗
+ta−1 pa−1 (1 − pa−1 ), donde ta−1 = ta−1 + ta y pa−1 = E[Ya−1 ]/ta−1 = (ta−1 pa−1 +
+ta pa )/(ta−1 + ta ).
+    Ahora bien, como se prueba en el corolario 2, una expresión adecuada para la
+                   ∗
+varianza es V[Ya−1    ] = ta−1 pa−1 (1 − pa−1 ) + ta pa (1 − pa ). El teorema 2 muestra
+que ambas expresiones de la varianza no son equivalentes y de hecho, para valores
+                                                   ∗           ∗
+dados de los parámetros, se tiene que VBin [Ya−1      ] ≥ V[Ya−1   ].
+                      ∗
+Teorema 2. Con Ya−1      = Ya−1 + Ya , para valores dados de ta−1 , ta , pa−1 , pa ,
+        ∗          ∗
+VBin [Ya−1 ] ≥ V[Ya−1 ].
+
+Demostración.
+        ∗
+VBin [Ya−1 ] = t∗a−1 p∗a−1 (1 − p∗a−1 )
+                                                                         
+                                ta−1 pa−1 + ta pa         ta−1 pa−1 + ta pa
+             = (ta−1 + ta )                          1−
+                                   ta−1 + ta                 ta−1 + ta
+                 2                         2
+               t     pa−1 (1 − pa−1 ) + ta pa (1 − pa ) + ta−1 ta [pa−1 + pa − 2pa−1 pa ]
+             = a−1
+                                                ta−1 + ta
+               ta−1 V[Ya−1 ] + ta V[Ya ] + ta−1 ta [pa−1 + pa − 2pa−1 pa ]
+             =
+                                          ta−1 + ta
+
+  Sea ∆V el incremento en varianza entre ambos supuestos, definido como ∆V =
+        ∗          ∗
+VBin [Ya−1 ] − V[Ya−1 ]. Entonces:
+        ta−1 V[Ya−1 ] + ta V[Ya ] + ta−1 ta [pa−1 + pa − 2pa−1 pa ]
+ ∆V =                                                                − V[Ya−1 ] − V[Ya ]
+                                 ta−1 + ta
+        ta−1 ta [pa−1 + pa − 2pa−1 pa ] − ta V[Ya−1 ] − ta−1 V[Ya ]
+      =
+                                 ta−1 + ta
+        ta−1 ta [pa−1 + pa − 2pa−1 pa ] − ta ta−1 pa−1 + ta ta−1 p2a−1 − ta−1 ta pa + ta−1 ta p2a
+      =
+                                               ta−1 + ta
+        −2ta−1 ta pa−1 pa + ta ta−1 p2a−1 + ta−1 ta p2a
+      =
+                          ta−1 + ta
+          ta−1 ta
+      =            (pa−1 − pa )2                                                               (4)
+        ta−1 + ta
+
+                              ∗          ∗
+  Claramente ∆V ≥ 0 ⇒ VBin [Ya−1 ] ≥ V[Ya−1 ]. En particular, si pa−1 = pa ⇒
+        ∗          ∗
+VBin [Ya−1 ] = V[Ya−1 ].
+
+   La figura 1 ilustra el comportamiento de ambas varianzas cuando se fijan los
+parámetros ta−1 , ta , pa−1 , evaluando la cantidad pa en los niveles 0.3, 0.5, 0.8.
+    Una discusión interesante sobre el tema, partiendo de una sucesión de ensayos
+de Poisson, puede consultarse en Nedelman & Wallenius (1986) y en las referencias
+citadas allí. Ahora bien, del examen de la ecuación (4) se desprenden dos hechos
+importantes:
+
+                                          Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                     167
+
+
+
+
+      Figura 1: Comparación de VBin [Ya−1
+                                      ∗
+                                          ] y V[Ya−1
+                                                 ∗
+                                                     ] con ta−1 = 20, ta = 50.
+
+
+  1. ∆V es directamente proporcional al cuadrado de la diferencia entre pa−1 y
+     pa , siempre positivo o nulo (llámese ∆p = |pa−1 − pa |). Por consiguiente, sin
+     importar cuáles sean los valores de pa−1 y pa que originan ∆p, mientras más
+     distantes estén entre sí, tanto mayor será la diferencia entre ambas varianzas.
+  2. ∆V es también directamente proporcional a la función:
+                              T (ta−1 , ta ) = ta−1 ta /(ta−1 + ta )
+      estrictamente positiva y creciente. Por lo tanto, la diferencia entre ambas
+      varianzas se incrementará en la medida en que aumenten simultáneamente
+      ta−1 y ta , o cualquiera de ellos, manteniéndose constante el otro. Además, sin
+      pérdida de generalidad, supóngase que ta−1 ≤ ta . En tal caso T es máxima
+      cuando ta−1 = ta = t y ∆V = t(∆p)2 /2.
+    Así, es clara la existencia de un problema cuando se agrupan niveles y se insiste
+en el modelo logit sin variar el supuesto binomial, especialmente en lo relacionado
+con la estimación de las varianzas y, en consecuencia, de los errores estándares
+utilizados para las pruebas de hipótesis sobre los parámetros del modelo.
+
+                                       Revista Colombiana de Estadística 32 (2009) 157–187
+
+168                            Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+4. El procedimiento sugerido
+    La estimación máximo-verosímil de los parámetros en el modelo logit (1) se
+lleva a cabo, bajo el supuesto binomial, mediante por ejemplo la aplicación del mé-
+todo de Newton-Raphson al sistema de ecuaciones de las primeras derivadas par-
+ciales del logaritmo de la función de verosimilitud, respecto a los βj (j = 1, . . . , r),
+igualadas a cero. Las probabilidades de éxito poblacionales en la verosimilitud se
+                                                  0         0
+sustituyen, despejando del modelo, como pi = exi β /(1 + exi β ) para i = 1, . . . , a. En
+el procedimiento se itera hasta tanto la diferencia entre dos estimaciones sucesivas
+de β sea despreciable.
+     La última iteración del método produce las estimaciones máximo-verosímiles
+tanto de pi como de β, cuyos estimadores se denotan respectivamente por pbi y
+b McCullagh & Nelder (1989, p. 119) demuestran que, asintóticamente, es decir,
+β.
+cuando los yi son suficientemente grandes,           b
+                                     h i el vector β obtenido por este mecanismo
+                                                                           
+es un estimador insesgado de β y V βb = (X 0 W X)−1 , donde W = diag ti pi (1 −
+    
+pi ) . Este resultado es válido para cualesquiera matriz de diseño Xa×r y vector
+columna de parámetros βr . En particular, es válido también para el caso del modelo
+saturado en el cual a = r.
+    Luego, en presencia del modelo saturado (2) que postula la equivalencia en-
+tre logit(pi ) y la función predictora lineal x0i β (en términos matriciales Xβ),
+sustituyendo
+  h    i       los parámetros por sus estimadores se tiene que, asintóticamente,
+      b
+V X β = X(X 0 W X)−1 X 0 = XX −1 W −1 (X 0 )−1 X 0 = W −1 . Por consiguiente
+y como consecuencia del TLC, así como de las propiedades de los estimadores
+máximo-verosímiles, se tiene que:
+                                                               −1 
+                        pi ) = x0i βb ∼ AN x0i β, ti pi (1 − pi )
+                  logit(b                                                     (5)
+
+   Nótese que tanto en la ecuación (5) como en las que siguen se ha decidido
+emplear la notación “AN”, frecuente en la literatura estadística, como abreviatura
+de la frase “asintóticamente normal”. Ahora bien, empleando el método delta a
+partir de la ecuación (5) se tiene:
+
+                              0 b
+                           e xi β                    
+                                            −1    0b
+                  pbi =             0 b
+                                        = g     x i β
+                       1 + e xi β
+                          0          0           0       0             0
+      d g −1 (x0i β)   e xi β 1 + e xi β − e xi β e xi β             e xi β
+                     =                    0 2
+                                                             =             0 2
+                                                                                  = pi (1 − pi )
+        d (x0i β)                 1 + e xi β                       1 + e xi β
+                                          0                      2                   !
+                                       e xi β         pi (1 − pi )        pi (1 − pi )
+              ⇒ pbi ∼ AN pi =                 0 ;                     =                            (6)
+                                    1 + exi β ti pi (1 − pi )                  ti
+
+ya que la función g −1 (·) es no nula y diferenciable.
+    Entonces, la ecuación (6) implica que el investigador conoce la distribución
+asintótica del estimador de las probabilidades de éxito para el modelo (2). En
+
+                                             Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                           169
+
+particular, cumplido el procedimiento de ajuste,
+                                             .h  el investigador
+                                                        i        tiene la estimación
+                                         0 b        0 b
+mediante el modelo logit de pi , pbi = exi β 1 + exi β y la varianza asintótica del
+             pi ] = pi (1 − pi )/ti .
+estimador V [b
+    Ahora bien, siguiendo la notación definida en la sección anterior, cuando se
+agrupan los niveles a − 1 y a, el estimador máximo-verosímil de la nueva probabi-
+lidad de éxito p∗a−1 es
+                            \
+                           E[Y  ∗       \         [
+                               a−1 ]   E[Ya−1 ] + E[Ya ]   ta−1 pba−1 + ta pba
+               pb∗ a−1 =     ∗       =                   =                                  (7)
+                            ta−1          ta−1 + ta           ta−1 + ta
+
+   Considerando el corolario 2, claramente pb∗ a−1 es un estimador insesgado de
+ ∗
+pa−1 . El teorema 3 demuestra cómo se distribuye este nuevo estimador cuando
+ta−1 y ta son suficientemente grandes.
+Teorema 3. Si los pbi se distribuyen independientes como en (6) para i = a − 1 e
+i = a, entonces:
+                   ta−1 pba−1 + ta pba
+         pb∗ a−1 =
+                      ta−1 + ta
+                                                                                   
+                          ta−1 pa−1 + ta pa ta−1 pa−1 (1 − pa−1 ) + ta pa (1 − pa )
+                 ∼ AN                      ;
+                             ta−1 + ta                   (ta−1 + ta )2
+
+Demostración. Claramente, en el límite, pb∗ a−1 es la suma ponderada de dos
+funciones lineales de variables aleatorias independientes asintóticamente normales.
+Luego, su distribución asintótica también es normal. Ahora bien, por un lado se
+tiene que:
+                h      i t         pa−1 ] + ta E[b
+                             a−1 E[b             pa ]   ta−1 pa−1 + ta pa
+              E pb∗ a−1 =                             =
+                                   ta−1 + ta               ta−1 + ta
+y por el otro:
+      h      i t2 V[b pa−1 ] + t2a V[b
+                                     pa ]   ta−1 pa−1 (1 − pa−1 ) + ta pa (1 − pa )
+    V pb∗ a−1 = a−1                       =
+                    (ta−1 + ta )2                        (ta−1 + ta )2
+
+    El teorema
+              4, empleando nuevamente el método delta, identifica la distribución
+          b∗
+de logit p a−1 requerida.
+
+Teorema 4. Si pb∗ a−1 se distribuye como en el teorema 3, entonces:
+                                                 ∗ 
+                      logit pb∗ a−1 ∼ AN µ∗a−1 , σ 2 a−1
+
+donde:
+                                               
+                              ta−1 pa−1 + ta pa
+          µ∗a−1 = logit                           , y
+                                 ta−1 + ta
+         ∗                          ta−1 pa−1 (1 − pa−1 ) + ta pa (1 − pa )
+      σ 2 a−1 =                                               ta−1 ta                 2
+                    ta−1 pa−1 (1 − pa−1 ) + ta pa (1 − pa ) + ta−1                 2
+                                                                   +ta (pa−1 − pa )
+
+
+
+                                            Revista Colombiana de Estadística 32 (2009) 157–187
+
+170                         Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+Demostración. Claramente la función logit es no nula y diferenciable, luego el
+método delta garantiza la normalidad asintótica con la esperanza señalada. Resta
+probar la expresión de la varianza asintótica, como sigue:
+                                            
+         ∗                   d logit(p∗a−1 ) 2
+      σ 2 a−1 = V[pb∗ a−1 ]
+                                 d p∗a−1
+                                                                               2
+                 [ta−1 pa−1 (1 − pa−1 ) + ta pa (1 − pa )]             1
+               =
+                               (ta−1 + ta )2                 p∗a−1 (1 − p∗a−1 )
+                         ∗                      ∗
+                     V[Ya−1 ]              V[Ya−1 ]
+               =                2 =                   
+                           ∗
+                  VBin [Ya−1 ]              ∗ ] + ∆V 2
+                                       V[Ya−1
+                                ta−1 pa−1 (1 − pa−1 ) + ta pa (1 − pa )
+               =                                                                   
+                                                               ta−1 ta
+                  ta−1 pa−1 (1 − pa−1 ) + ta pa (1 − pa ) + ta−1                   2 2
+                                                                  +ta (pa−1 − pa )
+
+
+    Para efectos de las pruebas de hipótesis e intervalos de confianza deseados, los
+parámetros distribucionales se sustituyen por sus estimadores. Así, el parámetro
+poblacional pi se sustituye por su estimador pbi y el vector de parámetros β en la
+predictora lineal, por su estimador β. b Ambos calculados a partir de la muestra
+observada por el método de Newton-Raphson, como se señaló al inicio de esta sec-
+ción. Consecuentemente, el procedimiento propuesto en la situación de agregación
+de niveles del factor es el siguiente:
+
+  1. Ajustar un modelo logit (llámese M ) sobre los datos como se disponen en la
+     tabla 1. Preservar del cómputo el vector de estimaciones de los pi y la matriz
+     estimada W .
+  2. Calcular la estimación puntual de p∗a−1 como en (7).
+                                                             
+                    pi ), i = 1, . . . , a − 2 y logit pb∗ a−1 formando el vector
+  3. Calcular logit(b
+
+                                              p∗ )(a−1)×1
+                                        logit(b
+
+  4. Estimar la nueva matriz asintótica de varianzas y covarianzas para la situa-
+     ción del modelo saturado como:
+                                 −1                                           
+                  t1 pb1 (1 − pb1 )    ···               0                  0
+                           ..         ..                 ..                ..   
+                            .             .               .                 .   
+          Σ=                                                     −1          
+                                                                                 
+                           0          · · · ta−2 pba−2 (1 − pba−2 )        0 
+                                                                               ∗
+                            0          ···               0               d
+                                                                        (σ 2)
+                                                                                a−1
+
+                  ∗
+             d
+      donde (σ 2)
+                  a−1 es la varianza obtenida en el teorema 4, estimada a partir de la
+      muestra, sustituyendo pi por pbi . La matriz Σ se conforma con la matriz W −1
+      del ajuste logit original. Se trata de la matriz de varianzas y covarianzas del
+      vector columna cuyas componentes son los logit(b   pi ), i = 1, . . . , a − 2 [como se
+      puede apreciar en la ecuación (5)], sustituyendo sus dos últimos elementos en
+
+                                       Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                    171
+
+      la diagonal por la varianza adecuada cuando se agregan los correspondientes
+      dos últimos niveles del factor. Σ resulta diagonal pues las respuestas para los
+      nuevos a−1 niveles no han perdido su condición de independencia asintótica.
+                                             ∗
+  5. Construir la nueva matriz de diseño X(a−1)×r   ∗ según el nuevo vector de
+
+     parámetros deseado βr∗ ×1 . Para el modelo saturado en (2), r∗ = a − 1.
+                         ∗
+
+
+  6. Ajustar una regresión de mínimos cuadrados generalizados (Christensen 2002,
+     pp. 34 y 88) con un nuevo modelo (llámese M ∗ ) formulado como sigue:
+
+                        Y = logit(pb∗ ) = X ∗ β ∗ + ,  ∼ AN(0, Σ)                  (8)
+
+    Ahora bien, en la situación estudiada, considerando la parametrización de re-
+ferencia, el modelo saturado y en consecuencia la existencia de la matriz (X ∗ )−1 ,
+los cómputos se simplifican notablemente como sigue:
+
+                               βb∗ = (X ∗ )−1 Y
+                             h i                h      i0
+                              b∗ = (X ∗ )−1 Σ (X ∗ )−1
+                            V β
+
+    Adicionalmente, el procedimiento sugerido presenta una ventaja computacional
+frente al procedimiento habitual: como se ha mencionado, al ajustar un modelo
+logit en general se recurre al método de Newton-Raphson. Este método implica
+una serie de iteraciones hasta alcanzar la convergencia en la estimación de los
+parámetros. En cada iteración es necesario invertir la matriz X 0 W X (si el modelo
+es no saturado) o bien la matriz W (si el modelo es saturado). Luego, al ejecutar
+el procedimiento de ajuste del modelo logit en dos ocasiones, se duplica el esfuerzo
+computacional dedicado a la inversión de matrices. Por otra parte, siguiendo el
+procedimiento sugerido, es necesario dedicar tiempo de cómputo a la inversión de
+matrices una sola vez, pues el segundo ajuste surge aprovechando los resultados
+obtenidos en la primera oportunidad, sin necesidad de iterar nuevamente.
+
+
+5. Extensión al caso cuando se agrupa un número
+   cualquiera k de niveles (1 < k < a)
+    Para efectos de simplificar la exposición, el procedimiento sugerido considera la
+agrupación de los dos últimos niveles del factor explicativo. No obstante, es sencillo
+observar que dicho procedimiento puede extenderse al caso cuando el investigador
+decide agrupar k (1 < k < a) niveles. Evidentemente, sigue en pie la violación
+del supuesto distribucional, cuando al menos dos de las probabilidades de éxito
+involucradas en la agrupación son distintas entre sí. Por otra parte, nótese que la
+posición que ocupan en la tabla los distintos niveles del factor es irrelevante (pues
+para el caso pueden ser reacomodados). Entonces, sin pérdida de generalidad, sean
+los últimos niveles a − k + 1, a − k + 2, . . . , a aquellos que el investigador decide
+                                                    ∗
+agrupar, formando la nueva variable aleatoria Ya−k+1      = Ya−k+1 +Ya−k+2 +· · ·+Ya .
+
+                                      Revista Colombiana de Estadística 32 (2009) 157–187
+
+172                                          Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+    Para simplificar los recorridos, sea ν = a − k + 1. El teorema 5 establece la
+diferencia entre las varianzas binomial (VBin [Yν∗ ]) y correcta (V[Yν∗ ]) para este
+caso más general.
+                                                                                                       Pa
+Teorema 5. Sean VBin [Yν∗ ] = t∗ν p∗ν (1 − p∗ν ) y V[Yν∗ ] =                                                i=ν ti pi (1 − pi ), donde:
+
+
+                                                                                                    a
+                                                                                                    X
+                                     a
+                                                                                                             ti p i
+                                     X                                        E[Yν∗ ]
+                             t∗ν =             ti          y            p∗ν =         = i=νa
+                                                                                t∗ν      X
+                                        i=ν
+                                                                                                              ti
+                                                                                                       i=ν
+
+
+Entonces:
+                                                                              a−1
+                                                                              X          a
+                                                                                         X
+                                                                                                  ti tj (pi − pj )2
+                                                                              i=ν j=i+1
+                       ∆Vν = VBin [Yν∗ ] − V[Yν∗ ] =                                             a                                            (9)
+                                                                                                 X
+                                                                                                       ti
+                                                                                                 i=ν
+
+
+
+
+Demostración.
+                                     a                a         
+                                      X                 X
+                              a
+                                   !     ti p i          ti p i   a
+                             X       i=ν                         X
+                 ∆Vν =           ti 
+                                     X a
+                                                  1 −
+                                                 
+                                                        i=ν
+                                                          a
+                                                                   −
+                                                                        ti pi (1 − pi )
+                                                      X          i=ν
+                             i=ν
+                                           ti                ti
+                                                     i=ν                            i=ν
+
+
+luego
+
+      a
+                 !             a
+                                                 !     a                a
+                                                                                       !          a
+                                                                                                             !        a
+                                                                                                                                          !
+      X                        X                       X                X                         X                   X
+            ti       ∆Vν =              ti p i                 ti −           ti p i       −            ti                  ti pi (1 − pi )
+      i=ν                      i=ν                     i=ν              i=ν                       i=ν                 i=ν
+                               a
+                                             !       a
+                                                                    !         a
+                                                                                                !2
+                               X                     X                        X
+                        =               ti                 ti p2i       −              ti p i
+                               i=ν                   i=ν                      i=ν
+                                                                                       
+                          a
+                          X             a
+                                        X    a
+                                             X            a
+                                                          X           a
+                                                                      X        a
+                                                                               X
+                                                                                       
+                        =   (ti pi )2 +   ti   tj p2j −  (ti pi )2 +   ti p i   tj p j 
+                             i=ν                      i=ν       j=ν                        i=ν                     i=ν          j=ν
+                                                              j6=i                                                              j6=i
+                             a
+                             X          a
+                                        X                    a
+                                                             X               a
+                                                                             X                   a X
+                                                                                                 X a
+                        =          ti            tj p2j −           ti p i          tj p j =                   ti tj pj (pj − pi )
+                             i=ν        j=ν                  i=ν             j=ν                  i=ν j=ν
+                                        j6=i                                 j6=i                     j6=i
+
+
+
+                                                               Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                              173
+
+       = tν tν+1 pν+1 (pν+1 − pν ) + tν tν+2 pν+2 (pν+2 − pν ) + · · · + tν ta pa (pa − pν )
+       + tν+1 tν pν (pν − pν+1 ) + tν+1 tν+2 pν+2 (pν+2 − pν+1 ) + · · ·
+                                 + tν+1 ta pa (pa − pν+1 )
+      + tν+2 tν pν (pν − pν+2 ) + tν+2 tν+1 pν+1 (pν+1 − pν+2 ) + · · ·
+                                  + tν+2 ta pa (pa − pν+2 )
+    ..
+     .
+      + ta tν pν (pν − pa ) + ta tν+1 pν+1 (pν+1 − pa ) + · · · + ta ta−1 pa−1 (pa−1 − pa )
+       = tν tν+1 [pν+1 (pν+1 − pν ) + pν (pν − pν+1 )] + tν tν+2 [pν+2 (pν+2 − pν )
+       + pν (pν − pν+2 )] + · · · + ta−1 ta [pa (pa − pa−1 ) + pa−1 (pa−1 − pa )]
+           a−1
+           X     a
+                 X
+       =               ti tj (pi − pj )2
+           i=ν j=i+1
+                   a−1
+                   X      a
+                          X
+                                ti tj (pi − pj )2
+                   i=ν j=i+1
+       ∴ ∆Vν =                 a
+                               X
+                                     ti
+                               i=ν
+
+
+    Así, en general también se sostiene que VBin [Yν∗ ] ≥ V[Yν∗ ], ya que (9) es una
+cantidad no negativa. La extensión de los teoremas 3 y 4 es inmediata:
+                                                   
+          Xa                 Xa
+               ti pbi            ti p i            
+                                          V[Y ∗
+                                                 ]                            
+                                                            b∗ ν ∼ AN µ∗ν , σ 2 ∗
+  pb∗ ν = i=νa        ∼ AN  i=νa        ;    ν
+                                                 !  
+                                                   2 y logit p
+           X                X             Xa                                     ν
+                ti                ti               
+                                              ti
+             i=ν                     i=ν        i=ν
+
+con:
+                                 a          
+                                  X
+                                     ti p i 
+                                 i=ν                          V[Yν∗ ]
+                     µν = logit 
+                      ∗
+                                 X a
+                                              y (σ 2 )∗ =
+                                                      ν
+                                                         (V[Yν∗ ] + ∆Vν )2
+                                       ti
+                                          i=ν
+
+
+   Consecuentemente, el procedimiento sugerido se extiende de la forma siguiente:
+
+   1. Ajustar un modelo logit sobre los datos originales, preservando el vector de
+      estimaciones de los pi y la matriz W .
+
+   2. Calcular pb∗ ν .
+                                                                                      
+   3. Calcular logit pbi , i = 1, . . . , a−k y logit pb∗ ν formando el vector logit pb∗ (ν×1) .
+
+
+                                                Revista Colombiana de Estadística 32 (2009) 157–187
+
+174                        Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+  4. Estimar la nueva matriz asintótica de covarianzas como:
+                                  −1                                             
+                   t1 pb1 (1 − pb1 )    ···               0                   0
+                            .          .                  ..                  .. 
+                            ..           ..                .                   . 
+          Σν =                                                    −1            
+                                                                                    
+                            0          · · · ta−k pba−k (1 − pba−k )         0 
+                                                                                  ∗
+                            0             ···                    0           d
+                                                                            (σ 2)
+                                                                                 ν
+
+                                             ∗
+  5. Construir la nueva matriz de diseño Xν×r   ∗ según el nuevo vector de pará-
+                      ∗
+     metros deseado βr∗ ×1 . Para el modelo saturado se tendrá que r∗ = a − k + 1.
+
+  6. Ajustar una regresión de mínimos cuadrados
+                                                  generalizados con un nuevo
+     modelo formulado como: Y = logit pb∗ = X ∗ β ∗ + , con  ∼ AN(0, Σν ).
+
+                     h i la parametrización
+   Y como antes, empleando                  de referencia y el modelo satura-
+                                    ∗ −1 0
+    b∗    ∗ −1        b∗     ∗ −1
+do, β = (X ) Y y V β = (X ) Σν (X )           .
+
+
+6. Ejemplo
+    En la tabla 2 se presenta una situación en que el interés se centra en estudiar la
+relación entre una variable respuesta Y y un factor explicativo A con tres niveles.
+Se muestran allí las frecuencias observadas para cada nivel.
+
+                           Tabla 2: Y (0, 1) vs. A(1, 2, 3).
+                                               Y
+                                 A         0         1   Total
+                                  1      189       161    350
+                                  2      300        50    350
+                                  3       32       318    350
+                                Total    521       529   1050
+
+
+    El modelo logit saturado empleando la parametrización con β3 como nivel de
+referencia, se muestra en la ecuación (10).
+                                                      
+                           logit(p1 )     1          1 0 β1
+                          logit(p2 ) = 1          0 1 β2                          (10)
+                           logit(p3 )     1          0 0 β3
+
+   La tabla 3 contiene las estimaciones de los parámetros de la predictora lineal
+con las pruebas χ2 de Wald para H0 : βi = 0, i = 1, 2, 3 e intervalos de confianza
+(IC) del 95 % construidos para βi .
+   Las probabilidades predichas y sus intervalos de confianza siguiendo a Agresti
+(2007, p. 109) se muestran en la tabla 4.
+   Ahora bien, supóngase que se agrupan los niveles 2 y 3 del factor A en la tabla
+2 y se repite el procedimiento para el modelo saturado. En este caso, el nuevo
+
+                                        Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                             175
+
+              Tabla 3: Modelo original. βbi y prueba de Wald (H0 : βi = 0).
+                               Estimación de βi                              IC del 95 %
+     i              βbi     SE          χ2    p-Valo r       Conclusión      Li        Ls
+     1           2.296     0.185     153.3    < 0.0001       Rechazar       1.933     2.660
+     2          −2.457     0.214     131.5    < 0.0001       Rechazar      −2.877   −2.037
+     3          −4.088     0.240     289.5    < 0.0001       Rechazar      −4.559   −3.617
+     SE: Error Estándar    Li: Límite inferior   Ls: Límite superior
+
+
+           Tabla 4: Modelo original. Probabilidades predichas e IC del 95 %.
+                                 i        pbi      Li        Ls
+                                 1      0.4600   0.4084    0.5125
+                                 2      0.1429   0.1100    0.1836
+                                 3      0.9086   0.8736    0.9346
+
+
+modelo es:                                               
+                                     logit(p∗1 )    1     1 β1∗
+                                                 =                                            (11)
+                                     logit(p∗2 )    1     0 β2∗
+    Las nuevas estimaciones utilizando el proceso habitual de ajuste, esto es, vol-
+viendo a ajustar un modelo logit sobre la tabla de contingencia resultante, se
+muestran en la tabla 5. Las probabilidades predichas por el modelo, sin atención
+a los niveles de significación de los parámetros, se reproducen en la tabla 6.
+                                          c∗ y prueba de Wald (H0 : βi∗ = 0).
+         Tabla 5: Procedimiento habitual. β i
+
+                                Estimación de βi∗                        IC del 95 %
+          i      c∗
+                 β         SE        χ2   p-Valor       Conclusión       Li        Ls
+                    i
+          1    0.103      0.076   1.850     0.174       No rechazar    −0.045     0.251
+          2   −0.263      0.131   4.023     0.045       Rechazar       −0.521   −0.006
+
+
+
+Tabla 6: Procedimiento habitual. Probabilidades predichas e IC del 95 % sin considerar
+         la significación de los parámetros del modelo.
+                                 i        c
+                                          p∗ i     Li        Ls
+                                 1      0.4600   0.4084    0.5125
+                                 2      0.5257   0.4887    0.5625
+
+
+    Como es de esperarse, en esta oportunidad el nuevo vector de parámetros β ∗
+resulta estimado de forma diferente
+                                     a la anterior. Por su parte, el nuevo vector
+de probabilidades predichas pb∗ , sin poner atención a los niveles de significación
+de los parámetros,
+                    resulta igual al anterior en la primera componente pb∗ 1 =
+pb1 = 0.460 , y diferente, pero tal como se supone debería ocurrir, en la segunda
+componente. Esto es:
+                      t2 pb2 + t3 pb3   350 × 0.1429 + 350 × 0.9086
+              pb∗ 2 =                 =                             = 0.526
+                          t2 + t3                 2 × 350
+    Sin embargo, con α = 0.05, en la tabla 5 se sugiere la inexistencia de evidencia
+suficiente para rechazar la hipótesis de nulidad de β1∗ , ya que el IC contiene al cero.
+
+                                            Revista Colombiana de Estadística 32 (2009) 157–187
+
+176                         Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+Esto tiene implicaciones importantes para el análisis: al no poderse concluir que β1∗
+es significativamente diferente de 0, el modelo (11) pierde vigencia y las probabili-
+dades predichas en la tabla 6, en estricto sentido estadístico, no deben considerarse
+válidas. Las predicciones correctas son entonces notablemente diferentes:
+                                      c     c                c
+                                     e β 1 +β 2           eβ 2
+                                       ∗     ∗                ∗
+
+                      pb∗ 1 =                       =                = 0.4346                (12)
+                                1 + eβc∗ 1 +βc∗ 2       1 + eβc∗ 2
+                                      c
+                                     eβ 1           e0
+                                       ∗
+
+                      pb∗ 2 =                =           = 0.5                               (13)
+                                1 + eβc∗ 1        1 + e0
+
+   Finalmente, la tabla 7 contiene las estimaciones del modelo logit en (11) y los
+IC del 95 %, y la tabla 8 las probabilidades predichas, ahora ajustando los datos
+según el procedimiento sugerido en este trabajo.
+
+                                        c∗ y prueba de Wald (H0 : βi∗ = 0).
+       Tabla 7: Procedimiento sugerido. β i
+
+                           Estimación de βi∗                               IC del 95 %
+        i      c∗
+               β        SE       χ2   p-Valor            Conclusión       Li         Ls
+                  i
+        1    0.103    0.0486   4.49     0.034            Rechazar        0.0077     0.1982
+        2   −0.263    0.1177   5.00     0.025            Rechazar       −0.4941   −0.0325
+
+
+
+      Tabla 8: Procedimiento sugerido. Probabilidades predichas e IC del 95 %.
+                                 i        c
+                                          p∗ i        Li        Ls
+                                 1      0.4600      0.4084    0.5125
+                                 2      0.5257      0.5019    0.5494
+
+
+    Nótese que, tal como se esperaba, las estimaciones puntuales del procedimiento
+habitual y del procedimiento sugerido son en esencia las mismas. No obstante,
+las varianzas estimadas son diferentes en ambos procedimientos. Las varianzas
+estimadas por el procedimiento sugerido son menores (y por tanto preferibles) que
+las estimadas mediante el procedimiento habitual, tanto en lo que se refiere a los
+estimadores de los parámetros de la predictora lineal como en cuanto a la segunda
+componente del vector de probabilidades.
+    Adicionalmente, ahora se produce un cambio en la conclusión sobre la significa-
+ción de β1∗ . Mientras que por el procedimiento habitual las estimaciones estadísti-
+camente válidas, ecuaciones (12) y (13), lucen considerablemente por debajo de lo
+que se supondría, mediante el procedimiento sugerido sí resultan estadísticamente
+válidas las predicciones de la tabla 8, que se aproximan de mejor manera a lo que
+cabría esperar con los datos disponibles.
+    Por último, la tabla 9 sintetiza los resultados obtenidos para efectos de su com-
+paración con base en la varianza estimada. La comparación de los IC en términos
+absolutos carece de sentido sin considerar las estimaciones puntuales correspon-
+dientes, de manera que, para poder comparar las diferencias en las longitudes de
+los IC, se utiliza la razón entre las longitudes del primero y el segundo (obtenidos
+por el procedimiento habitual y sugerido, respectivamente), esto es, el cociente
+
+                                             Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                           177
+
+entre las longitudes de los intervalos del 95 % de confianza, obtenidos por ambos
+métodos.
+           Tabla 9: Habitual vs. sugerido. Razón de la longitud de los IC.
+                          c∗
+                          β                                          c
+                                                                     p ∗
+                              i                                          i
+                                           h)                                         h)
+       i   L(ICh )    L(ICs )     Rβ = L(IC
+                                       L(IC )
+                                                      L(ICh )    L(ICs )     Rp = L(IC
+                                                                                  L(IC )
+                                                s                                       s
+       1    0.2960     0.1905          1.5538         0.1041     0.1041        1.0000
+       2    0.5150     0.4616          1.1157         0.0738     0.0475        1.5537
+       L(·): Longitud. R: Razón.
+       Subíndices, h: Procedimiento habitual, s: Procedimiento sugerido.
+
+
+    De la tabla 9 se deduce que para β  c∗ , el IC calculado por el procedimiento
+                                          1
+                                                                   c∗ , el primero
+habitual es 1.5538 veces el calculado por el método sugerido. Para β 2
+es 1.1157 veces el segundo. Esto significa una mejora sustancial en la precisión
+de las estimaciones empleando el procedimiento sugerido, como cabría esperar
+luego del ajuste hacia la baja en el supuesto sobre la varianza de las muestras
+involucradas. En efecto, en este ejemplo particular, sea s2h la estimación de la
+varianza calculada mediante el procedimiento habitual y ∆V d la estimación de su
+diferencia respecto a la varianza correcta (teorema 2). Entonces:
+            s2h = t∗2 pb∗ 2 (1 − pb∗ 2 ) = 700 × 0.5257 × (1 − 0.5257) = 174, 54
+                                   2                                 2
+                      p2 − pb3 )
+           d = t2 t3 (b            350 × (0.1429 − 0.9086)
+           ∆V                    =                         = 102, 60
+                    t2 + t3                   2
+          d estima una disminución en la varianza al ajustar el modelo según el
+    Así, ∆V
+procedimiento sugerido del 100×(174.54−102.60)/174.54 = 41.22 %, que se refleja
+en una disminución de 100 × (0.2960 − 0.1905)/0.2960 = 35.64 % en la longitud del
+IC para β c∗ y en una disminución de 100 × (0.5150 − 0.4616)/0.5150 = 10.37 % en
+            1
+la longitud del IC para β c∗ .
+                             2
+    Nótese, además, que tal mejora no afecta la predicción de pb∗ 1 , pero sí lo hace
+en la de pb∗ 2 . De hecho, el efecto relativo en la disminución de la longitud del IC
+para pb∗ 2 es esencialmente el mismo que opera sobre β   c∗ , en total acuerdo con lo
+                                                           1
+esperado, puesto que en el modelo se postula una relación exclusiva entre estos
+dos parámetros (logit(p∗2 ) = β1∗ ).
+
+
+7. Comparación de ambos procedimientos mediante
+   simulación
+    La simulación cuyos resultados se comentan a continuación, ha sido diseñada
+para estudiar el efecto de la agregación de los niveles a − 1 y a del factor ex-
+plicativo, mediante la generación seudoaleatoria de un número grande de tablas
+de contingencia, como la tabla 1, y su posterior análisis sobre medidas-resumen
+de desempeño. Para hacer más simple el experimento, se sigue la estructura del
+ejemplo de la sección anterior, con solo tres niveles del factor, agrupando los dos
+últimos (2 y 3).
+
+                                           Revista Colombiana de Estadística 32 (2009) 157–187
+
+178                        Ernesto Ponsot Balaguer, Surendra Sinha & Arnaldo Goitía
+
+7.1. Diseño del experimento de simulación
+    A la luz del examen de las varianzas presentado en la sección 3, con el pro-
+pósito de amplificar el impacto de la diferencia entre ambos procedimientos, el
+experimento supone t1 = t2 = t3 = t = 350. Como en la situación no lu-
+ce de interés la comparación del efecto de ambos procedimientos sobre el pri-
+mer nivel del factor, para este se genera seudoaleatoriamente p1 a partir de una
+distribución uniforme en (0, 1). Con los valores de t y p1 se genera la muestra
+Y1 ∼ Bin(t, p1 ). Para los restantes niveles del factor (objeto de comparación) se
+generan las muestras Y2 ∼ Bin(t, p2 ) y Y3 ∼ Bin(t, p3 ), para las combinaciones
+∆p = |p2 − p3 | = 0.0, 0.2, 0.4, 0.6, 0.8, obtenidas manteniendo constante el valor de
+p2 = 0.1 y variando el valor de p3 = 0.1, 0.3, 0.5, 0.7, 0.9.
+    Para cada uno de los 5 valores a experimentar de ∆p, se generan 2000 tablas de
+contingencia constituidas por binomiales independientes, dentro de cada tabla y
+entre tablas. El experimento prosigue ajustando un primer modelo logit contando
+los tres niveles del factor, un segundo modelo logit ajustado a la tabla resultante
+de agrupar los niveles 2 y 3 del factor, y un tercer ajuste de dicha tabla, mediante
+el procedimiento sugerido. El nivel de significación para las pruebas se establece
+en α = 0.05.
+   Las medidas de desempeño que se emplean como resultado de la simulación se
+exponen a continuación:
+
+ a) En primer lugar, se utilizan las diferencias en las estimaciones puntuales de
+    β1∗ , β2∗ , p∗1 , p∗2 , obtenidas mediante los procedimientos habitual y sugerido, sin
+    tomar en cuenta la significación de los parámetros de la predictora lineal.
+
+ b) Para la comparación de las diferencias en las longitudes de los IC, calculados
+    mediante los procedimientos habitual y sugerido, se utiliza el promedio de la
+    razón entre las longitudes del primero y el segundo. Estas razones se calculan
+    para los IC que acompañan a las estimaciones de los parámetros β1∗ , β2∗ , p∗1 , p∗2 .
+
+  c) Finalmente, se estudian las frecuencias absolutas de ocurrencia del cambio
+     en la conclusión del análisis de varianza (aceptación a rechazo, o viceversa)
+     para las pruebas de hipótesis sobre los parámetros H0 : β1∗ = 0 y H0 : β2∗ =
+     0, cuando se los contrasta por el procedimiento habitual, y cuando se los
+     contrasta por el procedimiento sugerido.
+
+
+7.2. Resultados del experimento de simulación
+ a) Cuando no se toma en cuenta la significación de los parámetros de la pre-
+    dictora lineal, en cuanto a las estimaciones puntuales, redondeando al tercer
+    decimal, en todos los casos estas coinciden por ambos métodos.
+      Así, en cada una de las 10000 tablas de contingencia generadas, los estima-
+      dores β     c∗ , pb∗ y pb∗ se calculan esencialmente de igual forma cuando se
+             c∗ , β
+               1    2     1     2
+      les estima por el procedimiento habitual o por el procedimiento sugerido.
+
+                                      Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                             179
+
+ b) En cuanto a las longitudes de los IC para cada estimador, la tabla 10 presenta
+    los resultados de las razones promedio obtenidas.
+
+        Tabla 10: Razón de la longitud de los IC para los estimadores.
+
+      Nótese en la tabla 10 que a mayor ∆p, tanto mayor es la razón promedio de
+      las longitudes de los IC estimados por ambos métodos. Por ejemplo, la lon-
+      gitud del IC correspondiente a β c∗ estimado por el procedimiento habitual,
+                                          1
+      es en promedio 1.68 veces la del IC estimado por el método sugerido, cuando
+      ∆p = |p2 − p3 | = 0.8. Por otro lado, es claro que cuando las probabilidades
+      de éxito de las muestras agrupadas están cercanas, ambos métodos estiman
+      en promedio esencialmente los mismos IC para todos los parámetros. Este
+      hecho debía verificarse en virtud de los postulados del teorema 2. También
+      resulta que el comportamiento relativo de los IC es muy similar para β     c∗
+                                                                                    1
+      y pb 2 , en total concordancia con lo esperado, tal y como se mencionó en la
+          ∗
+
+      sección anterior. Por último, es apreciable que los IC correspondientes a pc
+                                                                                 ∗1 ,
+      en promedio no muestran diferencias al ser estimados por ambos métodos,
+      mientras que las razones promedio de las longitudes de los IC correspondien-
+      tes a los β c∗ , aunque también muestran un comportamiento creciente con
+                    2
+      ∆p, lo hacen en proporción considerablemente menor que para β    c∗ .
+                                                                          1
+
+  c) Finalmente, la tabla 11 muestra las frecuencias absolutas de ocurrencia de
+     las conclusiones sobre los parámetros del modelo. Para β1∗ y ∆p por debajo
+     de 0.8, ambos procedimientos conducen al rechazo de la hipótesis de nulidad
+     en todas las muestras. Para ∆p = 0.8, la situación es contraria, es decir, en la
+     mayoría de las muestras no hay evidencia suficiente para rechazar la hipótesis
+     de nulidad. No obstante, mientras que utilizando el procedimiento habitual
+     se rechaza la hipótesis nula en 3 de las 2000 muestras (0, 15 %), empleando
+     el procedimiento sugerido esto ocurre en 109 de las 2000 muestras (5.46 %).
+
+        Tabla 11: Frecuencias en las conclusiones sobre los parámetros.
+
+      Al disminuir la región de aceptación de la hipótesis nula, mejorando la preci-
+      sión en la estimación del parámetro y la potencia de la prueba de la hipótesis
+      de nulidad, el procedimiento sugerido favorece la investigación particular que
+      se esté realizando. La calidad de las conclusiones sobre las posibilidades y
+      sobre las probabilidades mejora siempre que sea estadísticamente válido el
+      rechazo de la hipótesis de nulidad de los parámetros.
+      Para β2∗ la situación es variada. Aunque se observa para todos los valores
+      de ∆p una alta proporción de rechazo a la hipótesis de nulidad del paráme-
+      tro, leve pero sostenidamente a medida que aumenta ∆p, el procedimiento
+      sugerido favorece cada vez más el rechazo de tal hipótesis, cuando se lo com-
+      para con el procedimiento habitual. Sin embargo, para ∆p = 0.8, esto es, la
+      máxima diferencia entre las probabilidades de éxito estudiadas por el experi-
+      mento, el procedimiento sugerido conduce a cambiar la conclusión en apenas
+      1732 − 1698 = 34 oportunidades más que el procedimiento habitual, es decir,
+      cerca de tres veces menos que lo ocurrido para β1∗ (109 − 3 = 106).
+
+   En el anexo se incluye el código fuente R (R Development Core Team 2007)
+programado para realizar la simulación.
+
+
+8. Conclusiones
+   Es clara la existencia de un problema en el ajuste del modelo logit con niveles
+agrupados del factor. Se sugiere en este trabajo un procedimiento que, aprove-
+chando la disminución en la varianza cuando se postula el modelo distribucional
+correcto en lugar del modelo binomial, conduce a la reducción de los errores es-
+tándares de las estimaciones en un porcentaje apreciable.
+    Al disminuir el error estándar estimado, disminuye la región de aceptación de
+la hipótesis de nulidad de los parámetros de la predictora lineal, mejorando las
+estimaciones y la potencia de la prueba de dicha hipótesis de nulidad. Consecuen-
+temente, el procedimiento sugerido resulta preferible al habitual.
+    Desde el punto de vista computacional, el procedimiento sugerido resulta más
+eficiente que el habitual puesto que, aprovechando los cómputos obtenidos en un
+primer ajuste del modelo logit, produce nuevas estimaciones mediante regresión,
+sin requerir más iteraciones.
+    Mediante simulación se ha corroborado que diferencias relativamente leves en
+las probabilidades de éxito de las muestras involucradas en la agregación, en pro-
+medio no conducen a concluir que la aplicación del procedimiento sugerido sea
+diferente frente a la aplicación del habitual. Esto muestra clara evidencia sobre
+la robustez del modelo logit, sus habituales procedimientos de ajuste y prueba de
+hipótesis. Por otra parte, a medida que dicha diferencia en las probabilidades de
+éxito se profundiza (para los valores estudiados, esto es ∆p > 0.6), resulta cada vez
+mejor apoyarse en el procedimiento sugerido. Consecuentemente, el investigador
+debe tener especial cuidado cuando agrupa niveles del factor, cuyas proporciones
+muestrales son notoriamente disímiles.
+
+                                    Revista Colombiana de Estadística 32 (2009) 157–187
+
+Sobre la agrupación de niveles en el modelo logit                                    181
+
+    En este trabajo se ilustró la situación considerando un solo factor, la parame-
+trización de referencia y el modelo saturado. La investigación continuará en varias
+direcciones: asumiendo la presencia de dos o más factores, postulando el modelo
+no saturado para su análisis, estudiando el efecto sobre los residuos y las medidas
+de bondad del ajuste, entre otras.
+
+
+Agradecimientos
+   Los autores agradecen al Consejo de Desarrollo Científico, Humanístico y Tec-
+nológico (CDCHT) de la Universidad de Los Andes el apoyo financiero brindado
+para la realización de este trabajo. Asimismo, agradecen los valiosos comentarios
+de los árbitros anónimos, los cuales sin duda contribuyeron a mejorar tanto el
+fondo como la forma del presente trabajo.
+Referencias
+Agresti, A. (2007), An Introduction to Categorical Data Analysis, 2 edn, John Wiley & Sons, Inc., New Jersey, United States.
+Christensen, R. (1997), Log-Linear Models and Logistic Regression, 2 edn,Springer-Verlag, New York, United States.
+Christensen, R. (2002), Plane Answers to Complex Questions. The Theory of Linear Models, 3 edn, Springer-Verlag, New York, United States.
+Collett, D. (2002), Modelling binary data, 2 edn, Chapman & Hall/CRC, Boca Raton, United States.
+Cox, D. R. (1970), Analysis of Binary Data, 1 edn, Methuen and Co Ltd., London,England.
+Feller, W. (1968), An Introduction to Probability Theory and Its Applications,Vol. 1, 3 edn, John Wiley & Sons. Inc., New York, United States.
+Grizzle, J. E., Starmer, C. F. & Koch, G. G. (1969), ‘Analysis of Categorical Data by Linear Models’, Biometrics 25(3), 489–504.
+Hilbe, J. M. (2009), Logistic Regression Models, 1 edn, Chapman & Hall, Florida,United States.
+Hodges, J. L. & Le Cam, L. (1960), ‘The Poisson Approximation to the Poisson Binomial Distribution’, The Annals of Mathematical Statistics 31(3), 737–740.
+Hosmer, D. W. & Lemeshow, S. (2000), Applied Logistic Regression, 2 edn, John Wiley & Sons, New York, United States.
+Lehmann, E. L. (1999), Elements of Large-Sample Theory, 1 edn, Springer-Verlag,New York, United States.
+McCullagh, P. & Nelder, J. (1989), Generalized Linear Models, 2 edn, Chapman & Hall, London, England.
+McCulloch, C. E. & Searle, S. R. (2001), Generalized, Linear, and Mixed Models,1 edn, John Wiley & Sons, Inc., New York, United States.
+Neammanee, K. (2005), ‘A refinement of Normal approximation to Poisson Binomial’, International Journal of Mathematics and Mathematical Sciences (5), 717–728.
+Nedelman, J. & Wallenius, T. (1986), ‘Bernoulli Trials, Poisson Trials, Surprising Variances, and Jensen’s Inequality’, The American Statistician 40(4), 286–289.
+Nelder, J. A. & Wedderburn, R. W. M. (1972), ‘Generalized Linear Models’, Journal of the Royal Statistical Society. Serie A (135), 370–384.
+Neyman, J. (1939), ‘On a new class of contagious distributions, applicable in entomology and bacteriology’, The Annals of Mathematical Statistics 10(1), 35–57.
+Ollero, H. J. & Ramos, R. H. M. (1991), ‘La distribución hipergeométrica como binomial de poisson’, Trabajos de Estadística 6(1), 35–43.
+Ponsot, E. (2009), Estudio de la agrupación de niveles en el modelo logit, tesis de doctorado, Instituto de Estadística Aplicada y Computación, Facultad de Ciencias Económicas y Sociales, Universidad de Los Andes, Mérida, Venezuela.
+Powers, D. A. & Xie, Y. (1999), Statistical Methods for Categorical Data Analysis,1 edn, Academic Press, United States.
+R Development Core Team (2007), ‘R: A language and environment for statistical computing’, Vienna, Austria.*http://www.R-project.org
+Rodríguez, G. (2008), ‘Lectures notes about generalized linear models’, New Jersey,United States.*http://data.princeton.edu/wws509/notes
+Rohatgi, V. & Ehsanes, A. (2001), An Introduction to Probability and Statistics,2 edn, John Wiley & Sons, Inc., New York, United States.
+Roos, B. (1999), ‘Asymptotics and Sharp Bounds in the Poisson Approximation to the Poisson-Binomial Distribution’, Bernoulli 5(6), 1021–1034.
+Sprott, D. A. (1958), ‘The Method of Maximum Likelihood Applied to the Poisson Binomial Distribution’, Biometrics 14(1), 97–106.
+Wang, Y. H. (1993), ‘On the Number of Successes in Independent Trials’, Statistica Sinica 3, 295–312.
+Weba, M. (1999), ‘Bounds for the Total Variation Distance between the Binomial and the Poisson Distribution in case of Medium-Sized Success Probabilities’,Journal of Applied Probability (36), 497–104.
+Wedderburn, R. W. M. (1974), ‘Quasi-Likelihood Functions, Generalized Linear Models, and the Gauss-Newton Method’, Biometrika 61(3), 439–447.

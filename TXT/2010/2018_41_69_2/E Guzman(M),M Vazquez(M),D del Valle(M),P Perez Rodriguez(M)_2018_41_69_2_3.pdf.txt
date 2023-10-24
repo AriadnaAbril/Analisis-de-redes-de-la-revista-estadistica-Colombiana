@@ -1,0 +1,960 @@
+Articial Neuronal Networks: A Bayesian Approach Using Parallel Computing. Redes neuronales regularizadas: un enfoque bayesiano usando cómputo paralelo
+Colegio de Postgraduados, Texcoco, México. Universidad Autónoma Chapingo, Texcoco, México
+Abstract
+An Articial Neural Network (ANN) is a learning paradigm and automatic processing inspired in the biological behavior of neurons and the brain structure. The brain is a complex system; its basic processing unit are the neurons, which are distributed massively in the brain sharing multiple connections between them. The ANNs try to emulate some characteristics of humans, and can be thought as intelligent systems that perform some tasks in a dierent way that actual computer does. The ANNs can be used to perform complex activities, for example: pattern recognition and classication, weather prediction, genetic values prediction, etc. The algorithms used to train the ANN, are in general complex, so therefore there is a need to have alternatives which lead to a signicant reduction of times employed to train an ANN. In this work, we present an algorithm based in the strategy divide and conquer which allows to train an ANN with a single hidden layer. Part of the sub problems of the general algorithm used for training are solved by using parallel computing techniques, which allows to improve the performance of the resulting application. The proposed algorithm was implemented using the C++ programming language, and the libraries Open MPI and ScaLAPACK. We present some application examples and we asses the application performance. The results shown that it is possible to reduce signicantly the time necessary to execute the program that implements the algorithm to train the ANN.
+Key words   : Empirical Bayes; Nonlinear models; Parallel processing.
+Resumen
+Una Red Neuronal Articial (RNA) es un paradigma de aprendizaje y procesamiento automático inspirado en el comportamiento biológico de las neuronas y en la estructura del cerebro. El cerebro es un sistema altamente complejo; su unidad básica de procesamiento son las neuronas, las cuales se encuentra distribuidas de forma masiva compartiendo múltiples conexiones entre ellas. Las RNAs intentan emular ciertas características propias de los humanos, pueden ser vistas como un sistema inteligente que lleva a cabo tareas de manera distinta a como lo hacen las computadoras actuales. Las RNAs pueden emplearse para realizar actividades complejas, por ejemplo: reconocimiento y clasicación de patrones, predicción del clima, predicción de valores genéticos, etc. Los algoritmos utilizados para entrenar las redes, son en general complejos, por lo cual surge la necesidad de contar con alternativas que permitan reducir de manera signicativa el tiempo necesario para entrenar una red. En este trabajo se presenta una propuesta de algoritmos basados en la estrategia divide y conquista que permiten entrenar las RNAs de una sola capa oculta. Parte de los sub problemas del algoritmo general de entrenamiento se resuelven utilizando técnicas de cómputo paralelo, lo que permite mejorar el desempeño de la aplicación resultante. El algoritmo propuesto fue implementado utilizando el lenguaje de programación C++, así como las librerías Open MPI y ScaLAPACK. Se presentan algunos ejemplos de aplicación y se evalúa el desempeño del programa resultante. Los resultados obtenidos muestran que es posible reducir de manera signicativa los tiempos necesarios para ejecutar el programa que implementa el algoritmo para el ajuste de la RNA.
+Palabras clave   : Bayes empírico; modelos no lineales; procesamiento en paralelo.
+
+
+
+
+1. Introduction
+      An Articial Neural Network (ANN) is a learning paradigm and automatic
+processing inspired in the biological behavior of neurons and the brain structure.
+The brain is a complex system; its basic processing unit are the neurons, which
+are distributed massively in the brain sharing multiple connections between them.
+From the statistical point of view the ANN are non linear regression models that
+are useful for prediction. ANN have been used to perform complex tasks in many
+elds, for example classication and pattern recognition, weather prediction, pre-
+diction of genetic values (Pérez-Rodríguez, Gianola, Weigel, Rosa & Crossa 2013),
+human health (Lebrón-Aldea, Dhurandhar, Pérez-Rodríguez, Klimentidis, Tiwari
+& Vazquez 2015), electrical engineering (Lampinen, Vehtari & Leinonen 1999),
+etc. In some applications, for example genetics, it is usual to have a large number
+of predictors, when included in a neural network the number of parameters to esti-
+mate increases exponentially, which could lead to a problem known as overtting.
+Fortunately there exists some tting algorithms that can avoid these problems.
+These algorithms are complex and costly in computational terms and have been
+implemented in some software packages, for example, the nn toolbox in Matlab,
+
+
+
+                                        Revista Colombiana de Estadística 41 (2018) 173189
+
+ANN: A Bayesian Approach Using Parallel Computing                                                    175
+
+
+
+the brnn R-package (Pérez-Rodríguez et al. 2013), the exible bayesian modeling
+(Neal 1996), among others.
+
+   Modern computers include several CPU cores that can be used to speed up
+the computations. Some the software packages mentioned above are able to use
+multiple cores for the computations (e.g. brnn R-package and trainbr function in
+the nn toolbox in Matlab).           Nowadays we also have available computer clusters
+that can be used to solve complex problems by using several workstations that
+work cooperatively in the same problem.                In this work we present an algorithm
+based in the strategy divide and conquer which allows to train an ANN with
+a single hidden layer.         Part of the sub problems of the general algorithm used
+for training are solved by using parallel computing techniques, which allows to
+improve the performance of the resulting application.                   The proposed algorithm
+was implemented using the C++ programming language, and the libraries Open
+MPI (Gabriel, Fagg, Bosilca, Angskun, Dongarra, Squyres, Sahay, Kambadur,
+Barrett, Lumsdaine, Castain, Daniel, Graham & Woodall 2004) and ScaLAPACK
+(Blackford, Choi, Cleary, D'Azevedo, Demmel, Dhillon, Dongarra, Hammarling,
+Henry, Petitet, Stanley, Walker & Whaley 2012) which can be downloaded freely
+from the internet.
+
+   The work is organized as follows.              In Section 2 we briey review linear and
+non linear models and its relationship with Neural Networks.                      In Section 3 we
+review the algorithms that are used to t a Neural Network. Section 4 presents
+the implementation of the proposed algorithm. Section 5 shows two application
+examples. Section 6 presents a benchmark of computational times for the proposed
+algorithm. Finally in Section 7 we present the concluding remarks.
+
+
+
+
+2. Linear models and ANN
+   Multiple Linear Regression (MLR) model is widely used in statistics and many
+other elds. The model can be written as:
+
+
+              yi = β0 + β1 xi1 + · · · + βp xip + ei , i = 1, . . . , n, j = 1, . . . , p,            (1)
+
+
+where yi is the response variable for the i-th individual, xij is the value of the
+j -th covariate for individual i, β = (β0 , . . . , βp )0 are regression coecients to be
+                                                                                 2
+estimated from the data and ei are random residuals, usually ei ∼ N (0, σe ).
+
+   Note that the relationship between the covariates (predictors) is linear.                           In
+many applications the relationship between predictors and response is not linear,
+and in that case a non linear regression model is a better alternative (Fox 2008).
+The model can be written as:
+
+
+                                    yi = β0 + f (β ∗ , x0i ) + ei ,                                   (2)
+
+          ∗
+where β       = (β1∗ , . . . , βp∗ )0 , x0i = (xi1 , . . . , xip ) and f is a function that relates the
+predictors with the response variable, this function maps from the input space
+                                                                                             ∗
+to the real line.      Note that model (1) is a special case of (2) since f (β                   , x0i ) =
+
+
+                                             Revista Colombiana de Estadística 41 (2018) 173189
+
+176        Eduardo Guzmán, Mario Vázquez, David del Valle & Paulino Pérez-Rodríguez
+
+
+
+β1 xi1 + · · · + βp xip .   The Kolmogorov's theorem (Kolmogorov 1957) states that
+any multivariate function can be represented as follows:
+
+
+                                                         2p+1         p
+                                                                                            !
+                                                         X            X
+                    f (xi ) = f (xi1 , . . . , xip ) =          gq          hqr (xir ) ,                  (3)
+                                                         q=1          r=1
+
+
+where hpq (x) are xed increasing functions on I                     = [0, 1] and gq (·) are properly
+chosen function of one variable (Girosi & Poggio 1989). Therefore, by using the
+Kolmogorov's theorem, model (2) can be written as:
+
+
+                                      Combine output from hidden layer
+                                      z               }|                        {
+                                        s                      p
+                                                                           [k]
+                                      X                        X
+                        y i = β0 +          wk gk bk +              xij βj  +ei                         (4)
+                                      k=1                      j=1
+
+                                                 output from hidden layer
+                                                 |              {z               }
+
+
+                                                                                       exp(2x)+1
+where gk (x) is an activation function, for example gk (x) =
+                                                                                       exp(2x)−1 , is known as
+the tanh activation function.
+
+      Model (4) is known in the literature as a Single Hidden Layer Neural Network
+(SHLNN). In these models, the prediction is performed in two steps: i) The inputs
+are transformed non-linearly in the hidden layer, ii) Outputs from hidden layer are
+combined, and the predictions can be obtained once the parameters are estimated.
+Figure 1 shows a SHLNN, which includes an Input layer, Hidden layer with s
+neurons and the Output layer, see Pérez-Rodríguez, Gianola, González-Camacho,
+Crossa, Manes & Dreisigacker (2012) for further details.                                Note that no further
+transformation to the data is applied in the output layer. The MLR model is a
+particular case of (4). Model (1) is obtained by setting s = 1, w1 = 1, b1 = 0 and
+g1 (·) as the identity function in (4).
+      The parameters to be estimated in the SHLNN are w1 , . . . , ws (neurons' weights),
+                                          [1]         [1]            [s]              [s]
+b1 , . . . , bs (intercepts or biases), β1 , . . . , βp ; . . . , β1 , . . . , βp (connection strengths
+for covariates or regression coecients), β0 (general intercept or general mean) and
+                                                                                       [1]      [1]
+σe2 . Note that here we refer to w1 , . . . , ws as neuron's weights and β1 , . . . , βp ; . . . ,
+  [s]           [s]
+β1 , . . . , βp can also be referred as weights for covariates. The number of param-
+eter to be estimated for each neuron are 2 + p, i.e. one neuron's weight (w), one
+intercept (b) and p connection strengths for covariates, hence the total number
+of parameter to estimate in the full network without including the variance com-
+            2
+ponent σe is m = 1 + s × (2 + p). As the number of covariates included in the
+model and the number of neurons increases the number of parameter to estimate
+also increases. This could lead to a problem often referred as overtting that is
+avoided using penalized estimation algorithms or more generally Bayesian regular-
+ization, although another strategies are used commonly in neural networks such
+as dimensionality reduction, early stopping, pruning, etc. (Prechelt 2012). In the
+next section we briey review the Empirical Bayes approach that is used to t the
+SHLNN.
+
+
+
+                                                Revista Colombiana de Estadística 41 (2018) 173189
+
+ANN: A Bayesian Approach Using Parallel Computing                                                                                177
+
+
+                             β [kj ]
+                                                                   p
+                                                ui[1] = b1 + ∑ xij β [j1]
+             x i1                                                 j =1
+                                                     zi[1] = g1 (ui[1] )
+
+                                                                                    wk
+            !                                                 !
+
+
+
+                                                                      p
+                                                                                                         s
+             xij                                ui[ k ] = bk + ∑ xij β [j k ]
+                                                                   j =1
+                                                                                             yi = β0 + ∑ wk zi[k ] + ei
+                                                                                                        k=1
+                                                     zi[ k ] = g k (ui[ k ] )
+
+
+
+            !
+                                                                  !
+
+
+                                                                      p
+                                                ui[S ] = bs + ∑ xij β [s]
+             xip                                                   j=1
+                                                                      j
+
+                                                     zi[s] = gs (ui[s] )
+
+
+          Input layer                            Hidden layer with s                         Output layer
+                                                 neurons
+Figure 1: Single Hidden Layer Neural Network. Source: Pérez-Rodríguez et al. (2012).
+
+
+3. Estimation Algorithms
+       MacKay (1994) developed Empirical Bayes approach framework for estimating
+                                                                                                      [1]              [1]
+parameters in a neural network. Let θ = (w1 , . . . , ws , b1 , . . . , bs , β1                              , . . . , βp ; . . . ,
+ [s]            [s]
+β1 , . . . , βp , β0 )0 . MacKay (1994) assigned the following multivariate normal dis-
+tribution to the elements of θ :
+
+
+                                             p(θ|σθ2 ) = M N (0, σθ2 I),
+                               2                                                2
+that is θj ∼ N (0, σθ ), j = 1, . . . , m. Note that σθ is common to all the elements
+                                                                                         2   2
+of θ . The algorithm to obtain the posterior mode of θ , σe , σθ is as follows:
+
+
+                                                                                                                             2     2
+   1. Obtain conditional posterior modes of the elements in θ assuming σθ , σe
+         known. These are obtained by maximizing:
+
+
+                                             p(y|θ, σe2 )p(θ|σθ2 )      p(y|θ, σe2 )p(θ|σθ2 )
+                      p(θ|y, σθ2 , σe2 ) =             2           =R
+                                                           2
+                                                p(y|σθ , σe )         Rm
+                                                                         p(y|θ, σe2 )p(θ|σθ2 )dθ
+
+         which is equivalent to minimizing the augmented sum of squares :
+
+                                                n            m
+                                           1 X 2        1 X 2
+                                F (θ) =           e  +         θ = βED + αEw ,                                                   (5)
+                                          2σe2 i=1 i   2σθ2 j=1 j
+
+
+                                                       Revista Colombiana de Estadística 41 (2018) 173189
+
+178       Eduardo Guzmán, Mario Vázquez, David del Valle & Paulino Pérez-Rodríguez
+
+
+                                              Pn             Pm
+        where β  = 2σ1 2 and α = 2σ1 2 , ED = i=1 e2i , Ew = j=1 θj2 . The mini-
+                      e             θ
+        mization of F (θ) can be performed using numerical routines, in the present
+        work we adopted the Levenberg-Marquardt algorithm to solve this problem
+        [Levenberg (1944), Marquardt (1963)].
+
+                  2    2                                                                2   2
+  2. Update σθ , σe by maximizing marginal likelihood of the data p(y|σθ , σe ).
+        The marginal log-likelihood approximated as:
+
+                                     n         m        1
+         log p(y|σθ2 , σe2 ) ≈ k +     log β +   log α − log |Σ|θ=θmap − F (θ)|θ=θmap
+                                     2         2        2
+                           2
+                      ∂
+        where H    = ∂θθ 0 F (θ), map stands for maximum a posteriori . It can be
+
+        shown that this function is maximized when:
+
+                                 γ       n−γ
+                           α=       , β=     , γ = m − 2αtr(H)−1 .                          (6)
+                                2Ew      2ED
+        where γ is as estimate of the eective number of parameters, and it ranges
+        from 1 to m, which corresponds to the number of elements in θ , see Foresee
+        & Hagan (1997) and Gianola, Okut, Weigel & Rosa (2011) for further de-
+                                                                                    2
+        tails, H is the Hessian matrix which is approximated with H = ∇ F (θ) ≈
+            0
+        2βJ J + 2αI , J is the Jacobian matrix for the errors in the training set and
+        I is the identity matrix. Note that these solutions are obtained considering
+        log p(y|σθ2 , σe2 ) as a function of σθ2 and σe2 , deriving partially the function
+                               2       2
+        with respect to σθ and σe , setting the partial derivatives equal to 0 and
+        solving the resulting system of equations and rewriting the solution in terms
+        of α and β .
+
+
+      The algorithm developed by MacKay has been described numerous times in
+the literature, see for example: Foresee & Hagan (1997), Lampinen et al. (1999),
+Lampinen & Vehtari (2001), Gianola et al. (2011), Okut, Gianola, Rosa & Weigel
+(2011), Pérez-Rodríguez et al. (2013), etc. The original implementation in the C
+programming language can still be downloaded from the author's web site (http:
+//www.inference.phy.cam.ac.uk/mackay).
+      Figure 2 shows a simplied ow chart for the algorithm that ts a SHLNN,
+the owchart was generated based on the Foresee & Hagan (1997) algorithm and
+the owchart presented in Okut et al. (2011). Figure 3 presents the details of the
+computations to minimize the  augmented sum of squares  by using the Levenberg-
+Marquardt algorithm [Levenberg (1944), Marquardt (1963)] together t the rest
+of steps necessary to t a SHLNN. In order to initialize the vector θ we adopted
+the Nguyen & Widrow (1990) algorithm.
+
+      Neal (1996) developed fully Bayesian approach for tting neural network mo-
+dels, he developed Markov Chain Monte Carlo (MCMC) algorithms to that end.
+He also developed a computer package called exible Bayesian modeling package
+that implements the MCMC based algorithms, the software can be downloaded
+from www.cs.toronto.edu/~radford/fbm.software.html. Lampinen & Vehtari
+(2001) implemented part of the routines developed by Neal (1996) using Matlab.
+Pérez-Rodríguez et al. (2013) extended the algorithms in order shrink dierentially
+two sets of predictors.
+
+
+
+                                           Revista Colombiana de Estadística 41 (2018) 173189
+
+ANN: A Bayesian Approach Using Parallel Computing                                          179
+
+
+
+                         Start
+
+
+                              2   2
+               Initialize σ e , σ θ
+               Compute α = 1 /(2σ 2 ),
+                                      θ
+
+                          β = 1 /(2σ e2 )
+
+                        Update θ                   First step: update θ
+
+
+
+
+                   γ = n − 2α tr (H −1 )
+
+                                                   Second step: Compute the effective
+                    α = γ /(2 EW )                 number of parameters and update α , β
+
+
+                  β = (n − γ ) /(2ED )
+
+
+     No
+                       Convergence?
+
+
+                        Yes
+
+                          End
+Figure 2: Flow chart for the algorithm that ts a Bayesian Regularized Neural Network
+             with a single hidden layer.
+
+
+
+
+4. Implementation
+   It is well known that as the number of predictors and neurons increases, the
+number of parameters to estimate increases exponentially.                 The MacKay's algo-
+rithm works very well when the number of parameters to estimate is small, but as
+the number of parameters to estimate increases three bottle necks becomes evident
+(see Figure 3):
+
+
+  1. The computation of the Jacobian (J ) and the approximation of the Hessian
+     matrix (H).
+
+  2. The updating of θ in the Levenberg-Marquardt algorithm.
+
+                                                                                             2
+  3. The computation of the eective number of parameters γ when updating σe ,
+     σθ2 .
+
+   The most computational expensive operations in the include the solving of
+linear system of equations and obtaining the inverse of a matrix. Up to now the
+existing software routines that implement the Empirical Bayes approach proposed
+by MacKay are not able to use computational resources eciently. The original
+software developed by MacKay was designed in order to run in a single core.
+The Matlab routine trainbr in the nn toolbox and the one developed by Pérez-
+Rodríguez et al. (2013) and implemented in the brnn -R package are able to use
+
+
+
+                                            Revista Colombiana de Estadística 41 (2018) 173189
+
+180          Eduardo Guzmán, Mario Vázquez, David del Valle & Paulino Pérez-Rodríguez
+
+
+
+several cores in modern multi-core workstations, but are unable to use multiple
+cores in several works stations available in modern computing clusters. In the case
+of MCMC based approaches, the problem is even worse, the parallelization of the
+tasks is not possible.
+
+
+                                               Start
+
+
+             μ, μ𝑑𝑒𝑐 , μ𝑖𝑛𝑐 , μmax , n, flag μ , flag c , δ, epoch, epochs                                             Auxiliary variables
+
+
+                                                  1          1           𝑆          𝑆
+                                                                                                    𝐼𝑛𝑖𝑡𝑖𝑎𝑙𝑖𝑧𝑒 𝑤𝑒𝑖𝑔𝑕𝑡𝑠, 𝑏𝑖𝑎𝑠, 𝑎𝑛𝑑 𝑟𝑒𝑔𝑟𝑒𝑠𝑠𝑖𝑜𝑛 𝑐𝑜𝑒𝑓𝑓𝑖𝑐𝑖𝑒𝑛𝑡𝑠
+              𝜽 = 𝑤1 , … , 𝑤𝑆 ; 𝑏1 , … , 𝑏𝑆 ; β1 , … , β𝑝 , … , β1 , … , β𝑝 , β0                               using the Nguyen-Widrow method
+                                              α, 𝐸𝐷 , 𝐸𝑊
+
+
+               No
+                                       epoch<=epochs
+
+                                                      Yes
+                                                                                                                  Compute the Jacobian (J)
+         1                        Compute 𝑱 and 𝑯 = 𝑱′ 𝑱
+                                                                                                           and approximate the Hessian matrix (H)
+
+
+                                                                                               𝑦𝑖 : 𝑡𝑟𝑎𝑖𝑛𝑖𝑛𝑔 𝑑𝑎𝑡𝑎
+                               𝑒𝑖 = 𝑦𝑖 − 𝑦𝑖 , 𝑖 = 1, … , 𝑛                                     𝑦𝑖 : 𝑝𝑟𝑒𝑑𝑖𝑐𝑡𝑒𝑑 𝑣𝑎𝑙𝑢𝑒𝑠
+
+
+                                          𝑛                  𝑚                                 𝐸𝐷 : 𝑠𝑢𝑚 of squares of errors
+                               𝐸𝐷 =           𝑒𝑖2 , 𝐸𝑤 =           θ𝑗2                         𝐸𝑤 : sum of squares of weights, biases and regression paramters
+                                       𝑖=1                   𝑗=1
+
+
+
+
+                              𝐶𝑜𝑙𝑑 = 𝐹 θ = β𝐸𝐷 + α𝐸𝑤
+                                                                                               Update the Cost function in L-M algorithm
+
+
+
+                    No
+                                          μ1 ≤ μ𝑚𝑎𝑥
+
+
+                                                       yes
+
+         2                            𝜹 = 𝑯 + μ𝑰 𝒈                                            Compute a vector of increments for 𝜽
+
+                                                 𝑛                           𝑚
+                                                       2                          2
+                 𝜽𝑛𝑒𝑤 = 𝜽 − 𝜹 , 𝐸𝐷 =                  𝑒𝑛𝑒𝑤,𝑖 , 𝐸𝑤 =              θ𝑛𝑒𝑤,𝑗
+                                                𝑖=1                      𝑗=1
+
+
+
+
+                           𝐶𝑛𝑒𝑤 = 𝐹 𝜽𝑛𝑒𝑤 = β𝐸𝐷 + α𝐸𝑤
+
+
+
+                                          𝑐𝑛𝑒𝑤 < 𝐶𝑜𝑙𝑑
+                                                                                     No
+                                                       Yes
+
+                                       μ = μ ∗ μ𝑑𝑒𝑐                                                μ = μ × μ𝑖𝑛𝑐
+
+
+
+                               𝜽 = 𝜽𝑛𝑒𝑤 , 𝑒𝑝𝑜𝑐𝑕 = 𝑒𝑝𝑜𝑐𝑕 + 1
+
+
+
+        3                           ɣ = 𝑛 − 2α 𝑡𝑟(𝑯−1 )
+
+
+                                   ɣ
+                             α=       ,        β = (𝑛 − ɣ)/(2𝐸𝐷 )
+                                  2𝐸𝑊
+
+
+
+                                               End
+
+                                      Figure 3: Levenberg-Marquardt algorithm.
+
+      In this work, we propose to alleviate the bottle necks in the EB algorithm by
+using parallel computing. We propose to use the software packages ScaLAPACK
+
+
+
+                                                                                    Revista Colombiana de Estadística 41 (2018) 173189
+
+ANN: A Bayesian Approach Using Parallel Computing                                   181
+
+
+
+(http://www.netlib.org/scalapack/) and OpenMPI (http://www.open-mpi.
+org).     ScaLAPACK stands for    Scalable Linear Algebra PACKage (Blackford
+et al. 2012).   The ScaLAPACK library is a software that was designed to per-
+form eciently many linear algebra operations. The library was designed to give
+high eciency on Multiple Instructions Multiple Data (MIDM) distributed mem-
+ory concurrent supercomputers (Yoginath, Bauer, Kora, Samatova, Kora, Fann
+& Geist 2009). The software can be used with clusters of work stations through
+network environments via Multiple Processing Interface (MPI). The ScaLAPACK
+library is based on block-partitioned algorithms that minimize the movement be-
+tween dierent processes. ScaLAPACK uses a Parallel BLAS (Basic Linear Alge-
+bra Subroutines) for the computations and a set of routines (Basic Linear Algebra
+Communications Subprograms, BLACS) for the communication between the pro-
+cesses. The BLACS routines rely on one implementation of MPI, one of the most
+widely used is OpenMPI (Gabriel et al. 2004). In order to perform any compu-
+tation with ScaLAPACK it is necessary to create a two-dimensional grid with r
+rows and c columns encompassing the process to be involved in a particular com-
+putation, this grid is referred as process grid. For example, it is possible to specify
+that we want to use 8 CPUs cores to perform a product matrix, then the four
+possible processing grids are (2, 4), (4, 2), (8, 1), (1, 8). Once that the processing
+grid has been dened the data is distributed among the involved process using an
+algorithm that is known as block-cyclic data distribution.
+
+   ScaLAPACK was written in Fortran and C/C++ programming languages.
+Routines can be call from programs written in both programming languages. In
+this work we decided to use C/C++ in order to implement the Empirical Bayes
+approach because this is the programming language that we have been using rou-
+tinely.   We use the following functions available in ScaLAPACK to perform the
+computations:
+
+
+   • pdgemm : Performs a matrix-matrix product.
+   • pdgemv : Performs a matrix-vector product.
+   • pdgesv : Solves a linear system of equations without inverting the matrix of
+        coecients.
+
+
+   • pdpotrf : Performs the Cholesky decomposition of a matrix.
+   • pdpotri : Inverts a positive denite and symmetric matrix using the Cholesky
+        decomposition.
+
+
+   The resulting application is a console program that can run in standalone
+workstations or in computing clusters. The source code is available upon request
+from the authors. Figure 4, shows the command line and the arguments that are
+used to execute the program.
+
+
+
+
+                                     Revista Colombiana de Estadística 41 (2018) 173189
+
+182       Eduardo Guzmán, Mario Vázquez, David del Valle & Paulino Pérez-Rodríguez
+
+
+      MPI                                                                         Block size     Testing data
+                Number of rows and      Number of        Processing
+   commands
+                columns in Xtraining     neurons            grid
+                                                        dimmensions
+
+
+mpirun -np N ./trainbr F C S Xtraining.csv Ytraining.csv nc nr nx ny testing.csv n
+                                                                 Data file with
+                    Executable’s name                          response vector
+                                              Data file with                                   Number of rows in
+        Number of                              predictors                                         testing set
+        cpu cores
+                                                        Training data
+Figure 4: Command line example to execute the application that ts a neural net-
+              work using parallel computing.              The application uses ScaLAPACK to per-
+              form the matrix algebra operations, the communication between processes is
+              performed using OpenMPI.
+
+
+
+
+5. Application examples
+      In this section we present two applications examples for ANN. In the rst
+example we predict building energy loads from a series of input variables.                                  The
+response variable is electricity consumption and the input variables are temper-
+ature, humidity, solar ux and wind.                    The dataset was analyzed previously by
+MacKay (1994).         In the second example we analyze grain yield for wheat.                              The
+data set was generated by International Center of Maize and Wheat Improvement
+(CIMMyT, http://www.cimmyt.org). The goal in this case is to predict the grain
+yield of wheat lines using 1279 molecular markers (input variables). The dataset
+was rst analyzed by Crossa, de los Campos, Pérez-Rodríguez, Gianola, Burgueño,
+Araus, Makumbi, Singh, Dreisigacker, Yan, Arief, Banziger & Braun (2010) and
+has been reanalyzed by many authors since then. Finally we present a benchmark
+of the application.
+
+
+
+5.1. Electricity
+
+      For this example we selected the electricity consumption data reported by
+MacKay (1994). The dataset was downloaded from the following web site http:
+//www.inference.phy.cam.ac.uk/mackay/Bayes_FAQ.html#Data. The dataset
+consisted of hourly measurements from September 1 1989 to February 23 1990
+of four input variables (temperature, humidity, solar ux, and wind) and three
+response variables:        electricity, cooling water and heating water.                  Here we only
+analyze electricity consumption.              The total number of records in the dataset is
+4208. MacKay (1994) divided the data into two sets: Training and Testing. The
+testing set consisted of the last 1282 data points (January 1 1990 to February 23
+1990). The problem is to predict electricity consumption using the input variables.
+Figure 5 shows the Whole Building Electric consumption (WBE), and also shows
+the training and testing sets. MacKay (1994) tted neural networks with a single
+hidden layer of tanh units, he found that models with between 4 and 8 neurons
+were appropriate for the problem.                   MacKay (1994) omitted some records in the
+
+
+
+                                                Revista Colombiana de Estadística 41 (2018) 173189
+
+ANN: A Bayesian Approach Using Parallel Computing                                                                        183
+
+
+
+training set, because when tting the models he obtained large residuals (see
+Figure 5).                MacKay preprocessed the original data and he added variables that
+allow him to get dierent representations of time and holidays, moving averages of
+the environmental variables, etc. So at the end of the preprocessing of the original
+data he got a data set with 25 variables that he used as inputs. The pre-processed
+dataset can also be downloaded from the MacKay's web site.
+               1000
+               900
+
+
+
+
+                                                                         Omitted from training
+               800
+WBE (KWh/hr)
+
+               700
+               600
+               500
+               400
+
+
+
+
+                                              Training                                                  Testing
+
+
+                      0                1000              2000                                    3000             4000
+
+                                                           Hours
+
+Figure 5: Whole Building Electric consumption (WBE) in KWh/hr from September 1
+                          1989 to December 31 to February 23 1990.
+
+
+
+               We tted an ANN using the pre-processed dataset created by MacKay that
+we described previously, the goal is just to show that the proposed algorithm
+works as expected. We tted an ANN with s = 8 neurons and 4 CPU cores, the
+computing time necessary to complete the task were approximately 2 seconds. The
+number of input variables was p = 25, so with s = 8 neurons, the total number of
+weights, biasses and regression coecients estimated was s × (p + 1 + 1) = 216.
+Furthermore β̂ = 184.0268, α̂ = 1.5994 and the eective number of parameters
+γ = 207.26. Note than the eective number of parameters is close to 216, so it is
+not necessary to include more than 8 neurons in the model.
+
+               Figure 6 shows the original data, the predictions obtained from the model and
+the residuals. It can be seen that the model predicts very well, even that is not an
+easy task. The RMSE was 41.34 and the Pearson's correlation between observed
+and predicted values was 0.9538. Note also that even that the model has a huge
+number of parameter it predicts very well in the testing set. It is well known that
+non regularized neural networks tends to overt the training data and when the
+model is used to predict using a new dataset the predictions are very bad, but this
+is not the case in this application example because the ANN used avoids overtting
+automatically.
+
+
+
+
+                                                    Revista Colombiana de Estadística 41 (2018) 173189
+
+184        Eduardo Guzmán, Mario Vázquez, David del Valle & Paulino Pérez-Rodríguez
+
+
+
+
+                           1000
+                           800
+                           600
+           WBE (KWh/hr)
+
+                           400
+
+
+
+
+                                          Observed               RMSE=41.31
+                           200
+
+
+
+
+                                                                         ^
+                                          Predicted              r(WBE, WBE) = 0.9538
+                                          Residual
+                           0
+                           −200
+
+
+
+
+                                   3000       3200    3400     3600     3800      4000     4200
+
+                                                             Hours
+Figure 6: Predictions for Whole Building Electric consumption (WBE) in KWh/hr
+                          from January 1 1990 to February 23 1990.        The Figure displays 3 series:
+                          Observed data, predicted data and residuals.
+
+
+
+
+5.2. Wheat Dataset
+
+      The wheat data set is from CIMMYT's Global Wheat Program (http://
+www.cimmyt.org).                   Historically, this program has conducted numerous interna-
+tional trials across a wide variety of wheat-producing environments.                          The envi-
+ronments represented in these trials were grouped into four basic target sets of
+environments comprising four main agroclimatic regions previously dened and
+widely used by CIMMYT's Global Wheat Breeding Program.                                   The phenotypic
+trait considered here was the average grain yield (GY) of the 599 wheat lines
+evaluated in each of these four mega-environments.                         Wheat lines were recently
+genotyped using 1447 Diversity Array Technology (DArT) generated by Triticarte
+Pty. Ltd. (Canberra, Australia; http://www.triticarte.com.au). The DArT
+markers may take on two values, denoted by their presence(1) or absence(0). The
+dataset was rst analyzed by Crossa et al. (2010). The dataset can be downloaded
+                         http://www.genetics.org/content/suppl/2010/
+from the following web site:
+09/02/genetics.110.118521.DC1.
+      From the statistical point of view we have a prediction problem, the response
+variable (y ) corresponds to grain yield and the predictors are the molecular markers
+(x1 , . . . , x1279 ). Crossa et al. (2010) predicted the grain yield using a MLR model,
+that is:
+
+
+
+                                                      Revista Colombiana de Estadística 41 (2018) 173189
+
+ANN: A Bayesian Approach Using Parallel Computing                                                 185
+
+
+                                    1279
+                                    X
+                       y i = β0 +          xij βj + ei , i = 1, . . . , 599.
+                                    j=1
+
+   The model was tted using the Bayesian framework by using dierent priors
+for βj . Crossa et al. (2010) studied the predicted ability of the proposed model
+using cross-validation. The authors divided at random the dataset into 10 disjoint
+subsets, S1 , . . . , S10 . The observations are assigned to the sets which are then used
+in the evaluation process. For example, the full sample can be divided in training
+and testing sets, if set 1 is selected as testing, then observations in S2 , . . . , S10 are
+used to train the model and obtain the predictions for individuals in the testing
+set, that is {ŷi , i ∈ S1 } and compute the Pearson's correlation between observed
+and predicted values.     Pearson's correlation is the standard statistic to measure
+linear relationship between two continuous variables, in this case the variables
+are observed phenotypic values (y ) and predicted phenotypical values (ŷ ). If the
+tted model is predicting correctly then we expect that y                      ≈ ŷ .   In the case of
+prediction of complex traits (those that are controlled by large number of genes
+and with low heritabilities, e.g. grain yield) with high dimensional data like the
+one presented in this example correlations between observed and predicted value
+are expected to be low.      The exercise can be repeated for the rest of the sets.
+Table 1 shows the results from the cross-validation experiment for Environment
+1, together with the execution times. Note that the Pearson's correlation in the
+training set is always greater that the cross-validation in the testing set.                      The
+average of Pearson's correlation was 0.4559, a result similar to this was reported
+by Crossa et al. (2010).
+
+
+Table 1: Pearson's correlations between observed and predicted values in training and
+           testing set for the 10 fold Cross Validation experiment.
+
+                           Fold      rtrn         rtest     time (hrs)
+                            1       0.9781       0.5900        2.8
+                            2       0.9748       0.6474        1.9
+                            3       0.9752       0.4692        2.5
+                            4       0.9711       0.3642        1.9
+                            5       0.9842       0.3298        4.3
+                            6       0.9742       0.5569        2.9
+                            7       0.9876       0.4070        3.2
+                            8       0.9724       0.4362        6.1
+                            9       0.9768       0.2276        2.9
+                            10      0.9782       0.5312        3.8
+                           Avg.   0.9781        0.4559         3.23
+
+
+
+
+6. Benchmark
+   We carried out a benchmark evaluation by tting a Bayesian Regularized
+Neural Network using the wheat dataset described previously.                            We considered
+dierent scenarios involving 4 dierent number of neurons (s                        = 1, 2, 3 and 4)
+and   N = 1, 2, 4, 6, 8 CPU cores.         The CPU cores were arranged in 5 dierent
+
+
+
+                                           Revista Colombiana de Estadística 41 (2018) 173189
+
+186       Eduardo Guzmán, Mario Vázquez, David del Valle & Paulino Pérez-Rodríguez
+
+
+
+processing grids:    (1, 1), (1, 2), (2, 2), (2, 3), (2, 4).    The evaluation was carried
+out in a Linux workstation with an AMD Opteron processor (tm) with 32 core
+CPUs @ 2.6 GHz and 160 Gb of RAM memory.                       We obtained the source code
+for OpenMPI and ScaLAPACK libraries from                http://www.open-mpi.org and
+http://www.netlib.org/scalapack/ respectively and then we compiled and in-
+stalled the libraries using the conguration scripts included with the source code
+of the libraries. The proposed algorithm uses the Nguyen & Widrow (1990) al-
+gorithm in order to initialize the weights, biases and regression coecients in the
+vector θ , which can lead to dierent solutions and also it is possible that the run-
+ning times vary from run to run, so we repeated each simulation experiment 5
+times.
+
+      Table 2 shows the processing times necessary to t the model. Figure 7 shows
+the processing times against the number of cores, from the Figure, it is clear
+that the time necessary to t the models increases exponentially with the model
+complexity (number of neurons), on the other hand if the number of computing
+cores used to t the model increases, the computing time decreases.             Note that
+the decrease rate in computing time for a xed number of neurons is not a linear
+function of the number of CPU cores used for the tting, also note that for this
+particular problem the computing times are almost constant when using 4, 6 or
+8 CPU cores, unfortunately we do not know how to determine the optimal CPU
+cores that must be used in the general case. Figure 8 shows the processing times vs
+the number of neurons, if the number of neurons increases the processing time also
+increases and the processing times decrease signicantly as the number of CPU
+cores increases.    Note also that there the relationship between processing times
+and number of neurons is not linear.
+
+                                 Table 2: Running times.
+
+
+
+
+                                        Revista Colombiana de Estadística 41 (2018) 173189
+
+    ANN:
+- jsFiddle demoA     Bayesian Approach Using Parallel Computing                                                                     12/20/15,187
+                                                                                                                                              18:36
+
+
+
+
+    1500 min
+
+                                          1 core
+                                          ● 1 neuron: 2.43
+    1250 min
+                                          ● 2 neurons: 134.92
+                                          ● 3 neurons: 643.02
+                                          ● 4 neurons: 1 372.89
+    1000 min
+
+
+
+      750 min
+
+
+
+      500 min
+
+
+
+      250 min
+
+
+
+         0 min
+                                1 core                      2 cores                   4 cores                 6 cores           8 cores
+
+                                                 1 neuron         2 neurons             3 neurons         4 neurons
+
+                                           Figure 7: Running times vs number of cores.
+- jsFiddle demo                                                                                                                     12/20/15, 18:27
+
+
+
+
+    1500 min
+                                                                                                           4 neurons
+                                                                                                           ● 1 core: 1 372.89
+                                                                                                           ● 2 cores: 757.95
+    1250 min                                                                                               ● 4 cores: 162.33
+                                                                                                           ● 6 cores: 136.98
+                                                                                                           ● 8 cores: 100.91
+
+    1000 min
+
+
+
+      750 min
+
+
+
+      500 min
+
+
+
+      250 min
+
+
+
+         0 min
+                                     1 neuron                         2 neurons                   3 neurons                 4 neurons
+
+                                                1 core        2 cores             4 cores       6 cores         8 cores
+
+                                          Figure 8: Running times vs number of neurons.
+http://fiddle.jshell.net/_display/                                                                                                        Page 1 of 1
+
+
+
+
+   7. Concluding Remarks
+          The algorithms used to t a Bayesian regularized neural networks are well
+   know.           It is also well known that as the number of neurons and the number of
+   predictors increases the computing time necessary to t the model also increases.
+   We identied some bottle necks in the algorithm used to t the model and we pro-
+   posed to use parallel computing in order to alleviate this problem. The resulting
+
+
+
+                                                                          Revista Colombiana de Estadística 41 (2018) 173189
+
+
+
+
+http://fiddle.jshell.net/_display/                                                                                                        Page 1 of 1
+
+188      Eduardo Guzmán, Mario Vázquez, David del Valle & Paulino Pérez-Rodríguez
+
+
+
+application can be run in multicore computers, but it can also run in computing
+clusters where dierent multicore computers (computing nodes) can work cooper-
+atively to solve a given problem.
+
+
+                    Received: January 2016  Accepted: May 2018
+                    
+
+
+
+References
+Blackford, L. S., Choi, J., Cleary, A., D'Azevedo, E., Demmel, J., Dhillon, I., Dongarra, J., Hammarling, S., Henry, G., Petitet, A., Stanley, K., Walker, D. & Whaley, R. C. (2012), `ScaLAPACK users' guide', Netlib's ocial site. 2015-03-14. *http://netlib.org/scalapack/slug/index. html
+Crossa, J., de los Campos, G., Pérez-Rodríguez, P., Gianola, D., Burgueño, J., Araus, J. L., Makumbi, D., Singh, R. P., Dreisigacker, S., Yan, J., Arief, V., Banziger, M. & Braun, H.-J. (2010), `Prediction of genetic values of quantitative traints in plant breeding using pedigree and molecular markers', Genetics 186(2), 714724.
+Foresee, F. D. & Hagan, M. T. (1997), `Gauss Newton approximation to Bayesian learning', Proc. IEEE International Conference Neural Networks 3, 1931-1933.
+Fox, J. (2008), Applied Regression Analysis and Generalized Linear Models, SAGE Publications. *http://books.google.ch/books?id=GKkn3LSSHFsC
+Gabriel, E., Fagg, G. E., Bosilca, G., Angskun, T., Dongarra, J. J., Squyres, J. M., Sahay, V., Kambadur, P., Barrett, B., Lumsdaine, A., Castain, R. H., Daniel, D. J., Graham, R. L. & Woodall, T. S. (2004), Open MPI: Goals, concept, and design of a next generation MPI implementation, in `Proceedings, 11th European PVM/MPI Users' Group Meeting', Budapest, Hungary, pp. 97-104.
+Gianola, D., Okut, H., Weigel, K. A. & Rosa, G. J. (2011), `Predicting complex quantitative traits with bayesian neural networks: a case study with jersey cows and wheat', BMC Genetics 87, 7-8.
+Girosi, F. & Poggio, T. (1989), `Representation properties of networks:  Kolmogorov's theorem is irrelevant', Neural Computation 1(4), 465469. *http://dx.doi.org/10.1162/neco.1989.1.4.465
+Kolmogorov, A. K. (1957), `On the representation of continuous functions of several variables by superposition of continuous functions of one variable and addition', Doklady Akademii Nauk SSSR 114, 369373.
+Lampinen, J. & Vehtari, A. (2001), `Bayesian approach for neural networks review and case studies', Neural networks   14(3), 259262.
+Lampinen, J., Vehtari, A. & Leinonen, K. (1999), `Application of bayesian neural network in electrical impedance tomography',     6, 39423947.
+Lebrón-Aldea, D., Dhurandhar, E. J., Pérez-Rodríguez, P., Klimentidis, Y. C., Tiwari, H. K. & Vazquez, A. I. (2015), `Integrated genomic and bmi analysis for type 2 diabetes risk assessment', Frontiers in Genetics    6, 1-8.
+Levenberg, K. (1944), `A method for the solution of certain problems in least squares', Quart. Applied Math.   2, 164168.
+MacKay, D. J. (1994), `Bayesian non-linear modelling for the prediction tion', ASHRAE transactions    100, 512.
+Marquardt, D. W. (1963), `An algorithm for least-squares estimation of nonlinear parameters', SIAM Journal on Applied Mathematics 11(2), 431441.
+Neal, R. M. (1996), Bayesian Learning for Neural Networks, Springer-Verlag New York, Inc., Secaucus, NJ, USA.
+Nguyen, D. & Widrow, B. (1990), Improving the learning speed of 2-layer neural networks by choosing initial values of the adaptive weights, in `International Symposium on Neural Networks'.
+Okut, H., Gianola, D., Rosa, G. J. & Weigel, K. (2011), `Prediction of body mass index in mice using dense molecular markers and a regularized neural network', Genetics research   93, 189201.
+Pérez-Rodríguez, P., Gianola, D., González-Camacho, J. M., Crossa, J., Manes, Y. & Dreisigacker, S. (2012), `Comparison between linear and non-parametric regression models for genome-enabled prediction in wheat', G3 2(12), 1595-1605.
+Pérez-Rodríguez, P., Gianola, D., Weigel, K. A., Rosa, G. J. M. & Crossa, J.(2013), `Technical note: An R package for tting Bayesian regularized neural networks with applications in animal breeding', Journal of Animal Science 91, 35223525.
+Prechelt, L. (2012), Early stopping  but when?, in G. Montavon, G. B. Orr & K.-R. Müller, eds, `Neural Networks: Tricks of the Trade: Second Edition', Springer Berlin Heidelberg, Berlin, Heidelberg, pp. 5367. *https://doi.org/10.1007/978-3-642-35289-8_5
+Yoginath, S., Bauer, D., Kora, G., Samatova, N., Kora, G., Fann, G. & Geist, A. (2009), `RScaLAPACK: High-performance parallel statistical computing with R and ScaLAPACK'. 2016-01-12. *http://web.ornl.gov/ webworks/cppr/y2001/pres/124121.pdf

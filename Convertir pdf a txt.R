@@ -12,12 +12,12 @@ Conv_pdf_txt <- function(pdf){
 for (i in 1:length(pub)){
 
   años <- NULL
-  setwd(paste0("C:/Users/ASUS/OneDrive/Documentos/Tesis/PDF/", pub[i]))
+  setwd(paste0("C:/Users/ASUS/OneDrive/Documentos/Tesis/PDF/", pub[1]))
   años <- list.files()
   for (j in 1:length(años)) {
     
     files <- files_txt <- NULL
-    setwd(paste0("C:/Users/ASUS/OneDrive/Documentos/Tesis/PDF/", pub[i],"/", años[j]))
+    setwd(paste0("C:/Users/ASUS/OneDrive/Documentos/Tesis/PDF/", pub[1],"/", años[j]))
     files <- list.files(pattern = "\\.pdf$")
     files_txt <- lapply(files, Conv_pdf_txt)
     for (k in 1:length(files_txt)) {

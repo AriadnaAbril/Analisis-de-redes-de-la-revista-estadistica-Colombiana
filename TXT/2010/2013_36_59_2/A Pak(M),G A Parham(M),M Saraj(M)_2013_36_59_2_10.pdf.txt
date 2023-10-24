@@ -1,0 +1,1190 @@
+Inference for the Weibull Distribution Based on Fuzzy Data. Inferencia para la distribución Weibull basada en datos difusos
+Shahid Chamran University of Ahvaz, Ahvaz, Iran. Shahid Chamran University of Ahvaz, Ahvaz, Iran
+Abstract
+Classical estimation procedures for the parameters of Weibull distribution are based on precise data. It is usually assumed that observed data are precise real numbers. However, some collected data might be imprecise and are represented in the form of fuzzy numbers. Thus, it is necessary to generalize classical statistical estimation methods for real numbers to fuzzy numbers. In this paper, different methods of estimation are discussed for the parameters of Weibull distribution when the available data are in the form of fuzzy numbers. They include the maximum likelihood estimation, Bayesian estimation and method of moments. The estimation procedures are discussed in details and compared via Monte Carlo simulations in terms of their average biases and mean squared errors. Finally, a real data set taken from a light emitting diodes manufacturing process is investigated to illustrate the applicability of the proposed methods.
+Key words: Bayesian estimation, EM algorithm, Fuzzy data analysis, Maximum likelihood principle.
+Resumen
+Los procedimientos clásicos de estimación para los parámetros de la distribución Weibull se encuentran basados en datos precisos. Se asume usualmente que los datos observados son números reales precisos. Sin embargo, algunos datos recolectados podrían ser imprecisos y ser representados en la forma de números difusos. Por lo tanto, es necesario generalizar los métodos de estimación estadísticos clásicos de números reales a números difusos. En este artículo, diferentes métodos de estimación son discutidos para los parámetros de la distribución Weibull cuando los datos disponibles están en la forma de números difusos. Estos incluyen la estimación por máxima verosimilitud, la estimación Bayesiana y el método de momentos. Los procedimientos de estimación se discuten en detalle y se comparan vía simulaciones de Monte Carlo en términos de sesgos promedios y errores cuadráticos medios.
+Palabras clave: algoritmo EM, análisis de datos difusos, estimación Bayesiana, principio de máxima verosimilitud.
+
+
+1. Introduction
+    The Weibull distribution was originally proposed by Waloddi Weibull back in
+1937 for estimating machinery lifetime. Nowadays, the Weibull distribution is a
+broadly used in statistical model in engineering and life-time data analysis. The
+probability density function (pdf) and the cumulative distribution function (cdf)
+of a two-parameter Weibull random variable X can be written as
+                      f (x; α, λ) = αλxα−1 exp(−λxα ),      x>0                      (1)
+and
+                        F (x; α, λ) = 1 − exp(−λxα ),     x>0                        (2)
+respectively, where λ > 0 is the scale and α > 0 is the shape parameter. Several
+authors have addressed inferential issues for the parameters of a Weibull distribu-
+tion; among others, Al-Baidhani & Sinclair (1987) compared the generalized least
+squares, maximum likelihood, and the two mixed method of estimating the param-
+eters of a Weibull distribution. Qiao & Tsokos (1994) introduced an effective iter-
+ative procedure for the estimation. Watkins (1994) discussed maximum likelihood
+estimation for the two parameter Weibull distribution when the data for analysis
+contains both times to failure and censored times in operation. Marks (2005) con-
+sidered the estimation of Weibull distribution parameters using the symmetrically
+located percentiles from a sample. Helu, Abu-Salih & Alkam (2010) proposed
+different methods of estimation for the parameters of Weibull distribution based
+on different sampling schemes-namely, simple random sample, ranked set sample,
+and modified ranked set sample.
+    The above inference techniques are limited to precise data. In real world sit-
+uations, the data sometimes can not be measured and recorded precisely due to
+machine errors, human errors or some unexpected situations. The two types of
+such data namely, censored data and truncated data are widely used in prac-
+tice. Censored data typically arise when an event of interest, such as a disease
+or a failure, is only partially observed, because information is gathered at certain
+examination times. Two usual models are random right-censorship and random
+interval-censorship. In the first case, the observations are assumed to be of the
+form Yi = min(Xi , Wi ), i = 1, . . . , n, where the Xi are the (partially observed) sur-
+vival times, and the Wi are the censoring times. In this model, both survival and
+censoring times are assumed to be random, and mutually independent. Estimat-
+ing the parameters of Weibull distribution from such data have been considered
+
+
+                                      Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                           339
+
+by several authors. See, for example Ageel (2002), Balakrishnan & Kateri (2008),
+Nandi & Dewan (2010), Joarder, Krishna & Kundu (2011), Banerjee & Kundu
+(2012), and Lin, Chou & Huang (2012). In the case of so-called random interval
+censored data, the event is only known to happen between two random examina-
+tion times. The observations are thus of the form (Ui , Vi ), i = 1, . . . , n, and it is
+only known that Ui ≤ Xi ≤ Vi for all i. Here again it is customary to assume
+independence between survival times Xi and censoring interval endpoints. Sta-
+tistical analysis of Weibull distribution based on interval censored data has been
+discussed by Ng & Wang (2009) and Tan (2009), among others. Truncation is
+similar to but distinct from the concept of censoring. When the existence of the
+unseen “observation ” is not known for observations that fall outside the particular
+range, the data that are observed are said to be truncated. Recently, Balakrishnan
+& Mitra (2012) developed the EM algorithm for the estimation of the parameters
+of the Weibull distribution based on left truncated and right censored data.
+    The problem addressed in this paper, is different from censoring and trancation.
+We are not concerned with imprecision arising from random inspection times, but
+with the situation in which the result of a random experiment is reported from the
+observer to the statistician with some imprecision, arising from its limited percep-
+tion or recollection of the precise numerical values. For instance, the lifetime of
+some shaft may be reported as imprecise quantities such as: “about 1, 000h”, “ap-
+proximately 1, 400h”, “almost between 1, 000h and 1, 200h”, “essentially less than
+1, 200h”, and so on. The lack of precision of such data can be described using
+fuzzy sets. The classical statistical estimation methods are not appropriate to
+deal with fuzzy sets. Therefore, the conventional procedures used for estimating
+the parameters of Weibull distribution will have to be adapted to the new sit-
+uation. The main aim of this paper is to develop the inferential procedures for
+the two-parameter Weibull distribution when the available data are in the form of
+fuzzy numbers. In Section 2, we review the fundamental notation and basic defi-
+nitions of fuzzy set theory. In Section 3, we first introduce a generalized likelihood
+function based on fuzzy data. We then discuss the computation of maximum like-
+lihood estimates (MLEs) of the parameters α and λ by using the Newton-Raphson
+(NR) and Expectation Maximization (EM) algorithms, in Section 4. In Section
+5, the Bayes estimates of the unknown parameters are obtained by using the ap-
+proximation form of Tierney & Kadane (1986) under the assumption of Gamma
+priors. The estimation via method of moments is provided in Section 6. A Monte
+Carlo simulation study is presented in Section 7, which provides a comparison of
+all estimation procedures developed in this paper and one real data set is analyzed
+for illustrative purposes.
+
+
+
+2. Basic Definition of Fuzzy Sets
+To appreciate the nature of a fuzzy set, let us consider the following hypothetical
+example taken from Gertner & Zhu (1996). Consider an experiment characterized
+by a probability space S = (X , BX , Pθ ), where (X , BX ) is a measurable space and
+Pθ belongs to a specified family of probability measures {Pθ , θ ∈ Θ} on (X , BX ).
+
+
+                                      Revista Colombiana de Estadística 36 (2013) 337–356
+
+340                                 Abbas Pak, Gholam Ali Parham & Mansour Saraj
+
+
+Any indicator function IA : X → {0, 1}, defined by
+                                   
+                                     1        x ∈ A,
+                          IA (x) =
+                                     0        x∈ / A,
+
+characterizes a crisp subset A in X . For example, if X = {xi , i = 1, . . . , n},
+represents all trees in a forest stand, then A = {x, x’s age ≤ 40 yr} is its subset. So
+if tree x3 is 27 yr old, x3 ∈ A and IA (x3 ) = 1; and if x239 ’s age equals 56, x239 ∈
+                                                                                     /A
+and IA (x239 ) = 0. However, when referring to a “young tree”, the set above
+described becomes a fuzzy set. Now relate each tree to its youthfulness by assigning
+a value between 1, representing absolutely young, and 0, representing absolutely
+not young, as the membership degree describing the subjective uncertainty of a tree
+being considered young. For instance, µyoung (x3 ) = 0.9, since x3 will most likely be
+allocated into a younger class, whereas µyoung (x239 ) = 0.49 for x239 seems neither
+very young nor very old compared to other older trees in that stand. Thus, similar
+to crisp sets, a fuzzy subset A   e in X is characterized by a membership function
+µÃ (x) which associates with each point x in X a real number in the interval [0, 1],
+with the value of µÃ (x) at x representing the “grade of membership”of x in A.    e We
+hereafter assume that the sample space X is a set in a Euclidean space and BX
+is the smallest Borel σ−field on X . A fuzzy event in X is a fuzzy subset Ã of
+X , whose membership function µÃ is Borel measurable. Many examples of fuzzy
+samples and observations appear in social and natural sciences. These occur when
+the linguistic concepts or propositions cannot be precisely defined, or accurate
+measurements of variables are not possible or necessary.
+Example 1. An investigator is interested in analyzing the amount of an adverse
+substance extracted from a special brand of cigarettes. Assume that the investiga-
+tor has not a mechanism of measurement which is sufficiently precise to determine
+exactly the amount of adverse substance of cigarettes, but rather he can only ap-
+proximate them by means of imprecise observations, for instance, “The amount
+of adverse substance of cigarette is approximately 30 to 40 milligrams”. A fuzzy
+approach lies in expressing the preceding observation as a fuzzy event Ae such as
+that defined, for instance, by the membership function (Figure 1).
+                                  x−20
+                                               20 ≤ x ≤ 30,
+                                  10
+                                 
+                                 
+                                   1           30 ≤ x ≤ 40,
+                        µAe(x) =
+                                  50−x        40 ≤ x ≤ 50,
+                                  10
+                                 
+                                   0           otherwise,
+
+    The notion of probability was extended to fuzzy events by Zadeh (1968) as
+follows.
+Definition 1. Let (Rn , A, P ) be a probability space in which A is the σ−field of
+Borel sets in Rn and P is a probability measure over Rn . Then, the probability of
+a fuzzy event Ae in Rn is defined by:
+                                       Z
+                                   e = µ e(x)dP.
+                                P (A)      A                                   (3)
+
+
+                                     Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                               341
+
+
+               1
+
+
+
+
+         µ A~ ( x)
+
+
+
+               0
+                            10     20          30        40     50       60
+                                                     x
+  Figure 1: Fuzzy approach of the imprecise observation “approximately 30 to 40 ”.
+
+
+
+    In particular, assume that P is the probability distribution of a continuous
+random variable Y with p.d.f. g(Y ). The conditional density of Y given A    e is
+given by
+                                 e = R µAe(y)g(y) .
+                           g(y | A)                                           (4)
+                                       µAe(u)g(u)du
+    The set consisting of all observable events from the experiment S determines
+a fuzzy information system (f.i.s.) associated with it, which is defined as follows.
+
+Definition 2. (Tanaka ?). A fuzzy information system Se associated with the
+experiment S is a fuzzy partition F = {e              eK } of X , i.e., a set of K fuzzy
+                                         x1 , . . . , x
+events on X satisfying the orthogonality condition
+                                        K
+                                        X
+                                              µxek (x) = 1,
+                                        k=1
+
+where µxek denotes the membership function of x
+                                              ek .
+
+   We now examine a brief example illustrating the preceding concept:
+Example 2. To evaluate the problem of psychological depression in a population,
+there is no exact method that can measure and express the exact value for the
+severity of the disease in each person and, so measurement results may be reported
+by means of the following fuzzy observations: x e1 = “approximately lower than 20”,
+e2 =“approximately 25 to 30”, x
+x                                                           e4 =“approximately 40
+                                  e3 = “approximately 35 ”, x
+        e5 = “approximately 50”, x
+to 45”, x                           e6 = “approximately higher than 55”, which are
+characterized by the membership functions
+
+                                                                 x−20
+                                                                              20 ≤ x ≤ 25,
+                                                                 5
+              
+               1            x ≤ 20,                            
+                                                                
+                     25−x                                         1           25 ≤ x ≤ 30,
+ µxe1 (x) =            5     20 ≤ x ≤ 25,            µxe2 (x) =   35−x
+                                                                              30 ≤ x ≤ 35,
+                                                                 5
+                                                               
+                     0       otherwise,                         
+                                                                  0           otherwise,
+
+                                         Revista Colombiana de Estadística 36 (2013) 337–356
+
+342                                         Abbas Pak, Gholam Ali Parham & Mansour Saraj
+
+
+
+                                                                       x−35
+                   x−30                                                       35 ≤ x ≤ 40,
+                                  30 ≤ x ≤ 35,                         5
+                                                                      
+                                                                      
+                   5
+                      40−x                                              1      40 ≤ x ≤ 45,
+ µxe3 (x) =             5         35 ≤ x ≤ 40,             µxe4 (x) =   50−x
+                                                                               45 ≤ x ≤ 50,
+                                                                       5
+                                                                     
+                      0           otherwise,                          
+                                                                        0      otherwise,
+
+
+                   x−45                                               x−50
+                   5             45 ≤ x ≤ 50,                         5      50 ≤ x ≤ 55,
+                      55−x
+ µxe5 (x) =             5         50 ≤ x ≤ 55,             µxe6 (x) =   1      x ≥ 55,
+                                                                     
+                      0           otherwise,                            0      otherwise,
+
+respectively, (see Fig.2). Clearly, a f.i.s. Se = {e         e7 } can be immediately
+                                                   x1 , ..., x
+                                    6
+                                    P
+constructed by defining µxe7 = 1 −    µxei )
+                                            i=1
+
+
+
+              1
+
+                                                                                         µ ~x
+                                                                                            1
+
+
+                                                                                        µ ~x2
+
+                                                                                        µ ~x
+       µ ~x
+          i
+                                                                                            3
+
+
+                                                                                        µ ~x4
+
+                                                                                        µ ~x5
+
+
+                                                                                        µ ~x6
+
+
+
+              0
+                      20     25       30    35        40      45    50    55
+                                                  x
+                                                          e1 , x
+ Figure 2: Membership functions of the fuzzy observations x         e3 , x
+                                                               e2 , x         e5 and x
+                                                                         e4 , x      e6 .
+
+
+   For more details about the membership functions and probability measures of
+fuzzy sets, one can refer to Singpurwalla & Booker (2004).
+   In order to model imprecise data, a generalization of real numbers is necessary.
+These data can be represented by fuzzy numbers. A fuzzy number is a subset,
+denoted by x e, of the set of real numbers (denoted by R) and is characterized
+by the so called membership function µxe(.). Fuzzy numbers satisfy the following
+constraints (see Dubois & Prade (1980)):
+      (1) µxe : R −→ [0, 1] is Borel-measurable;
+      (2) ∃x0 ∈ R : µxe(x0 ) = 1;
+   (3) The so-called λ−cuts (0 < λ ≤ 1), defined as Bλ (e         x) = {x ∈ R : µxe(x) ≥
+                                        x) = [aλ , bλ ], ∀λ ∈ (0, 1].
+λ}, are all closed intervals, i.e., Bλ (e
+   With the definition of a fuzzy number given above, an exact (non-fuzzy) number
+can be treated as a special case of a fuzzy number. For a non-fuzzy real observation
+x0 ∈ R, its corresponding membership function is µx0 (x0 ) = 1.
+
+
+                                             Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                          343
+
+   Among the various types of fuzzy numbers, the triangular and trapezoidal fuzzy
+numbers are most convenient and useful in describing fuzzy data. For triangular
+membership functions, the triangular fuzzy number can be defined as xe = (a, b, c)
+and its membership function is defined by the following expression:
+                               
+                                   x−a
+                               
+                                b−a          a ≤ x ≤ b,
+                                   c−x
+                      µxe(x) =     c−b        b ≤ x ≤ c,
+                               
+                                0           otherwise.
+
+                                                  e = (a, b, c, d) with member-
+   The trapezoidal fuzzy number can be defined as x
+ship function                  
+                                 x−a
+                                b−a
+                                           a ≤ x ≤ b,
+                               
+                                 1          b ≤ x ≤ c,
+                               
+                      µxe(x) =   d−x
+                                d−c
+                                           c ≤ x ≤ d,
+                               
+                                0         otherwise.
+
+
+3. Fuzzy Data and the Likelihood Function
+   Suppose that X1 , . . . , Xn is a random sample of size n from Weibull distribution
+with pdf given by (1). Let X = (X1 , . . . , Xn ) denotes the corresponding random
+vector. If a realization x = (x1 , . . . , xn ) of X was known exactly, we could obtain
+the complete-data likelihood function as
+                                                 n
+                                                 X            n
+                                                              Y
+                                    n n
+                    L(α, λ; x) = α λ exp(−λ            xα
+                                                        i )         xiα−1           (5)
+                                                 i=1          i=1
+
+
+    Now consider the problem where x is not observed precisely and only partial
+information about x is available in the form of a fuzzy subset x   e with the Borel
+measurable membership function µx     e (x). In this setting, the fuzzy observation
+x
+e can be understood as encoding the observer’s partial knowledge about the re-
+alization x of random vector X, and the membership function µx       e is seen as a
+possibility distribution interpreted as a soft constraint on the unknown quantity
+x. The fuzzy set x e can be considered to be generated by a two-step process:
+
+  1. A realization x is drawn from X;
+  2. The observer encodes his/her partial knowledge of x in the form of a possi-
+     bility distribution µx
+                          e.
+
+    It must be noted that, in this model, only step 1 is considered to be a random
+experiment. Step 2 implies gathering information about x and modeling this
+information as a possibility distribution.
+Example 3. Consider a life-testing experiment in which n identical ball bearings
+are placed on test, and we are interested in the lifetime of these ball bearings.
+The unknown lifetime xi of ball bearing i may be regarded as a realization of a
+
+
+                                     Revista Colombiana de Estadística 36 (2013) 337–356
+
+344                                         Abbas Pak, Gholam Ali Parham & Mansour Saraj
+
+
+random variable Xi induced by random sampling from a total population of ball
+bearings. In practice, however, measuring the lifetime of a ball bearing may not
+yield an exact result. A ball bearing may work perfectly over a certain period but
+be braking for some time, and finally be unusable at a certain time. Assume that
+two intervals are determined for the lifetime of each ball bearing i as follows:
+
+    • an interval [ai , di ] certainly containing xi ;
+
+    • an interval [bi , ci ] containing highly plausible values for xi .
+
+    This information may be encoded as a trapeozoidal fuzzy number x         ei = (ai , bi , ci , di )
+with support [ai , di ] and core [bi , ci ], interpreted as a possibility distribution con-
+straining the unknown value xi . Information about x may be represented by the
+joint possibility distribution
+
+                              e (x) = µxe1 (x1 ) × ... × µxen (xn ).
+                             µx                                                                (6)
+
+    Once xe is given, and assuming its membership function to be the Borel mea-
+surable, we can compute its probability according to Zadeh’s definition of the
+probability of a fuzzy event. By using the expression (3), the observed-data like-
+lihood function can then be obtained as
+                                             Z
+                           e) = P (e
+                 LO (α, λ; x                              e (x)dx.
+                                   x; α, λ) = f (x; α, λ)µx                    (7)
+
+     Since the data vector x is a realization of an independent identically distributed
+(i.i.d.) random vector X, and assuming the joint membership function µx         e (x) to
+be decomposable as in (6), the likelihood function (7) can be written as:
+                                      n Z
+                                      Y
+                     LO (α, λ; x
+                               e) =          αλxα−1 exp(−λxα )µxei (x)dx,                      (8)
+                                      i=1
+
+and the observed-data log likelihood is
+
+      L∗ (α, λ; x
+                e)     =                 e)
+                           log LO (α, λ; x
+                                                 n
+                                                 X            Z
+                       = n(log α + log λ) +             log       xα−1 exp(−λxα )µxei (x)dx.   (9)
+                                                  i=1
+
+
+
+4. Maximum Likelihood Estimation
+    The idea behind maximum likelihood parameter estimation is to determine the
+parameters that maximize the probability (likelihood) of the sample data. From
+a statistical point of view, the method of maximum likelihood is considered to
+be more robust and yields estimators with good statistical properties. In other
+words, maximum likelihood methods are versatile and apply to most models and
+to different types of data. The maximum likelihood estimate of the parameters α
+
+
+                                            Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                          345
+
+and λ can be obtained by maximizing the log-likelihood L∗ (α, λ; x  e). Equating the
+partial derivatives of the log-likelihood (9) with respect to α and λ to zero, the
+resulting two equations are:
+                         n R
+   ∂ ∗              n X (xα−1 − λx2α−1 ) log x exp (−λxα ) µxei (x)dx
+              e) = +
+     L (α, λ; x                       R                                    = 0 (10)
+  ∂α                α i=1               xα−1 exp (−λxα ) µxei (x)dx
+
+and
+                              n R
+           ∂ ∗             n X x2α−1 exp (−λxα ) µxei (x)dx
+                       e) = −
+              L (α, λ; x        R                            = 0.                  (11)
+           ∂λ              λ i=1 xα−1 exp (−λxα ) µxei (x)dx
+
+Since there are no closed form of the solutions to the likelihood equations (10)
+and (11), an iterative numerical search can be used to obtain the MLEs. In the
+following, we describe the NR method and the EM algorithm to determine the
+MLEs of the parameters α and λ.
+
+
+4.1. NR Algorithm
+NR algorithm is a direct approach for estimating the relevant parameters in a
+likelihood function. In this algorithm, the solution of the likelihood equation is
+obtained through an iterative procedure. Let θ = (α, λ)T be the parameter vector.
+Then, at the (h + 1)th step of iteration process, the updated parameter is obtained
+as                            2 ∗                   −1  ∗                  
+                              ∂ L (θ; xe)                        e)
+                                                          ∂L (θ; x
+           θ (h+1) = θ (h) −              | θ =θ (h)                |θ =θ (h)   (12)
+                                ∂θ∂θ T                       ∂θ
+where
+                                             ∂L∗ (α,λ;x
+                                                           !
+                           ∂L∗ (θ; x
+                                   e)                 e)
+                                      =           ∂α
+                              ∂θ             ∂L∗ (α,λ;x
+                                                      e)
+                                                  ∂λ
+
+and
+                                     ∂ 2 L∗ (α,λ;x    ∂ 2 L∗ (α,λ;x
+                                                                       !
+                   ∂ 2 L∗ (θ; x
+                              e)                 e)               e)
+                                 =         ∂α2             ∂λ∂α
+                      ∂θ∂θ  T        ∂ 2 L∗ (α,λ;x
+                                                 e)   ∂ 2 L∗ (α,λ;x
+                                                                  e)
+                                          ∂λ∂α              ∂λ2
+
+The second-order derivatives of the log-likelihood with respect to the parameters,
+required for proceeding with the NR method, are obtained as follows.
+
+  ∂2 ∗                    n
+     L (α, λ; x
+              e)   = −
+ ∂α2                      α2
+                           n    R 2 3α−1
+                          X      (λ x     − λx2α−1 )(log x)2 exp (−λxα ) µxei (x)dx
+                        +     {           R
+                          i=1
+                                            xα−1 exp (−λxα ) µxei (x)dx
+                                R α−1
+                                  (x   − 2λx2α−1 )(log x)2 exp (−λxα ) µxei (x)dx
+                              +          R                                        }
+                                            xα−1 exp (−λxα ) µxei (x)dx
+                           n R                                                2
+                          X      (xα−1 − λx2α−1 ) log x exp (−λxα ) µxei (x)dx
+                        −              R
+                          i=1
+                                         xα−1 exp (−λxα ) µxei (x)dx
+
+
+                                     Revista Colombiana de Estadística 36 (2013) 337–356
+
+346                                  Abbas Pak, Gholam Ali Parham & Mansour Saraj
+
+                                n   R 3α−1
+      ∂2 ∗                 n   X      x     exp (−λxα ) µxei (x)dx
+                   e)
+          L (α, λ; x    = − 2+     { R α−1
+      ∂λ2                  λ   i=1
+                                      x     exp (−λxα ) µxei (x)dx
+                                        R 2α−1
+                                         x      exp (−λxα ) µxei (x)dx 2
+                                     −[ R α−1                         ] },
+                                          x    exp (−λxα ) µxei (x)dx
+
+                               n R
+    ∂2                        X      (2x2α−1 − λx3α−1 ) log x exp (−λxα ) µxei (x)dx
+        L∗ (α, λ; x
+                  e)    =   −                 R
+   ∂λ∂α                       i=1
+                                                xα−1 exp (−λxα ) µxei (x)dx
+                               n
+                                      (1 − λxα )xα−1 log x exp (−λxα ) µxei (x)dx
+                                    R
+                              X
+                            +     {         R
+                              i=1
+                                               xα−1 exp (−λxα ) µxei (x)dx
+                                        R 2α−1
+                                          x      exp (−λxα ) µxei (x)dx
+                                      × R α−1                           }
+                                          x      exp (−λxα ) µxei (x)dx
+The iteration process then continues until convergence, i.e., until k θ (h+1) −θ (h) k<
+ε, for some pre-fixed ε > 0. The maximum likelihood estimate of (α, λ) via NR
+algorithm is thereafter refereed as “(α̂N R , λ̂N R )” in this paper.
+    It should be pointed out that the second-order derivatives of the log-likelihood
+are required at every iteration in the NR method. Sometimes the calculation of the
+derivatives based on fuzzy data can be rather tedious. Another viable alternative
+to the NR algorithm is the well-known EM algorithm. In the following, we discuss
+how that can be used to determine the MLEs in this case.
+
+
+4.2. EM Algorithm
+    The EM algorithm is a broadly applicable approach to the iterative computa-
+tion of maximum likelihood estimates and useful in a variety of incomplete-data
+problems. Since the observed fuzzy data xe can be seen as an incomplete specifi-
+cation of a complete data vector x, the EM algorithm is applicable to obtain the
+maximum likelihood estimates of the unknown parameters. In the following, we
+use the fuzzy EM algorithm (see Denoeux (2011)) to determine the MLEs of α
+and λ.
+From the Eq. (5), the log-likelihood function for the complete data vector x
+becomes:
+                                                      n
+                                                      X            n
+                                                                   X
+         log L(α, λ; x) = n log α + n log λ + (α − 1)   log xi − λ   xα
+                                                                      i  (13)
+                                                        i=1            i=1
+
+Taking the derivative with respect to α and λ, respectively, on (13), the following
+likelihood equations are obtained:
+                                           n
+                                      n X α
+                                        =     xi                                    (14)
+                                      λ   i=1
+
+and
+                                  n                n
+                            n    X                X
+                              =λ     xα
+                                      i log x i −     log xi                        (15)
+                            α    i=1              i=1
+
+
+                                      Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                                     347
+
+Therefore the EM algorithm is given by the following iterative process:
+
+1. Given starting values of α and λ, say α(0) and λ(0) and set h = 0.
+2. In the (h + 1)th iteration,
+
+   • The E-step requires to compute the following conditional expectations using
+     the expression (4):
+                                                          (h)     (h)
+                                                                       
+                                                                 −1
+                                                      exp −λ(h) xα
+                                                     x2α
+                                                 R
+                                                                         µxei (x)dx
+            E1i = Eα(h) ,λ(h) (X α | x
+                                     ei ) = R α(h) −1             (h)
+                                                                      
+                                             x        exp −λ(h) xα      µxei (x)dx
+
+                                                      (h)
+                                                                                (h)
+                                                                                     
+                                                            −1
+                                                    xα         log x exp −λ(h) xα
+                                                R
+                                                                                       µxei (x)dx
+        E2i = Eα(h) ,λ(h) (log X | x
+                                   ei ) =            R                           
+                                                         xα(h) −1 exp −λ(h) xα(h) µxei (x)dx
+
+
+                   E3i   =     Eα(h) ,λ(h) (X α log X | x
+                                                        ei )
+                               R 2α(h) −1                        (h)
+                                                                      
+                                x           log x exp −λ(h) xα          µxei (x)dx
+                         =        R (h)                      (h)
+                                                                 
+                                      xα −1 exp −λ(h) xα           µxei (x)dx
+
+      and the likelihood equations (14) and (15) are replaced by
+                                                    n
+                                               n X
+                                                 =     E1i ,                                   (16)
+                                               λ   i=1
+
+      and
+                                            n
+                                      n    X
+                                        =λ     [E3i − E2i ] .                                  (17)
+                                      α    i=1
+
+   • The M-step requires to solve the Eqs. (16) and (17), and obtain the next
+     values, λ(h+1) and α(h+1) , of λ and α, respectively, as follows:
+                                                     n
+                                          λ(h+1) = P
+                                                   n
+                                                     E1i
+                                                            i=1
+                                          (            n
+                                                                      )−1
+                              (h+1)           1 (h+1) X
+                          α           =         λ         [E3i − E2i ]
+                                              n       i=1
+
+
+3. Checking convergence, if the convergence occurs then the current α(h+1) and
+λ(h+1) are the maximum likelihood estimates of α and λ via EM algorithm; oth-
+erwise, set h = h + 1 and go to Step 2.
+The maximum likelihood estimate of (α, λ) via EM algorithm is thereafter refereed
+as “(α̂EM , λ̂EM )” in this paper.
+
+
+                                          Revista Colombiana de Estadística 36 (2013) 337–356
+
+348                                  Abbas Pak, Gholam Ali Parham & Mansour Saraj
+
+
+5. Bayesian Estimation
+    In recent decades, the Bayes viewpoint, as a powerful and valid alternative
+to traditional statistical perspectives, has received frequent attention for statis-
+tical inference. In this section, we consider the Bayesian estimation under the
+assumptions that α and λ have independent gamma priors with the pdfs
+
+                                  dc c−1
+                      π1 (α) =        α  exp(−αd),              α>0                    (18)
+                                 Γ(c)
+
+and
+                                  ba a−1
+                      π2 (λ) =        λ  exp(−λb),              λ>0                    (19)
+                                 Γ(a)
+with the parameters α ∼ Gamma(c, d) and λ ∼ Gamma(a, b). Based on the above
+priors, the joint posterior density function of α and λ given the data can be written
+as follows:
+                                                            e)
+                                        π1 (α)π2 (λ)`(α, λ; x
+                    π(α, λ | x
+                             e) = ∞ ∞
+                                   R R                                           (20)
+                                                            e)dαdλ
+                                        π1 (α)π2 (λ)`(α, λ; x
+                                   0 0
+
+where
+                                                          n Z
+                                                          Y
+        e) = α(n+c−1) λ(n+a−1) exp(−αd) exp(−λb)
+`(α, λ; x                                                        xα−1 exp (−λxα ) µxei (x)dx
+                                                          i=1
+
+
+is the likelihood function based on the fuzzy sample x e. Then, under a squared
+error loss function, the Bayes estimate of any function of α and λ, say g(α, λ), is
+
+                                   R∞ R∞
+                                                                      e)dαdλ
+                                           g(α, λ)π1 (α)π2 (λ)`(α, λ; x
+                                   0 0
+            E(g(α, λ) | x
+                        e)   =           R∞ R∞
+                                                                     e)dαdλ
+                                                 π1 (α)π2 (λ)`(α, λ; x
+                                        0 0
+                                   R∞ R∞
+                                           g(α, λ)eQ(α,λ) dαdλ
+                                   0 0
+                             =           R∞ R∞                                         (21)
+                                                 eQ(α,λ) dαdλ
+                                         0 0
+
+
+                                              e) ≡ ρ(α, λ) + L(α, λ). Note that Eq.
+where Q(α, λ) = ln[π1 (α)π2 (λ)] + ln `(α, λ; x
+(21) cannot be obtained analytically; therefore, in the following we adopt Tierney
+and Kadane’s approximation for computing the Bayes estimates.
+   Setting H(α, λ) = Q(α, λ)/n and H ∗ (α, λ) = [ln g(α, λ) + Q(α, λ)] /n, the ex-
+pression in (21) can be reexpressed as
+                                      R ∞ R ∞ nH ∗ (α,λ)
+                                              e          dαdλ
+                                 e) = R0∞ R0∞ nH(α,λ)
+                     E(g(α, λ) | x                                                     (22)
+                                        0   0
+                                              e        dαdλ
+
+                                      Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                                    349
+
+    Following Tierney & Kadane (1986), Eq. (22) can be approximated as the
+following form:
+                                    1/2
+                             det Σ∗
+                           
+                                         exp n H ∗ (ᾱ∗ , λ̄∗ ) − H(ᾱ, λ̄)
+                                                                         
+             ĝBT (α, λ) =                                                   (23)
+                             det Σ
+where (ᾱ∗ , λ̄∗ ) and (ᾱ, λ̄) maximize H ∗ (α, λ) and H(α, λ), respectively, and Σ∗ and
+Σ are the negatives of the inverse Hessians of H ∗ (α, λ) and H(α, λ) at (ᾱ∗ , λ̄∗ )
+and (ᾱ, λ̄), respectively.
+   In our case, we have
+                                    1
+           H(α, λ)          =         {k + (n + c − 1) log α + (n + a − 1) log λ − αd
+                                    n
+                                              Xn     Z
+                                       −λb +      log xα−1 exp (−λxα ) µxei (x)dx}.
+                                              i=1
+
+where k is a constant; therefore, (ᾱ, λ̄) can be obtained by solving the following
+two equations
+      ∂                         1 n+c−1
+        H(α, λ)         =         {          −d
+     ∂α                         n      α
+                                      n
+                                           (xα−1 − λx2α−1 ) log x exp (−λxα ) µxei (x)dx
+                                         R
+                                     X
+                                   +             R                                       }
+                                     i=1
+                                                   xα−1 exp (−λxα ) µxei (x)dx
+
+                                (              n R 2α−1
+                                                                                )
+        ∂            1              n+a−1     X     x    exp (−λxα ) µxei (x)dx
+           H(α, λ) =                      −b−     R
+        ∂λ           n                λ       i=1
+                                                    xα−1 exp (−λxα ) µxei (x)dx
+and, from the second derivatives of H(α, λ), the determinant of the negative of
+the inverse Hessian of H(α, λ) at (ᾱ, λ̄) is given by
+                                                           2 −1
+                                       det Σ = (H11 H22 − H12 )
+where
+                      1    n+c−1
+     H11      =         {−
+                      n       ᾱ2
+                             n R                                              
+                            X      (λ̄2 x3ᾱ−1 − λ̄x2ᾱ−1 )(log x)2 exp −λ̄xᾱ µxei (x)dx
+                          +     (              R                    
+                            i=1
+                                                 xᾱ−1 exp −λ̄xᾱ µxei (x)dx
+                                  R ᾱ−1                                   
+                                   (x      − 2λ̄x2ᾱ−1 )(log x)2 exp −λ̄xᾱ µxei (x)dx
+                               +              R                                        )
+                                                xᾱ−1 exp −λ̄xᾱ µxei (x)dx
+                             n R                                        
+                            X      (xᾱ−1 − λ̄x2ᾱ−1 ) log x exp −λ̄xᾱ µxei (x)dx 2
+                          −     [           R                                      ] }
+                            i=1
+                                              xᾱ−1 exp −λ̄xᾱ µxei (x)dx
+
+                                         n R                   
+                        1    n + a − 1 X x3ᾱ−1 exp −λ̄xᾱ µxei (x)dx
+        H22       =       {−          +     ( R ᾱ−1           
+                        n       λ̄2     i=1
+                                                x    exp −λ̄xᾱ µxei (x)dx
+                                               R 2ᾱ−1           
+                                                  x    exp −λ̄xᾱ µxei (x)dx 2
+                                             −[ R ᾱ−1                      ] )}
+                                                  x    exp −λ̄xᾱ µxei (x)dx
+
+                                               Revista Colombiana de Estadística 36 (2013) 337–356
+
+350                                      Abbas Pak, Gholam Ali Parham & Mansour Saraj
+
+                             n R                                         
+                       1    X     (2x2ᾱ−1 − λ̄x3ᾱ−1 ) log x exp −λ̄xᾱ µxei (x)dx
+             H12   =     {−                R                    
+                       n    i=1
+                                              xᾱ−1 exp −λ̄xᾱ µxei (x)dx
+                             n R                                     
+                            X      (1 − λ̄xᾱ )xᾱ−1 log x exp −λ̄xᾱ µxei (x)dx
+                          +     (        R                    
+                            i=1
+                                           xᾱ−1 exp −λ̄xᾱ µxei (x)dx
+                                    R 2ᾱ−1               
+                                      x       exp −λ̄xᾱ µxei (x)dx
+                                  × R ᾱ−1                         )}
+                                      x      exp −λ̄xᾱ µxei (x)dx
+
+  Now, following the same arguments with g(α, λ) = α and λ, respectively, in
+     ∗
+H (α, λ), α̂BT and λ̂BT in Equation (23) can then be obtained in a straightforward
+manner.
+
+
+6. Method of Moments
+         It is well-known that the kth moment of the Weibull distribution with pdf (1)
+is
+                                                 k         k
+                                    E(X k ) = λ− α Γ(1 +     )
+                                                           α
+where Γ(.) is the complete Gamma function.
+   By equating the first and the second sample moments to the corresponding
+population moments, the following equations can be used to find the estimates of
+moment method.
+                                         n
+                         1       1    1X
+                      λ− α Γ(1 + ) =        Eα,λ (X | x
+                                                      ei )                 (24)
+                                 α    n i=1
+                                                n
+                                2       2    1X
+                           λ− α Γ(1 +     )=       Eα,λ (X 2 | x
+                                                               ei )                        (25)
+                                        α    n i=1
+
+    Since the closed form of the solutions to Eqs. (24) and (25) could not be
+obtained, an iterative numerical process to obtain the parameter estimates is de-
+scribed as follows:
+1. Let the initial estimates of α and λ, say α(0) and λ(0) with h = 0.
+2. In the (h + 1)th iteration, we first compute
+                             R α(h) +r−1              (h)
+                                                           
+                              x          exp −λ(h) xα        µxei (x)dx
+    Eα(h) ,λ(h) (X r | x
+                       ei ) = R α(h) −1              (h)
+                                                                       ,      r = 1, 2.
+                                x       exp −λ(h) xα       µxei (x)dx
+
+3. Based on equations (24) and (25), solve the following equation for α
+                           n                       2
+                           P
+                               Eα(h) ,λ(h) (X | x
+                                                ei )                  2
+                                                           Γ(1 + α1 )
+                                                          
+                           i=1
+                                                       = 
+                                                            Γ(1 + α2 )
+                            n                                         
+                            P
+                         n      Eα(h) ,λ(h) (X 2 | x
+                                                   ei )
+                            i=1
+
+
+                                          Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                                           351
+
+to obtain the solution as α(h+1) .
+4. The solution for λ, say λ(h+1) , is obtained through the following equation
+                                                                            α(h+1)
+                                                                            
+                                           nΓ(1 + (1/α(h+1) ))
+                                         
+                                                                            
+                                                                             
+                            λ(h+1) =       n
+                                           P
+                                             Eα(h) ,λ(h) (X | x
+                                                              ei ) 
+                                         
+                                                                  
+                                                                  
+                                             i=1
+
+
+5. Setting h = h + 1, repeat steps 2 to 4 until convergence occurs and denote the
+method of moment estimates as α̂M and λ̂M .
+
+         1
+                                                                                              µ ~x
+                                                                                                 1
+
+                                                                                              µ ~x
+                                                                                                 2
+
+                                                                                              µ ~x
+                                                                                                 3
+                                                                                              µ ~x
+                                                                                                 4
+
+                                                                                              µ ~x
+                                                                                                 5
+
+                                                                                              µ ~x
+                                                                                                 6
+
+                                                                                              µ ~x
+                                                                                                 7
+                                                                                              µ ~x
+                                                                                                 8
+
+
+         0
+                     0.05   0.25   0.5       0.75       1      1.5       2        3
+                                                    x
+       Figure 3: Fuzzy information system used to encode the simulated data.
+
+
+
+
+7. Numerical Experiments
+7.1. Simulation
+In this section, we present some experimental results, mainly to observe how the
+different methods behave for different sample sizes. We obtain the estimates of
+the unknown parameters α and λ using the three methods provided in the pre-
+ceding sections. The computations are performed using R 2.14.0 (R Development
+Core Team (2011)), which is a non-commercial, open source software package for
+statistical computing and graphics. First, for different sets of parameter values
+namely; (α, λ) = (0.5, 1), (1, 1), (2, 1), and various choices of n, we have generated
+i.i.d. random samples, say x, from the Weibull distribution. Each realization of x
+was made fuzzy, using the f.i.s. shown in Fig.3, corresponding to the membership
+functions
+
+                                                                         x−0.05
+              1             x ≤ 0.05,                                    0.2         0.05 ≤ x ≤ 0.25,
+                 0.25−x                                                       0.5−x
+µxe1 (x) =         0.2       0.05 ≤ x ≤ 0.25,               µxe2 (x) =         0.25    0.25 ≤ x ≤ 0.5,
+                                                                        
+                 0           otherwise,                                       0        otherwise,
+
+                                                Revista Colombiana de Estadística 36 (2013) 337–356
+
+352                                    Abbas Pak, Gholam Ali Parham & Mansour Saraj
+
+
+
+              x−0.25                                          x−0.5
+              0.25          0.25 ≤ x ≤ 0.5,                   0.25     0.5 ≤ x ≤ 0.75,
+                 0.75−x                                           1−x
+µxe3 (x) =         0.25      0.5 ≤ x ≤ 0.75,     µxe4 (x) =       0.25   0.75 ≤ x ≤ 1,
+                                                             
+                 0           otherwise,                           0      otherwise,
+
+                  x−0.75                                      x−1
+                  0.25        0.75 ≤ x ≤ 1,                   0.5      1 ≤ x ≤ 1.5,
+                     1.5−x                                        2−x
+  µxe5 (x) =           0.5    1 ≤ x ≤ 1.5,       µxe6 (x) =        0.5   1.5 ≤ x ≤ 2,
+                                                             
+                     0        otherwise,                          0      otherwise,
+
+                  x−1.5                                    
+                  0.5         1.5 ≤ x ≤ 2,                  x−2        2 ≤ x ≤ 3,
+      µxe7 (x) =   3−x         2 ≤ x ≤ 3,        µxe8 (x) =   1          x ≥ 3,
+                                                           
+                   0           otherwise,                     0          otherwise.
+
+    Then the estimates of α and λ for the fuzzy sample were computed using the
+maximum likelihood method (via NR and EM algorithms), the moments method
+and a Bayesian procedure. For computing the Bayes estimates, we have assumed
+that λ and α have Gamma(a, b) and Gamma(c, d) priors respectively. To make the
+comparison meaningful, it is assumed that the priors are non-informative, and they
+are a = b = c = d = 0. Note that in this case the priors are non-proper also. Press
+(2001) suggested to use very small non-negative values of the hyperparameters in
+this case, and it will make the priors proper. We have tried a = b = c = d = 0.0001.
+The results are not significantly different than the corresponding results obtained
+using non-proper priors, and are not reported due to space. From now on, the
+estimates of parameters obtained by using NR algorithm, EM algorithm, Bayesian
+procedure and moments method will be denoted by NR, EM, BET and MME,
+respectively. The average biases (AB) and mean squared errors (MSE) of the
+estimates over 5, 000 replications are presented in Tables 1-2.
+    From the experiments, we found that using the NR or EM algorithm for the
+computation of maximum likelihood estimates of α and λ give similar estimation
+results, but EM is computationally slower. For small and moderate sample sizes,
+the Bayesian procedure gives the most precise parameter estimates as shown by
+ABs and MSEs in Tables 1-2. For large sample sizes (n = 100, 200 and 500), the
+performance of the MLEs, MMEs and Bayes estimates are almost identical. For
+all the methods, it is observed that as the sample size increases, the biases and
+MSEs of the estimates decrease as expected.
+
+
+7.2. Application example
+    In order to demonstrate the application of proposed methods, let us consider a
+case study on the light emitting diodes (LED) manufacturing process that focuses
+on the luminous intensities of LED sources. The process distribution has been
+justified and has been shown to be fairly close to the Weibull distribution. A
+sample of size n = 30 is taken from the stable process. Since the data given by
+
+
+                                        Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                              353
+
+            Table 1: MSE of the estimates of α and λ for different sample sizes.
+ n      α       λ            Estimation of α                     Estimation of λ
+                    NR       EM       BET      MME      NR       EM       BET      MME
+ 15     0.5     1   0.0619   0.0620   0.0594   0.0705   0.0870   0.0871   0.0836   0.092
+        1       1   0.0987   0.0988   0.0830   0.1246   0.1129   0.1130   0.1091   0.1191
+        2       1   0.1263   0.1264   0.1129   0.1380   0.1465   0.1465   0.1421   0.1483
+ 20     0.5     1   0.0558   0.0559   0.0512   0.0631   0.0727   0.0728   0.0639   0.0792
+        1       1   0.0942   0.0943   0.0744   0.1193   0.1088   0.1089   0.0966   0.1139
+        2       1   0.1017   0.1018   0.0922   0.1240   0.1226   0.1227   0.1182   0.1259
+ 30     0.5     1   0.0366   0.0367   0.0341   0.0394   0.0489   0.0489   0.0422   0.0519
+        1       1   0.0614   0.0614   0.0488   0.0828   0.0691   0.0692   0.0646   0.0707
+        2       1   0.0721   0.0722   0.0630   0.0895   0.0843   0.0844   0.0819   0.0895
+ 50     0.5     1   0.0285   0.0286   0.0257   0.0335   0.0365   0.0365   0.0342   0.0386
+        1       1   0.0361   0.0362   0.0331   0.0451   0.0427   0.0427   0.0419   0.0430
+        2       1   0.0488   0.0489   0.0425   0.0536   0.0572   0.0572   0.0558   0.0587
+ 70     0.5     1   0.0214   0.0215   0.0208   0.0232   0.0305   0.0306   0.0291   0.0318
+        1       1   0.0282   0.0282   0.0225   0.0346   0.0338   0.0339   0.0328   0.0345
+        2       1   0.0327   0.0328   0.0311   0.0387   0.0478   0.0478   0.0460   0.0491
+ 100    0.5     1   0.0154   0.0154   0.0152   0.0156   0.0227   0.0228   0.0220   0.0236
+        1       1   0.0191   0.0192   0.0187   0.0195   0.0284   0.0285   0.0282   0.0289
+        2       1   0.0270   0.0270   0.0263   0.0271   0.0395   0.0395   0.0390   0.0397
+ 200    0.5     1   0.0104   0.0104   0.0098   0.0109   0.0174   0.0175   0.0168   0.0179
+        1       1   0.0127   0.0128   0.0120   0.0134   0.0211   0.0211   0.0202   0.0218
+        2       1   0.0214   0.0214   0.0209   0.0225   0.0356   0.0356   0.0348   0.0360
+ 500    0.5     1   0.0055   0.0055   0.0051   0.0058   0.0118   0.0118   0.0113   0.0122
+        1       1   0.0086   0.0086   0.0085   0.0088   0.0173   0.0174   0.0161   0.0179
+        2       1   0.0142   0.0142   0.0139   0.0153   0.0235   0.0235   0.0230   0.0238
+
+
+
+luminous intensity of a particular LED inevitably have some degree of imprecision,
+the luminous intensities of diodes are reported in the form of lower and upper
+bounds as well as a point estimate, which are as follows:
+      DATA SET:
+
+                (2.163, 2.738, 3.068), (5.972, 6.353, 8.150), (1.032, 1.971, 2.642),
+                (0.628, 0.964, 1.735), (2.995, 3.442, 5.066), (3.766, 5.814, 6.212),
+                (0.974, 1.839, 2.045), (4.352, 5.206, 5.988), (3.920, 4.762, 6.121),
+                (1.375, 2.195, 3.086), (0.618, 0.839, 2.217), (4.575, 6.050, 6.734),
+                (1.027, 1.218, 3.116), (6.279, 8.156, 9.435), (2.821, 3.409, 5.272),
+                (7.125, 8.470, 9.044), (5.443, 6.231, 7.395), (1.766, 2.190, 2.638),
+                (7.155, 8.013, 8.352), (0.830, 1.288, 2.541), (3.590, 4.169, 4.899),
+                (5.965, 7.344, 8.019), (3.177, 3.600, 4.213), (4.634, 5.780, 7.058),
+                (7.261, 8.325, 8.871), (2.247, 2.990, 4.128), (6.032, 7.746, 8.529),
+                (4.065, 5.312, 7.480), (5.434, 7.093, 7.655), (1.336, 2.750, 3.284).
+
+    In our approach, each triplet is modeled by a triangular fuzzy number x  ei ,
+and is interpreted as a possibility distribution related to an unknown value xi ,
+itself a realization of a random variable Xi . For this data, we employ NR and
+
+
+                                         Revista Colombiana de Estadística 36 (2013) 337–356
+
+354                                  Abbas Pak, Gholam Ali Parham & Mansour Saraj
+
+
+           Table 2: AB of the estimates of α and λ for different sample sizes.
+ n     α      λ            Estimation of α                     Estimation of λ
+                  NR       EM      BET       MME      NR       EM       BET      MME
+ 15    0.5    1   0.1272   0.1273  0.0734    0.1533   0.1180   0.1181   0.1092   0.1230
+       1      1   0.1381   0.1382  -0.0783   0.1698   0.1291   0.1292   0.1262   0.1322
+ 2            1   0.1914   0.1915  0.1527    0.2038   0.1570   0.1571   0.1503   0.1637
+ 20    0.5    1   0.1091   0.1092  -0.0617   0.1326   0.0931   0.0931   0.0865   0.1026
+       1      1   0.1354   0.1355  -0.0699   0.1633   0.1205   0.1206   0.1177   0.1298
+       2      1   0.1775   0.1775  0.1344    0.1851   0.1427   0.1428   0.1321   0.1485
+ 30    0.5    1   0.0922   0.0923  0.0591    0.1130   0.0778   0.0779   0.0631   0.0840
+       1      1   0.1228   0.1228  -0.0621   0.1417   0.1086   0.1087   0.1059   0.1152
+       2      1   0.1439   0.1439  0.1223    0.1507   0.1162   0.1163   0.1137   0.1218
+ 50    0.5    1   0.0754   0.0755  0.0518    0.0908   0.0620   0.0621   0.0582   0.0685
+       1      1   0.0917   0.0918  -0.0571   0.1275   0.0927   0.0927   0.0905   0.0996
+       2      1   0.1254   0.1255  0.1033    0.1445   0.1067   0.1067   0.1013   0.1151
+ 70    0.5    1   0.0628   0.0629  0.0435    0.0711   0.0514   0.0514   0.0507   0.0536
+       1      1   0.0887   0.0887  0.0494    0.1065   0.0833   0.0834   0.0821   0.0875
+       2      1   0.1057   0.1058  -0.0932   0.1126   0.0983   0.0983   0.0970   0.0994
+ 100   0.5    1   0.0413   0.0413  0.0408    0.0419   0.0459   0.0459   0.0455   0.0463
+       1      1   0.0438   0.0438  0.0426    0.0440   0.0648   0.0648   0.0642   0.0655
+       2      1   0.0906   0.0907  0.0896    0.0918   0.0952   0.0952   0.0948   0.0961
+ 200   0.5    1   0.0287   0.0288  0.0281    0.0290   0.0317   0.0318   0.0314   0.0318
+       1      1   0.0349   0.0349  0.0345    0.0353   0.0573   0.0573   0.0570   0.0574
+       2      1   0.0855   0.0856  0.0851    0.0859   0.0736   0.0737   0.0733   0.0738
+ 500   0.5    1   0.0211   0.0212  0.0207    0.0225   0.0244   0.0244   0.0241   0.0245
+       1      1   0.0267   0.0268  0.0260    0.0271   0.0408   0.0409   0.0404   0.0412
+       2      1   0.0762   0.0762  0.0758    0.0766   0.0553   0.0554   0.0550   0.0557
+
+
+
+EM algorithms to compute the ML estimates. The stopping criterion is based
+on the difference between the two consecutive iterates, with a tolerance value
+ε = 10−6 . The final MLEs are (α̂N R , λ̂N R ) = (2.1094, 0.0318) and (α̂EM , λ̂EM ) =
+(2.1095, 0.0319). Also, by using the procedure presented in section 6, the moment
+estimate of (α, λ) becomes (α̂M , λ̂M ) = (2.1257, 0.0374). For computing the Bayes
+estimate, we assume that both α and λ have a Gamma(0.0001, 0.0001) prior.
+Therefore, using the Tierney and Kadane’s approximation, the Bayes estimate of
+the parameters becomes (α̂BT , λ̂BT ) = (2.1036, 0.0287).
+
+
+8. Conclusions
+    Some work has been done in the past on the estimation of Weibull distribu-
+tion parameters based on complete and censored samples. But, traditionally it is
+assumed that the available data are performed in exact numbers. However, some
+collected data might be imprecise and are represented in the form of fuzzy num-
+bers. Therefore, we need suitable statistical methodology to handle these data
+as well. In this paper, we have discussed different estimation procedures for the
+Weibull distribution when the obtained data are fuzzy numbers. They include the
+maximum likelihood method (via NR and EM algorithms), a Bayesian procedure
+and the method of moments. We have then carried out a simulation study to assess
+
+                                      Revista Colombiana de Estadística 36 (2013) 337–356
+
+Inference for the Weibull Distribution Based on Fuzzy Data                          355
+
+the performance of all these procedures. The recommendations of an estimator
+based on minimum biases and MSEs are as follows:
+
+   i) For small and moderate sample sizes, the performance of the Bayes esti-
+      mates is generally best followed by the MLEs and then the MMEs. Thus, it
+      would seem reasonable to recommend the use of the Bayesian procedure for
+      estimating the unknown parameters α and λ.
+  ii) For large sample sizes, the three estimation procedures behave in similar
+      manner.
+
+
+Acknowledgments
+    The authors are thankful to the referees for their valuable comments which led
+to a considerable improvement in the presentation of this article.
+                                                                   
+            Recibido: febrero de 2013 — Aceptado: septiembre de 2013
+
+
+References
+Ageel, M. I. (2002), ‘A novel means of estimating quantiles for 2-parameter Weibull distribution under the right random censoring model’, Journal of Computational and Applied Mathematics 149(2), 373–380.
+Al-Baidhani, P. A. & Sinclair, C. (1987), ‘Comparison of methods of estimation of parameters of the Weibull distribution’, Communications in Statistics Simulation and Computation 16(2), 373–384.
+Balakrishnan, N. & Kateri, M. (2008), ‘On the maximum likelihood estimation of parameters of Weibull distribution based on complete and censored data’, Statistics and Probability Letters 78(17), 2971–2975.
+Balakrishnan, N. & Mitra, D. (2012), ‘Left truncated and right censored Weibull data and likelihood inference with an illustration’, Computational Statistics and Data Analysis 56, 4011–4025.
+Banerjee, A. & Kundu, D. (2012), ‘Inference based on type-II hybrid censored data from a Weibull distribution’, IEEE Transactions on Reliability 57(2), 369–378.
+Denoeux, T. (2011), ‘Maximum likelihood estimation from fuzzy data using the EM algorithm’, Fuzzy Sets and Systems 183(1), 72–91.
+Dubois, D. & Prade, H. (1980), Fuzzy Sets and Systems: Theory and Applications, Academic Press, New York.
+Gertner, G. Z. & Zhu, H. (1996), ‘Bayesian estimation in forest surveys when samples or prior information are fuzzy’, Fuzzy Sets and Systems 77, 277–290.
+Helu, A., Abu-Salih, M. & Alkam, O. (2010), ‘Bayes estimation of Weibull distribution parameters using ranked set sampling’, Communications in StatisticsTheory and Methods 39(14), 2533–2551.
+Joarder, A., Krishna, H. & Kundu, D. (2011), ‘Inferences on Weibull parameters with conventional type-I censoring’, Computational Statistics and Data Analysis 55, 1–11.
+Lin, C., Chou, C. & Huang, Y. (2012), ‘Inference for the Weibull distribution with progressive hybrid censoring’, Computational Statistics and Data Analysis 56, 451–467.
+Marks, N. B. (2005), ‘Estimation of Weibull parameters from common percentiles’, Journal of Applied Statistics 32(1), 17–24.
+Nandi, S. & Dewan, I. (2010), ‘An EM algorithm for estimating the parameters of bivariate Weibull distribution under random censoring’, Computational Statistics and Data Analysis 54(6), 1559–1569.
+Ng, H. K. T. & Wang, Z. (2009), ‘Statistical estimation for the parameters of Weibull distribution based on progressively type-I interval censored sample’, Journal of Statistical Computation and Simulation 79(2), 145–159.
+Press, S. J. (2001), The Subjectivity of Scientists and the Bayesian Approach, Wiley, New York.
+Qiao, O. & Tsokos, C. P. (1994), ‘Parameter estimation of the Weibull probability distribution’, Mathematics and Computers in Simulation 37, 47–55.
+R Development Core Team (2011), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0. *http://www.R-project.org
+Singpurwalla, N. D. & Booker, J. M. (2004), ‘Membership functions and probability measures of fuzzy sets’, Journal of the American Statistical Association 99(467), 867–877.
+Tan, Z. (2009), ‘A new approach to MLE of Weibull distribution with interval data’, Reliability Engineering and System Safety 94(2), 394–403.
+Tierney, L. & Kadane, J. B. (1986), ‘Accurate approximations for posterior moments and marginal densities’, Journal of the American Statistical Association 81, 82–86.
+Watkins, A. J. (1994), ‘On maximum likelihood estimation for the two parameter Weibull distribution’, Microelectronics Reliability 36(5), 595–603.
+Zadeh, L. A. (1968), ‘Probability measures of fuzzy events’, Journal of Mathematical Analysis and Applications 10, 421–427.

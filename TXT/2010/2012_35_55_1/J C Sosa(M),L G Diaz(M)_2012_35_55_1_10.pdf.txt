@@ -1,0 +1,889 @@
+Random Time-Varying Coefficient Model Estimation through Radial Basis Functions. Estimación de los coeficientes de un modelo de coeficientes dinámicos y aleatorios a través de funciones radiales kernel
+Universidad Externado de Colombia, Bogotá, Colombia. Universidad Nacional de Colombia, Bogotá, Colombia
+Abstract
+A methodology to estimate a time-varying coefficient model through a linear combination of radial kernel functions which are centered around all the measuring times, or their quantiles is developed. The linear combination is weighted by a bandwidth that may change or not among coefficients. The proposed methodology is compared with the local polynomial kernel methods by means of a simulation study. The proposed methodology shows a better behavior in a high proportion of times in all cases, or at least it has a similar behavior in relation with the estimation through local polynomial kernel regression, that in a low rate of times has a better behavior in relation with the average mean square error. In order to illustrate the methodology the data set ACTG 315 related with an AIDS study is taken into account. The dynamic relationship between the viral load and the CD4+ cell counts is investigated.
+Key words: Cross validation, Kernel function, Longitudinal data analysis, Mixed model.
+Resumen
+Se propone una metodología para estimar los coeficientes de un modelo de coeficientes dinámicos y aleatorios a través de una combinación lineal de funciones radiales kernel centradas en los diferentes puntos de medición, o en cuantiles de éstos, escalada por un ancho de banda que puede cambiar de coeficiente a coeficiente. En un estudio de simulación se compara la metodología propuesta con la estimación mediante los métodos de polinomios locales kernel, obteniéndose que la nueva metodología propuesta es la mejor opción en un alto porcentaje de veces para todos los escenarios simulados, o por lo menos se desempeña similarmente a la estimación a través de la regresión de polinomios locales kernel, que pocas veces se desempeña mejor que la estimación mediante funciones radiales kernel, en relación al error cuadrático medio promedio. Para ilustrar la estrategia de estimación propuesta se considera el conjunto de datos ACTG 315 asociado con un estudio del SIDA, en el que se modela dinámicamente la relación entre a carga viral y el conteo de células CD4+.
+Palabras clave: análisis de datos longitudinales, función kernel, modelo mixto, validación cruzada.
+
+
+
+1. Introduction
+    Longitudinal Data Analysis (LDA) takes place when a set of subjects are ob-
+served repeatedly along time, measuring the response variable in accordance with
+the covariates that may or may not be time-dependent. Given the characteris-
+tics of this kind of data, an underlying property that must be thought fitting
+a statistical model, is the correlation between repeated measures of the response
+variable within each experimental unit, considering measures independent between
+subjects. That is, measurements are correlated inside experimental units and inde-
+pendent between subjects. This way, the main purpose is to identify and describe
+the evolution of the response variable and to determine how it is affected by the
+covariates. For instance, in clinic trials, it is of interest to evaluate the impact of
+a dose or other related factors, over the progress of a disease along time.
+    Parametric techniques for LDA have been exhaustively studied in the literature
+(Diggle, Liang & Zeger 1994, Davis 2000, Verbeke & Molenberghs 2005, Fitzmau-
+rice, Davidian, Verbeke & Molenberghs 2009). While these tools are useful under
+some reasonable restrictions, always arise doubts and questions about the adequacy
+of the model assumptions and the potencial impact of model misspecifications on
+the analysis (Hoover, Rice, Wu & Yang 1998). Non parametric techniques re-
+cently introduced in LDA allow a functional dependence more flexible between
+the response variable and the covariates.
+    Hart & Wehrly (1986), Altman (1990), Hart (1991) propose methods for choos-
+ing smoothing parameter through cross-validation using kernel functions and con-
+sidered kernel methods for estimating the expectation of the response variable
+without covariates, while Rice & Silverman (1991) did it by using a class of smoo-
+thing splines. Although the kernel and splines methods are successful in predicting
+the mean curve of the response variable, they only consider the time effect and do
+not take into account other important covariates (Hoover et al. 1998).
+    In order to quantify the influence of covariates, Zeger & Diggle (1994) studied
+a semi-parametric model as follows:
+
+                            yij = µ(tij ) + xi (tij )T β + eij
+                                                                                       (1)
+                              j = 1, . . . , ni , i = 1, . . . , n
+
+                                        Revista Colombiana de Estadística 35 (2012) 167–184
+
+Random Time-Varying Coefficient Model                                                      169
+
+where n is the number of subjects, ni is the number of repeated measures associated
+with the i-th experimental unit, tij , yij ≡ yi (tij ),
+                       xi (tij ) = [xi0 (tij ), xi1 (tij ), . . . , xid (tij )]T
+and eij ≡ ei (tij ) are respectively the measuring time, the response variable, the
+covariate vector in Rd+1 and the error term, associated with the j-th measure of
+the i-th subject. Moreover, µ(·) is an arbitrary smooth real function and β =
+[β0 , β1 , . . . , βd ]T is a parameter vector in Rd+1 . Working with longitudinal data, it
+is usually assumed that repeated measures are independent between experimental
+units and that ei (t) is a Gaussian Process (GP) with E[ei (t)] = 0, for each t ∈ Ti ,
+with covariance function γei (r, s), r, s ∈ Ti , and Ti = {tij : j = 1, . . . , ni }; this is
+written as
+                                 ei = [ei1 , . . . , eini ]T ∼ P G(0ni , Γi )
+where 0ni is a column-vector with ni × 1 zeros and Γi = [γei (tik , til )]k,l=1,...,ni .
+   Hoover et al. (1998) considered a generalization of the model (1) that allows
+the parameters to vary over time. This extension is as follows:
+                                  yij = xi (tij )T β(tij ) + eij ,
+                                                                                           (2)
+                                  j = 1, . . . , ni , i = 1, . . . , n
+where
+                         β(tij ) = [β0 (tij ), β1 (tij ), . . . , βd (tij )]T
+is a vector of arbitrary real smooth functions. Components in vector β(t) are
+called dynamic coefficients or dynamic parameters, and the statistical model (2)
+is referred as Time-Varying Coefficient Model (TVCM). This kind of model has
+been widely studied by Wu & Zhang (2006) who investigated various alternatives
+for estimating the model coefficients. Sosa & Díaz (2010) proposed a methodol-
+ogy to estimate true-varying coefficients models through generalized estimation
+equations.
+    A Random Time-Varying Coefficient Model (RVCM) is an extension of a
+TVCM, and it was firstly investigated by Guo (2002). As in a Linear Mixed
+Effects Model (LMEM), this extension decomposes the term error ei (tij ) of model
+(2) into two parts: one of them that describes the characteristics of each subject
+that differs of the mean population behavior, and other related with the pure
+random error; that is, it is done by the decomposition
+                             ei (tij ) = z i (tij )T v i (tij ) + i (tij )
+                                  j = 1, . . . , ni , i = 1, . . . , n
+
+where z i (tij )T v i (tij ) is the model component that describes the characteristics
+related with each subject (random effects component), with
+                       z i (tij ) = [zi0 (tij ), zi1 (tij ), . . . , zid∗ (tij )]T
+                             ∗
+a covariate vector in Rd +1 , with components that vary along time, associated
+with the vector
+                     v i (tij ) = [vi0 (tij ), vi1 (tij ), . . . , vid∗ (tij )]T
+
+
+                                            Revista Colombiana de Estadística 35 (2012) 167–184
+
+170                                                      Juan Camilo Sosa & Luis Guillermo Díaz
+
+
+of random time-varying coefficients with size (d∗ + 1) × 1 and ij ≡ i (tij ) is the
+random error term associated with the j-th measurement of the i-th experimental
+unit. Thus, a RVCM is a model with the following form:
+
+                          yij = xi (tij )T β(tij ) + z i (tij )T v i (tij ) + ij
+                                                                                                (3)
+                                    j = 1, . . . , ni , i = 1, . . . , n
+
+where
+                                       v i (t) ∼ P G(0d∗ +1 , Γ)
+
+and
+                            i (t) = [i1 , . . . , ini ]T ∼ P G(0ni , Ri )
+
+with Γ = [γ(tik , til )]k,l=1,...,d∗ +1 and Ri = [γi (tik , til )]k,l=1,...,ni . It is supposed
+that the repeated measurements are independent between subjects, and v i (t) and
+i∗ (t) are independent Gaussian processes.
+    This paper is structured as follows: In Section 2 and Section 3 the estimation
+through local polynomial kernel techniques is presented and an estimation method-
+ology by means of radial kernel functions is proposed, respectively. In Section 4
+some techniques to choose the bandwidth associated with the estimation method-
+ologies is studied. In section 5 it is shown a simulation study where the estimation
+alternatives through the average mean square error are compared. In Section 6
+the methodology is illustrated by analyzing the data set ACTG 315 (Liang, Wu
+& Carroll 2003), where the relationship between viral load and CD4+ cell counts
+is investigated dynamically in a AIDS clinical trial. Finally, results are discussed
+in 7.
+
+
+2. Estimation Through Local Polynomial Kernel
+   Regression
+    The basic idea behind the estimation through Local Polynomial Kernel (LPK)
+regression is to approximate the dynamic coefficients by means of a Taylor expan-
+sion. Thus, in a fix time point t0 , it is supposed that the dynamic parameters
+βr (t0 ), r = 0, 1, . . . , d, and vis (t0 ), s = 0, 1, . . . , d∗ , have (p + 1) continuous deriva-
+tives for some non-negative integer p. Then, by means of an approximation in a
+Taylor expansion of order p around t0 , it follows that:
+
+                                 βr (tij ) ≈ hTij αr , r = 0, 1, . . . , d                      (4)
+
+and
+                                vsi (tij ) ≈ hTij bsi , s = 0, 1, . . . , d∗                    (5)
+
+for j = 1, . . . , ni , i = 1, . . . , n, where
+
+                        hij = [1, tij − t0 , (tij − t0 )2 , . . . , (tij − t0 )p ]T
+
+
+                                              Revista Colombiana de Estadística 35 (2012) 167–184
+
+Random Time-Varying Coefficient Model                                                               171
+
+is the vector of (p + 1) × 1 components related with the polynomials in the ap-
+proximation, αr = [αr0 , αr1 , . . . , αrp ]T and bsi = [bsi0 , bsi1 , . . . , bsip ]T , with
+                                                            (k)
+                                                          βr (t0 )
+                                                αrk =                                                (6)
+                                                            k!
+and
+                                                            (k)
+                                                          vsi (t0 )
+                                                bsik =                                               (7)
+                                                             k!
+for k = 0, 1, . . . , p.
+    Let α = [αT0 , αT1 , . . . , αTd ]T and bi = [bT0i , bT1i , . . . , bTd∗ i ]T be the vectors associ-
+ated with the approximation of the dynamic coefficients. Given that the repeated
+measurements are independent between subjects and that v i (t) ∼ P G(0d∗ +1 , Γ),
+it follows that the sequence of vectors b1 , . . . , bn constitutes a random sample
+from a population with a multivariate normal distribution with mean 0(d∗ +1)(p+1)
+and covariance matrix D ≡ D(t0 ) with size d∗ (p + 1) × d∗ (p + 1). Thus, in a
+neighborhood of t0 , model (3) can be approximately expressed as
+
+                                          yij ≈ xTij α + z Tij bi + ij
+                                                                                                     (8)
+                                         j = 1, . . . , ni , i = 1, . . . , n
+
+where xij = xi (tij ) ⊗ hij , z ij = z i (tij ) ⊗ hij , with bi ∼ N (0(d∗ +1)(p+1) , D) and
+i ∼ N (0ni , Ri )
+     Thus, in a neighborhood of t0 , model (8) is a standard LMEM where it is
+required to estimate α and find the Best Linear Unbiased Predictor (BLUP) of
+bi , with the purpose of finding the estimations of β(t) and v i (t). In order to
+incorporate the information given in the neighborhood, as in Wu & Zhang (2006,
+p. 297), it is constituted the following objective function:
+                                 1/2    1/2                  e −1 b
+                 (y − Xα − Zb)T Kh R−1 Kh (y − Xα − Zb) + bT D                                       (9)
+
+where
+       b = [bT1 , . . . , bTn ]T
+      y = [y T1 , . . . , y Tn ]T ,   y i = [yi1 , . . . , yini ]T
+      X = [XT1 , . . . , XTn ]T ,      Xi = [xi1 , . . . , xini ]T
+                                                                                                    (10)
+      Z = diag[Z1 , . . . , Zn ], Zi = [z i1 , . . . , z ini ]T
+      e = diag[D, . . . , D], R = diag[R1 , . . . , Rn ]
+      D
+   Kh = diag[K1h , . . . , Knh ],             Kih = diag[Kh (ti1 − t0 ), . . . , Kh (tini − t0 )]
+
+with Kh (·) = K(·/h)/h, K(·) a kernel function and h a bandwidth.
+    The estimators can be found fitting the model
+
+                                           y     e + Zb
+                                            e = Xα    e +
+                                                                                                    (11)
+                                                  e  ∼ N (0N , R)
+                                      b ∼ N (0N , D),
+
+                                                   Revista Colombiana de Estadística 35 (2012) 167–184
+
+172                                                       Juan Camilo Sosa & Luis Guillermo Díaz
+
+            1/2    e = K1/2 X, Ze = K1/2 Z and N = Pn ni .
+      e = Kh y, X
+where y                  h           h                 i=1
+   Therefore, given the variance components D and R, the kernel function K(·)
+                                              e
+and the bandwidth h, to minimize (9) in relation with α and b leads to
+                                     1/2            1/2   −1           1/2         1/2
+                      b = XT Kh V−1 Kh X
+                      α                                         XT Kh V−1 Kh y                          (12)
+                          e T K1/2 V−1 K1/2 (y − Xα)
+                      b = DZ
+                      b                                                                                 (13)
+                               h        h         b
+
+and
+                                         1/2      1/2
+                               bi = DZi Kih Vi−1 Kih (y i − Xi α)
+                               b                               b
+where
+                                                        e TK  1/2             1/2
+                       V = diag[V1 , . . . , Vn ] = Kh ZDZ  h                       +R
+with
+                                              1/2               1/2
+                                   Vi = Kih Zi DZTi Kih + Ri
+
+
+3. Estimation through Radial Kernel Functions
+   The idea behind the estimation through Radial Kernel Functions (RKF) is to
+approximate the dynamic coefficients by means of a linear combination of kernel
+functions treated as radial basis functions. Thus, it is possible to express the
+dynamic parameters by means of
+
+                                            β(t) = Ξ(t)T α                                              (14)
+
+and
+                                   v i (t) = Θ(t)T bi , i = 1, . . . , n                                (15)
+where α = [αT0 , αT1 , . . . , αTd ]T , Ξ(t) = diag[Ξ0 (t), Ξ1 (t), . . . , Ξd (t)],
+                                                                                 T
+                                     T          |t − t1 |                  |t − tM |
+          αr = [αr1 , . . . , αrM ] Ξr (t) = ξr             , . . . , ξr
+                                                   h                           h
+
+for r = 0, 1, . . . , d, bi = [bT0i , bT1i , . . . , bTd∗ i ]T , Θ(t) = diag[Θ0 (t), Θ1 (t), . . . , Θd∗ (t)]
+                                                                                    T
+                                     T             |t − t1 |                  |t − tM |
+          bsi = [bsi1 , . . . , bsiM ] Θs (t) = θs             , . . . , θs
+                                                      h                           h
+
+for i = 1, . . . , n, s = 0, 1, . . . , d∗ , with ξr : [0, ∞) → R and θs : [0, ∞) → R kernel
+functions, t1 , . . . , tM are all the M measurements time points that are different (or
+quantils of these) and h is a bandwidth.
+      If ξr ≡ ξ for each r = 0, 1, . . . , d and θs ≡ θ for each s = 0, 1, . . . , d∗ , then
+                                                                    T
+                                         β(t) = [Id+1 ⊗ ξ(t)] α                                         (16)
+
+and
+                                                          T
+                             v i (t) = [Id∗ +1 ⊗ θ(t)] bi , i = 1, . . . , n                            (17)
+
+
+                                               Revista Colombiana de Estadística 35 (2012) 167–184
+
+Random Time-Varying Coefficient Model                                                   173
+
+where Ik denote the identity matrix of k × k,
+                                                           T
+                                |t − t1 |            |t − tM |
+                      ξ(t) = ξ              ,...,ξ                                     (18)
+                                   h                     h
+
+and                                                        T
+                                |t − t1 |            |t − tM |
+                      θ(t) = θ              ,...,θ                                     (19)
+                                   h                     h
+
+     As above, given that v i (t) ∼ P G(0d∗ +1 , Γ) and that the repeated measure-
+ments are independent between subjects, it follows that the sequence of vectors
+b1 , . . . , bn constitutes a random sample from a population with a multivariate nor-
+mal distribution with mean 0(d∗ +1)(p+1) and covariance matrix D ≡ D(t) with size
+d∗ (p + 1) × d∗ (p + 1). Due to (3) and (15), it follows that γ(s, t) = Θ(s)T DΘ(t),
+so that an estimator of D leads directly to an estimator of Γ.
+   Thus, model (3) can be approximately expressed as
+
+                                yij ≈ xTij α + z Tij bi + ij
+                                                                                       (20)
+                               j = 1, . . . , ni , i = 1, . . . , n
+
+where xij = Ξ(tij )xi (tij ) and z ij = Θ(tij )z i (tij ), with bi ∼ N (0(d∗ +1)(p+1) , D)
+and i ∼ N (0ni , Ri ).
+   If ξr ≡ ξ and θs ≡ θ then
+
+                              xij = (Id+1 ⊗ ξ(tij ))xi (tij )
+
+and
+                              z ij = (Id∗ +1 ⊗ θ(tij ))z i (tij )
+where ξ(t) and θ(t) are given in (18) and (19).
+   Given the vectors Ξr (t), r = 0, 1, . . . , d, and Θs (t), s = 0, 1, . . . , d∗ , and the
+bandwidth h, model (20) is a standard LMEM where it is required to estimate α
+and find the BLUP of bi in order to calculate the estimations of β(t) and v i (t).
+
+
+4. Bandwidth Selection
+    By estimating the dynamic components of model 3 through LPK or RKF, it
+is mandatory to choose the bandwidth h carefully. In this section are presented
+two selection criterions designed to choose smoothing parameters: Subject Cross-
+Validation (SCV) and Point Cross-Validation (PCV).
+
+
+4.1. Subject Cross-Validation
+   This criterion was proposed by Rice & Silverman (1991), and has been studied
+by many authors, as Hoover et al. (1998) for instance. The idea behind this criteria
+
+
+                                         Revista Colombiana de Estadística 35 (2012) 167–184
+
+174                                               Juan Camilo Sosa & Luis Guillermo Díaz
+
+
+is to choose the smoothing parameter vector that minimize the expression
+                            n Xni                                 2
+                                                      b (−i) (tij )
+                            X
+                  SCV (h) =       wi yij − xi (tij )T β                               (21)
+                              i=1 j=1
+
+
+                                                     b (−i) (t) denotes the estimation
+where yij and xi (tij ) are defined as in model (3), β
+of β(t) excluding the data related with the i-th subject, and wi for i = 1 . . . , n, is
+a weight given by some of the following schemes:
+                                                                              Pn
+Scheme 1 All weights are given by wi = 1/N , i = 1, . . . , n, where N = i=1 ni .
+Scheme 2 All weights are given by wi = 1/(nni ), i = 1, . . . , n.
+
+Scheme 1 uses the same weight for all experimental units and was proposed by
+Hoover et al. (1998). Scheme 2 is considered by Huang, Wu & Zhou (2002) and
+uses different weights for the subjects taken into account in the study. In Huang
+et al. (2002) it is shown that scheme 1 could lead to inconsistent estimators of α.
+
+
+4.2. Point Cross Validation
+    Let {tl : l = 1, . . . , M } be the set formed by all the measuring times that are
+different (or quantiles of these) in all the data set. For a given time point tl , let
+{il∗ : l∗ = 1, . . . , ml } be the set of all experimental units at time tl .
+   The idea behind this criteria is to choose the smoothing parameter vector that
+minimize the expression
+                                   ml
+                                 M X           h                         i2
+                                                                (−l)
+                                 X
+                    P CV (h) =               wl yil∗ (tl∗ ) − sbil∗ (tl )             (22)
+                                 l=1 l∗ =1
+
+where yil∗ (tl∗ ) is the value of the response variable for subject il∗ at time tl∗ ,
+                                                                             (−l)
+wl = (M ml )−1 is the weight associated with the l-th measuring time and sbil∗ (tl )
+denotes the estimation of the response variable for experimental unit il∗ at time tl
+when all the observations related with the response variable at time tl have been
+excluded.
+
+
+5. Simulation
+    This section presents a simulation study to evaluate the performance of the
+estimation methods. The comparison is performed through the Average Mean
+Square Error (AMSE) given by
+                                       n      ni
+                                    1X 1 X                          2
+                    AM SE(κ) =                   [κ(tij ) − κ
+                                                            b(tij )]                  (23)
+                                    n i=1 ni j=1
+
+with κ(·) a function that corresponds to any dynamic coefficient of model (3).
+
+                                        Revista Colombiana de Estadística 35 (2012) 167–184
+
+Random Time-Varying Coefficient Model                                                             175
+
+   Simulation strategy is similar to that followed by Wu & Liang (2004). The
+simulation model is structured as follows:
+                yi (t) = β0 (t) + xi1 (t) [β1 (t) + v1i (t)] + i (t), i = 1, . . . , n
+              xi1 (t) = 1 − exp [−0.5t − (i/n)]
+               β0 (t) = 3 exp(t), β1 (t) = 1 + cos(2πt) + sin(2πt)
+                                                                                                 (24)
+               v1i (t) = ai0 + ai1 cos(2πt) + ai2 sin(2πt)
+                   ai = [ai0 , ai1 , ai2 ]T ∼ N [0, 0, 0]T , diag[σ02 , σ12 , σ22 ]
+                                                                                   
+
+                     i (t) ∼ N (0, σ2 x2i1 (t))
+
+where β0 (t), β1 (t) and v1i (t), are the dynamic parameters of the model, xi (t) is
+the covariate of the model associated with β1 (t) and where v1i (t) and i (t) are
+random errors. This model corresponds to the RVCM given in (3) where
+
+  β(t) = [β0 (t), β1 (t)]T , v i (t) = [v1i (t)], xi (t) = [xi0 (t), xi1 (t)]T , z i (t) = [zi1 (t)]
+
+with xi0 (t) ≡ 1 and zi1 (t) ≡ xi1 (t). Note that in the simulated model Ri is a
+diagonal matrix and D is an unstructured covariance matrix. The observations
+between subjects are simulated independent.
+   It is assumed that σ12 = σ22 = σ2 = σ 2 . Then, the correlation coefficient
+between repeated measurements within each experimental unit is
+
+                                              σ02 + σ 2 cos[2π(t − s)]
+              ρ = Corr[yi (t), yi (s))] =                              , for s 6= t
+                                                     σ02 + 2σ 2
+
+therefore
+                                  σ02 − σ 2         σ2 + σ2
+                                   2       2
+                                             ≤ ρy ≤ 20
+                                  σ0 + 2σ          σ0 + 2σ 2
+   To simulate different intensities of correlation are considered three cases:
+
+Case 1 In which σ12 = σ22 = σ2 = σ 2 = 0.01 and σ02 = 0.01. This corresponds to
+    ρy ∈ ( 0 , 0.67 ).
+
+Case 2 In which σ12 = σ22 = σ2 = σ 2 = 0.01 and σ02 = 0.04. This corresponds to
+    ρy ∈ ( 0.50 , 0.83 ).
+
+Case 3 In which σ12 = σ22 = σ2 = σ 2 = 0.01 and σ02 = 0.09. This corresponds to
+    ρy ∈ ( 0.73 , 0.91 ).
+
+   Design times are simulated in accordance with the expression
+
+                        tij = j/(m + 1), i = 1, . . . , n, j = 1, . . . , m
+
+where m is a positive integer. To simulate unbalanced data sets, a main character-
+istic of the structure of longitudinal data, in each subject are removed randomly
+repeated measures with a rate rm = 30%. Thus, there is approximately m(1 − rm )
+repeated measurements per experimental unit and nm(1 − rm ) measurements in
+
+                                            Revista Colombiana de Estadística 35 (2012) 167–184
+
+176                                                 Juan Camilo Sosa & Luis Guillermo Díaz
+
+
+                      Table 1: Scenarios for the simulation study.
+      Scenario   n   m     σ02   Scenario    n      m     σ02   Scenario   n    m     σ02
+         1       5   5    0.01      10       10     5    0.01      19      20   5    0.01
+         2       5   5    0.04      11       10     5    0.04      20      20   5    0.04
+         3       5   5    0.09      12       10     5    0.09      21      20   5    0.09
+         4       5   10   0.01      13       10     10   0.01      22      20   10   0.01
+         5       5   10   0.04      14       10     10   0.04      23      20   10   0.04
+         6       5   10   0.09      15       10     10   0.09      24      20   10   0.09
+         7       5   15   0.01      16       10     15   0.01      25      20   15   0.01
+         8       5   15   0.04      17       10     15   0.04      26      20   15   0.04
+         9       5   15   0.09      18       10     15   0.09      27      20   15   0.09
+
+
+
+total. Smoothing parameters are chosen by using PCV. Table 1 contains all the
+scenarios considered in the simulation study.
+   Each scenario was repeated N = 500 times and each time was calculated
+AM SE(β0 ) and AM SE(β1 ), in order to compare the relative performance of
+the Local Polynomial Kernel Regression Estimation (LPKE) with Radial Kernel
+Functions Estimation (RKFE). For these estimations the next indicators are define
+                                              N
+                                            1 X AM SEk (κ, LP KE)
+            AM SER(RKF E/LP KE) =                                 × 100%                    (25)
+                                            N   AM SEk (κ, RKF E)
+                                              k=1
+
+and
+
+  AM SERKF(RKF E/LP KE)
+                   PN
+                        I{AM SEk (κ,LP KE)>AM SEk (κ,RKF E)}
+                = k=1                                        × 100%                         (26)
+                                       N
+where AM SEk (κ, LP KE) and AM SEk (κ, RKF E) denote the value of AM SE(κ)
+obtained in the k-th simulation replicate, k = 1, . . . , N , by using the RKFE and
+the LPKE respectively, and IA denotes the indicator function of set A. AM SER
+represents the average relative efficiency associated with the N replications and
+AM SERKF is the percentage of estimations obtained through RKF that are be-
+tter than those obtained through LPK in relation to the AMSE in AMSE in the N
+replications. If AM SER ≈ 100% and AM SERKF ≈ 50%, LPKE and the RKFE
+perform similarly; if AM SER > 100% y AM SERKF > 50%, RKFE has better
+performance than LPKE; and if AM SER < 100% and AM SERKF < 50%,
+LPKE has better performance than RKFE.
+    Table 2 contains the results of the simulation. According to this table, the
+choice rules of an alternative estimation by using indicators (25) and (26), and
+Tables 3 and 4 which summarizes the results, it follows that at 48% of cases the
+best estimation strategy is the RKFE; by approximation to the rules given, that is,
+following the criteria AM SER0 ≈ 100% y AM SERKF0 ≈ 50%, it has that in the
+35.2% of the situations the two strategies behave similarly; furthermore, just 9.3%
+of cases the best strategy is LPKE and for 7.4% of the scenarios the criterion does
+not decide (AM SER > 100% and AM SERKF < 50%, or, AM SER < 100%
+
+
+                                        Revista Colombiana de Estadística 35 (2012) 167–184
+
+Random Time-Varying Coefficient Model                                                     177
+
+                                Table 2: Simulation results.
+                            n=5                 n = 10                n = 20
+                    m = 5 m = 10 m = 15 m = 5 m = 10 m = 15 m = 5 m = 10 m = 15
+          AM SER0   100.0% 100.2% 101.1% 100.9% 100.0% 100.0% 101.0% 102.0% 100.8%
+ 2        AM SERKF0 49.9% 50.2% 50.8% 50.8% 49.2% 48.4% 50.9% 46.0% 62.0%
+σ0 = 0.01
+          AM SER1   100.5% 102.4% 101.4% 100.0% 101.5% 100.9% 99.6% 100.1% 100.4%
+          AM SERKF1 45.8% 51.2% 50.8% 48.1% 51.0% 50.4% 43.8% 61.9% 56.4%
+          AM SER0   100.1% 100.0% 100.0% 100.1% 101.0% 100.0% 100.0% 102.1% 100.5%
+ 2        AM SERKF0 50.7% 49.4% 45.8% 47.8% 45.9% 49.9% 49.0% 63.1% 51.8%
+σ0 = 0.04
+          AM SER1    99.6% 102.2% 100.7% 100.0% 100.8% 100.5% 100.7% 101.3% 100.4%
+          AM SERKF1 42.0% 52.7 % 48.1% 46.9% 50.1% 54.9% 50.2% 49.9% 52.8%
+          AM SER0   100.9% 100.5% 100.1% 100.0% 100.0% 100.3% 100.0% 100.7% 99.9%
+ 2        AM SERKF0 50.5% 50.4% 51.1% 47.7% 49.7 % 51.0% 47.7% 48.6% 46.8%
+σ0 = 0.09
+          AM SER1    99.3% 101.8% 101.6% 100.5% 101.3% 100.9% 99.5 % 102.0% 100.2 %
+          AM SERKF1 44.5% 49.0% 49.3% 49.6% 43.6% 51.6% 46.7% 52.0% 51.4%
+
+
+
+and AM SERKF > 50%). It is also noted that the strategy most appropriate
+for estimating, considering β0 (t) and β1 (t) simultaneously, is type RKF E which
+corresponds to n = 5, m = 10 and σ02 = 0.01, n = 5, m = 15 and σ02 = 0.01,
+n = 10, m = 15 and σ02 = 0.09, n = 10, m = 15 and σ02 = 0.01, and n = 10,
+m = 15 and σ02 = 0.04; there is no case where LPKE improved the outcomes
+for both dynamic components simultaneously. Furthermore, there are a variety of
+cases where the best strategy is RKFE for one of the dynamic parameters and for
+the other two strategies perform similarly.
+    According to Table 3, it is concluded that while the value of σ02 decreases, and
+at the same time the correlation between repeated measurements, the proportion
+of times that the best strategy is RKFE increase. Moreover, in all degrees of cor-
+relation, the proportion of times that performs better RKFE is superior compared
+to the proportion for LPKE. In the same way, in all degrees of correlation, the
+proportion of times where the two strategies perform similarly is higher than the
+proportion where LPKE is the best option. Also, these relationships are main-
+tained in each case for the dynamic intercept and the dynamic slope. Therefore,
+with any degree correlation and any dynamic parameter, in 83.3% of cases, RKFE
+performs better or similarly than LPKE. Thus, it is concluded that in such cir-
+cumstances, to choose RKFE is the best alternative.
+
+Table 3: Proportion of times that a strategy is better than another for σ02 and βr (t).
+                                            RKF     Equal    LPK      No
+                                  β0 (t)     9.3%    5.6%    0.0%    1.9%
+                   σ02 = 0.01
+                                  β1 (t)    11.1%    1.9%    1.9%    1.9%
+                   Total                    20.4%   7.4%     1.9%    3.7%
+                                  β0 (t)     5.6%    9.3%    0.0%    1.9%
+                   σ02 = 0.04
+                                  β1 (t)     9.3%    5.6%    1.9%    0.0%
+                   Total                    14.8%   14.8%    1.9%    1.9%
+                                  β0 (t)     7.4%    7.4%    1.9%    0.0%
+                   σ02 = 0.09
+                                  β1 (t)     5.6%    5.6%    3.7%    1.9%
+                   Total                    13.0%   13.0%    5.6%    1.9%
+                   Total general            48.1%   35.2%    9.3%    7.4%
+
+
+
+                                           Revista Colombiana de Estadística 35 (2012) 167–184
+
+178                                          Juan Camilo Sosa & Luis Guillermo Díaz
+
+
+  Table 4: Proportion of times that a strategy is better than another for n and m.
+                                     RKF      Equal    LPK     No
+                            m=5       3.7%     1.9%    3.7%   1.9%
+                   n=5      m = 10    7.4%     3.7%    0.0%   0.0%
+                            m = 15    5.6%     5.6%    0.0%   0.0%
+                   Total             16.7%    11.1%    3.7%   1.9%
+                            m=5       1.9%     9.3%    0.0%   0.0%
+                   n = 10   m = 10    3.7%     3.7%    0.0%   3.7%
+                            m = 15    7.4%     3.7%    0.0%   0.0%
+                   Total             13.0%    16.7%    0.0%   3.7%
+                            m=5       3.7%     3.7%    3.7%   0.0%
+                   n = 20   m = 10    5.6%     3.7%    0.0%   1.9%
+                            m = 15    9.3%     0.0%    1.9%   0.0%
+                   Total             18.5%     7.4%    5.6%   1.9%
+                   Total             48.1%    35.2%    9.3%   7.4%
+
+
+    Furthermore, according to Table 4, for all sample sizes, when the number of
+repeated measurements of each individual increases, the proportion of scenarios
+where RKFE performs better RKFE increases as well. It must also be noted that
+this proportion is similar for all sample sizes, and is always significantly higher
+than the proportion where LPKE is the best option. Moreover, when n = 10
+is notorious the proportion of times where the two strategies perform similarly.
+Finally, it is observed the fact that the proportion of times where LPKE is better
+is equal to 0.0% in most cases for any value of n y m. Thus, it is concluded that
+the proposed methodology is the best option a high percentage of times in all
+simulated scenarios, or at least performs similarly to the LPKE, which very rarely
+performs better than the RKFE.
+
+
+
+6. Application
+    The viral load (plasma VIH RNA copies/mL) and cell count CD4+ are cur-
+rently key indicators to assess AIDS treatments in clinical research. Initially it
+was considered the CD4+ cell count as a primary indicator of AIDS immunod-
+eficiency, but it was newly found that viral load is more predictive for clinical
+outcomes. However, recently some researchers have suggested that a combination
+of these two indicators may be more appropriate to evaluate the treatment of HIV
+and AIDS. Therefore it is pertinent to study the relationship between viral load
+and CD4+ cell count during treatment (Liang et al. 2003).
+    Figure 2 presents some graphs of a linear regression of viral load (log(RNA))
+against to CD4+ cell counts in some measuring times of a clinical study of AIDS
+(ACTG 315). In this investigation, there are 46 infected patients with an antiviral
+therapy consisting of ritonavir, 3TC and AZT. After starting treatment, viral load
+and CD4+ cell count were observed simultaneously at days 0, 2, 7, 10, 14, 28, 56,
+84, 168, and 336. The number of repeated measurements for individual varies from
+4 to 10 and in total 361 observations were obtained.
+
+
+                                     Revista Colombiana de Estadística 35 (2012) 167–184
+
+Random Time-Varying Coefficient Model                                                                                                                             179
+
+
+
+
+                               Figure 1: Scatter plot for CD4+ cell count and viral load.
+
+
+                               Day 0                                                    Day 2                                                   Day 7
+               p−value = 0.053    R−square = 8.83 %                 p−value = 0.0535       R−square = 10.838 %                  p−value = 0.4984   R−square = 1.85 %
+           6                                                        6                                                       6
+log(RNA)
+
+
+
+
+                                                         log(RNA)
+
+
+
+
+                                                                                                                 log(RNA)
+           5                                                        5                                                       5
+           4                                                        4                                                       4
+           3                                                        3                                                       3
+           2                                                        2                                                       2
+           1                                                        1                                                       1
+           0                                                        0                                                       0
+
+
+                 0    1    2      3      4    5    6                      0    1    2      3      4   5   6                       0    1    2      3      4   5    6
+
+
+                               CD4/100                                                  CD4/100                                                 CD4/100
+
+
+
+                               Day 10                                                   Day 14                                                  Day 28
+               p−value = 0.3949   R−square = 5.62 %                     p−value = 0.7477    R−square = 0.56 %                   p−value = 0.7866   R−square = 0.31 %
+           6                                                        6                                                       6
+log(RNA)
+
+
+
+
+                                                         log(RNA)
+
+
+
+
+                                                                                                                 log(RNA)
+           5                                                        5                                                       5
+           4                                                        4                                                       4
+           3                                                        3                                                       3
+           2                                                        2                                                       2
+           1                                                        1                                                       1
+           0                                                        0                                                       0
+
+
+                 0    1    2      3      4    5    6                      0    1    2      3      4   5   6                       0    1    2      3      4   5    6
+
+
+                               CD4/100                                                  CD4/100                                                 CD4/100
+
+
+
+                               Day 56                                                   Day 84                                               Day 168
+               p−value = 0.8231       R−square = 0.3 %                  p−value = 0.027    R−square = 23.21 %                   p−value = 0.8414   R−square = 0.38 %
+           6                                                        6                                                       6
+log(RNA)
+
+
+
+
+                                                         log(RNA)
+
+
+
+
+                                                                                                                 log(RNA)
+
+
+
+
+           5                                                        5                                                       5
+           4                                                        4                                                       4
+           3                                                        3                                                       3
+           2                                                        2                                                       2
+           1                                                        1                                                       1
+           0                                                        0                                                       0
+
+
+                 0    1    2      3      4    5    6                      0    1    2      3      4   5   6                       0    1    2      3      4   5    6
+
+
+                               CD4/100                                                  CD4/100                                                 CD4/100
+
+Figure 2: Graphs related with the linear regression of viral load (log10 (RNA)) against
+          CD4+ cell count in some measuring times. The model adjusted in each
+          case has got the form log10 (RN A) = β0 + β1 (CD4/100) + e. The p-value
+          corresponding to H0 : β1 = 0 against H1 : β1 6= 0 is also presented in each
+          case.
+
+
+
+
+    In general, it appears that the virologic (measured by the viral load) and the
+immune response (measured by the CD4+ cell count) of the patient are negatively
+correlated, and that their relationship is approximately linear during antiviral
+therapy. Figure 1 shows the scatter plots associated with CD4+ cell count and
+viral load. The logarithm of viral load is used to stabilize the variance for the
+estimation procedures of the model fitted in the following.
+
+
+                                                                              Revista Colombiana de Estadística 35 (2012) 167–184
+
+180                                                    Juan Camilo Sosa & Luis Guillermo Díaz
+
+
+    Figure 2 shows that the slope of the linear regression of viral load versus CD4+
+cell count changes over time because in a few days the slope is significantly different
+from zero and in others not. This motivates the fitting of a model with dynamic
+coefficients in order to describe and quantify the change in the relationship. How-
+ever, because it may be of interest to investigate the relationship between viral
+load and CD4+ cell count in a particular patient, the fitting of a RVCM is needed.
+    The ACTG 315 data set has been studied extensively by Liang et al. (2003),
+who showed a strong inverse relationship between viral load and CD4+ cell count.
+In this section, a RVCM is fitted to investigate the dynamic relationship between
+viral load (in logarithmic scale) and CD4+ cell count, and also to describe this
+relationship particularly in any patient.
+    The RVCM fitted is
+
+          yij = β0 (tij ) + β1i (tij )xi1 (tij ) + eij , j = 1, . . . , ni , i = 1, . . . , 46   (27)
+
+where yij , xi1 (tij ), and eij are viral load (in logarithmic scale), the CD4+ cell
+count and the error associated with the j-th measurement of the i-th patient,
+respectively, β0 (t) is the dynamic coefficient associated with the intercept and
+β1i (t) is the dynamic and random coefficient associated with the CD4+ cell count.
+This parameter is given by
+
+                            β1i (t) = β1 (t) + vi (t), i = 1, . . . , 46
+
+with β1 (t) the coefficient associated with the mean dynamic relationship between
+viral load and cell count CD4+ and vi (t) the coefficient related to the character-
+istics of the i-th patient that differ from the average behavior.
+    The dynamic components of the model are estimated through LPK and the
+proposed methodology by using RKF. The kernel functions used in the estimation
+are Gaussian, and for selecting the smoothing parameters (bandwidths) the PCV is
+implemented which gives the bandwidths hRKF = 0.999 and hRKF = 0.401 using
+RKF and LPK respectively (Figure 3). Furthermore, models (8) and (20) are fitted
+by using function lme4 (Bates, Maechler & Bolker 2011) in R (R Development Core
+Team 2008).
+    Figure 4 shows the residuals of the RVCM fitted. It is observed that in both
+cases, the RVCM has a good fit to the data. The value of the residuals by using
+both estimation methods are similar prior 150-th day. From that day the value of
+the residuals is less by using LPK, suggesting that the relationship at the end of the
+treatment by using LPK is more accurate; however, both techniques indicate the
+same at the end of treatment as it is evidenced in Figure 5 where are illustrated the
+graphs associated with the estimation of β0 (t) and of β1 (t) by using LPK and RKF,
+respectively. In both cases, the graphics are very similar to those obtained by Liang
+et al. (2003).The right chart shows that the dynamic relationship between viral
+load and CD4+ cell count is approximately direct to day 50, point at which the
+association is weak; from this day the relationship between the indicators is inverse
+to the end of treatment. Moreover, between week 1 and 14, RKF estimate suggests
+that the relationship is apparently stronger. Also, major differences between the
+estimation methodologies from day 150 of treatment are noted, where the estimate
+
+
+                                            Revista Colombiana de Estadística 35 (2012) 167–184
+
+Random Time-Varying Coefficient Model                                              181
+
+
+
+
+            Figure 3: Graphs related with PCV against the bandwidth.
+
+
+
+through LPK suggests that the relationship changes and it is strengthened –in an
+inverse way– to the end of treatment. Overall, the dynamic relationship between
+viral load and CD4+ cell count decreases gradually until the seventh week of
+the study where the relationship begins to strengthen gradually until the end of
+treatment.
+    One advantage of fitting a RVCM is that it is possible to characterize the
+performance of the dynamic relationship of interest for any particular subject.
+Figure 6 shows the estimates of the deviations typical of the population vi (t)
+for patients 1, 3 y 16 using RKF and LPK. Not only the magnitude but also the
+direction of changes can be see among individuals. Due to the high variation within
+each of the individuals, the estimation of the relationship between the indicators
+for each patient is very important because it allows to customize the treatment
+and care of each patient. Using LPK more variability between individuals in the
+dynamic relationship of viral load and CD4+ cell count is perceived. It is observed
+how the relationship may even be direct. While using RKF variability is lower and
+the pattern is very similar to the average dynamic relationship.
+
+
+
+
+           Figure 4: Residuals of RVCM fitted by using RKF and LPK.
+
+
+
+
+                                    Revista Colombiana de Estadística 35 (2012) 167–184
+
+182                                           Juan Camilo Sosa & Luis Guillermo Díaz
+
+
+
+
+Figure 5: Graphs associated with the estimation of β0 (t) and β1 (t) for the RVCM fitted
+          by using RKF and LPK.
+
+
+
+
+Figure 6: Graphs associated with the estimation of vi (t) for the RVCM fitted by using
+          RKF and LPK for patients 1, 3 and 16.
+
+
+
+
+7. Discussion and Conclusions
+    This paper proposes a methodology to estimate the coefficients of a random
+time-varying coefficient model through radial kernel functions, where model coeffi-
+cients are approximated by a linear combination of kernel functions which centered
+around all the measuring points, or their quantiles, weighted by a bandwidth that
+may change or not among coefficients (Hastie, Tibshirani & Friedman 1990).
+    By means of a simulation study the estimation method is compared by using a
+local polynomial kernel regression with the use of radial kernel functions in relation
+with the average mean square error, resulting that the proposed methodology is
+the best one in a high percentage of times in all simulated scenarios, or at least
+performs similarly to the LPKE, who rarely performs better than the RKFE, in
+relation with the average mean square error.
+    Analyzing the ACTG 315 data set (Liang et al. 2003), it was found that the
+relationship between viral load and CD4+ cell count is inverse. Furthermore, as a
+
+
+                                      Revista Colombiana de Estadística 35 (2012) 167–184
+
+Random Time-Varying Coefficient Model                                                183
+
+future alternative modeling, it can be thought a model in which the response vari-
+able is bivariate, consisting of viral load and CD4+ cell count, and the predicted
+correspond to some covariates related to the treatment of patients with AIDS.
+     Further studies may investigate the consistency and asymptotic properties of
+the estimators proposed, the impact of the functional form of the dynamic coef-
+ficients of the model and mechanisms for testing hypotheses related to both the
+dynamic and random coefficients model.
+                                                                       
+                  Recibido: abril de 2010 — Aceptado: febrero de 2012
+
+
+References
+Altman, N. S. (1990), ‘Kernel smoothing of data with correlated errors’, Journal of the American Statistical Association 85(411), 749–759.
+Bates, D., Maechler, M. & Bolker, B. (2011), lme4: Linear Mixed-Effects Models Using S4 classes. R package version 0.999375-42. *http://CRAN.R-project.org/package=lme4
+Davis, C. S. (2000), Statistical Methods for the Analysis of Repeated Measurements, Springer.
+Diggle, P. J., Liang, K. Y. & Zeger, S. L. (1994), Analysis of Longitudinal Data, Oxford University Press.
+Fitzmaurice, G., Davidian, M., Verbeke, G. & Molenberghs, G. (2009), Longitudinal Data Analysis, Champman & Hall.
+Guo, W. (2002), ‘Functional mixed effects models’, Biometrics 58(1), 121–128.
+Hart, J. D. (1991), ‘Kernel regression estimation with time series errors’, Journal of the Royal Statistical Society. Series B (Methodological) 53(1), 173–187.
+Hart, J. D. & Wehrly, T. E. (1986), ‘Kernel regression estimation using repeated measurements data’, Journal of the American Statistical Association 81(396), 1080–1088.
+Hastie, T., Tibshirani, R. & Friedman, J. (1990), The elements of Statistical Learning, Springer.
+Hoover, D. R., Rice, J. A., Wu, C. O. & Yang, L. P. (1998), ‘Nonparametric smoothing estimates of time-varying coefficient models with longitudinal data’, Biometrika 85(4), 809–822.
+Huang, J. Z., Wu, C. O. & Zhou, L. (2002), ‘Varying-coefficient models and basis function approximations for the analysis of repeated measurements’, Biometrika 89(1), 111–128.
+Liang, H., Wu, H. & Carroll, R. J. (2003), ‘The relationship between virologic and immunologic responses in AIDS clinical research using mixed-effects varying coefficient models with measurement error’, Biostatistics 4(2), 297–312.
+R Development Core Team (2008), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0. *http://www.R-project.org
+Rice, J. A. & Silverman, B. W. (1991), ‘Estimating the mean and covariance structure nonparametrically when the data are curves’, Journal of the Royal Statistical Society. Series B (Methodological) 53(1), 233–243.
+Sosa, J. C. & Díaz, L. G. (2010), ‘Estimación de las componentes de un modelo de coeficientes dinámicos mediante las ecuaciones de estimación generalizadas’, Revista Colombiana de Estadística 33(1), 89–109.
+Verbeke, G. & Molenberghs, G. (2005), Models for Discrete Longitudinal Data, Springer.
+Wu, H. & Liang, H. (2004), ‘Backing random varying-coefficient models with timedependent smoothing covariates’, Scandinavian Journal of Statistics 31, 3–19.
+Wu, H. & Zhang, J. T. (2006), Nonparametric Regression Methods for Longitudinal Data Analysis, Wiley.
+Zeger, S. L. & Diggle, P. J. (1994), ‘Semiparametric models for longitudinal data with application to CD4 cell numbers in HIV seroconverters’, Biometrics 50(3), 689–699.

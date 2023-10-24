@@ -1,0 +1,818 @@
+Kernel Function in Local Linear Peters-Belson Regression. Función del núcleo en la regresión lineal local de Peters-Belson
+Hakim Sabzevari Univercity, Sabzevar, Iran
+Abstract
+Determining the extent of a disparity, if any, between groups of people, for example, race or gender, is of interest in many elds, including public health for medical treatment and prevention of disease or in discrimination cases concerning equal pay to estimate the pay disparities between minority and majority employees. The Peters-Belson (PB) regression is a form of statistical matching, akin in spirit to Bhattacharya's bandwidth matching which is proposed for this purpose. In this paper, we review the use of PB regression in legal cases from Bura, Gastwirth & Hikawa (2012). Parametric and nonparametric approaches to PB regression are described and we show that in nonparametric PB regression a suitable kernel function can improve results, i.e. by selecting the appropriate kernel function, we can reduce bias and variance of estimators, also increase the power of tests.
+Key words Kernel function; Local linear regression; Welch's approximation.
+Resumen
+Determinar el alcance de una disparidad, si la hubiere, entre grupos de personas, por ejemplo, raza o género, es de interés en muchos campos, incluida la salud pública para el tratamiento médico y la prevención de enfermedades o en casos de discriminación en relación con la igualdad salarial para estimar las disparidades salariales entre los empleados minoritarios y mayoritarios. La regresión de Peters Belson (PB) es una forma de coincidencia estadística, similar en espíritu a la coincidencia de ancho de banda de Bhattacharya que se propone para este propósito. En este trabajo, repasamos el uso de la regresión del PB en casos legales de Bura et al. (2012). Se describen los enfoques paramétricos y no paramétricos de la regresión del PB y demostramos que en la regresión no paramétrica del PB una función de kernel adecuada puede mejorar los resultados, es decir, seleccionando la función de kernel apropiada, podemos reducir el sesgo y la varianza de los estimadores, también aumentan el poder de las pruebas.
+Palabras clave Aproximación de Welch; función kernel; regresión lineal local.
+
+
+1. Introduction
+
+      In disparate treatment and equal pay discrimination cases, the salaries of mi-
+nority/disadvantaged group (DG) members should be compared to those of sim-
+ilarly qualied majority/advantaged group (AG) employees. The PB regression,
+as well as ordinary regression with an indicator representing group status, have
+been accepted by courts (Gray 1993).          As Bura et al. (2012) point out the PB
+method oers some advantages compared to standard regression with a dummy
+or indicator variable.        First, the method is intuitive and comparatively easy to
+understand for a general audience (e.g., judges, juries, etc.). For example, in the
+context of sex discrimination cases, PB regression estimates the salary equation
+for the male group (AG) incorporating related covariates and then takes the dier-
+ence between the female group's (DG) actual salary and the estimated salary that
+the DG employee would have received if s/he were paid according to the equation
+for AG employees.        Moreover, the estimated pay dierential obtained from the
+PB approach is individualized for each member of the protected group. In con-
+trast, ordinary least squares linear regression with an indicator variable estimates
+a common overall eect of being DG, after adjusting for the relevant covariates.
+This approach assumes that any dierential is the same across the entire range of
+covariate values. Another advantage of the PB method is that the females whose
+salaries are higher than predicted and were not discriminated against are readily
+identiable.
+
+      The PB regression method was rst introduced by Peters (1941) and Belson
+(1956) for conducting treatment-control comparisons that accounted for relevant
+covariates by creating statistical matches for the treatment group observations.
+Blinder (1973) and Oaxaca (1973) used this idea to decompose the dierence be-
+tween the means of the two groups into components.             Gastwirth & Greenhouse
+(1995) applied the PB method to salary data as well as to logistic regression for
+binary responses in order to analyze the data arising from a case involving promo-
+tion decisions (     Capaci v. Katz and Bestho1 ). Furthermore, Nayak & Gastwirth
+(1997) extended the method to generalized linear models. Hikawa, Bura & Gast-
+                 a
+wirth (2010 ) introduced nonparametric PB in regressions with a binary response
+as an alternative to logistic regression. Hikawa, Bura & Gastwirth (2010 ) intro- b
+duced the local linear regression in PB. They considered the unknown functions
+for modeling the mean response in the two groups.              Then they used Epanech-
+nikov kernel to estimate unknown functions (for details about linear and nonlinear
+regression see Achcar & Lopes, 2016).
+
+  1 Capaci v. Katz and Bestho 711 F. 2d 647, 5th Cir., 1983
+
+
+
+                                         Revista Colombiana de Estadística 41 (2018) 235249
+
+Kernel Function in Local Linear PB Regression                                           237
+
+
+
+     In this paper, we review the use of PB regression in legal cases from Bura
+et al. (2012). We suggest using another kernel functions and show that choose an
+appropriate kernel function can improve the results. The layout of the paper is as
+follows: In Section 2, we review parametric PB regression, based on parametric
+ordinary linear regression. Section 3, introduces a recent nonparametric version
+                              b
+from Hikawa et al. (2010 ) that increases the applicability of the PB approach. In
+Section 4, we apply all of the methods outlined to data from a sex discrimination
+case, and Section 5 contains the simulation study. We present the conclusion in
+Section 6.
+
+
+
+
+2. Parametric Peters-Belson Regression
+
+     In this section, we review parametric PB regression. Like the study of Bura
+et al. (2012), we assume that the salaries (Y ) are determined by a set of covari-
+ates (e.g., seniority, education, etc.) plus normally distributed random errors (ε).
+Suppose the salaries for minority and majority employees are given, respectively,
+by
+
+                                              T
+                M inority(DG) :        Y1i = X1i β1 + ε1i ,   i = 1, . . . , n1
+                                              T
+                M ajority(AG) :        Y2j = X2j β2 + ε2j ,   j = 1, . . . , n2
+X denotes the covariate vector and β the corresponding coecient vector. The
+errors, in each equation, are assumed to be normally distributed with mean zero
+                2         2
+and variance σ1 and σ2 , respectively.        If β1   = β2 , there is no unjustiable pay
+dierential and the dierence of salaries is due to random variability. A meaningful
+measure of pay dierential against the minority employee with a given value of the
+covariate is:
+
+                                        T        T
+                                  δi = X1i β1 − X1i β2
+If δi is negative, the i-th minority employee is underpaid compared to a major-
+ity employee with the same covariate values. In parametric PB, a linear regres-
+sion model is tted to the data for the majority employees. Then each minority
+                                         T
+member's salary is predicted by X1i β̂2 , where X1i is the covariate vector for the
+i-th minority member and β̂2 is the least squares estimate of β2 . The dierence,
+              T
+Di = Y1i − X1i  β̂2 , between the actual and predicted salaries is the estimate of the
+pay dierential of the i-th minority employee relative to a similarly qualied ma-
+jority employee. Thus, Di is the parametric PB estimate of δi . When the model
+is correct, Di is unbiased for δi and the corresponding unbiased estimator for the
+average disparity overall minority employees
+
+                              n
+                              1
+                         1 X
+                    δ=                     T
+                                [X T β1 − X1i β2 ] = X̄1T (β1 − β2 )
+                         n1 i=1 1i
+
+is equal to
+
+                                  n1          n1
+                              1 X         1 X            T
+                     D̄ =            Di =        [Y1i − X1i β̂2 ],
+                              n1 i=1      n1 i=1
+
+
+                                         Revista Colombiana de Estadística 41 (2018) 235249
+
+238                                                               Mohammad Bolbolian Ghalibaf
+
+where X̄1 is the mean vector of the minority covariate values. The variance of D̄
+is
+
+                                           σ12
+                              V ar(D̄) =       + σ22 X̄1T (X2T X2 )−1 X̄1 ,                     (1)
+                                           n1
+
+where  X2 = (X21 , X22 , . . . , X2n2 )T is the usual design matrix of the majority
+                             2      2     2
+group. When we assume σ1 = σ2 = σ , the test statistic
+
+
+                                               D̄
+                              t= p                                                              (2)
+                                  σ̂ [1/n1 + X̄1T (X2T X2 )−1 X̄1 ]
+                                    2
+
+
+can be used to test the null hypothesis δ = 0. Gastwirth (1989) suggested that
+                                                                                 2
+majority observations be used to estimate the common variance σ                      because under
+the hypothesis of no discrimination both majority and minority are supposed to be
+paid under the same system and hence the variances are supposed to be the same
+                          2
+as well. If we use σ̂   = σ̂22 , under the null hypothesis of δ = 0, the test statistic
+in (2) is t-distributed with n2 − p2 degrees of freedom, where p2 is the number of
+parameters (coecients) in the majority model.
+
+      Gastwirth (1989) discusses the form of the variance of D̄ in simple regression
+and the hypothesis testing for δ . Nayak & Gastwirth (1997) focus on a slightly
+dierent version of δ and its estimator and derive its distributional properties.
+
+      When the error variances are assumed to be dierent, we can approximate the
+distribution of the test statistic by using Welch's approximation approach (Welch
+(1949); Schee (1970); Nayak & Gastwirth (1997)).                    Under this approximation,
+the test statistic distribution under the null is approximated by a t distribution
+with degrees of freedom:
+
+                                    2                              2
+                                     σ1     T   T      −1
+                                     n1 + X̄1 (X2 X2 )    X̄1 σ22
+     df =                                                                                       (3)
+             σ14 /[n21 (n1 − p1 )] + σ24 /(n2 − p2 )X̄1T (X2T X2 )−1 X̄1 X̄1T (X2T X2 )−1 X̄1
+
+         2         2
+Since σ1 and σ2 are unknown, the degrees of freedom are estimated by substituting
+σ̂12 and σ̂22 in (3). For more details see Hikawa (2009).
+Note 1.       The measure of average pay dierential δ was used by Gastwirth (1989)
+with the particular intention to analyze the data arising from pay discrimination
+cases where the two underlying mean salary lines do not cross each other in the
+range of covariate values that are of interest. When the two mean lines cross each
+other, some values of δi become negative and others become positive; as a result,
+taking the average will cancel out these negative and positive values and d will
+no longer be a meaningful measure of pay dierential.                    Therefore,   δ should be
+used only for the cases where the two mean lines do not cross.                    While this is a
+theoretical possibility, but this situation does not happen in practice. Therefore,
+we recommend that the regression lines be plotted and if they cross, try to nd
+out why; perhaps a variable has been omitted. After considering all the necessary
+variables, we probably can be run the PB method.
+
+
+
+                                             Revista Colombiana de Estadística 41 (2018) 235249
+
+Kernel Function in Local Linear PB Regression                                          239
+
+
+
+3.     Local Linear Peters-Belson Regression
+
+     In this section, we review the local linear regression technique to estimate the
+expected minority responses from the majority data in the PB approach (Bura
+et al. 2012). Then, we express the role of the kernel function in tting the local
+linear regression model.
+
+                          b
+     Hikawa et al. (2010 ) mentioned two problems an analyst of pay discrimina-
+tion data often encounters.       The rst is the diculty in estimating the salary
+equation when it does not appear to follow any usual parametric forms (e.g., lin-
+ear, quadratic).    The second problem pertains to determining who the relevant
+male/majority employees are to be compared against female/minority employees
+of interest. Including too many irrelevant majority employees in the comparisons
+(e.g., male employees who are too senior compared to the target female employees)
+may introduce serious bias in the estimated disparity (Greiner 2008).
+
+                                                            b
+     To address these problems, Hikawa et al. (2010 ) introduced the local linear
+regression in PB. Local linear regression ts a linear regression in the neighborhood
+of the covariate values of each minority member. The method is well suited for
+equal pay cases since the estimation/prediction of the salary of a minority employee
+is based on majority employees whose qualications are closest to those of the
+minority employee and thus should receive the greatest weight. Furthermore, the
+similarity of this method to matched-pairs is expected to make the results more
+understandable to judges and juries.        Local linear regression is similar in spirit
+to bandwidth matching introduced by Bhattacharya (1989). However, the weight
+given to each majority observation decreases with the distance of the covariate
+values from the target minority member.
+
+     Like the study of Bura et al. (2012), suppose we have d covariates and the data
+consist of n1 minority observations, (X11 , Y11 ), . . . , (X1n1 , Y1n1 ), and n2 majority
+observations, (X21 , Y21 ), . . . , (X2n2 , Y2n2 ), where X is a vector of d xed covariate
+values. The response values of minority and majority members are generated by
+the following equations:
+
+                   M inority :   Y1i = m1 (X1i ) + ε1i ,    i = 1, . . . , n1
+                   M ajority : Y2j = m2 (X2j ) + ε2j ,      j = 1, . . . , n2
+where m1 (X1i ) = E(Y1 |X = X1i ) and m2 (X2j ) = E(Y2 |X = X2j ). Also ε1i 's and
+ε2j 's are iid N (0, σ12 ) and N (0, σ22 ), respectively. The only assumption we make
+on the unknown functions modeling the mean response in the two groups, m1 (X)
+and m2 (X), is that they are twice dierentiable.
+
+     As in the parametric PB denition of disparity, the pay disparity for the i-th
+minority member is
+
+                              δi = m1 (X1i ) − m2 (X1i ),
+and the average disparity of all minority members is
+
+                                  n1
+                              1 X
+                         δ=          [m1 (X1i ) − m2 (X1i )].
+                              n1 i=1
+
+
+                                        Revista Colombiana de Estadística 41 (2018) 235249
+
+240                                                                      Mohammad Bolbolian Ghalibaf
+
+Let
+                                   (X211 − X11i )                 (X2d1 − X1di )
+                        
+                         1                                 ...
+                                                                                 
+                       1          (X212 − X11i )          ...    (X2d2 − X1di ) 
+                  Zi =  .
+                                                                                
+                                          .                             .
+                        ..               .                             .
+                                                                                 
+                                          .                             .        
+                            1     (X21n2 − X11i ) . . .           (X2dn2 − X1di )
+and Wi       = diag(W (||X2j − X1i ||/h)), where W is a kernel weight function and
+||.|| is a norm. Denoting the elements of the rst row of (ZiT Wi Zi )−1 ZiT Wi by
+Si1 , Si2 , . . . , Sin2 , the tted value for the design point X1i is given by
+                                                  n2
+                                                  X
+                                   m̂2 (X1i ) =           Sij Y2j .
+                                                    j=1
+
+The estimated pay dierential for the i-th minority member is
+
+                                                                 n2
+                                                                 X
+                      Di = Y1i − m̂2 (X1i ) = Y1i −                    Sij Y2j .
+                                                                 j=1
+
+The estimated average pay dierential against all minority members and its vari-
+ance are
+                                                                         
+                                    n1            n1           n2
+                                1 X            1 X    Y1i −
+                                                              X
+              D̄LOC    =               Di =                       Sij Y2j  ,
+                                n1 i=1        n1 i=1          j=1
+                                                                                       
+                                               n1 Xn2              n1 X
+                                                                n1 X    n2
+                                1            X                X
+      var(D̄LOC )      =             n1 σ12 +           2 2
+                                                      Sij σ2 +              Sij Slj σ22  .
+                                n21           i=1 j=1                  j=1    i6=l
+
+          2       2
+Since σ1 and σ2 are usually unknown, the estimated variance of D̄LOC can be
+                                      2         2
+obtained by using estimates σ̂1 and σ̂2 which can be obtained from the residuals
+of the separate local linear regression models within each group.                             Details of the
+estimation approach are given in Hikawa (2009) and Hikawa et al. (2010 ). The                       b
+estimated variance of D̄LOC is given by
+                                                                        
+                                 n1 Xn2              n1 X
+                                                  n1 X   n2
+                    1          X                 X
+       ar(D̄LOC ) = 2 n1 σ̂12 +
+      vd                                 2 2
+                                        Sij σ̂2 +           Sij Slj σ̂22  .
+                   n1           i=1 j=1                 j=1            i6=l
+
+
+Cleveland & Devlin (1988) showed that, under the assumption of normal errors and
+                                                                 2 2               2
+negligible bias of m̂i (X), the distribution of (ηj σ̂j )/(κj σj ) can be approximated
+      2                                          2
+by a χ     distribution with degrees of freedom ηj /κj , where
+
+
+                                 ηj   = tr(I − Sj )(I − Sj )T
+                                 κj   = tr[(I − Sj )(I − Sj )T ]2
+                                                                              th
+for j = 1, 2. Let Sj be the nj × nj matrix whose (i, k)                              element is Sik obtained
+from tting a separate smooth curve for the minority and majority groups (i.e.,
+
+
+
+                                              Revista Colombiana de Estadística 41 (2018) 235249
+
+Kernel Function in Local Linear PB Regression                                             241
+
+
+
+separately estimating m1 (Xi ) for i = 1, . . . , n1 and m2 (Xj ) for j = 1, . . . , n2 ). The
+test statistic for testing for lack of disparity (H0 : δ = 0 vs. H1 : δ 6= 0) is dened
+to be
+                                         D̄LOC
+                                    t= p            .                                      (4)
+                                         ar(D̄LOC )
+                                        vd
+                                                    2       2          2
+When the two variances are equal (i.e., σ1 = σ2 = σ ), we estimate the common
+                                                        2
+variance by the majority variance estimate σ̂               = σ̂22 ; see Gastwirth (1989). The
+estimated variance of D̄LOC becomes
+                                                                 
+                                   n1 Xn2          n1 X
+                                                n1 X   n2
+                          σ̂ 2   X
+                                           2
+                                                X
+              ar(D̄LOC ) = 2 n1 +
+             vd                           Sij +           Sij Slj  .
+                          n1      i=1 j=1             j=1       i6=l
+
+
+Therefore, under the assumption of equal variances, the test statistic for group
+                                    η2
+disparity is t distributed with
+                                    κ degrees of freedom, where η = η2 and κ = κ2 .
+   When the two variances are assumed to be dierent, as in parametric PB, we
+can apply Welch's approximation approach to nd the approximate distribution
+of the test statistic. The expression of the variance of D̄LOC can be expressed as
+
+                                                                       
+                                              n2
+                                           n1 X          n1 X
+                                                      n1 X   n2
+                                σ12  σ22 X           X
+             var(D̄LOC )   =        + 2          S2 +           Sij Slj 
+                                n1   n1 i=1 j=1 ij          j=1            i6=l
+
+                           =    σ12 C1 + σ22 C2 .
+
+When H0 is true, the test statistic (4) is approximately t distributed with the
+degrees of freedom
+                                          (σ12 C1 + σ22 C2 )2
+                             df =                                     .                    (5)
+                                    σ14 κ1 /η12 C12 + σ24 κ2 /η22 C22
+         2        2
+Since σ1 and σ2 are unknown in most practical situations, the degrees of freedom
+                                      2         2
+are approximated by plugging σ̂1 and σ̂2 into (5).
+
+   The nearest neighbor bandwidth that xes the fraction of data that contribute
+to the estimation (Cleveland & Devlin (1988); Loader (1999)) is used in tting
+the local linear regression model.                                            b
+                                           Hikawa et al. (2010 ) is used Epanechnikov
+kernel as the weight function, but we recommend to use another kernels.                   The
+kernel function W (u) is a non-negative real-valued integrable function satisfying
+the following requirements:
+
+
+  (i) W (u) ≥ 0 for all u;
+      R∞
+ (ii)
+       −∞
+          W (u)du = 1;
+
+(iii)   W (.) is symmetric about zero;
+
+
+
+
+                                          Revista Colombiana de Estadística 41 (2018) 235249
+
+242                                                              Mohammad Bolbolian Ghalibaf
+
+   In Table 1 some samples of kernels are given. In these kernels, u = ||X2j −
+X1i ||/h and h is the bandwidth. Epanechnikov kernel is the optimal kernel in the
+sense that roughly both the asymptotic mean squared error and the mean inte-
+grated squared error are minimized (Fan & Gijbels 1996). Loader (1999) suggests
+scaling the vector norm.
+
+                            Table 1: Some Kernel Functions.
+                            Kernel       W(u)
+
+                             Epanechnikov         3
+                                                  4
+                                                    (1 − u2 )I(|u| ≤ 1)
+                                                      −u   2
+                             Normal               √1 e 2
+                                                   2π
+
+                             Logistic                  1
+                                                  eu +e−u +2
+
+                             Laplace              1 −|u|
+                                                  2
+                                                    e
+
+
+      We use
+
+                                            d              2
+                                        2
+                                            X   X2kj − X1ki
+                      ||X2j − X1i || =                                    ,
+                                                           Sk
+                                            k=1
+
+where
+                    sP
+                        n2                 Pn2                      2
+                        j=1 (X2kj − X1ki −  j=1 (X2kj − X1ki )/n2 )
+             Sk =                                                             .
+                                               n2 − 1
+Since X1ki is xed, Sk is simply the sample standard deviation of X2k about X1ki
+for the majority members for the k -th covariate.
+
+      But using Epanechnikov kernel cannot be optimized, since in Epanechnikov
+kernel if |u| ≤ 1 then W (u) = 0, while in practice, there may be some values of |u|
+that exceed from 1 and thus this kernel doesn't have correctly results to estimate
+of these values. Therefore, we recommend using the kernel functions that values
+of u belong to real numbers. We used Normal kernel, Logistic kernel, and Laplace
+kernel and we concluded these kernels reduce bias and variance of estimators and
+increase the power of the test. In this paper, we will call these real kernels.
+
+
+
+
+4. Application: Re-analysis of Data from EEOC v.
+       Shelby County Government
+
+      In this section, we display the role of kernel functions in local linear PB regres-
+                                                     EEOC v. Shelby County
+sion by using data set from the pay discrimination case,
+Government. This data set reported and analyzed by Bura et al. (2012). In 1983,
+a female clerical employee of Shelby County Criminal Court brought a charge of
+salary discrimination. The data, presented in Table 2, consist of salaries per pay
+period as the response and seniority measured in months since hired as the covari-
+ate with 16 male and 15 female clerical employees as of February 1, 1984. Fitting
+
+
+
+                                            Revista Colombiana de Estadística 41 (2018) 235249
+
+Kernel Function in Local Linear PB Regression                                              243
+
+
+
+a ordinary regression to each gender separately yields:
+
+
+                                    Ŷf = 885.103 + 4.328Xf                                (6)
+
+
+                                   Ŷm = 913.897 + 5.953Xm                                 (7)
+
+where the subscripts m and f stand for male and female. The estimated variances
+                            2                      2
+of the error terms are σ̂m = 7494.5 and σ̂f = 8757.1, and the sample means and
+                                             2
+variances of seniority are:       X̄m = 81, Sm = 1603.3, X̄f = 69.3, and Sf2 = 2195.5.
+Table 3 summarizes the ANOVA tables for both the male and female models.
+
+                 Table 2: Shelby County pay discrimination case data.
+                                Male                           Female
+                 Salary (Y2 )    Seniority (X2 )   Salary (Y1 ) Seniority (X1 )
+                    1666              125             1474            128
+                    1666              124             1474            96
+                    1666              124             1403            121
+                    1666              120             1403            117
+                    1548              117             1403            114
+                    1548              116             1336            89
+                    1548              113             1336            97
+                    1548               95             1157            105
+                    1548               73             1000            64
+                    1306               69             1000            51
+                    1157               51             1000            13
+                    1157               47             1000            17
+                    1157               46              929            13
+                    1157               18              929             8
+                    1000               41              929             6
+                    1000               17
+
+
+ Table 3: ANOVA tables for male and female models from the Shelby County data.
+                         Male                                         Female
+     Sources       SS      DF      MS             F        SS     DF       MS       F
+     Seniority  852412      1    852412        113.74*   575666     1    575666   65.74*
+     Error      104924     14     7495                   113842    13     8757
+     Total      957336     15                            689508    14
+                R2 = 0.89                                R2 = 0.83
+     *P-value was smaller than .0001.
+
+
+   Since the sample sizes of 16 males and 15 female are too small to t a local
+linear regression model, we augmented the data set following the method used by
+Bhattacharya (1989) and Bhattacharya & Gastwirth (1999), where they analyze
+data from   Berger v. Iron Workers Local 201.               Fitting a Gamma distribution
+to the seniority data yielded Gamma(4, 20) for males and Gamma(2, 33) for
+females. Then, we consider two scenarios for enhancing observations. The rst,
+we generate additional salary data for 34 males and 35 females according to the
+tted models in (6) and (7) and other, we generate additional salary data for 84
+males and 85 females according to the tted models in (6) and (7).                Therefore,
+in two scenarios sample sizes of male and female are same and equal to 50 and
+
+
+
+                                           Revista Colombiana de Estadística 41 (2018) 235249
+
+244                                                     Mohammad Bolbolian Ghalibaf
+
+                                                                2                       2
+100, respectively. The error variances were set equal to σ̂m = 7494.5 and σ̂f   =
+8757.1 in order to match the estimated variances of the error terms from the tted
+regression models. The data were simulated based on unequal variances for males
+and females. Consequently, we compute the variance of D̄ based on the assumption
+of unequal variances and approximate the degrees of freedom of the test statistics
+using the Welch's approximation approach. Tables 4 and 5 summarize the results
+from applying the ve methods: (1) Parametric PB, (2) Local Linear PB with
+Epanechnikov kernel, (3) Local Linear PB with Normal kernel, (4) Local Linear
+PB with Logistic kernel and (5) Local Linear PB with Laplace kernel.
+
+      In Tables 4 and 5, the negative values of D̄ indicate that female employees were
+underpaid on average compared to their similarly qualied male counterparts. The
+bias and standard error of the average pay dierential estimated. In Table 4, value
+of D̄ of the local linear PB with Epanechnikov kernel is dierent with other meth-
+ods and its variance is greater than the other local linear methods. However, the
+parametric PB has the minimum variance. In Table 5, the results of methods are
+similar, but parametric PB still has the least variance and among nonparametric
+methods, the real kernels have fewer variances. These results demonstrate using
+the appropriate kernel can be eective in reducing bias and standard error. How-
+ever, from a single example, one cannot make general conclusions. Therefore, we
+conducted a further simulation study, discussed in the next section.
+
+
+Table 4: Analysis of the augmented Shelby County Pay Discrimination data (n = 50).
+                   Parametric PB      Local PB      Local PB    Local PB     Local PB
+                                   (Epanechnikov)   (Normal)    (Logistic)   (Laplace)
+   D̄                 -133.979        -129.116      -133.029    -133.206     -133.833
+   Bias                 4.572           9.435         5.522       5.345        4.718
+                       16.203          21.349        19.893      18.707       18.954
+   p
+      ar(D̄)
+     vd
+                       -8.267          -6.048        -6.687      -7.121       -7.061
+      p
+   D̄/ vdar(D̄)
+   P-value             <.001           <.001         <.001       <.001        <.001
+
+
+
+Table 5: Analysis of the augmented Shelby County Pay Discrimination data (n = 100).
+                   Parametric PB      Local PB      Local PB    Local PB     Local PB
+                                   (Epanechnikov)   (Normal)    (Logistic)   (Laplace)
+   D̄                 -125.542        -122.019      -122.364    -122.480     -123.732
+   Bias                  1.500          5.023         4.678       4.562        3.310
+                        11.625         15.625        14.373      13.791       14.017
+   p
+      ar(D̄)
+     vd
+                       -10.799         -7.809        -8.513      -8.879       -8.827
+      p
+   D̄/ vdar(D̄)
+   P-value              <.001          <.001         <.001       <.001        <.001
+
+
+      Since the estimated amount of pay dierential from all the methods is quite
+large, the p-values of all test statistics are very small. Hence, all methods would
+reject the null hypothesis of no pay dierential and conrm the court's conclu-
+sion that the female employees were discriminated in their pay with an average
+dierential about $129-134 ($122-125) per pay period for sample size 50 (100).
+
+
+
+
+                                      Revista Colombiana de Estadística 41 (2018) 235249
+
+Kernel Function in Local Linear PB Regression                                         245
+
+
+
+5. Simulation
+
+   In this section, we display the role of kernel functions in local linear PB regres-
+sion by using simulated data. It should be noted that the simulation models were
+chosen from Bura et al. (2012). Consider a company that has three stores with
+employees of both sexes. In the rst, amount of pay is same for two group (male
+and female). The data of this store simulated from equation (8).
+
+
+                                yi = 20000 + 200xi + εi .                             (8)
+
+
+In the stores 2 and 3, amount of pay are dierent for two group and women are
+underpaid relative to comparable men in both stores but the system leading to
+the disparity dier in the two stores. In the second store, men and women start
+at the same salary but men receive better raises over time, while in the third store
+men start at a slightly higher salary and also receive higher raises over time. The
+data of these two stores simulated from equations (9) and (10), respectively.
+                         (
+                             20000 + 200xi + ε1i   when i is female
+                  yi =                                                                (9)
+                             20000 + 250xi + ε2i   when i is male.
+
+                         (
+                             20000 + 200xi + ε1i   when i is female
+                  yi =                                                               (10)
+                             20500 + 250xi + ε2i   when i is male.
+
+The values of the seniority predictor variable for females and males were generated
+from the Gamma distribution with scale parameters 3 and 2 for females and males,
+respectively, and shape 2 for both sexes. To sum up, the simulations run according
+to 3 choices for sample sizes of two groups. The rst, we choose in all three stores,
+the number of males is 40 and the number of females is 30, in the second choice,
+we consider the number of males is 80 and the number of females is 60 and the
+last scenario is based on 60 males and 80 females. The error variances were the
+same and errors generated from the normal distribution with mean 0 and standard
+error 300. Ten thousand replicates were used in the simulation and the signicant
+level of α = 0.05 considered.
+
+   Table 6 reports the results of the rst choice for sample sizes.          In the rst
+store, where amount of pay is equal for two group, by using parametric PB the
+null hypothesis δ = 0 is rejected 5.75% of the times, But by using local PB with
+Epanechnikov kernel the null hypothesis is rejected 5.96% of the times and by real
+kernels Normal, Logistic and Laplace the null hypothesis is rejected 5.35%, 5.28%
+and 5.34% of the times, respectively.      Therefore, the size of all tests is close to
+nominal level 5%. In store 2, by using parametric PB the null hypothesis δ = 0
+is rejected 95.22% of the times, But by using local PB with Epanechnikov kernel
+the null hypothesis is rejected 81.97% of the times and by real kernels Normal,
+Logistic and Laplace the null hypothesis is rejected 86.40%, 93.47% and 93.09% of
+the times, respectively. The comparison of the power of the local linear tests shows
+that tests based on Logistic and Laplace kernels have the high powers followed by
+the Normal kernel, and Epanechnikov kernel, respectively.          In store 3, by using
+parametric PB the null hypothesis δ = 0 is rejected 100% of the times, But by
+
+
+
+                                       Revista Colombiana de Estadística 41 (2018) 235249
+
+246                                                      Mohammad Bolbolian Ghalibaf
+
+using local PB with Epanechnikov kernel the null hypothesis is rejected 98.46%
+of the times and by real kernels Normal, Logistic and Laplace the null hypothesis
+is rejected 99.25%, 100% and 100% of the times, respectively. The comparison of
+the power of tests show that all tests have good powers. Furthermore, in all three
+stores, the standard error of local PB with Epanechnikov kernel is more than other
+methods.
+
+                  Table 6: Analysis of the simulated data (Scenario 1).
+                         Parametric      Local PB      Local PB    Local PB     Local PB
+                             PB       (Epanechnikov)   (Normal)    (Logistic)   (Laplace)
+             D̄            -0.286          -1.235         1.342      -0.038       -0.038
+             Bias          -0.286          -1.235         1.342      -0.038       -0.038
+  Store 1
+             Std. Dev.     81.129         109.472       101.126      84.725       85.438
+             Size          0.0575          0.0596        0.0535      0.0528       0.0534
+             D̄           -300.692       -301.495       -298.997    -300.368     -300.386
+             Bias          -0.539          -1.342         1.155      -0.215       -0.233
+  Store 2
+             Std. Dev.     81.054         107.611       100.987      84.592       85.291
+             Power         0.9522         0.8197         0.8640      0.9347       0.9309
+             D̄           -799.564       -801.386       -798.246    -799.610     -799.584
+             Bias           0.460          -1.362         1.778       0.415        0.441
+  Store 2
+             Std. Dev.     81.090         106.392       100.198      84.627       85.328
+             Power            1            0.9846        0.9925         1            1
+
+
+      Tables 7 and 8 show the results of two other choices for sample sizes.          The
+ndings of these two tables are similar to the previous table. The size of all tests
+is close to nominal level 5%, and tests based on real kernels have the good powers.
+Also, using local PB with Epanechnikov kernel causes the bias and larger standard
+error.
+
+                  Table 7: Analysis of the simulated data (Scenario 2).
+                         Parametric      Local PB      Local PB    Local PB     Local PB
+                             PB       (Epanechnikov)   (Normal)    (Logistic)   (Laplace)
+             D̄             0.254         -4.472         -0.033       0.147        0.123
+             Bias           0.254          4.472         -0.033       0.147        0.123
+  Store 1
+             Std. Dev.     56.892         78.072         63.938      58.313       58.614
+             Size          0.0546         0.0503         0.0521      0.0513       0.0514
+             D̄           -299.598       -302.356       -299.417    -299.658     -299.620
+             Bias           0.243         -2.514          0.425       0.183        0.221
+  Store 2
+             Std. Dev.     56.850         76.537         64.224      58.318       58.628
+             Power         0.9995         0.5765         0.9833      0.9988       0.9986
+             D̄           -800.173       -797.535       -799.796    -800.214     -800.214
+             Bias           0.021          2.659          0.398      -0.019       -0.019
+  Store 2
+             Std. Dev.     56.852         78.295         64.217      58.285       58.591
+             Power            1           0.8831         0.9997         1            1
+
+
+
+
+                                       Revista Colombiana de Estadística 41 (2018) 235249
+
+Kernel Function in Local Linear PB Regression                                           247
+
+
+                 Table 8: Analysis of the simulated data (Scenario 3).
+                          Parametric      Local PB      Local PB    Local PB     Local PB
+                              PB       (Epanechnikov)   (Normal)    (Logistic)   (Laplace)
+            D̄               0.613          3.658          1.571       0.567        0.605
+            Bias             0.613          3.658          1.571       0.567        0.605
+  Store 1
+            Std. Dev.       58.661         85.658         68.744      60.673       61.062
+            Size            0.0551         0.0434         0.0522      0.0528       0.0525
+            D̄             -301.931       -304.083       -300.321    -301.715     -301.647
+            Bias            -1.610         -3.761         0.0003      -1.393       -1.325
+  Store 2
+            Std. Dev.       58.732         83.029         68.777      60.725       61.122
+            Power           0.9985         0.5303         0.9671      0.9965       0.9957
+            D̄             -800.018       -802.577       -799.363    -800.007     -800.026
+            Bias             0.167         -2.390          0.822       0.178        0.159
+  Store 2
+            Std. Dev.       58.766         84.116         69.087      60.809       61.201
+            Power              1           0.8433         0.9993         1            1
+
+
+
+
+6. Conclusion
+
+   In this paper, we show that by selecting an appropriate kernel, we can use local
+linear PB regression and the results of this method are similar to the parametric
+method. Therefore in most cases, due to the constraints of parametric PB regres-
+sion, we can be used local linear PB regression. According to the results of data
+from   EEOC v. Shelby County Government and simulation study we concluded
+that the use of local linear PB regression be eective in determining the extent of
+a disparity between groups and in local PB method using real kernels can reduce
+the bias and variance of the estimators and also increase the power of the test. By
+comparing the three real kernel functions we deduced Logistic and Laplace kernels
+have better results. By using these kernels the bias is the lowest and variance of
+the estimator is relatively small.     Moreover, the power of the test is acceptable.
+But, the Normal kernel compared to two other real kernels has weaker results.
+However, all three real kernel in comparison with the Epanechnikov kernel have
+better performances. It should be noted that we investigate the performance of
+some other kernels like Triangular and Cosine and have concluded that results of
+these kernels are similar to the Epanechnikov kernel. Therefore, we recommend
+using real kernels in local linear PB regression.
+
+
+
+
+Acknowledgement
+
+   The author would like to thank the reviewer for their valuable suggestions and
+comments.
+
+
+                 
+                     Received: January 2017  Accepted: January 2018
+                                        Revista Colombiana de Estadística 41 (2018) 235249
+
+248                                                      Mohammad Bolbolian Ghalibaf
+
+References
+
+Achcar, J. A. & Lopes, S. R. C. (2016), `Linear and Non-Linear Regression Models Assuming a Stable Distribution', Revista Colombiana de Estadística 39(1), 109128.
+Belson, W. A. (1956), `A technique for studying the eects of a television broadcast', Applied Statistics 5, 195202.
+Bhattacharya, P. K. (1989), Estimation of treatment main eect and treatment covariate interaction in observational studies using bandwidth-matching, Technical Report 188, Division of Statistics, University of California, Davis.
+Bhattacharya, P. K. & Gastwirth, J. L. (1999), `Estimation of the Odds-Ratio in an Observational Study Using Bandwidth-Matching', Journal of Nonparametric Statistics 11, 112.
+Blinder, A. S. (1973), `Wage discrimination: reduced form and structural estimates',   Journal of Human Resources 8, 436-455.
+Bura, E., Gastwirth, J. L. & Hikawa, H. (2012), The use of petersbelson regression in legal cases,   in `Nonparametric Statistical Methods And Related Topics: A Festschrift in Honor of Professor PK Bhattacharya on the Occasion of His 80th Birthday', World Scientic, pp. 213231.
+Cleveland, W. S. & Devlin, S. J. (1988), `Locally-weighted regression: an approach to regression analysis by local tting', Journal of the American Statistical Association 83, 597610.
+Fan, J. & Gijbels, I. (1996),      Local Polynomial Modelling and Its Applications, Chapman and Hall, London.
+Gastwirth, J. L. (1989), `A clarication of some statistical issues in Watson vs. Fort Worth Bank and Trust',  Jurimetrics Journal 29, 267-284.
+Gastwirth, J. L. & Greenhouse, S. W. (1995), `Biostatistical Concepts and Methods in the Legal Setting',   Statistics in Medicine 14, 16411653.
+Gray, M. W. (1993), `Can statistics tell us what we do not want to hear? The case of complex salary structures',   Statistical Science 8(2), 144-158.
+Greiner, D. J. (2008), `Causal inference in civil rights litigation', Harvard Law Review 122, 533598.
+Hikawa, H. (2009), Local linear peters-belson regression and its applications to employment discrimination cases, Doctoral dissertation, Department of Statistics , George Washington University.
+Hikawa, H., Bura, E. & Gastwirth, J. L. (2010 ), `Local Linear Logistic Peters-Belson Regression and its application in employment discrimination cases', Statistics and its Interface 3, 125144.
+Hikawa, H., Bura, E. & Gastwirth, J. L. (2010 ), Robust peters-belson type estimators of measures of disparity and their applications in employment discrimination cases, Technical report, Department of Statistics, George Washington University.
+Loader, C. (1999),   Local Regression and Likelihood, Springer-Verlag, New York.
+Nayak, T. K. & Gastwirth, J. L. (1997), `The Peters-Belson approach to measures of economic and legal discrimination', Advances in the Theory and Practice of Statistics pp. 587601.
+Oaxaca, R. (1973), `Male-Female dierentials in urban labor markets', International Economic Review 14, 693709.
+Peters, C. C. (1941), `A method of matching groups for experiments with no loss of populations',   Journal of Educational Research 34(8), 606612.
+Schee, H. (1970), `Practical solutions of the Behrens-Fisher problem', Journal of the American Statistical Association 65(332), 1501-1508.
+Welch, B. L. (1949), `Further note on Mrs. Aspin's tables and on certain approximations to the tabled function',   Biometrika 36(3/4), 293296.

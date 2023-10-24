@@ -1,0 +1,1529 @@
+Un pronóstico no paramétrico de la inflación colombiana
+Banco de la República; Universidad Nacional de Colombia
+Resumen
+En este trabajo se presentan los resultados de un ejercicio de pronóstico no paramétrico, múltiples pasos adelante, para la inflación colombiana mensual. En particular, se usa estimación kernel para la media condicional de los cambios de la inflación, dada su propia historia. Los resultados de pronóstico se comparan con un modelo ARIMA estacional y un modelo tipo STAR. Se encuentra que, excepto para el pronóstico un mes adelante, el pronóstico no paramétrico mejora a las otras dos metodologı́as que le compiten; además, de entre las tres alternativas consideradas, el no paramétrico es el único pronóstico que estadı́sticamente mejora al pronóstico que se hace con un modelo de caminata aleatoria.
+Palabras clave: Pronóstico no paramétrico, evaluación y comparación de pronósticos, ancho de banda (bandwidth), estimación kernel.
+Abstract
+This paper contains the results of a non parametric multi step ahead forecast for the monthly Colombian inflation, using Mean conditional kernel estimation over inflation changes, with no inclusion of exogenous variables. The results are compared with those from an ARIMA and a non linear STAR. The nonparametric forecast over perform the others two, as well as being the only, from the three, that statistically improved the naı̈ve forecast given by a random-walk model.
+Key words: Nonparametric forecast, Kernel estimation, Forecast evaluation, Bandwidth selection, Rolling forecast.
+Introducción
+El control de la inflación es casi siempre uno de los objetivos prioritarios de la polı́tica económica gubernamental, en particular del banco central. Su pronóstico acertado ayudará a atenuar todos los posibles inconvenientes, al permitir tomar medidas remediales anticipadas si es necesario.
+Para el estudio de la inflación se han usado varias herramientas estadı́sticas entre las cuales se encuentran los modelos de series de tiempo a través de métodos paramétricos, con básicamente dos propósitos: uno es construir un modelo que ajuste adecuadamente los datos con la estimación de los parámetros del modelo y ası́ hacer análisis de polı́tica; el segundo propósito es usar el modelo identificado y estimado para realizar pronósticos. El presente trabajo se centra exclusivamente en este último objetivo.
+La metodologı́a de Box-Jenkins ofrece la manera de lograr estos objetivos a través de la construcción, identificación y predicción de un proceso autorregresivo de media móvil estacional, SARIMA; pero la linealidad, que es el soporte fundamental de la teorı́a Box-Jenkins, es bastante fuerte e inadecuada en muchas situaciones prácticas.
+Uno de los problemas que se presenta en predicción, principalmente si el horizonte de pronóstico es largo, es el aumento en el error cuadrático medio de pronóstico conforme aumenta el horizonte de predicción. Consideraciones de modelos paramétricos no lineales tipo STAR, como bi-lineales o procesos ARCH1 no siempre logran producir un notable mejoramiento en la calidad de la predicción.
+Hasta el momento no se habı́an utilizado métodos no paramétricos para realizar pronósticos en la serie de la inflación colombiana, pero gracias a los desarrollos en la teorı́a de estadı́stica no paramétrica para series de tiempo, se facilita dicha labor. En el presente trabajo se realizaron pronósticos de la inflación colombiana por medio de los métodos de predicción no paramétricos basados en estimación kernel. No obstante, la aplicación de técnicas no paramétricas a datos de la economı́a colombiana no es tan poco común como se podrı́a pensar; sólo por mencionar dos trabajos de aplicación a datos de ingresos, están Núñez & Jiménez (1998) y, más novedoso, Zárate (2003).
+Los métodos no paramétricos tienen ventajas sobre los paramétricos. Los métodos paramétricos en muchas ocasiones no cumplen con los supuestos acerca de la forma funcional del conjunto de variables aleatorias de las cuales provienen los datos, produciendo ası́ modelos no muy confiables que generan sesgos y deterioran la calidad de los pronósticos. En el campo no paramétrico se evita este problema al permitir una forma funcional flexible, y no un conjunto pequeño de modelos rı́gidos como lo hacen los paramétricos. Sin embargo, se les hacen dos crı́ticas: la primera se refiere a la demora en el trabajo computacional, y la segunda al amplio error cuadrático medio de predicción. Gracias a desarrollos tecnológicos en el ámbito computacional y su disponibilidad a bajo costo queda sin peso la primera crı́tica. La segunda ha sido estudiada en la literatura; se ha demostrado que los pronósticos del método no paramétrico de la mediana condicional, al ser comparados con los de modelos ARIMA dan resultados favorables en términos del error cuadrático medio Gannoun (1991)2 ; resultados similares son mostrados para la media condicional Carbon & Delecroix (1993).
+Puesto que se plantea el uso de una nueva técnica de pronóstico, es deseable comparar sus resultados con los de otros modelos existentes. Con eso en mente, y por ubicar al lector, a continuación de esta introducción se presenta una breve sintaxis de dos de los modelos usados por el Banco de la República para generar pronósticos de la inflación. En la sección 3 se introducen los primeros conceptos de estimación no paramétrica de densidades condicionales o funciones de regresión, junto a un ejemplo de datos simulados, para terminar dicha sección con una descripción de algunas de las funciones kernel más usadas en aplicaciones estadı́sticas de métodos no paramétricos de suavizamiento. Se pasa a la sección 4, donde se resume la metodologı́a de pronósticos no paramétricos múltiples pasos adelante, basados en suavizamiento kernel, y las especificaciones que se requieren del mismo. La sección 5 presenta los resultados del pronóstico no paramétrico de la inflación colombiana, ası́ como los resultados de la evaluación de los mismos. La sección 6 concluye y enuncia algunas recomendaciones para futuro trabajo de aplicación en el área.
+Modelos paramétricos usados para
+       pronosticar
+
+   Actualmente el Banco de la República utiliza, entre otros, dos tipos de
+modelos para pronosticar mensualmente la inflación; son ellos los tradicionales
+modelos ARIMA y los modelos no lineales tipo STAR. Una breve descripción
+de ellos se presenta en seguida.
+
+  2 Véanse las definiciones más adelante.
+
+92                                              Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+2.1.        Modelo ARIMA
+
+   El modelo que se usa comúnmente para hacer pronósticos a la serie de
+tiempo de la inflación es un modelo ARIMA estacional de la forma:
+
+                φ(L)Φ(L12 )(1 − L)(1 − L12 ) ln(IP Ct ) = θ(L)Θ(L12 )et ,             (1)
+
+donde ln es el logaritmo natural, L es el operador de rezagos3 , φ(L) y θ(L)
+son polinomios en L, con coeficientes fijos a través de la muestra, de grados
+p y q, respectivamente; Φ(L12 ) y Θ(L12 ) son polinomios en L12 de grados P
+y Q, respectivamente, los cuales modelan el componente estacional; {et } es
+un proceso ruido blanco: variables aleatorias independientes e idénticamente
+distribuidas con media 0 y varianza σ 2 , usualmente asumidas con distribución
+normal (gaussiana).
+   Entre las ventajas de estos modelos se encuentran: son de fácil manejo
+computacional, están incorporados en la mayorı́a de paquetes estadı́sticos, son
+bastante conocidos y utilizados. Entre sus desventajas, sus pronósticos resultan
+desmejorados para el mediano o largo plazo.
+
+
+2.2.       Modelos autorregresivos de transición suave: STAR
+
+    Los modelos tipo STAR corresponden a una gama de modelos no lineales,
+presentados como una extensión de los modelos TAR (Threshold Autoregres-
+sive), donde se supone que el proceso generador de la serie Yt oscila de forma
+suave entre dos regı́menes:
+
+                             X            ³     X        ´
+                Yt = α0 +        αi Yt−i + β0 +   βt Yt−i F (Yt−d ) + εt ,            (2)
+
+εt ∼ N (0, σe2 ), F (Yt−d ) es una función no lineal de Yt−d que toma valores entre
+0 y 1, es no decreciente y continua, se denomina función de transición; los dos
+modelos más comunes suponen las siguientes funciones:
+
+
+                                   £                     ¤−1
+          Modelo LSTAR: F (Yt−d ) = 1 + exp[−γ(Yt−d − c)]    γ>0                      (3)
+                                   £                     2
+                                                           ¤
+          Modelo ESTAR: F (Yt−d ) = 1 − expb−γ(Yt−d − c) c γ > 0.                     (4)
+
+   Los cambios de la no linealidad que introduce el régimen por medio de la
+función F (Yt−d ) dependen de los parámetros γ y c. En particular, para un
+     3 El operador L de rezagos está definido por: Lk z
+                                                           t = L. . .Lzt = zt−k .
+                                                                 k
+
+Un pronóstico no paramétrico de la inflación colombiana                      93
+
+
+modelo LSTAR los regı́menes de transición ocurren alrededor de Yt−d = c
+donde el parámetro γ indica el grado de no linealidad, es decir, qué tan rápido
+ocurre la transición entre los dos regı́menes extremos: el paso de cero a uno en
+F (Yt−d ). Este modelo ha sido también utilizado con una variable exógena Jalil
+& Melo (2000).
+     Entre las desventajas se encuentra que sus intervalos de pronóstico son
+difı́ciles de obtener con métodos convencionales y los pronósticos puntuales
+a mediano y largo plazo deben ser generados vı́a simulación estocástica. La
+ventaja que presentan frente a los ARIMA y otras técnicas paramétricas es que
+resultan pronosticar consistentemente mejor que aquellos a mediano y largo
+plazo.
+
+
+2.3.    Otros modelos
+
+    Existen varios trabajos en los cuales se involucran especificaciones de mo-
+delos no lineales para la inflación de Colombia. Uno de los primeros trabajos
+explica el proceso inflacionario como un modelo switching con dos o tres estados
+(Melo & Misas 1998), pero resulta de difı́cil implementación y no útil para
+pronóstico, debido a que bajo cierta especificación necesaria se requieren 20
+dı́as continuos de ejecución en computador.
+    Recientemente se han usado modelos de redes neuronales, los cuales son
+intensivos en uso de recurso computacional; esto dificulta el proceso de evalua-
+ción de sus pronósticos, pero aun ası́ no han dado muestra de mejorar otros
+modelos en el trabajo de pronosticar (Misas, López & Querubı́n 2002).
+
+
+3.     Regresión no paramétrica
+    Con el objeto de introducir conceptos, en este capı́tulo se presenta la es-
+timación no paramétrica de densidades condicionales, o dicho de otro modo,
+funciones de regresión, lo cual es básico para entender las estimaciones no pa-
+ramétricas en modelos de series de tiempo. Con el ánimo de ilustrar las ideas
+se presenta un ejemplo. La estimación no paramétrica de densidades no con-
+dicionales y resultados básicos de estimación kernel son dejados como anexo
+A.
+   Como lo escribe Härdle (1990), la aproximación no paramétrica a la es-
+timación de curvas de regresión tiene cuatro propósitos principales. Primero,
+proveer un método versátil de explorar una relación general entre dos variables.
+Segundo, generar una predicción de observaciones aún no hechas, sin referencia
+
+94                                               Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+a un modelo paramétrico fijo. Tercero, proporcionar una herramienta para en-
+contrar observaciones espurias, mediante el estudio de la influencia de puntos
+aislados. Cuarto, constituye un método flexible de sustitución de observacio-
+nes faltantes o atı́picas y permite interpolar entre valores adyacentes de las
+variables exógenas.
+    Dentro del marco de regresión no paramétrica se pueden citar además de
+los métodos basados en kernel o suavizamiento, los de estimación basada en
+los k vecinos más cercanos (k-nearest neighbor ), las estimaciones con series
+ortogonales, regresión cuantı́lica y los suavizamientos de Splines. El presente
+trabajo se centra en los basados en metodologı́a kernel, la cual se describe a
+continuación.
+
+
+3.1.     Estimación de regresión por el método kernel
+
+    Se consideran las variables aleatorias bidimensionales, independientes e idénti-
+camente distribuidas (X1 , Y1 ), . . . , (Xn , Yn ). Suponiendo que existe una función
+r(.) la cual modela la relación entre la respuesta Yi y la co-variable Xi , ası́:
+Yi = r(Xi ) + εi , y además que E(εi |Xi ) = 0, se puede mostrar que la aproxi-
+mación optima a Yi , en el sentido de menor error cuadrático medio, está dada
+por la esperanza condicional,
+
+                          r(x) = E(Yi |Xi = x),            x ∈ R,
+
+nótese que no se hace ningún supuesto sobre la linealidad de dicha relación.
+     Si se definen las funciones:
+
+                                             Z
+                                   f (x) =        f (x, y)dy,
+
+la densidad marginal de X, donde f (x, y) es la densidad conjunta, sea:
+
+                                             Z
+                                   ϕ(x) =        yf (x, y)dy,
+
+entonces, la esperanza condicional de Yi dado Xi = x es,
+
+                               Z
+                                    f (x, y)y      ϕ(x)
+                      r(x) =                  dy =       ,      x ∈ R.
+                                      f (x)        f (x)
+
+Un pronóstico no paramétrico de la inflación colombiana                    95
+
+
+   Un estimador kernel de f (x), basado en las n observaciones, es:
+                                     n    µ        ¶
+                                 1 X        x − Xi
+                      fn (x) =          K            ,
+                                nhn i=1       hn
+
+donde K(.) es una función simétrica alrededor de cero, continua, acotada, no
+necesariamente positiva en todo su soporte e integrable (detalles en el anexo A,
+ecuación 34, haciendo d = 1), análogamente, un estimador de ϕ(x) es (Pagan
+& Ullah 1999, págs. 83-84):
+                                 n     µ        ¶
+                             1 X         x − Xi
+                   ϕn (x) =          K           Yi , x ∈ R.
+                            nhn i=1        hn
+
+   El estimador kernel de r(x), basado en n observaciones, está definido como:
+                                            ϕn (x)
+                              rn (x) =             ,    x ∈ R;
+                                            fn (x)
+rescribiendo esta función se obtiene:
+                                             n
+                                             X
+                                rn (x) =           Wni (x)Yi ,
+                                             i=1
+
+donde4 :                                          ¶
+                                                  µ
+                                           x − Xi
+                                              K
+                                             hn
+                            Wni (x) = n µ           ¶.
+                                      P      x − Xs
+                                         K
+                                     i=1       hn
+
+   Ası́, el estimador de regresión kernel de E(Yi |Xi = x) es:
+                                     µ        ¶
+                               P
+                               n       x − Xi
+                                   K           Yi
+                                         hn
+                     rn (x) = i=1n µ           ¶ , x ∈ R,                    (5)
+                                P       x − Xi
+                                    K
+                                i=1       hn
+el cual puede verse como un promedio ponderado de los Y , donde el peso de-
+pende de la distancia entre Xi y x, la cual es cuantificada por la función K(.);
+en general el procedimiento de ponderación asigna el mayor peso a puntos cer-
+canos a x, y menor o ningún peso a puntos apartados de x. Este es precisamente
+el estimador de Nadaraya-Watson; véase Bosq (1998) para detalles adicionales.
+  4 Se debe usar la convención W
+                                    ni (x) = 0 si el denominador es cero.
+
+96                                       Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+    Las ponderaciones kernel definen una vecindad de puntos alrededor de x.
+El suavizador kernel puede ser entendido como un polinomio de ajuste local
+constante. Extensiones naturales a esta idea son las regresiones polinómicas
+locales, esto es, ajustar una regresión lineal local, un ajuste cuadrático local,
+etc. Propiedades teóricas deseables son obtenidas con esta estrategia. En la
+práctica, muchas veces resulta suficiente con la regresión lineal local. Véase
+Fan & Gijbels (1996).
+
+
+3.2.     Ejemplo de regresión no paramétrica
+
+    Este ejemplo, más que detallar el uso de la regresión no paramétrica, preten-
+de ilustrar lo crı́tico de la selección del ancho de banda. El ejemplo está básado
+        ¡ Kohler,
+en Györfi,         ¢ Krzizak & Walk (2002); en ese caso Yi = r(xi ) + εi , donde
+εi ∼ N 0, var(εi ) , var(εi ) = 0,2 − 0,1 cos(2πxi ) y
+                      
+                      
+                        (x + 2)2 /2               si −1 ≤ x < −0,5,
+                      
+                         x/2 + 0,875               si   −0,5 ≤ x < 0,
+             r(x) =                    2
+                      
+                        −5(x   − 0,2)   + 1,075   si    0 ≤ x < 0,5,
+                      
+                         x + 0,125                 si    0,5 ≤ x < 1,
+
+
+
+
+                           Gráfica 1: Datos simulados.
+
+
+donde x es generado aleatoriamente como una variable normal estándar trun-
+cada al intervalo [−1, 1]; ası́, la función r(x) es polinomial a trazos, con dis-
+continuidades; nótese además la heterocedasticidad del término de error. La
+
+Un pronóstico no paramétrico de la inflación colombiana                     97
+
+
+gráfica 1 muestra la nube de puntos de los n = 400 datos simulados; de allı́,
+se nota que el ojo humano no es capaz de ver con claridad cuál puede ser la
+función de regresión.
+    La gráfica 2 muestra el modelo teórico junto con la lı́nea de ajuste que
+se obtendrı́a con un modelo paramétrico lineal. Obviamente, la aproximación
+lineal no es una muy buena alternativa.
+
+
+
+
+Gráfica 2: Datos simulados, lı́nea continua relación simulada, lı́nea a trazos
+ajuste lineal.
+
+
+
+
+Gráfica 3: Dos estimaciones kernel, a trazos h = 0,01, lı́nea continua h = 0,4.
+
+    La gráfica 3 muestra dos ajustes obtenidos por el método kernel. El primero,
+la lı́nea a trazos, se obtiene con el kernel gaussiano y usa h = 0,01, lo cual
+
+98                                     Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+
+
+            Gráfica 4: Estimación kernel, con h óptimo, h = 0,1527.
+
+
+produce sub-ajuste (poco suavizamiento), en el sentido de que el ajuste sigue
+muy de cerca los datos originales. El segundo, la lı́nea continua, se obtiene con
+h = 0,4, generando sobre-ajuste (suavizamiento excesivo).
+    La gráfica 4 muestra, junto a la relación teórica, el ajuste kernel con se-
+lección de ancho de banda que señala el método plug-in, en el que se sugiere
+h=σ  bx n−1/5 , en este caso h = 0,1527. Los expertos recomiendan, en cuanto sea
+posible, recurrir a la inspección visual del ajuste obtenido para varios anchos
+de banda y tener en cuenta que es menos dañino excederse un poco en suavi-
+zamiento que en sobre-ajuste. Ası́ queda en evidencia la importancia de una
+adecuada selección del ancho de banda. Los problemas son mucho más graves
+cuando la regresión es múltiple, esto es, con varios regresores. De la construc-
+ción del estimador se encuentra que la metodologı́a es menos influenciable a
+valores extremos y situaciones atı́picas que los modelos paramétricos. Otras
+aplicaciones, extensiones y detalles se pueden encontrar ilustradas en Härdle
+(1990).
+
+
+3.3.     Funciones kernel
+
+    A continuación se mencionan las funciones kernel más usadas en aplicaciones
+                                                                      ³ ´ pero se
+prácticas. Con fines ilustrativos se presentan los kernel estándar, K(u),
+debe tener en cuenta que en la practica se utiliza Kh (u) = h−1 K uh .
+
+     Kernel uniforme: Asigna peso de h1 por igual a todas las observaciones
+
+Un pronóstico no paramétrico de la inflación colombiana                    99
+
+
+que están a distancia no mayor de h y cero a las demás.
+                                         1
+                                K(u) =     I[−1,1] (u).
+                                         2
+
+
+
+
+                            Gráfica 5: Kernel uniforme.
+
+
+   Kernel triangular: Asigna pesos de h1 a observaciones coincidentes y el
+peso de las otras decrece linealmente hasta un peso de cero a las que están a h
+o más lejos.                     ¡       ¢
+                           K(u) = 1 − |u| I[−1,1] (u).
+
+
+
+
+                           Gráfica 6: Kernel triangular.
+
+
+   Kernel Epanechnikov: Para las observaciones que están a distancia de 0
+a h asigna pesos entre 0,75 y cero, con decrecimiento cuadrático. Las que están
+a una distancia de h o mayor tienen peso cero.
+                                   3¡       ¢
+                          K(u) = 1 − u2 I[−1,1] (u).
+                                   4
+
+100                                     Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+
+
+                        Gráfica 7: Kernel Epanechnikov.
+
+
+    Kernel bicuadrado: Los pesos para observaciones cercanas son cuando
+más de 0,93 con decrecimiento polinomial cuártico hasta llegar a cero, cuando
+la distancia es de h o mayor.
+
+                                15 ¡             ¢
+                      K(u) =         1 − 2u2 + u4 I[−1,1] (u).
+                                16
+
+
+
+
+                          Gráfica 8: Kernel bicuadrado
+
+
+    Kernel gaussiano: Asigna pesos de acuerdo con una densidad normal
+estándar. Observaciones cuya distancia oscila entre cero y 1 reciben peso entre
+0,4 y 0,2; las que están a distancia 3 reciben peso de 0,0039 y prácticamente cero
+el resto de observaciones. Es un kernel muy popular, con soporte no compacto
+y diferenciable en todo su soporte o recorrido. En este caso el ancho de banda
+
+Un pronóstico no paramétrico de la inflación colombiana                      101
+
+
+en Kh (u) desempeña el papel de desviación estándar.
+                                           µ        ¶
+                                   1           1
+                         K(u) = √ exp − u2 .
+                                   2π          2
+
+
+
+
+                           Gráfica 9: Kernel gaussiano.
+
+
+   Kernel tri-cúbico: Es similar al Epanechnikov pero más plano en la cima,
+con la ventaja teórica de que es diferenciable en los lı́mites de su soporte (|u| =
+1)
+                                   ¡        ¢3
+                           K(u) = 1 − |u|3 I[−1,1] (u).
+
+
+
+
+                           Gráfica 10: Kernel tri-cúbico.
+
+
+    Kernel Dirichlet: Los pesos son asignados según ondas senosoidales de
+magnitud decrecientes, con un “lóbulo principal” o mayor alrededor de cero
+y lóbulos laterales o menores a los dos lados. Este kernel resulta de soporte
+
+102                                      Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+no acotado. Tiene la particularidad de no ser siempre positivo y es usado en
+análisis espectral; véase Prietsley (1984).
+                                          ¡           ¢
+                                       sen (M + 0,5)u
+                             K(u) =                     .
+                                         2π sen(0,5u)
+
+
+
+
+                      Gráfica 11: Kernel Dirichlet, M = 2.
+
+
+    De las anteriores funciones kernel y de otras que existen en la literatura, las
+más usadas son la función tri-cúbico, Epanechnikov y la gaussiana soportada
+en sus propiedades estadı́sticas y asintóticas. Dado que la elección de la función
+kernel no afecta marcadamente los resultados, como es aceptado ampliamente
+en la literatura, en este trabajo se usa el kernel gaussiano, como se explica más
+adelante. Véase Hastie, Tibshirani, Friedman & Friedman (2002).
+
+
+4.     Implementación del método no paramétrico
+       en series de tiempo
+    Cuando un estimador kernel es aplicado a datos dependientes como en el
+caso de series de tiempo, el efecto por la dependencia entre las observacio-
+nes afecta solamente un pequeño intervalo de tiempo y no a todos los datos
+(Heiler 1999). Este hecho reduce la dependencia entre las estimaciones, por lo
+que muchas de las técnicas desarrolladas para datos independientes pueden ser
+usadas en el caso de series de tiempo. Sin embargo, dentro de las hipótesis
+se encuentra el que las observaciones sean asintóticamente independientes, lo
+
+Un pronóstico no paramétrico de la inflación colombiana                                      103
+
+
+que ha sido estudiado ampliamente por varios autores para los casos que se
+presentan en este capı́tulo.
+
+
+4.1.      Estacionarización
+
+    El primer paso de la implementación de los métodos no paramétricos es la
+estacionarización de los datos, que se lleva a cabo estabilizando la varianza y
+removiendo la tendencia, si es del caso; sin embargo, algunos autores afirman
+que si los cambios en la media o la varianza para las series de tiempo no
+estacionarias son leves, las técnicas no paramétricas siguen siendo igualmente
+efectivas5 .
+
+
+4.2.      Notación y suposiciones generales
+
+    Sea {Zt } un proceso observado de serie de tiempo univariado estrictamente
+estacionario6 con 1 ≤ t ≤ n. En la práctica, el supuesto de variables inde-
+pendiente e idénticamente distribuidas difı́cilmente se cumple, mientras que el
+supuesto de un proceso asintóticamente independiente o mixing 7 y no necesaria-
+mente distribuido idénticamente es más simple de mantener. Estos supuestos
+han sido verificados para procesos gaussianos (Ibragimov & Rozanov 1978) y
+para procesos ARIMA no gaussianos (Pham & Tran 1985). Sin embargo, esta
+suposición es muy difı́cil de verificar en la práctica en situaciones generales.
+    Como tercer supuesto, {Zt } sigue un proceso d-markoviano8 (suposición H),
+donde d es llamado el coeficiente de Markov. Dada la realización z1 , z2 , . . . , zn
+se desea predecir la variable aleatoria no observada Zn+m , m ≥ 1 donde m es
+el horizonte de predicción.
+    Para este propósito se construye el proceso asociado {Xt , Yt }, donde
+
+
+                                   Xt = (Zt , . . . , Zt−d+1 ),                                  (6)
+   5 Véase Bosq (1998, pág. 88), donde se menciona el método cynical que consiste en ignorar
+
+el componente determinı́stico de la serie observada, siendo este componente el que podrı́a
+inducir la no estacionaridad.
+   6 Z es estrictamente estacionario si (Z , . . . , Z      distribución
+      t                                   t           t+n ) −−−−−−−−→ (Zt+g , . . . , Zt+n+g ) para
+todo entero t, g, n ≥ 1. Esto indica que los dos vectores aleatorios tienen la misma función
+de distribución conjunta.
+   7 Veáse anexo B.
+   8 Para un proceso Z de Markov se cumple: F (Z |Z
+                        t                                t t−s s ≥ 1) = F (Zt |Zt−1 , . . . , Zt−d ),
+con F la función de distribución acumulativa de probabilidad.
+
+104                                      Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+y
+                          Yt = Zt+m ,     t ∈ {d, . . . , n}.                  (7)
+
+     Considerando el estimador de regresión kernel rn , basado en los datos
+z1 , z2 , . . . , zn para E(Yn |Xn ) = E(Zn+m |Zn , . . . , Zn−d+1 ) es
+
+                                              n−m
+                                              X
+                               b n |Xn ) =
+                      rn (x) = E(Y                   Wtm (x)Yt ,
+                                               t=d
+
+donde                                µ      ¶
+                                     x − Xt
+                                 Kd
+                                       hn
+                    Wtm (x) = n−m µ           ¶,          x ∈ Rd .             (8)
+                               P       x − Xt
+                                   Kd
+                               t=d       hn
+
+    Nótese que la fijación del ancho de banda hn controla el tamaño de la
+vecindad local y debe ser un valor real positivo que debe tender a cero cuando
+n tiende a infinito. La función de Kd (.) es una función kernel d-variada, con
+integral múltiple igual a uno y ella controla la forma de los pesos. Finalmente,
+x = Xn = (Zn , . . . , Zn−d+1 ) se llamará el bloque de referencia con el cual
+se comparan los otros bloques. Ası́, una secuencia de observaciones o bloque,
+tendrá mayor peso en el pronóstico si es más parecido en términos de distancia
+al bloque de referencia, que un bloque que no lo sea.
+    La gráfica 12 ilustra esas ideas, cuando se tiene un proceso markoviano
+de orden d = 3. Dependiendo de la amplitud de banda, hn , y si el soporte del
+kernel es acotado, las secuencias en negrilla serán consideradas en la generación
+del pronóstico; las demás no.
+   Ahora, fijado un h, las secuencias pasadas que se han de considerar en el
+pronóstico son aquellas que caen completamente dentro de la banda a trazos
+que se muestra en la gráfica 13, y los pesos son asignados acorde con la función
+kernel usada.
+
+
+4.3.    Predictores no paramétricos basados en kernel
+
+    La predicción de las variables Zn+m ó Yn consiste en encontrar la variable
+aleatoria más cercana (con respecto a cierta norma), conociendo todo el pasado
+de la serie. Este problema puede ser visto ası́: suponga que existe una función
+r(.) que modela la relación entre la respuesta Y y la co-variable X, y que
+
+Un pronóstico no paramétrico de la inflación colombiana                  105
+
+
+
+
+         Gráfica 12: Secuencias por considerar en el pronóstico kernel.
+
+
+
+
+                   Gráfica 13: Vecindades de sendas pasadas.
+
+106                                          Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+r(.) está definida a través de la distribución condicional9 . Dada una función
+                       ¡ con mı́nimo único
+de pérdida convexa l(.)                 ¢    en cero, se define rb(x) como la que
+minimiza la media E l(Y − a)|X = x , con respecto a a, es decir:
+                                           ¡              ¢
+                         rb(x) = arg mı́n E l(Y − a|X = x) .
+                                      a∈R
+
+entonces estimando no paramétricamente r(.) por rbn (.) y calculando rbn (Xn ) se
+                                                     bn+m . Tres alternativas han
+genera Ybn . De esta forma se obtiene la predicción Z
+sido propuestas en la literatura: media, mediana y moda condicional, depen-
+diendo de la función de pérdida que se considere.
+
+
+4.3.1.    Media condicional
+
+    Se puede ver que con l(u) = u2 se llega a la función de media condicional
+rb(x) = E(Y |X = x). Entonces usando la suposición H y estimando rb(.) se
+obtiene:
+                                     n−m
+                                     X
+                           rbn (x) =     Wtm (x)Yt .                       (9)
+                                            t=d
+
+Aquı́ el predictor no paramétrico m-pasos adelante de la media es:
+                                         n−m
+                                         X           ¡ ¢
+                               Zbn+m
+                                 med
+                                     =            Wtm Xn Yt .                           (10)
+                                          t=d
+
+En Collomb (1984) se encuentra que, con alguna condición de regularidad, es
+posible demostrar que:
+                                ¯            ¯
+                                ¯ bmed       ¯ c.s.
+                                ¯Zn+m − Zn+m ¯ −−→ 0.
+
+
+4.3.2.    Mediana condicional
+
+   Ahora se asume que la distribución condicional de Y dado X es más pesa-
+da en un extremo o asimétrica. Entonces es mejor usar la mediana en vez de
+la media para predecir valores futuros, teniendo en cuenta que la mediana es
+ampliamente resistente en estos casos. En este ejemplo la función de pérdida
+   9 Cuando se ha observado una realización x = (z , . . . , z ) de longitud n de un proceso
+                                                t      1       n
+estocástico y se desea obtener la predicción del valor zn+m con el criterio de minimizar el
+error cuadrático medio (ECM), el predictor ẑn+m que minimiza el ECM es la esperanza de
+la distribución condicionada ẑn+m = E[zn+m | xt ] como predictor óptimo.
+
+Un pronóstico no paramétrico de la inflación colombiana                    107
+
+
+es dada por l(u) =                   ¢ deªrb(x) lleva a la función mediana condi-
+                   © |u|, y¡ la solución
+cional rb(x) = ı́nf y : F y|X = x ≥ 21 . Entonces, usando la suposición H y
+estimando rb(.) se obtiene:
+                                ½       n−m
+                                        X                           ¾
+                                                                1
+                   rbn (x) = ı́nf y :         Wtm (x)I{Yt ≤y} ≥         .    (11)
+                                                               2
+                                        t=d
+
+
+Aquı́ el estimador no paramétrico de la mediana para m pasos adelante está da-
+do por:
+                                ½ n−mX                         ¾
+                                                             1
+                Zbn+m
+                  mediana
+                          = ı́nf y :     Wtm (Xn )I{Yt ≤y} ≥     ,         (12)
+                                                             2
+                                        t=d
+
+bajo algunas condiciones de regularidad se prueba que (Gannoun 1990):
+                            ¯            ¯
+                            ¯ bmediana   ¯ c.s.
+                            ¯Zn+m − Zn+m ¯ −−→ 0.
+
+
+4.3.3.   Moda condicional
+
+    Algunos autores propusieron un método para producir ¡ predictores
+                                                                  ¢      no para-
+métricos basados en la función moda θ(x) = arg máxy f Y |X = x , esta función
+puede ser estimada como sigue (Collomb, Hardle & Hassani 1987). Suponga que
+se tiene una función de pérdida no convexa con mı́nimo único l(u) = 0 cuando
+                                     ¡ la solución
+u = 0 y l(u) = 1 en otro caso. Entonces        ¢    de rb(x) conduce a la función
+moda condicional rb(x) = arg máx f Y |X = x . Después, usando la suposición
+                                y∈R
+H y estimando rb(.), se obtiene:
+                                         n−m
+                                                         Ã      !
+                                         X               y − Yt
+                  rb(x) = arg mı́n h−1          Wtm (x)K          .          (13)
+                               y∈R                         hn
+                                          t=d
+
+Consecuentemente el predictor no paramétrico m pasos adelante es:
+                                 n−m
+                                                Ã        !
+                                 X                y − Yt
+              Zbn+m = arg máx
+                moda                   m
+                                     Wt (Xn )K            ;                  (14)
+                             y∈R                    hn
+                                        t=d
+
+bajo algunas condiciones de regularidad se ha demostrado que:
+                           ¯              ¯
+                           ¯ bmoda        ¯ c.s.
+                           ¯Zn+m − Zn+m ¯ −−→ 0.
+
+Todos los predictores dados pueden ser interpretados con respecto a los pe-
+sos Wtm (Xn ). Una observación con peso grande desempeña un papel más
+
+108                                         Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+importante en la elaboración de los predictores. Los pesos estarán cerca de
+cero si el correspondiente bloque Xt contiene un outlier ; sea éste Zt0 , (t0 ∈
+{t, . . . , t − d + 1}). Ası́, la metodologı́a de estimación kernel es robusta a la
+presencia de valores atı́picos.
+
+
+4.4.     Elección de coeficientes
+
+4.4.1.   Elección de la función kernel K
+
+   La función kernel más usada en el caso multivariado es el producto kernel:
+                                                     d
+                                                     Y
+                           Kd (x1 , . . . , kd ) =         K(xj ),
+                                                     j=1
+
+
+donde la función kernel K(.) está definida en la recta real. Será usado el kernel
+gaussiano, definido como:
+                                                Ã d       !
+                                          − d      X x2
+                                                        i
+              Kd (x1 , . . . , kd ) = (2π) 2 exp −          , xi ∈ R.           (15)
+                                                   i=1
+                                                       2
+
+    Esta función corresponde a la idea de dar pesos grandes¯ a Xt cuando¯
+está cercano a Xn usando la norma kXn − Xt k∞ = sup0<t0 <k+1 ¯Zn−t0 − Zt−t0 ¯
+(Matzner-Løber, Gannoun & Gooijer 1998). En este caso, de no presencia de
+variables exógenas o explicativas, no se requiere estandarizar las variables xi
+(Hastie et al. 2002, pág. 174).
+
+
+4.4.2.   Elección del coeficiente de Markov d
+
+    Intuitivamente se podrı́a escoger el d lo más grande posible para no dejar
+de considerar demasiada información del pasado; no obstante, la elección de d
+está limitada por la cantidad de datos disponible. Debe ser evidente que cuando
+el valor del coeficiente de Markov crece, la cantidad de datos disponibles para
+predicción decrece.
+    Matzner-Løber et al. (1998) proponen un método empı́rico para encontrar
+el d óptimo:
+   Sea Zbt (d, hn ) la predicción en el tiempo t, dependiendo del coeficiente de
+Markov d y del ancho de banda hn obtenido para uno de los tres métodos
+(media, mediana, moda condicional). Sea dmáx un valor fijo, el cual es bastante
+
+Un pronóstico no paramétrico de la inflación colombiana                           109
+
+
+grande para capturar cualquier efecto estacional en los datos. Entonces, para
+d ∈ {1, . . . , dmáx } se define:
+                                        X¯                  ¯
+                         f1 (d) = p−1    ¯Zt − Zbt (d, hnd )¯                       (16)
+                                         t
+                                        X©                     ª2
+                         f2 (d) = p−1        Zt − Zbt (d, hnd )                     (17)
+                                         t
+                                     ¯                  ¯
+                         f3 (d) = sup¯Zt − Zbt (d, hnd )¯,                          (18)
+
+donde t = n − p, . . . , n. El parámetro de suavizamiento hnd será definido des-
+pués. El valor de p se toma como p = [ n4 ] para series de tiempo con n < 100, y
+para series con tamaño igual o superior a cien se usa p = [ n5 ], donde [ ] repre-
+senta la parte entera del argumento. Si las funciones fj (d), j ∈ {1, 2, 3} no se
+incrementan después de cierto valor d, se escoge el valor de fj (d) con el cual
+ocurre la estabilización.
+    En otro caso se escoge arg mı́nd fj (d); de esta forma se encuentran tres va-
+lores, d1 , d2 , d3 , y se toma d = máxj dj . Esta aproximación es rápida pero
+puede ocasionar problemas para series de tiempo que tienen pocas observacio-
+nes (Auestad & Tjøstheim 1990).
+
+
+4.4.3.   Elección del ancho de banda hn
+
+   El ancho de banda determina el suavizamiento del pronóstico. Un ancho de
+banda pequeño prácticamente reproduce los datos, mientras que uno extrema-
+damente grande produce como estimación una constante.
+   Si h crece, la varianza del estimador decrece mientras que el sesgo se in-
+crementa y viceversa. Usualmente el ancho de banda óptimo es seleccionado al
+balancear el trance entre varianza y el cuadrado del sesgo, mediante la mini-
+mización de alguna medida global de error.
+   Generalmente para la estimación de la densidad se usa la siguiente elección
+de h (Deheuvels 1977):
+                                   bn n−1/(d+4) ,
+                             hnd : σ                                       (19)
+donde σ    bn es el estimador de la desviación estándar de la serie de tiempo {Zt ; t =
+1, . . . , n}. Esta elección garantiza una rata óptima de convergencia con respecto
+al criterio del error cuadrado medio. Sin embargo, no es óptima en todos los
+casos, puesto que no se toman en cuenta las condiciones mixing. Otra elección
+usada es:
+                                 b
+                                 hn = c × hnd , c ∈ (0, 5].                          (20)
+
+110                                          Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+    Dos procedimientos son utilizados para encontrar c. El primero es el de
+validación cruzada y el segundo es el método empı́rico.
+    Validación cruzada: Este procedimiento ha sido estudiado por muchos auto-
+res (Györfi, Härdle, Sarda & View 1989); su objetivo es encontrar c que mini-
+mice alguna medida de error cuadrático. Dentro de esta categorı́a existen dos
+posibilidades.
+   Un procedimiento se llama validación cruzada local (VCL), el cual encuentra
+un valor de h para cada horizonte de pronóstico, y el otro es la validación
+cruzada global (VCG) donde se encuentra un valor común de h para todos los
+horizontes de predicción. Las formas de cómputo son las siguientes:
+                                           Xµ
+                                           n−m                    ¶2
+          V CL(c, m) = (n − k − c + 1) −1       b
+                                                Zt+m|t (c) − Zt+m ,        (21)
+                                                    t=d
+
+                             c = arg mı́n V CL(c, m),
+                             b
+                                        c∈[0,5]
+y
+                                        n−M
+                                         X               M µ
+                                                         X                    ¶2
+      V CG(c) = (n − M − k + 1)    −1
+                                               M    −1       b
+                                                            Zt+m|t (c) − Zt+m      (22)
+                                         t=k             m=1
+
+                              c = arg mı́n V CG(c),
+                              b
+                                          c∈[0,5]
+
+donde Zbt+m|t (c) denota la versión de dejar la t-ésima observación por fuera y
+M es el horizonte máximo de predicción.
+   Método empı́rico: Este procedimiento usa parte de los datos pasados para
+encontrar el ancho de banda. El método empı́rico local (MEL) y el método
+empı́rico global (MEG) son los siguientes:
+                                        n−m
+                                        X
+                              −1             |Zbt+m (c) − Zt+m |
+             M EL(c, m) = p                                      × 100             (23)
+                                   t=n−p−m+1
+                                                   |Zt+m |
+
+                            c = arg mı́n M EL(c, m),
+                            b
+                                        c∈[0,5]
+                               n−M
+                                X              M
+                       −1                   1 X |Zbt+m (c) − Zt+m |
+          M EG(c) = p                                               × 100          (24)
+                                            M m=1     |Zt+m |
+                            t=n−p−M +1
+
+                              c = arg mı́n M EG(c).
+                              b
+                                         c∈[0,5]
+
+   El primer método mencionado encuentra un valor de c para cada horizonte
+de predicción, y el segundo encuentra un valor de c para todo horizonte de
+predicción.
+
+Un pronóstico no paramétrico de la inflación colombiana                             111
+
+
+4.5.    Comparación de los métodos
+
+    Seis medidas se usan para medir la capacidad de pronóstico dentro de mues-
+tra: el error medio (EM), el error absoluto medio (EAM), el error absoluto
+porcentual medio (EAPM), la raı́z del error cuadrático medio (RECM), la raı́z
+del error cuadrático medio porcentual (RECMP) y la estadı́stica U de Theil.
+Sus fórmulas aparecen a continuación:
+
+                                        p−m
+                                        X         ¡                    ¢
+            EM (m) = (p − m + 1)−1                 Zn−p+r+m − Zbn−p+r+m ,              (25)
+                                            r=0
+                                            p−m
+                                            X      ¯                     ¯
+           EAM (m) = (p − m + 1)−1                 ¯Zbn−p+r+m − Zn−p+r+m ¯,            (26)
+                                             r=0
+                                      p−m ¯                   ¯
+                                      X ¯Zbn−p+r+m − Zn−p+r+m ¯
+                                 −1                  ¯         ¯
+    EAP M (m) = (p − m + 1)                          ¯Zn−p+r+m ¯             × 100,    (27)
+                                      r=0
+               v
+               u
+               u               Xµ
+                               p−m                                            ¶2
+               t
+     RECM (m) = (p − m + 1) −1     Zb               n−p+r+m − Zn−p+r+m             ,   (28)
+                                            r=0
+               v
+               u
+               u              X µ Zbn−p+r+m − Zn−p+r+m
+                              p−m                           ¶2
+  RECM P (m) = t(p − m + 1)−1                          × 100 ,
+                              r=0
+                                        Zn−p+r+m
+                                                                                       (29)
+                                    P¡
+                                   p−m                              ¢2
+                                            Zn−p+r+m − Zbn−p+r+m
+                                   r=0
+                U − T heil(m) =                                          ,             (30)
+                                     P¡
+                                    p−m                            ¢2
+                                             Zn−p+r+m − Zn−p+r
+                                      r=0
+                                        £ ¤
+donde n es el tamaño de la serie, p = n5 indica el número de observaciones que
+son quitadas al final de la serie para hacer comparaciones dentro de muestra,
+r = 1, . . . , p indica el aumento de tamaño de muestra.
+
+
+4.6.    Comparación estadı́stica de los métodos
+
+   Bajo el enfoque de Diebold & Mariano (1995) –DM en adelante–, se parte
+de la hipótesis nula de que el nuevo modelo no mejora al modelo existente
+o modelo referencia, contra la alternativa de que el modelo nuevo mejora al
+modelo referencia. Interesa por tanto rechazar la hipótesis nula.
+
+112                                           Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+
+
+                                      H0 : DMi ≥ 0,
+                                      H1 : DMi < 0.
+
+     Para i = 1, 2, 3, usando
+
+                         DM1 = (0 − P N )2 − (0 − P E)2 ,
+                         DM2 = |0 − P N | − |0 − P E|,
+                               ¯            ¯ ¯              ¯
+                               ¯    PN      ¯ ¯      PE      ¯
+                               ¯
+                         DM2 = ¯            ¯ −¯¯            ¯,
+                                 obsP N − 1 ¯     obsP E − 1 ¯
+
+
+donde: O = Dato observado, P E = Pronóstico modelo referencia, P N =
+Pronóstico modelo nuevo, Obs = Número de observaciones usadas para pro-
+nosticar.
+    Bajo la hipótesis nula, tanto DM1 , DM2 como DM3 se distribuyen cada
+una como una normal estándar. Ası́, lo deseable es obtener valores para estas
+estadı́sticas menores que cero (0) con p-valores pequeños.
+
+
+5.      Aplicación práctica
+
+5.1.     Datos
+
+    Para la selección de coeficientes, inicialmente se tomó la serie de inflación
+colombiana medida mensualmente a través del IPC calculado por el Departa-
+mento Administrativo Nacional de Estadı́stica, DANE, a partir de enero de
+1980 hasta septiembre de 2002; contiene un total de 273 datos. Fuente: Ar-
+chivos del Banco de la República Bogotá Colombia10 . Computacionalmente se
+trabajan cifras en escala (0,1).
+     Con el objeto de encontrar coeficientes óptimos y comparar los pronósticos
+de este modelo con los de los modelos paramétricos, se tomaron datos desde
+febrero de 1980 hasta marzo de 1998 (n − p + r datos, con p = [ n5 ] y r =
+1, . . . , n − p), es decir, iniciando con 219 observaciones; luego se aumenta el
+tamaño de muestra hasta septiembre de 2002.
+  10 A pesar de ser deseable en la práctica estadı́stica –especialmente la no paramétrica–
+
+utilizar la mayor cantidad de información posible, en este trabajo se descartan cifras previas
+por presentar cambios muy bruscos en niveles, además de hacer comparables los resultados
+con otros modelos que usan la misma información.
+
+Un pronóstico no paramétrico de la inflación colombiana                             113
+
+
+5.2.     Estacionarización
+
+    En la gráfica 14 se presenta la evolución de la inflación colombiana. Se pue-
+de apreciar que la serie no tiene media constante, y aunque parece presentar
+cambio de varianza, se ha considerado que de existir y modelar los mismos11 ,
+esto no afecta significativamente los pronósticos bajo los métodos no paramétri-
+cos, al igual que no lo hace en los métodos paramétricos tipo GARCH. Para
+estabilizar la media se realizó una diferenciación de orden uno; en la gráfica 15
+se ve la inflación diferenciada, que muestra un comportamiento constante en la
+media. Se deja para futuro trabajo la detección y el modelaje de los posibles
+cambios en varianza.
+
+
+
+
+                          Gráfica 14: Inflación colombiana.
+
+
+
+
+                          Gráfica 15: Inflación diferenciada.
+
+  11 Esto se puede llevar a cabo, entre otras alternativas, en el espı́ritu de Hardle & Yang
+
+(1996).
+
+114                                    Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+5.3.     Predictor usado
+
+    El predictor usado es el de la media condicional mencionado en la sección
+4.3.1, ecuación 10. Este predictor fue utilizado porque la serie no presenta
+valores atı́picos; además, el uso de los diferentes predictores no paramétricos
+basados en kernel mencionados en la sección 4.3 genera resultados similares,
+según conclusiones de estudios realizados para series de tiempo con más de 100
+observaciones (Matzner-Løber et al. 1998, Gooijer & Zerom 2000).
+   Para obtener los pesos que se le da a cada uno de los vectores de orden d
+comparados con el último vector de los n − p + r elementos de la serie, se ha
+hecho uso de la función kernel gaussiana multivariada no correlacionada de la
+ecuación 15, siguiendo conclusiones que aseguran que cualquier elección de la
+función continua usada presenta resultados similares.
+
+
+5.4.     Elección de coeficientes
+
+5.4.1.   Elección inicial de coeficientes
+
+    Elección del coeficiente de Markov óptimo d: Se hizo por medio de las tres
+funciones fj (d) j = 1, 2, 3 vistas en la sección 4.4.2, con anchos de banda de
+acuerdo con cada d, dados por el h de la fórmula 19. Las funciones tomaron
+valores d = 1, . . . , 20. Tomándose 20 como el valor máximo para alcanzar a
+capturar la estacionalidad en los datos, no se consideran valores mayores por
+la excesiva pérdida en información.
+   Las gráficas para estas tres funciones se encuentran a continuación:
+
+
+
+
+                          Gráfica 16: Función f1 (d).
+
+
+   Se puede ver que las funciones f1 (d) y f2 (d) decrecen antes e incrementan
+
+Un pronóstico no paramétrico de la inflación colombiana   115
+
+
+
+
+                            Gráfica 17: Función f2 (d).
+
+
+
+
+                            Gráfica 18: Función f3 (d).
+
+116                                          Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+a partir de d = 6 y f3 (d) hace lo mismo en d = 4. Como se tienen dos valores
+para d, se tomó el mayor de ellos como el coeficiente óptimo de Markov, esto
+es, d = 6.
+   Elección del ancho de banda óptimo hn : Se obtuvo por medio de la fórmula
+mostrada en la sección 4.4.3, ecuación 19; el valor encontrado para h con d = 6
+es hn = 0,56. Los anteriores valores de d y hn fueron usados para todos los
+horizontes de predicción. El resultado de pronósticos con dichos coeficientes no
+mejoraban los de un modelo ARIMA; se omite su presentación aquı́.
+
+
+5.4.2.    Elección posterior de coeficientes
+
+    Pensando en mejorar estos resultados se hallaron coeficientes dm y hnm para
+cada horizonte de predicción, utilizando una medida modificada del MEL que
+se presentó en la ecuación 23.
+    Este procedimiento se llevó a cabo obteniendo errores de pronóstico para
+cada m = 1, . . . , 12, tamaños de muestra n − d, . . . , n y para valores de hn =
+0,001, . . . , 0,1, . . . , 1 y de d = 1, . . . , 20. Para comparar la calidad de pronóstico
+se usó la siguiente medida:
+                                                    p−m ¯                                 ¯
+                                                    X¯                                    ¯
+  M ELM (hn , m, d) = (p − m + 1)−1                     ¯zbn−p+r+m (hn , m, d) − zn−p+r+m ¯,
+                                                        ¯                                 ¯
+                                             r=0
+
+                         ĥnm = arg mı́n M ELM (hn , m, d).
+                                      h∈(0,1]
+
+   Esta medida permitió hacer un resumen para todos los tamaños de muestra
+y encontrar los d y hn en cada horizonte de predicción para los cuales esta
+medida era mı́nima; los resultados se encuentran en la tabla 1.
+    Llama la atención el hecho de que para horizontes largos –léase 11 y 12
+meses–, el orden del proceso markoviano resulta extremadamente pequeño; esto
+puede estar siendo causado porque para dicha cantidad de rezagos comienza a
+ser evidente el problema del curso de la dimensionalidad. Dicho de otra forma,
+se disponen de pocas observaciones para estimar esas relaciones, haciendo que
+la porción de puntos que caen en los lı́mites sea muy grande cuando d crece.
+Véase, entre otros, Hastie et al. (2002).
+
+
+5.5.     Comparación de los métodos
+
+   Para la elección de dm y hnm mostrada en la tabla 1 se obtienen las medidas
+de bondad de pronóstico como se presenta en la tabla 2; ordenadas éstas por
+
+Un pronóstico no paramétrico de la inflación colombiana                    117
+
+
+
+                     Tabla 1: Resultados dm y hnm óptimos.
+                                m      dm      hnm
+                                1      12      0.007
+                                2      11      0.007
+                                3      10      0.007
+                                4       9      0.007
+                                5       8      0.006
+                                6      14      0.009
+                                7       6      0.006
+                                8      15      0.009
+                                9       4      0.004
+                                10     13      0.008
+                                11      2      0.005
+                                12      2      0.005
+
+
+RECMP, los resultados son alentadores. El perı́odo de evaluación es de enero de
+2000 a mayo de 2003. Detallando el error medio se encuentra que el método no
+paramétrico, excepto para cinco y seis meses, es el que consistentemente genera
+pronósticos con menores sesgos (absolutos) que las otras dos metodologı́as.
+Según el ordenamiento presentado, el pronóstico no paramétrico supera a los
+otros dos en 9 de las 12 ocasiones, pero si los resultados se ordenaran por
+EAM, EAPM o U-Theil, el NP supera a los ARIMA y no lineal en todos los
+horizontes, y el RECM favorece al no paramétrico en 11 de los 12 horizontes.
+Todo lo anterior muestra además la importancia de la correcta selección de los
+coeficientes d y h.
+    Los valores de las estadı́sticas DMi y sus p-valores, P DMi , se presentan
+en la tabla 3; el modelo referencia es el de caminata aleatoria. En este caso, los
+resultados no son tan favorables. No obstante que en general ninguno de los
+pronósticos muestra mejorar estadı́sticamente a los de un pronóstico ingenuo
+(caminata aleatoria), cuando de pronosticar un mes adelante se trata, el NP
+es el único que al 10 % de significación mejora el pronóstico de ingenuidad.
+Además, el NP es el que muestra menores valores de probabilidad para todas
+las estadı́sticas. No se descarta el posible problema de insuficiente tamaño de
+muestra para validar el resultado teórico de DM.
+    Queda abierta la discusión de si los pronósticos no paramétricos resultan
+o no menos persistentes, esto es, menos influenciables por la información más
+reciente utilizada, que los modelos ARIMA y STAR. Dados los resultados de
+la anterior comparación, se podrı́a conjeturar que sı́, aunque es recomendable
+hacerles un seguimiento detallado en tiempo real, antes de aseverar conclusiones
+al respecto.
+
+118                                    Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+
+                     Tabla 2: Resultados dm y hnm óptimos.
+ Modelo   m    Obs.     EM     EAM    EAPM    RECM     RECMP      U-THEIL
+
+   NP     1     41     0.01    0.22   3.01     0.30      4.20        0.89
+ ARIMA    1     41     -0.16   0.27   3.48     0.35      4.51        1.05
+  STR     1     41     0.02    0.34   4.50     0.42      5.52        1.27
+
+   NP     2     40     0.01    0.38   5.23     0.50      7.44        0.87
+ ARIMA    2     40     -0.38   0.54   7.00     0.69      9.08        1.20
+  STR     2     40     0.03    0.57   7.59     0.70      9.41        1.22
+
+   NP     3     39     0.00    0.51   7.24     0.68      10.35       0.92
+  STR     3     39     0.05    0.77   10.11    0.93      12.43       1.25
+ ARIMA    3     39     -0.64   0.83   10.96    1.01      13.73       1.37
+
+   NP     4     38     -0.04   0.63   9.00     0.83      12.65       0.97
+  STR     4     38     0.04    0.84   11.11    1.02      13.82       1.19
+ ARIMA    4     38     -0.94   1.12   14.62    1.34      18.09       1.56
+
+   NP     5     37     -0.09   0.77   11.03    0.99      14.98       1.03
+  STR     5     37     0.06    0.92   12.30    1.11      15.08       1.15
+ ARIMA    5     37     -1.20   1.39   18.30    1.63      22.07       1.69
+
+  STR     6     36     0.09    1.07   14.35    1.22      16.80       1.13
+   NP     6     36     -0.12   0.94   13.24    1.17      17.21       1.08
+ ARIMA    6     36     -1.47   1.67   22.23    1.93      26.13       1.79
+
+  STR     7     35     0.17    1.13   15.28    1.33      18.37       1.10
+   NP     7     35     -0.11   1.05   14.68    1.28      18.63       1.06
+ ARIMA    7     35     -1.71   1.93   25.95    2.21      30.05       1.82
+
+  STR     8     34     0.25    1.25   16.90    1.45      20.00       1.11
+   NP     8     34     -0.15   1.21   16.67    1.46      20.31       1.11
+ ARIMA    8     34     -1.98   2.20   29.85    2.48      34.03       1.89
+
+   NP     9     33     -0.19   1.26   17.30    1.51      20.68       1.10
+  STR     9     33     0.33    1.35   18.41    1.57      21.82       1.15
+ ARIMA    9     33     -2.29   2.49   34.03    2.77      38.03       2.01
+
+   NP     10    32     -0.23   1.33   18.09    1.62      21.61       1.13
+  STR     10    32     0.40    1.41   19.53    1.71      23.72       1.20
+ ARIMA    10    32     -2.61   2.75   37.78    3.07      42.29       2.15
+
+   NP     11    31     -0.29   1.33   18.21    1.65      22.00       1.11
+  STR     11    31     0.48    1.54   21.41    1.83      25.63       1.23
+ ARIMA    11    31     -2.95   3.03   42.05    3.36      46.77       2.27
+
+   NP     12    30     -0.33   1.33   18.21    1.65      22.08       1.08
+  STR     12    30     0.57    1.62   22.69    1.96      27.54       1.29
+ ARIMA    12    30     -3.28   3.34   46.62    3.68      51.48       2.41
+
+Un pronóstico no paramétrico de la inflación colombiana                    119
+
+
+
+                 Tabla 3: Comparación estadı́stica de los métodos.
+ Modelo     m     DM1      P− DM1    DM1      P− DM2         DM1     P− DM3
+
+   NP       1      -1.49     0.07     -1.92      0.03        -1.88    0.03
+ ARIMA      1      -0.42     0.34     -0.35      0.36        -0.35    0.36
+  STR       1      1.68      0.95     1.85       0.97        1.83     0.97
+
+   NP       2      -0.22     0.41     -0.38      0.35        -0.40    0.34
+ ARIMA      2      1.13      0.87     1.28       0.90        1.26     0.90
+  STR       2      1.70      0.96     1.83       0.97        1.88     0.97
+
+   NP       3      0.05      0.52     -0.49      0.31        -0.37    0.36
+  STR       3      1.82      0.97     1.89       0.97        1.91     0.97
+ ARIMA      3      3.05      1.00     3.10       1.00        3.02     1.00
+
+   NP       4      0.28      0.61     -0.23      0.41        -0.04    0.48
+  STR       4      1.64      0.95     1.46       0.93        1.47     0.93
+ ARIMA      4      3.67      1.00     3.66       1.00        3.61     1.00
+
+   NP       5      0.79      0.78     0.06       0.53        0.25     0.60
+  STR       5      1.35      0.91     1.07       0.86        1.16     0.88
+ ARIMA      5      3.94      1.00     3.77       1.00        3.71     1.00
+
+  STR       6      1.08      0.86     1.10       0.86        1.03     0.85
+   NP       6      1.34      0.91     0.43       0.66        0.46     0.68
+ ARIMA      6      3.88      1.00     3.65       1.00        3.67     1.00
+
+  STR       7      0.11      0.54     0.26       0.60        0.08     0.53
+   NP       7      0.26      0.60     -0.33      0.37        -0.38    0.35
+ ARIMA      7      3.91      1.00     3.51       1.00        3.51     1.00
+
+  STR       8      -0.31     0.38     -0.06      0.48        -0.13    0.45
+   NP       8      0.35      0.64     -0.01      0.50        -0.24    0.40
+ ARIMA      8      4.14      1.00     3.44       1.00        3.55     1.00
+
+   NP       9      0.49      0.69     -0.04      0.49        -0.34    0.37
+  STR       9      -0.26     0.40     0.00       0.50        -0.22    0.41
+ ARIMA      9      4.34      1.00     3.93       1.00        4.10     1.00
+
+   NP       10     0.24      0.59     -0.06      0.48        -0.39    0.35
+  STR       10     0.18      0.57     -0.06      0.48        -0.18    0.43
+ ARIMA      10     4.35      1.00     3.88       1.00        4.12     1.00
+
+   NP       11     -0.11     0.45     -0.52      0.30        -0.96    0.17
+  STR       11     0.85      0.80     0.38       0.65        0.30     0.62
+ ARIMA      11     4.35      1.00     3.98       1.00        4.21     1.00
+
+   NP       12     -0.85     0.20     -0.92      0.18        -1.29    0.10
+  STR       12     1.52      0.94     0.79       0.79        0.66     0.75
+ ARIMA      12     4.38      1.00     4.12       1.00        4.29     1.00
+
+120                                      Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+
+                 Tabla 4: Pronósticos usando la serie completa.
+                      Mes      m    dm     hm     Pronóstico
+                     Jun-03     1   12    0.007      7.6
+                     Jul-03     2   11    0.007      7.5
+                     Ago-03     3   10    0.007      7.4
+                     Sep-03     4    9    0.007      7.3
+                     Oct-03     5    8    0.006      7.1
+                     Nov-03     6   14    0.009      7.0
+                     Dic-03     7    6    0.006      6.8
+                     Ene-04     8   15    0.009      6.7
+                     Feb-04     9    4    0.004      6.6
+                     Mar-04    10   13    0.008      6.5
+                     Abr-04    11    2    0.005      6.4
+                     May-04    12    2    0.005      6.3
+
+
+5.6.     Pronósticos usando información de la serie completa
+
+    Se realizaron pronósticos para los 12 meses siguientes al final de la muestra
+disponible a la fecha. Para ello se usaron los mismos coeficientes y rezagos
+reportados en la sección 5.4.2. Los resultados se pueden ver en la tabla 4 y en
+la gráfica 19.
+    Se nota que los pronósticos presentan tendencia a decaer, y al parecer no son
+influenciados por el comportamiento de la información más reciente utilizada,
+en este caso, febrero a mayo de 2003.
+
+
+
+
+      Gráfica 19: Pronósticos de la inflación enero de 2002 a abril de 2004.
+
+Un pronóstico no paramétrico de la inflación colombiana                                  121
+
+
+6.      Conclusiones y recomendaciones
+    En este trabajo se aplicaron técnicas no paramétricas tipo kernel para ge-
+nerar y evaluar pronósticos de la inflación colombiana. Los resultados de la
+evaluación de pronósticos son alentadores, pues en general mejoran, en sentido
+estadı́stico y computacional, a los de las metodologı́as actualmente aplicadas.
+    La elección del ancho de banda h y del coeficiente de Markov d desempeña
+un papel muy importante en los pronósticos de series de tiempo, en particular
+para la inflación colombiana, usando métodos no paramétricos basados en ker-
+nel; se encontró que la elección final de los coeficientes para cada horizonte de
+predicción permite mejorar los pronósticos dados bajo los modelos paramétricos
+ARIMA y no lineal STAR.
+    En la literatura especializada se encuentran diversas ideas para encontrar
+intervalos de pronósticos bajo estos métodos no paramétricos, los cuales pueden
+aplicarse para tener, además del pronóstico puntual, un rango de su confiabili-
+dad. Johnston (1982), usando Bickel & Rosenblaty (1973); los bootstraping son
+otra alternativa aunque intensiva en cómputo.
+   Existen también en la literatura no paramétrica reportes de los efectos ad-
+versos de las condiciones de borde (“boundary conditions”) o agrupamiento en
+alguno(s) de los lı́mites internos de las bandas de suavizamiento, lo cual puede
+generar sesgos en las estimaciones. El kernel especial de Gasser & Muller (1979)
+puede ser usado para sobrellevar este problema; otra alternativa de solución es
+usar regresión lineal local o más aún polinómica local; se puede consultar Fan
+& Gijbels (1996). Otra opción serı́a usar funciones kernel, aunque normales, no
+independientes.
+    No se desea terminar sin antes resaltar el hecho de que el tema de análisis no
+paramétrico de series en el tiempo es un área de extensa aplicación no explotada
+aún en nuestro paı́s; por ello se invita a otros investigadores y académicos a
+examinar en esta prometedora área.
+
+Nota: Este documento se basa en el trabajo de grado presentado por Patricia Siado para
+obtener el tı́tulo de Estadı́stica, del Departamento de Estadı́stica de la Universidad Nacional
+de Colombia. Se agradecen los comentarios de los jurados calificadores y la ayuda del profesor
+Fabio H. Nieto. De mucha ayuda fue el curso “Estimación no paramétrica y robusta en
+series de tiempo” dictado por Dr. Siegfred Heiler, profesor de la Universidad de Konstanz,
+Alemania, para el doctorado de Estadı́stica de la Universidad Nacional de Colombia, Bogotá,
+agosto a septiembre de 2001. No obstante, cualquier error que persista es de nuestra exclusiva
+responsabilidad. Esta versión del trabajo se vio nutrida de las discusiones con Héctor Zárate,
+a quien también se le agradece. Los errores y omisiones son únicamente nuestros. Cualquier
+posible opinión expresada aquı́ no compromete la posición oficial del Banco de la República
+ni tampoco la de ninguno de los miembros de su Junta Directiva.
+
+122                                      Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+A.      ANEXO A
+   La estimación no paramétrica de densidades puede ser útil en el análisis ex-
+ploratorio de datos, pero puede ser también usada para problemas más estándar
+en pruebas de hipótesis e inferencia estadı́stica.
+
+
+A.1.     Estimador de densidades usando histogramas
+
+    Cuando el objetivo de estudio es construir un modelo de distribución de
+probabilidad para un conjunto de datos, no se necesita hacer suposiciones sobre
+la posible distribución de la cual provienen los datos, sino que se puede estimar
+directamente la función de densidad a partir de los datos, siempre y cuando se
+tenga una muestra grande.
+   A continuación se muestra la construcción del estimador no paramétrico
+para funciones de densidad de variables aleatorias, que ha sido base de muchos
+predictores no paramétricos.
+    El estimador natural es el histograma con n datos e intervalos de amplitud
+h. La estimación del histograma de la función de densidad en el punto x es:
+
+                                          1 n(0)
+                                  fb(x) =        ,                              (31)
+                                          h n
+                                                 h                 ´
+donde n(0) es el número de datos en el intervalo ẋ − h2 , ẋ + h2 , donde ẋ es una
+marca de clase, h es la amplitud de intervalo y n el tamaño total de la muestra.
+     Esta estimación es fácil de calcular pero tiene la desventaja de ser constante
+dentro del intervalo, y las estimaciones son muy dependientes del origen y de
+la amplitud del intervalo, pues considera únicamente los datos dentro de cada
+uno ignorando los datos adyacentes por próximos que estén; para resolver este
+último problema se da cierto peso a los datos de intervalos contiguos al que se
+está estimando.
+                                                                ³      ´
+     Tomando como n(0) el número de datos en el intervalo ẋ ± h2 , n(h) , n(−h)
+                                                       ³           ´ ³             ´
+al número de datos en los intervalos adyacentes ẋ + h ± h2 y ẋ − h ± h2 ,
+respectivamente, se construye un estimador que asigna cierto peso a los datos
+que están en estos intervalos, y para los intervalos adyacentes el peso es el
+mismo, por simetrı́a, obteniéndose
+
+                               1 h            ©            ªi
+                    fˆ(x) =       α0 n(0) + α1 n(h) + n(−h) ,
+                              hn
+
+Un pronóstico no paramétrico de la inflación colombiana                       123
+
+        h                 ´
+para x ∈ ẋ − h2 , ẋ + h2 , donde α0 , α1 > 0 y α0 + 2α1 = 1.
+
+   Esta idea puede generalizarse incluyendo el resto de los intervalos con peso
+decreciente para obtener:
+
+                             ·           Xm                    ¸
+                           1                   £              ¤
+                  fˆ(x) =      a0 n(0) +     αi n(hi) + n(−hi) ,                (32)
+                          hn             i=1
+             P
+donde α0 + 2 αi = 1, para valores de i tales que los intervalos formados
+contengan elementos de la muestra.
+    El anterior estimador puede aplicarse si se divide el rango o soporte de
+valores de la variable x en k puntos x1 , . . . , xk , para k tan grande como se
+quiera; se elige un valor de h y se aplica la ecuación 32 a cada punto. La
+estimación de fˆ(xi ) equivale a construir un histograma con centros de clase:
+xi −mh;     xi −(m−1)h, . . . , xi −h,   xi ,   xi +h, . . . , xi +(m−1)h,   xi +mh,
+y estimar la densidad en el punto xi aplicando la ponderación simétrica 32.
+Para calcular fˆ(xi+1 ) se toma xi+1 como nuevo punto central y se aplica de
+nuevo 32.
+    Este proceso equivale a calcular la frecuencia absoluta en cada punto dando
+ciertos coeficientes de ponderación a cada uno de los datos, la cual depende de
+la distancia a dicho punto.
+
+
+A.2.      Estimación de densidad por el método kernel
+
+    El estimador encontrado anteriormente es llamado el estimador de densidad
+kernel. Formalmente se supone que los datos x1 , . . . , xn vienen de una secuen-
+cia de variables reales aleatorias independientes con una densidad común f
+perteneciente a alguna familia =.
+   Si = es grande (por ejemplo si = contiene las densidades continuas), se sabe
+que el estimador insesgado de f puede no existir y que el supremo de la función
+máximo verosı́mil es infinito (Bosq 1998, pág. 3).
+   Entonces un estimador de densidad primario es el del histograma mencio-
+nado en la sección anterior, definido formalmente como:
+                                  vnj
+                 fˆn (x) =                   , x ∈ Inj , j ∈ Z,
+                           n(an,j − an,j−1 )
+donde Inj = ban,j−1 , an,j ) y (anj , j ∈ Z) es una secuencia estrictamente cre-
+                                                           Pn
+ciente tal que |ajn | → ∞ cuando |j| → ∞ y donde vnj =        1[an,j−1 ,an,j ) (Xi ).
+                                                               i=1
+
+124                                            Norberto Rodrı́guez N. & Patricia Siado C.
+
+
+    Si f es continua en el intervalo Inj y si an,j − an,j−1 es pequeño, entonces
+ˆ
+fn (x) está cercano a f (x) para cada x que pertenece a Inj .
+    Dado que este estimador no utiliza la información de toda la muestra, so-
+lamente los datos contenidos en el intervalo Inj , se construye el estimador
+histograma adaptable definido como:
+
+                                          vn (x)
+                                  fn∗ =          ,   x ∈ R,
+                                           nhn
+
+donde
+                                   n
+                                   X
+                        vn (x) =          I£                  ¤ (Xi ).
+                                            x − h2n , x + h2n
+                                    i=1
+
+
+
+    Ası́ fn∗ (x) se puede escribir en términos de una función continua, simétrica
+y acotada K(.) que da pesos a los datos en el intervalo dependiendo de la
+distancia al punto x:
+
+                                       n    µ        ¶
+                                   1 X        x − Xi
+                      fn∗ (x) =           K           ,         x ∈ R.              (33)
+                                  nhn i=1       hn
+
+
+    Considerando el caso en que las observaciones sean la realización de un
+proceso estocástico {Xt }, por la extensión del teorema de Kolmogorov la dis-
+tribución v de un proceso estocástico está completamente especificada por las
+distribuciones finito dimensionales (Bhat 1933). El problema de estimación de
+v se reduce a las estimaciones de las densidades finito dimensionales asociadas.
+    Ası́ si (Xt , t ∈ Z) es un proceso estocástico de dimensión Rd con función
+de densidad común f , el estimador de densidad kernel d-dimensional se puede
+escribir como:
+
+                         n      µ        ¶
+                    1 X           x − Xt
+           fn (x) =         K d
+                   nhdn t=1         hn
+                         n      µ                           ¶
+                    1 X           x1 − X1t         xd − Xdt
+                 =          K d            , . . .           ,           x ∈ Rd ,   (34)
+                   nhdn t=1          hn               hn
+
+
+donde Kd (.) es una función kernel d-variada.
+
+Un pronóstico no paramétrico de la inflación colombiana                 125
+
+
+B.       ANEXO B
+
+B.1.     Condiciones mixing
+
+    Las condiciones mixing son herramientas matemáticas planteadas para dar
+propiedades asintóticas a los estimadores basadas en kernel para datos depen-
+dientes. Básicamente éstas prueban el control de la dependencia entre Xt y Xs
+cuando la distancia en el tiempo t − s se incrementa. Generalmente estas con-
+diciones son difı́ciles de chequear, sin embargo si el proceso es una cadena de
+Markov estacionaria, entonces la ergodicidad geométrica implica regularidad
+absoluta, lo cual implica las condiciones strong mixing (Härdle, Lütkepohl &
+Chen 1997, págs. 53-54).
+
+
+B.1.1.    Condición strong mixing o α−mixing
+                                                         £              ¤
+   Para A un elemento de la σ−álgebra ϕk generada
+                                              £     por   {X s },
+                                                                ¤ s ≤ t   yB
+un elemento de la σ−álgebra ϕk+s generada por {Xs }, s ≥ t + k , se dice que
+una secuencia es α−mixing si:
+                             ¯                   ¯
+                     sup ¯P (A ∩ B) − P (A)P (B)¯ ≤ αk ,
+                   ϕk , ϕk+s
+
+donde αk → 0 cuando k → ∞.
+
+
+B.1.2.    Condición uniformly mixing ó φ−mixing
+
+   Se dice que una secuencia es φ−mixing si:
+                    ¯                      ¯
+                    ¯P (A ∩ B) − P (A)P (B)¯ ≤ φk P (A),
+
+donde φk → 0 cuando k → ∞.
+
+Bibliografía
+Auestad, B. & Tjøstheim, D. (1990), ‘Identification of nonlinear time series: First order characterization and order determination’, Biometrika 77, 669–687.
+Bhat, U.Ñ. (1933), Elements of Applied Stochastic Processes, John Wiley & Sons, New York.
+Bickel, P. J. & Rosenblaty, M. (1973), ‘On some global measures of the deviations of density function estimates’, Annals of Statistics 1, 1071–1091.
+Bosq, D. (1998), Nonparametric Statistics for Stochastic Processes, Springer Verlag, New York.
+Carbon, M. & Delecroix, M. (1993), ‘Nonparametric vs parametric forecasting in time series: a computational point of view’, Applied Stochastic Models and Data Analysis 9, 215–229.
+Collomb, G. (1984), ‘Propriétés de convergence presque complète du prédicteur à noyau’, Zeitschrift für Wahrscheinlichkeitstheorie 66, 441–460.
+Collomb, G., Hardle, W. & Hassani, S. (1987), ‘A note on prediction via estimation of the conditional mode function’, Journal of Statistical Planning and Inference 15, 227–236.
+Deheuvels, P. (1977), ‘Estimation non paramétrique de la densité par histogramme généralisé’, Revue de Statistique Appliquée 35, 5–42.
+Diebold, F. X. & Mariano, R. S. (1995), ‘Comparing predictive accuracy’, Journal of Business and Economic Statistics 13, 253–263.
+Fan, J. & Gijbels, I. (1996), Local Polynomial Modeling and Its Applications, Chapman and Hall, London.
+Gannoun, A. (1990), ‘Estimation non paramétrique de la médiane conditionnelle: médiano gramme et méthode du noyau’, Publication de I’Institut de Statistique de l’Université de Paris 45, 11–22.
+Gannoun, A. (1991), ‘Prédiction non paramétrique: médianogramme et méthode du noyau en estimation de la médiane conditionnelle’, Statistique et Analyse des Données 16, 23–42.
+Gasser, T. & Muller, H. G. (1979), Kernel estimation of regression functions, in ‘Smoothing Techniques for Curve Estimation’, Springer-Verlag, Heidelberg, pp. 23–68.
+Gooijer, J. D. & Zerom, D. (2000), ‘Kernel-based multistep-ahead predictions of the us short-term interest rate’, Journal of Forecasting 19, 335–353.
+Györfi, L., Härdle, W., Sarda, P. & View, P. (1989), Nonparametric Curve Estimation from Time Series, Springer-Verlang, New York.
+Györfi, L., Kohler, M., Krzizak, A. & Walk, H. (2002), A Distribution Free Theory on Nonparametric Regression, Springer-Verlang, New York.
+Härdle, W. (1990), Applied Non-parametric Regression, Cambridge University Press, New York.
+Härdle, W., Lütkepohl, H. & Chen, R. (1997), ‘A review of nonparametric time series analysis’, International Statistical Review 65, 1, 49–72.
+Hardle, W. & Yang (1996), Nonparametric Time Series Model Selection, Humbold-Universitat zu Berlin, Discussion paper.
+Hart, J. D. & Wherly, T. E. (1986), ‘Kernel regression estimation using repeated measurement data’, Journal of the American Statistical Association 81, 1080–1088.
+Hastie, T., Tibshirani, R., Friedman, J. H. & Friedman, J. (2002), Elements of Statistical Learning: Data Mining, Inference, and Prediction, Springer- Verlag, New York.
+Heiler, S. (1999), A survey on nonparametric time series analysis, Working paper, Universität Konstanz Fakultät für Wirtschaften.
+Ibragimov, I. A. & Rozanov, Y. (1978), Gaussian Random Processes, Spring Verlag, New York.
+Jalil, M. & Melo, V. (2000), ‘Una relación no lineal entre inflación y los medios de pago’, Borradores de economı́a. Banco de la República 145, Bogotá.
+Johnston, G. J. (1982), ‘Probabilities of maximal deviations for nonparametric regression functions estimates’, Journal of Multivariate Analysis 12, 402–414.
+Kreiss, J. P. & Franke (1992), ‘Bootstrapping stationary autoregressive moving average models’, Journal of Time Series Analysis 13, 297–317.
+Liu, R. Y. & Singh (1992), ‘Moving blocks jackknife and bootstrap capture weak dependence’, Exploring the Limits of Bootstrap pp. 225–248.
+Matzner-Løber, E., Gannoun, A. & Gooijer, J. G. D. (1998), ‘Nonparametric forecasting: a comparison of three kernel-based methods’, Communications in Statistics: Theory and Methods 27, 1593–1617.
+Melo, L. F. & Misas, M. A. (1998), ‘Análisis del comportamiento de la inflación trimestral en Colombia bajo cambios de régimen: una evidencia a través del modelo “switching de hamilton”’, Borradores de Economı́a. Banco de la República 086.
+Misas, M. A., López, E. & Querubı́n, P. (2002), ‘La inflación en Colombia: Una aproximación desde las redes neuronales’, Borradores de Economı́a. Banco de la República 199.
+Núñez, J. & Jiménez, J. (1998), Correcciones a los ingresos de las encuestas de hogares y distribución del ingreso urbano, in c. F. Sánchez, ed., ‘La distribución del ingreso en Colombia, DNP’, Tercer Mundo Editores.
+Pagan, A. & Ullah, A. (1999), Nonparametric Econometrics, Cambridge University Press, UK.
+Pham, T. D. & Tran (1985), ‘Some strong mixing properties of time series models’, Stochastic Processes and their Applications 19, 297–303.
+Prietsley, M. B. (1984), Spectral Analysis and Time Series, Academic Press, London.
+Zárate, H. M. (2003), ‘Cambios en la estructura salarial: Una historia desde la regresión cuantı́lica’, Borradores de Economı́a, Banco de la República 245.

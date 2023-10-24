@@ -1,0 +1,370 @@
+Generación de tiempos de falla dependientes Weibull bivariados usando cópulas
+Universidad Nacional de Colombia
+Resumen
+La distribución Weibull bivariada es muy importante en confiabilidad y en análisis de supervivencia. La dependencia para este tipo de problemas ha venido cobrando gran importancia en años recientes. En la literatura,se conocen algoritmos para generar una distribución Weibull univariada y distribuciones bivariadas con marginales independientes. En este artículo, se presenta un algoritmo para generar tiempos de falla Weibull bivariados dependientes, usando una representación cópula para la función de confiabilidad Weibull bivariada. Tal representación se obtiene utilizando modelos cópula arquimedianos. En particular, se utilizó la familia Gumbel. Se realizó una aplicación del algoritmo cópula, cuyos resultados fueron validados exitosamente.
+Palabras clave: distribución bivariada, datos dependientes, cópula.
+Introducción
+La distribución Weibull es una familia muy utilizada para modelar tiempos de falla, en vista de su interpretación física y su flexibilidad para el ajuste empírico. La
+distribución Weibull bivariada se puede visualizar en varios contextos, tales como,
+los tiempos hasta la primera y segunda falla de un equipo reparable, los tiempos
+de “breakdown” de generadores duales en una planta de energía, o los tiempos de
+supervivencia en un sistema de dos órganos, tal como los pulmones o riñones, en
+el cuerpo humano (Lu & Bhattacharyya 1990).
+    La dependencia para este tipo de problemas ha venido cobrando gran impor-
+tancia en años recientes. Crowder (2001), describe la importancia de la temática,
+no solamente para los temas demográficos y actuariales sino también desde el
+punto de vista de la inferencia estadística y las aplicaciones a la teoría de la con-
+fiabilidad y el análisis de supervivencia. Denuit et al. (2005), es otro ejemplo de la
+importancia actual del tema. También Bedford (2005) y Nelsen (2006) muestran
+la relación entre dependencia en modelos multivariados, riesgos en competencia y
+el trabajo en cópulas. Las cópulas se han convertido en una potente herramien-
+ta para el modelamiento multivariado en muchos campos donde la dependencia
+multivariada es de gran interés. En actuaría, las cópulas son usadas en el mode-
+lamiento de mortalidad y las pérdidas dependientes (Frees et al. 1996, Frees &
+Valdez 1998, Frees & Wang 2005). En finanzas, las cópulas son usadas en asigna-
+ción de activos, modelamiento y administración de riesgos, calificación de créditos y
+tasación derivada (Bouyè et al. 2000, Embrechts et al. 2003, Cherubini et al. 2004).
+En estudios biomédicos, las cópulas son usadas en el modelamiento de tiempos de
+eventos correlacionados y riesgos en competencia (Wang & Wells 2000, Escarela
+& Carrière 2003). En ingeniería, las cópulas son usadas en el control de procesos
+multivariado y en el modelamiento hidrológico (Yan 2006, Genest & Favre 2007).
+   En la actualidad, el modelo Weibull univariado está muy documentado, sin
+embargo, la investigación de la distribución Weibull bivariada y multivariada con
+dependencia, es limitada. Lu & Bhattacharyya (1990) presentan aproximaciones
+con sentido físico para la construcción de extensiones bivariadas de la distribución
+Weibull.
+    El objetivo de este artículo es difundir un algoritmo para la generación de
+tiempos Weibull bivariados usando cópulas, de manera que éste sirva para trabajo
+de simulación en problemas que involucren la función de confiabilidad Weibull
+bivariada, la cual es ampliamente utilizada en confiabilidad. La importancia de la
+divulgación del algoritmo radica en que tradicionalmente, la modelación estadística
+en problemas de riesgos en competencia ha utilizado el supuesto de independencia,
+pero en muchas situaciones prácticas la dependencia es una condición usual, lo que
+ha generado el creciente interés por su estudio, y como consecuencia de ello se tiene
+la necesidad actual de generar datos Weibull bivariados con dependencia.
+    En la sección 2 se presenta una descripción básica de los modelos cópula, la cual
+pretende dar un marco para el trabajo en las secciones posteriores. En la sección
+3 se presenta la forma en que la función de confiabilidad Weibull bivariada puede
+ser representada a través de un modelo cópula, de manera que a partir de esta
+
+                                      Revista Colombiana de Estadística 31 (2008) 169–181
+
+Generación de tiempos de falla dependientes Weibull bivariados usando cópulas           171
+
+representación se pueden generar tiempos de falla Weibull bivariados dependientes,
+los cuales serán útiles para problemas de simulación en temas de confiabilidad.
+Finalmente, en la sección 4, se presenta una aplicación del algoritmo para generar
+tiempos de falla Weibull bivariados dependientes y se muestra una validación del
+mismo.
+
+
+
+2. Descripción del modelo cópula
+     Suponga que Cα es una función de distribución con densidad cα sobre [0, 1] ×
+[0, 1] para α ∈ R. Denote (T1 , T2 ) los tiempos de falla, y denote (S1 , S2 ), (f1 , f2 )
+las respectivas funciones de confiabilidad y de densidad marginales. Si (T1 , T2 )
+proviene de una cópula Cα para algún α, entonces las funciones de confiabilidad
+y densidad conjuntas de T1 y T2 (Nelsen 2006), están dadas por
+
+
+                                                   
+              S(t1 , t2 ) = Cα S1 (t1 ), S2 (t2 ) ,        t1 , t 2 ≥ 0
+                                                  
+              f (t1 , t2 ) = cα S1 (t1 ), S2 (t2 ) f1 (t1 )f2 (t2 ),    t1 , t2 ≥ 0
+
+donde α representa el parámetro de dependencia entre los tiempos de falla T1 y
+T2 .
+   Dos de las familias cópula más usadas son las cópulas elípticas y las arqui-
+medianas. A continuación se introduce la familia de cópulas arquimedianas, ya
+que para la función de confiabilidad Weibull bivariada se tiene una representación
+cópula a través de esta familia.
+
+
+
+2.1. Cópulas Arquimedianas
+
+  Una distribución bivariada perteneciente a la familia de modelos cópula arqui-
+medianos tiene la representación
+                                               
+                               α φα (u) + φα (v) ,
+                  Cα (u, v) = φ−1                               0 ≤ u, v ≤ 1            (1)
+
+donde φα es convexa y decreciente tal que φα ≥ 0, φα (1) = 0. A la función
+φα se le denomina generador de la cópula Cα y la inversa del generador φ−1   α es
+la transformada de Laplace de una variable latente denotada γ, la cual induce
+la dependencia α. Así, la selección de un generador resulta en varias familias
+cópulas. En la tabla 1, se muestran las formas funcionales para las funciones de
+confiabilidad bivariadas en tres familias cópula arquimedianas. Adicionalmente, en
+la tabla 2, se muestran los generadores y las transformadas de Laplace para las
+familias consideradas. A continuación se dan detalles de las tres familias cópulas
+arquimedianas.
+
+   Tabla 2: Generadores y transformadas de Laplace de las cópulas arquimedianas.
+
+
+
+2.1.1. Familia Clayton
+
+    La función de confiabilidad bivariada perteneciente a la familia Clayton (1978)
+tiene la forma
+                                                1/(1−α)
+                Cα (u, v) = u1−α + v 1−α − 1
+                             
+                                                        ,    α>1                (2)
+                         1/(1−α)
+aquí φ−1α (s) = (1 + s)           es la transformada de Laplace de una distribución
+gama. T1 y T2 están positivamente asociados cuando α > 1 y son independientes
+cuando α → 1. Denote λ la función Hazard. Clayton (1978) mostró que λ(t2 | T1 =
+t1 )/λ(t2 | T1 ≥ t1 ) = α, si y sólo si, la función de confiabilidad bivariada pertenece
+a la familia Clayton.
+
+2.1.2. Familia Gumbel
+
+    La función de confiabilidad bivariada perteneciente a la familia Gumbel (1960)
+tiene la forma
+
+                   Cα (u, v) = exp{−[(− ln u)1/α + (− ln v)1/α ]α }                     (3)
+                                         α
+donde 0 < α < 1. Aquí φ−1 α (s) = exp(−s ) es la transformada de Laplace de una
+distribución estable positiva. Valores pequeños de α producen alta correlación y
+T1 , T2 son independientes cuando α → 1.
+
+2.1.3. Familia Frank
+
+   La función de confiabilidad bivariada introducida por Frank (1979) tiene la
+representación
+
+                  Cα (u, v) = logα {1 + (αu − 1)(αv − 1)/(α − 1)}                       (4)
+
+donde α > 0, y logα denota el logaritmo en base α. T1 , T2 están asociados positi-
+vamente cuando α < 1, negativamente cuando α > 1, y son independientes cuando
+
+                                      Revista Colombiana de Estadística 31 (2008) 169–181
+
+Generación de tiempos de falla dependientes Weibull bivariados usando cópulas       173
+
+α → 1. Aquí φα
+             −1
+                (s) = logα {1 − (1 − α)es } y se convierte en una transformada de
+Laplace cuando 0 < α < 1.
+
+
+3. Representación cópula de la función de
+   confiabilidad Weibull bivariada
+   Sean T1 y T2 , tiempos de falla Weibull. Una función de confiabilidad conjunta
+para la Weibull bivariada (Lu & Bhattacharyya 1990), es:
+                            "                    # 
+                             t  βα1  t  βα2 α 
+                                  1          2
+          S(t1 , t2 ) = exp −          +               ,     0<α≤1            (5)
+                                θ1         θ2       
+
+donde, β1 , θ1 , β2 , θ2 (todos mayores que cero), son los parámetros de forma y escala
+asociados a T1 y T2 respectivamente. 0 < α ≤ 1, es el parámetro de dependencia
+entre T1 y T2 , cuyas funciones de confiabilidad marginales son:
+                                (   )
+                                          βk
+                                       t
+                  Sk (t) = exp −               ,     k = 1, 2,    t>0               (6)
+                                      θk
+
+   Cuando el parámetro de dependencia α entre tiempos de falla Weibull es 1, en-
+tonces hay independencia entre T1 y T2 . A medida que α disminuye, la dependencia
+entre T1 y T2 aumenta.
+    Observe que comparando (5) con (3), la representación de la función de con-
+fiabilidad Weibull bivariada se obtiene mediante la familia cópula Gumbel, para
+0 < α < 1, es decir, cuando T1 y T2 no son independientes. Observe que, de la
+sección 2.1.2, para la representación de la función de confiabilidad Weibull bivaria-
+da se requiere generar una variable aleatoria, digamos γ, con distribución estable
+                                                               α
+positiva, cuya trasformada de Laplace sea φ−1  α (s) = exp(−s ). A continuación se
+dan detalles de la generación de distribuciones estables positivas.
+
+
+3.1. Distribución estable positiva
+    Una variable aleatoria Γ se dice que tiene distribución estable positiva si existen
+parámetros 0 < α < 1, σ ≥ 0, −1 ≤ β ≤ 1, µ ∈ R, tal que su función característica
+tiene la siguiente forma:
+                                 "                              #
+                     itΓ                             πα
+                  E e       = exp − σ α tα 1 − iβ tan        + iµt                  (7)
+                                                        2
+
+donde α es el índice de estabilidad, σ es el parámetro de escala, β es el parámetro
+de asimetría y µ es el parámetro de localización. La distribución de una variable
+aleatoria estable positiva con los parámetros antes mencionados se denota como
+Sα (σ, β, µ).
+
+                                     Revista Colombiana de Estadística 31 (2008) 169–181
+
+174                                                       Mario César Jaramillo et al.
+
+   Se puede demostrar que la transformada de Laplace de una variable aleatoria
+Γ ∼ Sα (σ, 1, 0) para 0 < α < 1 y σ > 0, es igual a
+
+                                                 σα α
+                                                       
+                                 
+                           E e−tΓ = exp −             t                    (8)
+                                               cos πα
+                                                    2
+
+
+    Note que la expresión en (8) es equivalente a la transformada de Laplace reque-
+rida en la representación cópula de la función de confiabilidad Weibull bivariada,
+                                               α
+explicada en la sección anterior, haciendo cosσ πα = 1.
+                                                2
+
+   Para mayores detalles de distribuciones estables véase Samorodnitsky & Taqqu
+(1994).
+
+
+3.2. Algoritmo cópula
+    Basados en lo anterior un algoritmo para generar tiempos de falla Weibull
+Bivariados con dependencia α, haciendo uso de la representación cópula Gumbel
+para la función de confiabilidad Weibull bivariada explicada en la sección 3, es el
+siguiente:
+
+a) Genere una variable aleatoria γ con distribución estable positiva Sα (σ, β, µ) y
+   que tenga transformada de Laplace τ (s) = exp(−sα ). Para que esto se cumpla
+                                       α1
+   de acuerdo a (8), tome σ = cos πα
+                              
+                                    2      , β = 1 y µ = 0.
+   Para generar γ se utiliza el método propuesto por Chambers et al. (1976).
+
+b) Independiente del paso anterior, genere variables aleatorias U1 y U2 con distri-
+   bución uniforme en el intervalo (0,1).
+
+c) Para k = 1, 2, de la expresión (6) calcule Tk = Sk−1 (U∗k ), donde U∗k =
+   τ [−γ −1 ln(Uk )], con τ la transformada de Laplace asociada a la cópula Gumbel
+   dada en tabla 2.
+
+   La implementación del algoritmo cópula se realizó utilizando el software es-
+tadístico R versión 2.5.1; utilizando las librerías MASS, boot y CircStats. Más
+detalles acerca de R y los paquetes anteriores se muestran en R Development Core
+Team (2007), Canty & Ripley (2007), Lund & Agostinelli (2007) y Venables &
+Ripley (2002). El código utilizado se suministra bajo pedido a los autores.
+
+
+4. Aplicación del algoritmo cópula
+    Se ilustrará la utilización del algoritmo cópula descrito anteriormente, mediante
+la generación de muestras aleatorias de tamaño 50, 100 y 500 provenientes de una
+distribución Weibull bivariada, con parámetros de escala θ1 = θ2 = 1.0, parámetros
+de forma β1 = 2.0, β2 = 1.0 y parámetro de dependencia α = 0.1, 0.2, 0.4, 0.6, 0.8
+y 0.9.
+
+   A continuación se muestran los diagramas de dispersión para las muestras
+anteriores. Adicionalmente, se superponen los contornos de la función de densidad
+conjunta Weibull bivariada teórica.
+
+Figura 1: Diagramas de dispersión de n = 50 datos simulados de una densidad conjunta
+          Weibull bivariada θ1 = θ2 = 1.0, β1 = 2.0, β2 = 1.0 y 0.4, 0.6, 0.8 y 0.9, con
+          sus contornos teóricos.
+
+
+   De las figuras 1, 2 y 3 se observa que a medida que el parámetro de depen-
+dencia α se incrementa, la dependencia entre los dos tiempos de falla T1 y T2
+disminuye como se esperaba. Note que la dependencia en este tipo de problemas
+no es lineal, de hecho existe una relación entre el coeficiente de correlación de
+Pearson y el parámetro de dependencia α. Para más detalles, puede consultarse
+Lu & Bhattacharyya (1990).
+   Para validar el algoritmo cópula se realizan pruebas de Kolmogorov-Smirnov de
+bondad de ajuste en las marginales asociadas a cada tiempo de falla. Los resultados
+de la validación se muestran en la tabla 3. Para más detalles de la prueba de
+Kolmogorov-Smirnov, véase Conover (1999).
+
+Figura 2: Diagramas de dispersión de n = 100 datos simulados de una densidad
+          conjunta Weibull bivariada  
+
+    De la tabla 3, se observa que las marginales cumplen con la distribución original
+que se simuló, de manera que el funcionamiento del algoritmo propuesto se verifica
+estadísticamente de una manera exitosa.
+    Adicionalmente, se puede establecer un procedimiento sencillo de verificación
+de la bondad del ajuste de los datos generados a la distribución teórica asumida,
+que consiste en lo siguiente:
+
+   • Se definen los contornos teóricos de la función de densidad conjunta de T1 y
+     T2 en los niveles de 0.1, 0.3, 0.5, 0.7 y 0.9.
+   • Para una muestra de tamaño n de parejas de datos se establece el porcentaje
+     de puntos por fuera de cada contorno teórico.
+
+Figura 3: Diagramas de dispersión de n = 500 datos simulados de una densidad
+          conjunta Weibull bivariada θ1 = θ2 = 1.0, β1 = 2.0, β2 = 1.0 y α =
+          0.1, 0.2, 0.4, 0.6, 0.8 y 0.9, con sus contornos teóricos.
+
+   • Finalmente, se comparan éste porcentaje con el nivel del contorno teórico.
+
+   A continuación se muestran los resultados obtenidos para n = 500 datos si-
+mulados de una densidad conjunta Weibull bivariada θ1 = θ2 = 1.0, β1 = 2.0,
+β2 = 1.0 y α = 0.1, 0.2, 0.4, 0.6, 0.8 y 0.9.
+   En la tabla 4 se observo que los porcentajes de puntos por fuera de los niveles
+de contornos teóricos se aproximan a los valores teóricos para todos los valores del
+parámetro de dependencia α, lo cual es un indicio de un ajuste adecuado de los
+puntos a la distribución teórica asumida.
+
+                  Tabla 3: Pruebas marginales de bondad de ajuste.
+
+Tabla 4: Proporciones empíricas de datos por fuera de los contornos de una densidad
+         Weibull bivariada con parámetros θ1 = θ2 = 1.0, β1 = 2.0, β2 = 1.0.
+
+
+
+5. Discusión y recomendaciones
+
+    La literatura acerca de los modelos cópula y su pertinencia para trabajar pro-
+blemas multivariados se ha desarrollado recientemente. Muchos de los artículos
+aquí citados fueron publicados a partir del año 2000. En ellos se destaca que los
+modelos cópula ofrecen a los analistas una estructura intuitivamente atractiva para
+la investigación de distribuciones multivariadas y la especificación de su estructura
+de dependencia. De esta forma, los modelos cópula ofrecen una estructura flexible
+que es aplicable en muchas situaciones.
+   Como se mencionó en la introducción la distribución Weibull bivariada tiene
+gran importancia en temas financieros, actuariales, de ingeniería y bioestadística,
+entre otros. Durante el desarrollo del algoritmo se encontró la necesidad de manejar
+conceptos no estándar como las distribuciones estables positivas, las cuales no son
+ampliamente conocidas en el medio y su desarrollo es relativamente reciente.
+
+                                         Revista Colombiana de Estadística 31 (2008) 169–181
+
+Generación de tiempos de falla dependientes Weibull bivariados usando cópulas       179
+
+    Este artículo pretende divulgar los modelos cópula arquimedianos para que los
+lectores identifiquen la pertinencia de tales modelos en problemas multivariados
+no normales, y que esto contribuya para que en el corto o mediano plazo se invo-
+lucren estas temáticas en los cursos de pregrado y posgrado dedicados al análisis
+multivariado.
+   La temática de este artículo está inmersa en los modelos multivariados y con-
+ceptos de dependencia (Joe 1997), y su importancia radica en que la utilización
+de modelos cópula permite realizar una amplia variedad de inferencias, así como
+también, evaluar supuestos, chequear diagnósticos, comparar modelos y realizar
+análisis de sensibilidad. De esta forma los modelos cópula se pueden usar para
+construir y analizar distribuciones y modelos multivariados.
+Referencias
+Bedford, T. (2005), Competing Risk Modeling in Reliability, in K.-M. S. Wilson,A. & Y. Armijo, eds, ‘Modern Statistical and Mathematical Methods in Reliability’, World Scientific Publishing Co, Singapore.
+Bouyè, E., Durrleman, V., Bikeghbali, A., Riboulet, G. & Rconcalli, T. (2000),‘Copulas for Finance - A Reading Guide and Some Applications’, Manuscript,Financial Econometrics Research Center .
+Canty, A. & Ripley, B. D. (2007), Boot: Bootstrap R (S-Plus) Functions (Canty).S original by Canty, A. R port by Ripley, B. D. Package version 1.2-28.
+Chambers, J. M., Mallows, C. L. & Stuck, B. W. (1976), ‘A Method for Simulating Stable Random Variables’, Journal of the American Statistical Association 71(354), 340–344.
+Cherubini, U., Luciano, E. & Vecchiato, W. (2004), Copula Methods in Finance,John Wiley & Sons, New York.
+Clayton, D. G. (1978), ‘A Model for Association in Bivariate Life Tables and its Application in Epidemiological Studies of Familial Tendency in Chronic Disease Incidence’, Biometrika 65(1), 141–152.
+Conover, W. J. (1999), Practical Nonparametric Statistics, third edn, John Wiley & Sons, New York, United States.
+Crowder, M. (2001), Classical Competing Risks, Chapman & Hall, London, United Kingdom.
+Denuit, M., Dhaene, J., Goovaerts, M. & Kaas, R. (2005), Actuarial Theory for Dependent Risks: Measures, Orders and Models, John Wiley & Sons, Great Britain.
+Embrechts, P., Lindskog, F. & McNeil, A. (2003), Modelling Dependence with Copulas and Applications to Risk Management, in S. Rachev, ed., ‘Handbook of Heavy Tailed Distribution in Finance’, Elsevier, North-Holland, Netherlands.
+Escarela, G. & Carrière, J. F. (2003), ‘Fitting Competing Risks with an Assumed Copula’, Statistical Methods in Medical Research 12(4), 333–349.
+Frank, M. J. (1979), ‘On the Simultaneous Associativity of f (x, y) and x+y-f(x,y)’, Aequationes Mathematicae 19(1), 194–226.
+Frees, E. W., Carrière, J. F. & Valdez, E. A. (1996), ‘Annuity Valuation with Dependent Mortality’, Journal of Risk and Insurance 63(2), 229–261.
+Frees, E. W. & Valdez, E. A. (1998), ‘Understanding Relationships Using Copulas’, North American Actuarial Journal 2(1), 1–25.
+Frees, E. W. & Wang, P. (2005), ‘Credibility Using Copulas’, North American Actuarial Journal 9(2), 31–48.
+Genest, C. & Favre, A. C. (2007), ‘Everything You Always Wanted to Know About Copula Modeling but were Afraid to Ask’, Journal of Hydrologic Engineering 12(4), 347–368.
+Gumbel, E. J. (1960), ‘Bivariate Exponential Distributions’, Journal of the American Statistical Association 55(292), 698–707.
+Joe, H. (1997), Multivariate Models and Dependence Concepts, Chapman & Hall,New York, United States.
+Lu, J. & Bhattacharyya, G. K. (1990), ‘Some New Constructions of Bivariate Weibull Models’, Annals of the Institute of Statistical Mathematics 42(3), 543–559.
+Lund, U. & Agostinelli, C. (2007), CircStats: Circular Statistics, from “Topics in Circular Statistics” (2001). S-plus original by Lund, U. R port by Agostinelli, C. R package version 0.2-3.
+Nelsen, R. B. (2006), An Introduction to Copulas, second edn, Springer, New York,United States.
+R Development Core Team (2007), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0.*http://www.R-project.org
+Samorodnitsky, G. & Taqqu, M. S. (1994), Stable Non-Gaussian Random Processes: Stochastic Models with Infinite Variance, Chapman & Hall, New York,United States.
+Venables, W. N. & Ripley, B. D. (2002), Modern Applied Statistics with S, fourth edn, Springer, New York, United States. ISBN 0-387-95457-0.
+Wang, W. & Wells, M. T. (2000), ‘Model Selection and Semiparametric Inference for Bivariate Failure-Time Data’, Journal of the American Statistical Association 95(449), 62–72.
+Yan, J. (2006), Multivariate Modeling with Copulas and Engineering Applications,in H. Pham, ed., ‘Handbook in Engineering Statistics’, Springer, New York,United States.

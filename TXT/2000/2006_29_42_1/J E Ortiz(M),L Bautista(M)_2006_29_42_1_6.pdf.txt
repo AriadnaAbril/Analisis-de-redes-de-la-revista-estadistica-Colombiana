@@ -1,0 +1,627 @@
+Tablas de encuestas en LATEX
+Universidad Nacional de Colombia
+Resumen
+El muestrista se enfrenta regularmente con el problema de editar cuidadosamente una gran cantidad de tablas para incluir en sus informes. Se presenta una estrategia de edición en LATEX a partir de las estimaciones obtenidas luego de realizar la encuesta. La aplicación de la estrategia propuesta reduce notoriamente los inconvenientes y permite generar los informes con un estándar de edición cientı́fica conveniente. Se ilustra el método con un ejemplo real, utilizando SAS como herramienta de programación.
+Palabras clave: LATEX, presentación de informes de muestreo, muestreo, SAS/SQL, SAS/MACRO.
+Introducción
+Una de las tareas crı́ticas que debe realizar el muestrista, luego de la aplicación de una encuesta, es la elaboración de los informes con las tablas de resultados. Los paquetes estadı́sticos incluyen rutinas excelentes para elaborar tablas complejas que luego se exportan a los programas tradicionales de edición de texto, donde se realiza la edición final. La experiencia nos ha mostrado que esta labor es demasiado dispendiosa por la magnitud de los archivos que se generan y por el apremio del tiempo, una vez que los resultados numéricos están disponibles. Proponemos utilizar LATEX como una alternativa que disminuye notoriamente los contratiempos y que permite llevar los resultados a un estándar de edición cientı́fica conveniente.
+En la segunda sección describimos la estrategia para buscar una solución, en la tercera sección se encuentra la descripción de la solución propuesta, y en la cuarta, un ejemplo con resultados reales. La programación se realizó utilizando SAS/MACRO (SAS Institute 1996a) y SAS/SQL (SAS Institute 1996b).
+2.     Método
+    Para fijar las ideas, supongamos que necesitamos presentar una tabla como la
+siguiente:
+
+                        Tabla __ : TÍTULO DE LA TABLA
+
+                                      NOMBRE DE LA VARIABLE
+                                     QUE DEFINE LOS DOMINIOS
+                                  -----------------------------
+        ENCABEZADO_FILAS Total    DOMINIO1 DOMINIO2 DOMINIO3
+      ---------------------------------------------------------
+        CAMPO 1
+          (cve%)                   CUERPO DE LA TABLA
+        CAMPO 2                  CON VALORES NUMÉRICOS
+          (cve%)
+          ...
+      ---------------------------------------------------------
+      NOTA AL PIE DE LA TABLA.
+
+    Los elementos que componen la tabla, como el tı́tulo, los encabezados, la nota
+al pie y los valores a representar, se encuentran en diferentes partes de la base
+de datos, según el diseño establecido. El objetivo es utilizar la información sobre
+estos elementos, para generar un documento LATEX que, compilado, produzca el
+informe con las tablas acordadas.
+    La solución del problema se concibe a partir de un sistema elemental de bases
+de datos. Como punto de partida para la elaboración del modelo entidad-relación,
+se toma la siguiente descripción de la tabla impresa:
+
+      Una tabla impresa, con su tı́tulo y eventualmente una nota al pie de la
+      tabla, contiene una o más lı́neas con estimaciones de algunos paráme-
+      tros y sus coeficientes de variación estimados (cve). En las columnas de
+      la tabla se presentan las estimaciones para algunos dominios definidos
+      por una variable categórica cuyos valores se etiquetan con rótulos que
+
+                                      Revista Colombiana de Estadı́stica 29 (2006) 93–107
+
+Tablas de encuestas en LATEX                                                             95
+
+
+       indican los nombres asignados a los dominios respectivos. Además, se
+       incluye un encabezado para las filas que describe de manera genérica
+       las variables cuyas estimaciones se presentan en la tabla.
+
+Las estimaciones se calculan con la información contenida en campos con los datos
+recolectados. Las tablas con esta información no se describen en este artı́culo, pues
+el interés se centra en las estimaciones ya obtenidas.
+    La figura 1 muestra un bosquejo parcial del diagrama de entidad-relación, con
+los elementos que se utilizan en la solución del problema planteado.
+    Se observa el doble papel que juega la entidad campo:
+
+     • Para cada estimación, señala la variable a la cual corresponde. Estas variables
+       son numéricas y sus nombres van en las filas de la tabla.
+     • Para cada tabla, se trata de una variable categórica que determina los domi-
+       nios donde se calculan las estimaciones. Los nombres de los dominios apare-
+       cen como columnas en la tabla.
+
+                              de
+               ESTIMACIÓN                 con
+                       incluida en                          con
+                                                  CAMPO           para   RÓTULO
+                 con
+                            para
+                                     dominio de
+                            con
+                  TABLA                   para    NOTA
+
+                            con                   TÍTULO
+                                          para
+                            con
+                                          para ENCABEZADO LÍNEA
+
+
+
+                        Figura 1: Diagrama de entidad-relación.
+
+
+
+
+3.      Procedimiento
+    El programa está elaborado en SAS, con comentarios en cada paso para que
+el lector interesado lo siga sin mayores problemas. Con un conocimiento básico
+de LATEX y de programación en SAS se pueden introducir modificaciones para
+adecuarlo a necesidades especı́ficas. En esta sección nos ocuparemos del uso para
+generar el código LATEX.
+
+  1. Como primera tarea, se debe identificar el archivo que contiene las estima-
+     ciones obtenidas. Su estructura debe llevarse a la de estimacion, con los
+     siguientes nombres para sus columnas: N Tabla N campo tt t1 t2 t3 ct c1
+
+        c2 c3, donde N Tabla es el número de tabla, N Campo el número del cam-
+        po del cual se calculan las estimaciones, las columnas que empiezan por t
+        contienen los valores de las estimaciones para el total y para cada dominio
+        y las que empiezan por c contienen los respectivos coeficientes de variación
+        estimados. Cada número diferente de N Tabla señala una tabla que debe
+        elaborarse con al menos un campo y cada campo con dos filas: la primera
+        contiene los estimativos de los totales, los valores de tt, t1, t2, t3 y la segunda,
+        los cve, ct, c1, c2 y c3.
+     2. Se construyen los archivos titulos, encabezados y notas con estructuras si-
+        milares a las del código del programa del apéndice. El número de tı́tulo,
+        encabezado o nota servirá para asignar el texto respectivo a las tablas del
+        informe. No es obligatorio que los números coincidan con los de las tablas de
+        estimaciones. Los sı́mbolos especiales, como el signo pesos o los porcentajes,
+        deben respetar la gramática LATEX. Esta observación es válida para todos los
+        textos que conforman la tabla que se está produciendo.
+     3. Para construir el archivo campos, es necesario conocer cuáles de ellos son
+        numéricos y cuáles categóricos. Para los campos categóricos se deben definir
+        los rótulos que se asignan a cada categorı́a. Por ejemplo, el Área de estudio
+        tiene tres categorı́as: 1 (Ingenierı́a), 2 (C. de la salud) y 3 (Artes). Además, la
+        primera columna de estimaciones corresponde al total que se codifica con -1
+        (Universidad). Los campos numéricos tienen un nombre, pero no categorı́as
+        y, por lo tanto, no tienen rótulos asignados. El tipo de rótulo es, por ejemplo,
+        0 (cero) y su texto descriptivo es vacı́o, como aparece en la tabla rotulos. Los
+        campos numéricos tienen tipo de rótulo 0.
+        El código del programa SAS contiene un ejemplo del archivo de rotulos.
+        Como se dijo antes, el tipo 0, cuyo texto es vacı́o, se utiliza para las variables
+        numéricas. Puede definirse otro tipo con texto vacı́o para el mismo fin. El
+        tipo 2, que también es arbitrario, agrupa cuatro valores que sirven para las
+        cuatro categorı́as que se describieron en el párrafo anterior.
+        Conviene construir el archivo rotulos antes que campos, para poder asignar
+        el tipo de rótulo adecuadamente a cada campo.
+        El archivo campos debe contener todos los números de campo que aparecen
+        en estimacion para que la presentación de las tablas impresas sea correcta.
+        Cada campo debe tener su número, igual al que se utiliza en estimacion, su
+        tipo, tal como se acaba de explicar, y un nombre.
+     4. Por último, el archivo de tablas define para cada una un número, que debe
+        coincidir con N Tabla del archivo estimacion, el número del tı́tulo que lleva,
+        el número del campo que define los dominios, el del encabezado y el de la nota
+        al pie de la tabla. El campo que identifica los dominios debe ser categórico
+        con las categorı́as que correspondan a los dominios establecidos para que los
+        tı́tulos de las columnas sean correctos.
+     5. Los parámetros de la página o de las tablas se pueden modificar para ajus-
+        tar los espacios disponibles o para cambiar la cantidad de dominios, lo que
+
+     lleva a modificar la cantidad de columnas. En los comentarios previos a la
+     construcción del archivo latex se dan indicaciones para hacerlo.
+  6. Cuando la cantidad de tablas producidas es muy grande, el uso de objetos
+     flotantes en LATEX genera el mensaje de error “too many unprocessed floats”.
+     En este caso, conviene agregar la instrucción \clearpage antes de la tabla
+     donde se genera el mensaje de error o una anterior. Esta instrucción provoca
+     un salto de página, por lo que se recomienda colocarla antes de una tabla
+     donde haya cambio de página, para evitar que quede sola.
+
+
+4.    Ejemplo
+    Para el ejemplo utilizamos la experiencia de una investigación en el medio
+universitario, mediante la cual la oficina de Bienestar Estudiantil quiere conocer,
+entre otros aspectos, la composición del gasto directo y las fuentes de ingreso de
+los estudiantes, por tipo de área de estudio. Los objetivos de la investigación se
+traducen a cuadros de salida y, con base en ellos, se confecciona el instrumento de
+recolección de información o cuestionario de la encuesta. En la figura 2 se muestra
+la parte del cuestionario que sustenta este ejemplo.
+    Los nombres C31 a C46 que aparecen a la derecha de los recuadros de las dos
+primeras preguntas y el nombre C47 a la izquierda del recuadro de la pregunta 25
+corresponden a los nombres de los campos que tendrá la base de datos de grabación
+de la encuesta.
+    El siguiente código SAS importa la base depurada de datos de la encuesta,
+hace los ajustes para los cuadros solicitados e invoca la macro que, según el di-
+seño muestral aplicado, coloca los factores de expansión y utiliza las fórmulas de
+estimación de la varianza (Särndal et al. 1992, Bautista 1998):
+
+PROC IMPORT OUT=ARCA.bienestar
+ DATAFILE=’C:\2006\ASESORIAS\BIENESTIL_06.DBF’ DBMS=DBF REPLACE;
+ RUN;
+ /**************************************************************
+ *    PREPARACIÓN DE LAS VARIABLES                             *
+ ***************************************************************/;
+ DATA ARCHI_1; SET ARCA.bienestar; D41 = C41/1000000;
+ D42 = (C31+C32)/1000000; D43 = C33/1000000; D44 = C34/1000000;
+ D45 = (C35 + C36 + C37 + C38 + C39 + C40)/1000000;
+ D46 = C46/1000000; D47 = C42/1000000; D48 = C43/1000000;
+ D49 = C44/1000000; D50 = C45/1000000; D51 = C47;
+ KEEP D41-D51;
+ RUN;
+ /**************************************************************
+ *    PREPARACIÓN DE LOS ARCHIVOS DE RESULTADOS                *
+ ***************************************************************/;
+ DATA ARCA.SALIDA7; N_TABLA = 1; N_CAMPO = 1; tt = 1; t1 =1;
+
+
+ t2 =1; t3 =1; ct = 1; c1 =1; c2 =1; c3 =1; if N_TABLA = 2;
+ keep N_tabla N_campo tt t1 t2 t3 ct c1 c2 c3; run;
+ /**************************************************************/;
+ %include ’C:\2006\ASESORIAS\MACRO_7.SAS’;
+ /**************************************************************
+ *   INVOCACIÓN DE LA MACRO                                   *
+ ***************************************************************/;
+ %estima_linea(ARCHI_1, 12560, 237, 16, D41, 41, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 16, D42, 42, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 16, D43, 43, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 16, D44, 44, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 16, D45, 45, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 17, D46, 46, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 17, D47, 47, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 17, D48, 48, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 17, D49, 49, D51, ARCA.SALIDA7)
+ %estima_linea(ARCHI_1, 12560, 237, 17, D50, 50, D51, ARCA.SALIDA7)
+
+    Los resultados esperados se obtienen con el programa incluido en el apéndice
+y se presentan en las tablas 1 y 2 de la figura 3.
+
+
+5.    Conclusiones
+    El código ofrecido ilustra la idea de utilizar LATEX como herramienta de edición
+de las tablas provenientes de estudios de muestreo. Con un conocimiento básico
+de LATEX y de programación en SQL se puede ajustar a las necesidades de cada
+caso o adecuar para condiciones más generales.
+    Las ventajas del uso de LATEX como herramienta de edición se aprecian cuando
+la cantidad de tablas por editar es grande. Sin embargo, aun con pocas tablas, la
+ganancia es evidente cuando el mismo informe está preparado en LATEX.
+    Todos los archivos utilizados pueden construirse con cualquier programa de
+computador que genere archivos compatibles con los procedimientos de impor-
+tación de SAS. Esto es válido para tablas, titulos, encabezados, notas, rotulos y
+campos. Lo importante es conservar las estructuras, para que los llamados de SQL
+correspondan a la información solicitada.
+    La inclusión de estimacion dentro del código del programa obedece a fines de
+ilustración completa dentro del artı́culo. En el trabajo real, este archivo se produ-
+ce con las rutinas de estimación disponibles. Las instrucciones data se reemplazan
+entonces según el modelo: data estimacion; set salida7, donde salida7 es el ar-
+chivo SAS generado con las rutinas de estimación por muestreo y con la misma
+estructura del archivo estimacion.
+    La programación del apéndice puede realizarse en otros programas que inclu-
+yan SQL como lenguaje de consulta, pero la comodidad de uso se tiene con la
+posibilidad de crear código ejecutable por paquetes, como lo hace SAS.
+
+
+   23. ¿A cuánto ascendieron los gastos directos para su sustento
+        personal durante la semana pasada?
+
+     Compra de alimentos para preparación en casa: $                              C31
+     Pagos en restaurantes y similares: $                                          C32
+     Gastos en transporte: $                                                       C33
+     Fotocopias, libros y similares para el estudio: $                             C34
+     Gastos en medicamentos, consultas y similares
+     en salud: $                                                                   C35
+     Gastos para aseo personal, de su ropa y
+     de su vivienda: $                                                             C36
+     Gastos en teléfonos, correos y similares en
+     comunicación: $                                                              C37
+     Gastos en periódicos, revistas, cines y
+     similares en cultura: $                                                       C38
+     Gastos en asistencia a eventos deportivos,
+     bares y similares en esparcimiento: $                                         C39
+     Otros gastos de la semana sin incluir vivienda: $                             C40
+     Total gastos directos la semana pasada: $                                     C41
+
+   24. ¿A cuánto ascendieron los ingresos efectivos disponibles
+        para su sustento durante el MES pasado?
+     Ingresos por trabajo: $                                                    C42
+     Préstamos (becas): $                                                      C43
+
+     Transferencias familiares: $                                               C44
+     Otros ingresos: $                                                          C45
+     TOTAL ingresos disponibles en el mes: $                                    C46
+
+
+
+     25. ¿A qué área de estudio de la Universidad pertenece usted?
+
+             1   1    Ingenierı́a, ciencias o ciencias humanas
+   C47       2   2    Ciencias de la salud, veterinaria o agronomı́a
+             3   3    Artes, arquitectura, diseños, cine y T.V.
+
+
+
+                     Figura 2: Extracto del cuestionario aplicado.
+
+           Tabla 1: Gastos semanales por área de estudio según tipo de gasto
+
+                                                           Área de estudio
+      Tipo de gasto                             Ingenierı́a      C. de la           Artes
+                                Universidad
+                                                                    salud
+      Total gasto semanal              1295           266             431             597
+        (cve %)                         2.4           9.1             9.0             9.6
+      Alimentación                     477           149             168             160
+        (cve %)                         1.5           9.4             9.2             9.8
+      Transporte                         95            27              33              35
+        (cve %)                         2.2           9.8             9.5            10.1
+      Fotocopias y similares             62            16              22              24
+        (cve %)                         1.8           9.4             9.1             9.7
+      Otros gastos                      660            74             208             378
+        (cve %)                         4.0           8.9             9.1             9.6
+      Datos en millones de pesos.
+
+
+        Tabla 2: Ingresos mensuales por área de estudio según fuente de ingreso
+
+                                                           Área de estudio
+      Fuente de ingreso                         Ingenierı́a      C. de la           Artes
+                                Universidad
+                                                                    salud
+      Total ingresos del mes           5525          1147            1843            2535
+        (cve %)                         2.4           9.1             9.0             9.6
+      Ingresos de trabajo               246            84              95              66
+        (cve %)                        11.1          21.8            19.9            21.9
+      Préstamos                         83            23              28              32
+        (cve %)                        15.7          31.2            28.3            27.0
+      Transferencias familiares        5140          1033            1705            2402
+        (cve %)                         2.5           9.2             9.1             9.6
+      Otros ingresos                     55               5            14              35
+        (cve %)                        81.8          76.3            55.1            52.6
+      Datos en millones de pesos.
+
+
+            Figura 3: Resultados obtenidos con el programa del apéndice
+
+Apéndice: Código del programa en SAS
+
+/*       ---------------------------------------------------------
+         Elaboración de tablas en LaTeX
+         Jorge Ortiz P. - Leonardo Bautista S.
+         Febrero de 2006
+         ---------------------------------------------------------
+*/
+options ps = 5000 nosource nonotes nodate nonumber nocenter; title;
+/*   ----------------- ARCHIVOS DE DATOS Y ARCHIVOS AUXILIARES */
+
+/*    TABLAS contiene las tablas que se incluyen en el informe.
+      NTabla   es uno de los números de tabla del archivo de
+               estimaciones (estimacion)
+      N_Titulo indica el tı́tulo escogido para la tabla
+               (del archivo titulos)
+      NDominio indica el campo que define los dominios.
+               Debe ser un valor de Ncampo en la tabla campos.
+      N_Encabezado indica el encabezado para las filas de la tabla.
+               Debe ser un valor de Nencabezado de la tabla
+               encabezados.
+      N_Nota es el número de la nota que se incluye al pie de
+               la tabla. Toma valores de la tabla Notas.
+*/
+ data tablas;
+ input NTabla
+       N_Titulo
+       NDominio
+
+       N_Encabezado
+       N_Nota;
+ cards;
+ 16   1     51   1     2
+ 17   2     51   2     2
+ ;
+/* ----------------------------------- TÍTULOS para las tablas */
+ data titulos;
+ input NTitulo
+        Titulo $ 4-66;
+ cards;
+ 1 Gastos semanales por área de estudio según tipo de gasto       %
+ 2 Ingresos mensuales por área de estudio según fuente de ingreso %
+ ;
+
+/*   -----------------   ENCABEZADOS para las filas de la tabla               */
+ data encabezados;
+ input Nencabezado Texto $ 6-40;
+ cards;
+ 1   Tipo de gasto                                                             %
+ 2   Fuente de ingreso                                                         %
+ ;
+/* -----------------------------------    NOTAS al pie de tabla               */
+ data Notas;
+ input NNota
+        Nota $ 6-55;
+ cards;
+ 1   Fuente: Encuesta 2006 de bienestar estudiantil.                           %
+ 2   Datos en millones de pesos.                                               %
+ ;
+
+/*   ROTULOS asigna los textos para los códigos de los campos
+     categóricos de la tabla de datos. Por ejemplo, un campo con
+     TipoRotulo = 2 toma los valores
+     -1 (Universidad), 1 (Ingenierı́a), 2 (C. Salud) o 3 (Artes).*/
+ data rotulos;
+ input tipo
+        valor
+        texto $ 11-30;
+ cards;
+ 0   0                                                              %
+ 2 -1      Universidad                                              %
+ 2   1     Ingenierı́a                                              %
+ 2   2     C. de la salud                                           %
+ 2   3     Artes                                                    %
+;
+
+
+/*    Información sobre los campos de la tabla de datos.
+      TipoRotulo debe coincidir con tipo en la tabla rotulos
+                  donde se asignan los textos correspondientes
+                  a los valores posibles de cada campo.
+*/
+
+ data campos;
+ input Ncampo
+        TipoRotulo
+        NombreCampo $ 11-50;
+ cards;
+ 41   0    Total gasto semanal                                                 %
+ 42   0    Alimentación                                                       %
+ 43   0    Transporte                                                          %
+ 44   0    Fotocopias y similares                                              %
+ 45   0    Otros gastos                                                        %
+ 46   0    Total ingresos del mes                                              %
+ 47   0    Ingresos de trabajo                                                 %
+ 48   0    Préstamos                                                          %
+ 49   0    Transferencias familiares                                           %
+ 50   0    Otros ingresos                                                      %
+ 51   2    Área de estudio                                                    %
+;
+
+/*    Estimacion. Las lı́neas con el mismo valor de N_Tabla
+      contienen las estimaciones                tt t1 t2 t3
+      con coeficientes de variación            ct c1 c2 c3
+      para cada campo con código dado por N_campo.
+*/
+
+ data estimacion;
+ input N_Tabla N_campo tt t1 t2 t3 ct c1 c2 c3;
+ cards;
+ 16 41   1295     266  431  597     2.4    9.1            9.0        9.6
+ 16 42    477     149  168  160     1.5    9.4            9.2        9.8
+ 16 43     95      27   33   35     2.2    9.8            9.5       10.1
+ 16 44     62      16   22   24     1.8    9.4            9.1        9.7
+ 16 45    660      74  208  378     4.0    8.9            9.1        9.6
+ 17 46   5525   1147 1843 2535      2.4    9.1            9.0        9.6
+ 17 47    246      84   95   66    11.1   21.8           19.9       21.9
+ 17 48     83      23   28   32    15.7   31.2           28.3       27.0
+ 17 49   5140   1033 1705 2402      2.5    9.2            9.1        9.6
+ 17 50     55       5   14   35    81.8   76.3           55.1       52.6
+;
+
+
+/*    -----------------------------------------------------
+        INSTRUCCIONES PARA GENERAR EL CÓDIGO FUENTE LATEX
+      -----------------------------------------------------
+      El ancho del texto (\textwidth) se puede modificar.
+      está para 125mm. De ellos, en \begin{tabular}{p{44mm}}
+      se utilizan 44mm y en el encabezado de las columnas de
+      los dominios (ver más adelante en SQL) se utilizan
+      4*19+5 mm = 73mm (ver \multicolumn{1}{p{19mm}}).
+      Se pueden modificar estos valores, manteniendo su
+      total dentro de los 125mm del ancho del texto,
+      para adaptar la presentación de los valores en la
+      tabla LaTeX.
+*/
+ data latex;
+ input Lugar Posicion Texto $ 7-60;
+ datalines;
+ 1 1 \documentclass[10pt,twoside]{book}                                        %
+ 1 2 \usepackage[english,spanish]{babel}                                       %
+ 1 3 \usepackage[latin1]{inputenc}                                             %
+ 1 4 \usepackage{latexsym}                                                     %
+ 1 5 \usepackage{amsmath,amssymb,amsfonts}                                     %
+ 1 6 \usepackage[dvips]{graphicx}                                              %
+ 1 7 \usepackage{enumerate}                                                    %
+ 1 8 \usepackage{array}                                                        %
+ 1 9 \setcounter{MaxMatrixCols}{15}                                            %
+ 1 11 \setlength{\textwidth}{125mm}                                            %
+ 1 12 \setlength{\textheight}{195mm}                                           %
+ 1 13 \setlength{\marginparwidth}{2mm}                                         %
+ 1 14 \setlength{\headsep}{6mm}                                                %
+ 1 15 \setlength{\oddsidemargin}{12mm}                                         %
+ 1 16 \setlength{\evensidemargin}{12mm}                                        %
+ 1 17 \begin{document}                                                         %
+ 1 18 \renewcommand{\arraystretch}{1.2}                                        %
+ 1 19 \renewcommand{\tablename}{Tabla}                                         %
+ 1 20 \renewcommand{\tabcolsep}{0.7mm}                                         %
+ 1 21 \clearpage                                                               %
+ 2 1 \begin{table}                                                             %
+ 2 2 \begin{center}                                                            %
+ 2 3 \caption{                                                                 %
+ 3 1 } \vspace{2mm}                                                            %
+ 3 2 \begin{tabular}{p{34mm}rrrr}                                              %
+ 3 3 & & \multicolumn{3}{c}{                                                   %
+ 4 1 } \\                                                                      %
+ 4 2   \cline{3-5}                                                             %
+ 5 1 \\ \hline                                                                 %
+ 6 1 \hline                                                                    %
+
+
+ 6 2 \end{tabular}                                                             %
+ 6 3 \end{center}                                                              %
+ 6 4 \end{table}                                                               %
+ 9 2 \clearpage                                                                %
+ 9 3 \end{document}                                                            %
+ ;
+ run;
+
+/*   -----   Procedimiento para generar el código fuente LaTeX               */
+ proc sql;
+ create table CuerpoTabla(
+   ntabla numeric(9,1),
+   lugar numeric(9,1),
+   posicion numeric(9,1),
+   texto char(500));
+
+/* --------------    Tabla como objeto flotante: \begin{table}                */
+ insert into CuerpoTabla
+  select ntabla, lugar, posicion, trim(latex.texto) as texto
+  from tablas, latex
+  where lugar = 2;
+
+/* -------------------    Tı́tulo de la tabla: \caption{titulo}  */
+ insert into CuerpoTabla
+  select ntabla, 2.5 as lugar, 1 as posicion, trim(titulo) as texto
+  from titulos, tablas
+  where titulos.ntitulo = tablas.n_titulo;
+
+/* --------------------    Inicio de la tabla: \begin{tabular}                */
+ insert into CuerpoTabla
+  select ntabla, lugar, posicion, trim(latex.texto) as texto
+  from tablas, latex
+  where lugar = 3;
+
+/* ---------------    Nombre del campo que define los dominios                */
+ insert into CuerpoTabla
+  select ntabla, 3.5 as lugar, 1 as posicion,
+  trim(nombrecampo) as texto
+  from tablas, campos
+  where tablas.ndominio = campos.ncampo;
+
+/* - Lı́nea que separa los encabezados de columnas de dominios                */
+ insert into CuerpoTabla
+  select ntabla, lugar, posicion, trim(latex.texto) as texto
+  from tablas, latex
+  where lugar = 4;
+
+/* ------------------------------    Encabezado para las filas                  */
+ insert into CuerpoTabla
+  select ntabla, 4.1 as lugar, 1 as posicion,
+  trim(encabezados.texto) as texto
+  from tablas, encabezados
+  where tablas.N_encabezado = encabezados.Nencabezado;
+
+/* ------------    Encabezado de las columnas de los dominios                   */
+ insert into CuerpoTabla
+  select ntabla, 4.5 as lugar, valor as posicion,
+  ’& \multicolumn{1}{p{17.7mm}}{\vspace{-6mm} \flushright ’ ||
+  trim(rotulos.texto) || ’} %’ as texto
+  from tablas, campos, rotulos
+  where ndominio = ncampo and
+        tiporotulo = tipo;
+
+/* -----------     Lı́nea de separación del cuerpo de la tabla            */
+ insert into CuerpoTabla
+  select ntabla, lugar, posicion, trim(latex.texto) as texto
+  from tablas, latex
+  where lugar = 5;
+
+/* ------------------------------------     Cuerpo de la tabla */
+ insert into CuerpoTabla
+  select ntabla, 5.5 as lugar, estimacion.N_campo as posicion,
+  trim(nombrecampo) || ’ & ’ || put(tt, 9.0) ||
+  ’ & ’ || put(t1, 9.0) || ’ & ’ || put(t2, 9.0) ||
+  ’ & ’ || put(t3, 9.0) || ’ \\ %’ as texto
+  from tablas, campos, estimacion
+  where estimacion.n_tabla = tablas.ntabla and
+        estimacion.n_campo = campos.ncampo;
+
+ insert into CuerpoTabla
+  select ntabla, 5.5 as lugar,
+  estimacion.N_campo + 0.5 as posicion,
+  ’\quad \textit{(cve\%)}’ ||
+  ’ & \textit{’ || put(ct, 9.1) ||
+  ’} & \textit{’ || put(c1, 9.1) ||
+  ’} & \textit{’ || put(c2, 9.1) ||
+  ’} & \textit{’ || put(c3, 9.1) || ’} \\ %’ as texto
+  from tablas, campos, estimacion
+  where estimacion.n_tabla = tablas.ntabla and
+        estimacion.n_campo = campos.ncampo;
+
+/* -------------------------------       Notas al pie de la tabla */
+ insert into CuerpoTabla
+  select    ntabla, 6 as lugar, 1.1 as posicion,
+  ’\multicolumn{5}{p{90mm}}{’ || trim(Nota) || ’} %’ as texto
+  from tablas, notas
+  where tablas.n_nota = notas.nnota;
+/* ------------     Final de la tabla (\end{tabular}\end{table} */
+ insert into CuerpoTabla
+  select ntabla, lugar, posicion, trim(latex.texto) as texto
+  from tablas, latex
+  where lugar = 6;
+/* ------------------ Reordenamiento de las lı́neas producidas */
+ create table salida as
+  select ntabla, lugar, posicion, texto
+  from CuerpoTabla
+  order by ntabla, lugar, posicion;
+/* ---------------------------- Generación del archivo LaTeX */
+ create table Informe(texto char(500));
+/* ---------------------------- Preámbulo del documento LaTeX */
+ insert into Informe
+  select trim(texto)
+  from latex
+  where lugar = 1;
+/* -------------------------------------------------- Tablas */
+ insert into Informe
+  select trim(texto)
+  from salida;
+/* --------------------------------------- Fin del documento */
+ insert into Informe
+  select trim(latex.texto)
+  from latex
+  where lugar = 9;
+ quit;
+/* Informe.tex es el archivo con el texto LaTeX para ser
+   compilado. La primera lı́nea contiene la palabra "texto"
+   y se debe borrar antes de la compilación.
+   Modifique la carpeta donde va a quedar grabado.
+*/
+ PROC EXPORT DATA= Work.Informe
+      OUTFILE= "C:\Rev\V29_1\OrtizBautista\Informe.tex"
+      DBMS=TAB REPLACE;
+ RUN;
+ /* -------------------------------------------------------
+                        FIN DEL PROGRAMA
+      ------------------------------------------------------- */
+
+Referencias
+Bautista, L. (1998), Diseños de muestreo estadı́stico, Universidad Nacional de Colombia, Bogotá.
+SAS Institute (1996a), SAS/MACRO Facility, version 6, 2nd. edn, Cary, NC.
+SAS Institute (1996b), SAS/SQL User’s Guide, version 6, 2nd. edn, Cary, NC.
+Särndal, K.-E., Swensson, B. & Wretman, J. (1992), Model Assisted Survey Sampling, Springer, New York.

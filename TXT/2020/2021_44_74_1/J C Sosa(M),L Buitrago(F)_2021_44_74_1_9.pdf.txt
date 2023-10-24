@@ -1,0 +1,1328 @@
+A Review of Latent Space Models for Social Networks. Una revisión de modelos de espacio latente para redes sociales
+Universidad Nacional de Colombia, Bogotá, Colombia
+Abstract
+In this paper, we provide a review on both fundamentals of social networks and latent space modeling. The former discusses important topics related to network description, including vertex characteristics and network structure; whereas the latter articulates relevant advances in network modeling, including random graph models, generalized random graph models, exponential random graph models, and social space models. We discuss in detail several latent space models provided in literature, providing special attention to distance, class, and eigen models in the context of undirected, binary networks. In addition, we also examine empirically the behavior of these models in terms of prediction and goodness-of-ﬁt using more than twenty popular datasets of the network literature.
+Key words: Bayesian inference; Latent space model; Markov chain Monte Carlo; Social networks.
+Resumen
+En este artículo, proporcionamos una revisión sobre los fundamentos de redes sociales y el modelamiento de espacio latente. La primera trata temas importantes relacionados con la descripción de la red, incluidas las características de los vértices y la estructura de la red; mientras que la segunda articula avances relevantes en el modelado de redes, incluidos modelos de grafos aleatorios, modelos de grafos aleatorios generalizados, modelos de grafos aleatorios exponenciales y modelos de espacio social. Discutimos en detalle varios modelos de espacio latente proporcionados en la literatura, prestando especial atención a los modelos de distancia, clase y eigen, en el contexto de redes binarias no dirigidas. Además, también examinamos empíricamente el comportamiento de estos modelos en términos de predicción y bondad de ajuste utilizando más de veinte conjuntos de datos populares de la literatura de redes.
+Palabras clave: Cadena de Markov de Monte Carlo; Inferencia Bayesiana; Modelo de espacio latente; Redes sociales.
+
+1. Introduction
+    The study of information that emerges from the interconnectedness among
+autonomous elements in a system (and the elements themselves) is extremely
+important in the understanding of many phenomena. The structure formed by
+these elements (individuals or actors) and their interactions (ties or connections)
+is commonly known as a graph, social network, or just network. Examples
+of networks are common in many research areas including: Finance (studying
+alliances and conﬂicts among countries as part of the global economy),
+social science (studying interpersonal social relationships and social schemes
+of collaboration such as legislative cosponsorship networks), biology (studying
+arrangements of interacting genes, proteins or organisms), epidemiology (studying
+the spread of a infectious disease), and computer science (studying the Internet, the
+World Wide Web, and also communication networks), among many others. Just
+a few examples are enough to see that both entities and connections in networks
+are varied and diverse, ranging from people to organizations, and friendship to
+communication, respectively.
+    Since the mid 90s there has been an increasing development of statistical
+methods aiming to improve our understanding of how actors’ attributes and
+relations aﬀect the overall structure and behavior of a system. To that end
+statistical methods essentially aim to do three things. First, to summarize the
+patterns that characterize the structure of a network along with its individual
+entities. Second, to create (stochastic) models that provide a way to explain
+the process under which a network came to be as it is. And third, to predict
+missing or future relations taking into account the structural properties of the
+network and the local rules governing its actors. In contrast to a vast quantity
+of deterministic methods developed in the physics literature, the implementation
+of statistical models allow us to report measures of uncertainty associated with
+parameter estimates and predictions.
+    This review is structured as follows: Sections 2 and 3 review fundamental
+concepts on networks including basic deﬁnitions and networks topology. Section
+4.4 provides details about network modeling, paying special attention to latent
+space models. Section 5 presents our approach to Bayesian inference through
+Markov chain Monte Carlo methods. Section 6 discusses details about distance,
+class and eigen models, including important properties, prior elicitation, and
+applications. Finally, Section 7 summarizes our main remarks.
+
+
+2. Fundamentals
+    Generally speaking, network data consists of a set of actors, variables measured
+on such actors (nodal attributes) and variables measured on pair of actors (dyads).
+This speciﬁc type of data in its simplest form comes in the form of a dichotomous
+variable indicating the presence or absence of a connection of interest (e.g.,
+friendship, collaboration, alliances and conﬂicts, and so forth) between a pair
+of actors: This is known as a binary network. Also, it is quite common to ﬁnd
+
+                   Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                        173
+
+networks in which edges are equipped with weights (e.g., the amount of time spent
+together between individuals, costs of transactions between companies, number of
+conﬂicts between countries, distance between objects, and so forth) characterizing
+the corresponding connection between a pair of actors. Such kind of networks are
+known as weighted or valued networks.
+     It is also frequent to characterize relations as undirected or directed. An
+undirected (symmetric) relation has one and only one value per pair of actors;
+on the other hand, a directed (asymmetric) relation has two values per pair of
+actors, one value representing the perspective of each pair member. Accordingly, a
+network is said to be an undirected network if every relation in it is undirected, and
+it is called directed network or digraph otherwise. Examples of directed networks
+include the network of citations between academic papers and the network of
+email messages between coworkers, since each relation is unidirectional. On the
+other hand, examples of undirected networks include the network of friendship
+relations and the network of sexual contact between individuals, since there is no
+directionality implicit in the relation.
+    A binary network is often represented as a graph in which vertices (nodes)
+correspond to the actors and edges (ties or links) correspond to the connections
+between dyads. Another useful way of representing network data is through a
+matrix commonly known as adjacency matrix or sociomatrix. For binary networks
+with I nodes, the adjacency matrix Y = [yi,i′ ] is an I × I binary matrix such
+that yi,i′ = 1 if there is a link from node i to node i′ , and yi,i′ = 0 otherwise.
+Analogously, the adjacency matrix of a weighted network is deﬁned in such a way
+that yi,i′ is equal to the corresponding weight associated with the relation from
+node i to node i′ , and it is equal to zero otherwise. The main diagonal of an
+adjacency matrix is full of structural zeros if edges connecting nodes to themselves
+are not allowed in the network. Note that the adjacency matrix of an undirected
+network has to be symmetric; similarly, the adjacency matrix of a directed network
+is possibly asymmetric.
+    From a statistical perspective, tools and methods for the analysis of network
+data can be classiﬁed according to three main categories, namely, descriptive
+methods, modeling and inference methods, and processes methods. First,
+descriptive methods aim to visualize and numerically characterize the actors and
+the overall structure of a network. Second, modeling and inference methods aim
+to explain how a network might have arisen. And third, process methods aim
+to study how interactions inﬂuence actors’ attributes. Broadly speaking, in this
+paper we mostly review methods within the ﬁrst and second categories.
+
+
+3. Network Description
+    Visualization and description are fundamental processes when studying the
+main features of a network. Graphical techniques and summary quantities, many
+of them graph-theoretic in nature, have been designed in order to characterize
+the role of the actors in a network (by describing their relative importance and
+that of their relations) and the structural patterns of the system (by describing
+
+                   Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+174                                                          Juan Sosa & Lina Buitrago
+
+
+aspects of the network itself such as cohesion, connectivity, assortativity, among
+many others).
+   Identifying structural attributes in a network is of great importance because
+they lead to dependencies in the data. That is why taking into account such
+dependencies is tremendously important when developing statistical models for
+network analysis (see Section 4). Even though the concepts presented below
+are easily extended to directed networks, for simplicity we devote the discussion
+principally to undirected, binary networks. Two classic introductory books about
+network fundamentals and methods are Wasserman & Faust (1994) and Scott
+(2000). More contemporaneous reviews on network properties and measure
+summaries can be found in Kolaczyk (2009) and Newman (2010).
+   In what follows, we consider some details about vertex characteristics along
+with network structure as the main two aspects to be taken into account by the
+analyst when the goal consists in characterizing the topology of a network. We
+make such a distinction because the former describes speciﬁc node attributes,
+whereas the latter characterizes global network attributes.
+
+
+
+
+3.1. Vertex Characteristics
+
+    Frequently, the ﬁrst step to characterize a network consists in describing its
+vertices. The degree of a vertex refers to the number of edges connected to that
+vertex; this quantity allows us to identify the most highly connected vertices in
+the network. The degree distribution in most real-world networks is highly right-
+skewed, and therefore very unlike the random graph case (see Section 4); indeed,
+many of them follow power laws in their tails (i.e., pk ∝ k −γ where pk is the
+fraction of vertices with degree k, and γ is some exponent greater than zero).
+From a structural perspective, it is useful to look at the average neighbor degree
+(two vertices are referred to as neighbors if they are joined by an edge) versus the
+vertex degree in order to investigate how vertices of diﬀerent degrees are linked to
+each other.
+    Vertex centrality measures allow us to characterize the relative importance of
+an actor in the network. Obviously, the deﬁnition of these measures depends on
+the underling notion of “importance”. For instance, closeness centrality measures
+suggest that a vertex is important if it is close to many other vertices, while
+betweenness centrality measures label a vertex as important if it is between many
+other pair of vertices. Centrality measures are usually based on the geodesic
+distance, i.e., the length of the shortest path between vertices. Many other
+centrality measures have been proposed over the years; see for example Kolaczyk
+(2009, Ch. 4) for a review.
+   In addition to describing vertices’ characteristics, it is also very important to
+characterize the network’s structure as a whole. In what follows, we review some
+measures about this regard.
+
+                  Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                       175
+
+3.2. Network Structure
+
+    Two fundamental aspects of the structure of a network are cohesion and
+connectivity. Of course, there are several ways to assess cohesiveness attributes.
+One way to do so simply consists in establishing whether or not the network is
+connected (i.e, every vertex is reachable from every other vertex) or complete
+(i.e, every vertex is joined to every other vertex), and enumerating pre-speciﬁed
+subgraphs of interest such as dyads (pairs), triads (triples) or cliques (undirected
+graph such that every two distinct vertices in the clique are adjacent).
+    There are also several measures speciﬁcally designed to describe connectivity
+in a network. For instance, the density of a network, deﬁned as the frequency of
+realized edges relative to the number of potential edges, measures how close the
+network is to being complete. In addition, the clustering coeﬃcient or transitivity,
+deﬁned as the relative frequency of connected triples to triangles (three nodes
+connected to each other by three edges), measures the density of triangles in the
+network and therefore its transitivity. Density and clustering in the immediate
+neighborhood of a vertex are also possible. Another way of examining connectivity
+is related to the impact that vertex removal might have on the existence of paths
+between pairs of vertices; this notion is commonly known as resilience. In many
+real networks, only a few percent of hight degree vertices need be removed before
+essentially all communication through the network is destroyed.
+    In most kinds of networks there are diﬀerent types of vertices according
+to certain attributes. Selective linking among vertices according to these
+characteristics is usually called homophily or assortative mixing. Homophily
+provides an explanation to patterns often seen in social networks, such as
+transitivity (“a friend of a friend is a friend”), balance (“the enemy of my friend
+is an enemy”), and the existence of cohesive subgroups of nodes (Hoﬀ 2008, p.
+1). Measures that aim to quantify the extent of homophily are called assortative
+coeﬃcients and essentially are variations of a regular correlation coeﬃcient.
+One common use of assortative coeﬃcients consists in summarizing the degree
+correlation of adjacent vertices.
+    As an extreme case of homophily, it is common to ﬁnd subsets of actors that
+demonstrate cohesive patterns with respect to the underlying relational framework.
+Such groups of vertices have a high density of edges within them, with a lower
+density of edges between groups. Networks evidencing this behavior are said to
+have a community structure. In that regard, hierarchical clustering and spectral
+partitioning are two classical methods often used to detect network communities in
+the absence of external information. Speciﬁcally, hierarchical clustering methods
+aim to algorithmically optimize a similarity measure in order to detect vertices in
+the same communities (e.g., two vertices can be considered as similar if they have
+the same neighbors). On the other hand, spectral partitioning methods attempt
+to discover communities by iteratively using the eigen-decomposition of the graph
+Laplacean. Development of procedures for community detection is a highly active
+area of research. There are numerous reviews available; see Fortunato (2010), for
+example.
+
+                  Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+176                                                          Juan Sosa & Lina Buitrago
+
+
+4. Modeling
+    Generally speaking, a statistical network model is a probability distribution on
+a sociomatrix Y indexed by an unknown parameter θ ∈ Θ, p(Y | θ). Rather than
+visualizing and describing topological characteristics of the network, statistical
+models aim to study essential aspects of the stochastic mechanism under which a
+given network might have arisen. Indeed, statistical network models allow us to
+test for the signiﬁcance of predeﬁned features in the network, assess associations
+between node/edge attributes and the network structure, and impute missing
+observations. In contrast to deterministic and algorithmic models, statistical
+models are also useful to quantify the uncertainty related to the unknowns in
+the model (e.g, parameter estimates, predictions, and missing data imputations).
+    It is very important to emphasize that the nature of a network itself leads
+to dependencies between actors, and also, between ties; for instance, reciprocity
+and clustering are clear manifestations of dependence in network data. It is
+indispensable to take such dependencies into account if we want to formulate
+reasonable statistical models. A concise discussion of relevant models for cross-
+sectional (also called static) networks is presented below. An extensive treatment
+of these topics can be found for example in Goldenberg et al. (2010), Snijders
+(2011), and Crane (2018).
+
+
+4.1. Random Graph Models
+    Statistical models for networks have now over 50 years of history. The random
+graph model (Gilbert 1959, Erdös & Rényi 1959, 1960, 1961) was one of the ﬁrst
+models for networks discussed in the literature. Under this model, an edge between
+any pair of nodes is added to the graph independently with some ﬁxed probability
+θ. For example, the probability of an undirected, binary network under this model
+is given by                          ∏
+                          p(Y | θ) =     θyi,i′ (1 − θ)1−yi,i′ .
+                                     i<i′
+
+Random graphs tend to be sparse with small diameter (value of the longest geodesic
+distance), low clustering, and an unrealistic degree distribution. Hence, most real-
+world networks are rarely a plausible realization of a random graph. In spite of
+such unrealistic behavior, random graph models are commonly used in deﬁning
+null classes of networks against which to assess the signiﬁcance of structural
+characteristics found in an observed network (Kolaczyk & Csárdi 2020, Sec. 5.5, for
+example). Bollobás (1998) oﬀers an extensive treatment of random graph models.
+
+
+4.2. Generalized Random Graph Models
+   Motivated by real-world network attributes, generalized random graph models
+arose as an extension of the original random graph aiming to mimic such attributes
+through the inclusion of simple mechanisms. For instance, conﬁguration models
+(Bender & Canﬁeld 1978) generate random networks with a pre-speciﬁed degree
+
+                  Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                          177
+
+distribution. A shortcoming of such a model is that it fails at capturing homophily
+and clustering, which are features frequently observed in social networks. On
+the other hand, small-world models (Watts & Strogatz 1998, Newman & Watts
+1999) produce high levels of clustering with small average distances, but generate
+unrealistic degree distributions. In addition, both the conﬁguration model and
+the small-world model work with a ﬁxed number of nodes and thus cannot be
+used to model network growth (phenomenon in which the number of nodes in
+the network increases over time). On the other hand, preferential attachment
+models (Barabási & Albert 1999), designed to account for network growth and
+preferential attachment (“the rich get richer” eﬀect), yield networks with degree
+distributions that tend to a power law. Nevertheless, this model still shares the
+tendency towards low clustering. As a consequence, neither the conﬁguration
+model, the small-world model, nor the conﬁguration model should be viewed as
+fully realistic models for networks. Chung & Lu (2006) is a classical reference on
+generalized random graphs models.
+
+
+4.3. Exponential Random Graph Models
+    Beyond generalized random graphs models, Frank & Strauss (1986) introduced
+the so-called exponential random graphs models (ERGMs), also known as p∗
+models (Wasserman & Pattison 1996), attempting to built more realistic models
+to address the foregoing transitivity issue. Speciﬁcally, ERGMs can be written as
+                                             {K              }
+                                     1        ∑
+                      p(Y | X, θ) =      exp    θk Sk (Y, X)                             (1)
+                                    κ(θ)
+                                                   k=1
+
+
+where X is an array of predictors xi,i′ = (xi,i′ ,1 , . . . , xi,i′ ,P ) speciﬁc to each dyad
+(i, i′ ), each Sk (Y, X) is either a network statistic or a function of edge and vertex
+attributes, θ = (θ1 , . . . , θK ) is a K-dimensional vector of unknown parameters, and
+κ(θ) is a normalizing constant. Examples of network statistics include counts of k-
+stars (k+1 nodes with one node being linked to the other k) and triangles. ERGMs
+are appealing models for networks since the form of (1) explicitly tie parameters
+to suﬃcient statistics, yielding an attractive interpretation. Furthermore, ERGMs
+can be constructed to match beliefs on important structural features of the data.
+    Even though ERGMs have a natural appeal, they are computationally
+challenging because the normalizing constant κ(θ) is generally unknown and
+intractable in all but the simplest cases. An additional shortcoming is that ERGMs
+tend to degenerate, i.e., the model places disproportionate probability mass on
+only a few of the possible graph conﬁgurations. Also, ERGMs implicitly assume
+that the network is observed for the whole population of interest, and therefore,
+they are not well suited to make predictions on unobserved dyads. Finally, a
+recognized limitation of ERGMs is that they are weak at capturing local features
+of networks and as a consequence may lead to poor model ﬁtting in real-world
+networks (Snijders 2002, Handcock et al. 2003). Frank & Strauss (1986) also
+proposed models with Markov structure that provide forms of dyad dependence
+
+                    Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+178                                                                   Juan Sosa & Lina Buitrago
+
+
+(homogeneous monadic Markov models). A detailed review of ERGMs can be
+found in Robins et al. (2007) and Lusher et al. (2012).
+
+
+4.4. Social Space Models
+     The use of random eﬀects in the context of generalized linear models is a
+popular alternative to model networks. Speciﬁcally, consider a model in which the
+yi,i′ s are conditionally independent with probabilities of interaction
+
+              Pr [yi,i′ = 1 | β, γi,i′ , xi,i′ ] = g −1 (xT
+                                                          i,i′ β + γi,i′ ),   i < i′ ,      (2)
+
+where β = (β1 , . . . , βP ) is an (unknown) vector of ﬁxed eﬀects, xT      i,i′ β =
+∑P
+   p=1 βp xi,i ,P is a linear predictor representing patterns in the data related to
+              ′
+
+known covariates xi,i′ , γi,i′ is an unobserved speciﬁc random eﬀect, representing
+any additional patterns in the data unrelated to those of the predictors, and g(·)
+is a (known) link function.
+    Following results in Aldous (1985) and Hoover (1982), see also Hoﬀ (2008)
+for details, it can be shown that if the matrix of random eﬀects [γi,i′ ] is jointly
+exchangeable, there exists a symmetric function α(·, ·) such that γi,i′ = α(ui , ui′ ),
+where u1 , . . . , uI is a sequence of independent latent random variables (vectors).
+The impact of such latent variables on (2) is largely dictated by the form of α(·, ·).
+Therefore, it is mainly through α(·, ·) that we are able to capture relevant features
+of relational data.
+    A number of potential formulations for α(·, ·) have been explored in the
+literature to date; for instance, see Nowicki & Snijders (2001), Hoﬀ et al. (2002),
+Schweinberger & Snijders (2003), Hoﬀ (2005), Handcock et al. (2007), Linkletter
+(2007), Hoﬀ (2008), Krivitsky & Handcock (2008), Hoﬀ (2009), Krivitsky et al.
+(2009), Li et al. (2011), Raftery et al. (2012a), and Minhas et al. (2019). Some
+of these approaches are discussed bellow (see also Table 1). Other important
+approaches in a multilayer setting include Salter-Townshend & McCormick (2017),
+Durante et al. (2018), and Wang et al. (2019). See also Section 7 for a discussion.
+
+
+4.4.1. Class Models
+
+    Nowicki & Snijders (2001) assume that each actor i belongs to an unobserved
+latent class ui ∈ {1, . . . , K}, and a probability distribution describes the
+relationships between each pair of classes. Here, the latent eﬀects are speciﬁed
+as α(ui , ui′ ) = θϕ(ui ,ui′ ) , for a symmetric K × K matrix Θ = [θk,ℓ ] of real entries
+θk,ℓ such that 0 < θk,ℓ < 1, with ϕ(u, v) = (min{u, v}, max{u, v}). Latent
+class models, also known as stochastic block models (SBMs), eﬀectively capture
+stochastic equivalence (pattern in which nodes can be divided into groups such
+that members of the same group have similar patterns of relationships). However,
+models based on distinct clusters may not ﬁt well when many actors fall between
+clusters (Hoﬀ et al. 2002). Recent extensions of this approach are given in Kemp
+et al. (2006), Xu et al. (2006), and Airoldi et al. (2009).
+
+                    Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                        179
+
+4.4.2. Distance Models
+
+    Hoﬀ et al. (2002) assume that each actor i has an unknown position ui ∈ RK in
+an Euclidean social space (space of unobserved latent characteristics that represent
+potential transitive tendencies in network relations), and that the probability
+of an edge between two actors may increase as the latent characteristics of the
+individuals become more similar, i.e., when the actors become closer in the social
+space. To this end, the latent eﬀects are speciﬁed as α(ui , ui′ ) = −∥ui − ui′ ∥,
+where ∥ · ∥ denotes the Euclidean norm. Latent structures based on distances
+naturally induce homophily (pattern in which the relationships between nodes
+with similar characteristics are stronger than those between nodes with diﬀerent
+characteristics), which is a main feature frequently seen in real social networks.
+Also, modeling positions as belonging to a low-dimensional Euclidean space
+provides a model-based alternative of data reduction to graphically represent
+social network data. Even though latent distance models inherently account for
+reciprocity and transitivity, they may not be appropriate for networks exhibiting
+hight levels of clustering.
+
+
+4.4.3. Projection Models
+
+    Hoﬀ et al. (2002), in the same context of latent distance models where ui ∈ RK ,
+propose that the probability of an edge between two actors may increase as the
+overture of the angle formed by the corresponding latent positions becomes wider.
+Speciﬁcally, actors i and i′ are prone to having a tie if the angle between them is
+small (uT                                                                    T
+          i ui′ > 0), neutral to having ties if the angle is a right angle (ui ui′ = 0),
+                                                   T ′
+and averse to ties if the angle is obtuse (ui ui < 0). The latent eﬀects are
+speciﬁed as α(ui , ui′ ) = uTi ui′ /∥ui′ ∥, which corresponds to the signed magnitude
+of the projection of ui in the direction of ui′ . Such a quantity can be thought
+of as the extent to which i and i′ share characteristics, multiplied by the activity
+level of i.
+
+
+4.4.4. Bilinear Models
+
+     Hoﬀ (2005), considering again a K-dimensional social space, assumes that
+interaction probabilities rely on symmetric multiplicative interaction eﬀects. Such
+interaction for a dyad (i, i′ ) is expressed in terms of a bilinear eﬀect, i.e., the
+inner product between unobserved characteristic vectors speciﬁc to actors i and
+i′ . Hence, the latent eﬀects are speciﬁed as α(ui , ui′ ) = uT i ui′ . According to
+Hoﬀ (2008), bilinear models are able to generalize distance models (but not class
+models) and reproduce diﬀerent degrees of balance and clusterability.
+
+
+4.4.5. Spatial Process Models
+
+   Linkletter (2007), extrapolating ideas from Hoﬀ’s latent distance model to a
+covariate space, assumes that pairwise connections are conditionally independent
+given a latent spatial process evaluated at observed covariates. Thus, the
+
+                   Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+180                                                                  Juan Sosa & Lina Buitrago
+
+
+probability of an edge between actors i and i′ depends on a relative diﬀerence
+between observed covariates xi and xi′ , through latent eﬀects expressed as
+−∥z(xi ) − z(xi′ )∥, where z(·) is a latent real-valued function. Note that in
+this context, the z(xi ) are actually unobserved, and the covariates xi represent
+attributes measured to learn about social relations.
+
+4.4.6. Cluster Models
+
+    Handcock et al. (2007), Krivitsky & Handcock (2008), and Krivitsky et al.
+(2009) generalize Hoﬀ’s latent distance model in an eﬀort to recreate a model
+that allow the practitioner to model both transitivity and homophily, and
+simultaneously ﬁnd clusters of actors in a model-based fashion when the number
+of groups in the data is known. As in Hoﬀ et al. (2002), the latent eﬀects are
+given by α(ui , ui′ ) = −∥ui − ui′ ∥, except that now, actors’ positions are drawn
+from a ﬁnite spherical multivariate normal mixture. Thus, the position of each
+actor is drawn from one of G groups, where each group is centered on a diﬀerent
+mean vector and dispersed with a diﬀerent spherical covariance matrix, which
+allow latent positions form cluster of actors within the latent space. Note that the
+model of Hoﬀ’s distance model is essentially the case with G = 1.
+
+4.4.7. Eigen Models
+
+    Hoﬀ (2008) and Hoﬀ (2009), based on the principles of eigen-analysis, assume
+that the relationship between two nodes as the weighted inner-product of node-
+speciﬁc vectors of latent characteristics ui ∈ RK . Here, the latent eﬀects have the
+                     i Λui′ , where Λ is a K × K diagonal matrix. These models,
+form α(ui , ui′ ) = uT
+also known as eigenmodels, generalize latent class and latent distance models in the
+sense that they can compactly represent the same network features, but not vice
+versa. As a result, eigenmodels can represent both positive or negative homophily
+in varying degrees, and stochastically equivalent nodes may or may not have strong
+relationships with one another (Hoﬀ 2008).
+
+                        Table 1: Summary of latent space models.
+            Model               Latent eﬀects                        Latent space
+            Class               α(ui , ui′ ) = θϕ(ui ,ui′ )          ui ∈ {1, . . . , K}
+            Distance            α(ui , ui′ ) = −∥ui − ui′ ∥          u i ∈ RK
+            Projection                          i ui′ /∥ui′ ∥
+                                α(ui , ui′ ) = uT                    u i ∈ RK
+            Bilinear            α(ui , ui′ ) = uT
+                                                i u i′               u i ∈ RK
+            Spatial process     α(xi , xi′ ) = −∥z(xi ) − z(xi′ )∥   xi ∈ X P
+            Cluster             α(ui , ui′ ) = −∥ui − ui′ ∥          u i ∈ RK
+            Eigen               α(ui , ui′ ) = uT
+                                                i Λui′               u i ∈ RK
+
+
+
+
+                      Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                        181
+
+5. Computation
+   For a given K the posterior distribution of the parameters can be
+explored using Markov chain Monte Carlo (Gamerman & Lopes 2006,
+MCMC) algorithms in which the posterior distribution is approximated using
+dependent but approximately identically distributed samples Υ(1) , . . . , Υ(B) , with
+Υ = (u1 , . . . , uI , ϕ), where ϕ has as elements the rest of the model parameters.
+Point and interval estimates can be approximated from the empirical distributions.
+Details about MCMC algorithms implemented here can be found in Appendix A.
+
+
+6. Illustrations
+    In what follows, we present some examples in which we fully implement some of
+the latent space models described in Section 4.4. We illustrate the characteristics
+of these models by analyzing popular datasets in the network literature. Special
+attention is given to latent class, distance, and eigen models.
+
+
+6.1. Florentine Families Dataset
+     Here, we illustrate a fully Bayesian implementation of the distance model by
+reproducing the analysis of the ﬂorentine families dataset given in Hoﬀ et al. (2002,
+Section 4.2). The system is composed of I = 15 prominent families, for which
+yi,i′ = 1 between families i and i′ if there is at least one marriage between them. We
+considered this as an undirected relation, whose corresponding adjacency matrix
+Y is displayed in Panel (a) of Figure 1.
+    We consider a latent space with K = 2 dimensions, which also will help us
+to demonstrate the graphical capabilities of the model. Indeed, setting K = 2
+simpliﬁes visualization and interpretation, and is therefore particularly useful when
+the main goal of the analysis is to provide a description of the social relationships.
+Following Section 4.4, we implement a model of the form,
+                                     ind
+                    yi,i′ | ζ, ui , ui′ ∼ Ber (expit (ζ − ∥ui − ui′ ∥)) ,
+
+where expit(x) = 1/(1 + e−x ) is the inverse of the logit function, ζ is a ﬁxed
+eﬀect representing the average propensity of observing an edge between two given
+actors, and u1 , . . . , uI are unobserved positions in R2 . In order to proceed with
+a fully Bayesian analysis and make inference about the model parameters, we
+must specify prior distributions for ζ and each ui . A standard prior choice that
+seems to work well in practice is ζ | ω 2 ∼ N(0, ω 2 ) and ui | σ 2 ∼ N(0, σ 2 I),
+                                                                          iid
+
+
+where I denotes the identity matrix. We complete the formulation of the model
+by letting ω 2 ∼ IGam(aω , bω ) and σ 2 ∼ IGam(aσ , bσ ). Sensible elicitation of the
+hyperparameters aω , bω , aσ , and bσ is fundamental to ensure appropriate model
+performance. To this end, we set aω = 2 and bω = 100, which places a diﬀuse prior
+distribution for ζ. Similarly, we mimic a heuristic given in Krivitsky & Handcock
+(2008, Sec. 2.4) by setting aσ and bσ in such a way that a priori σ 2 is vaguely
+
+                   Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+182                                                                                                               Juan Sosa & Lina Buitrago
+
+                      [ ]               [ ]     π
+concentrated (e.g., CV σ 2 = 1) around E σ 2 = Γ(2) I 2/K , i.e., the volume of a
+2-dimensional Euclidean ball of radius I 1/K .
+  16
+                                                                                                                                                            1
+                                                                              16
+  15
+                                                                              15
+  14
+                                                                              14
+  13
+                                                                              13                                                                            0.75
+  11
+                                                                              11
+  10
+                                                                              10
+   9
+                                                                                  9
+   8                                                                                                                                                        0.5
+                                                                                  8
+   7
+                                                                                  7
+   6
+                                                                                  6
+   5
+                                                                                  5                                                                         0.25
+   4                                                                              4
+   3                                                                              3
+   2                                                                              2
+                                                                                                                                                            0
+   1                                                                              1
+       1
+           2
+               3
+                    4
+                        5
+                            6
+                                7
+                                    8
+                                        9
+                                            10
+                                                 11
+                                                      13
+                                                           14
+                                                                15
+                                                                     16
+
+
+
+
+                                                                                          1
+                                                                                              2
+                                                                                                  3
+                                                                                                      4
+                                                                                                          5
+                                                                                                              6
+                                                                                                                  7
+                                                                                                                      8
+                                                                                                                          9
+                                                                                                                              10
+                                                                                                                                   11
+                                                                                                                                        13
+                                                                                                                                             14
+                                                                                                                                                  15
+                                                                                                                                                       16
+                   (a) Adjacency matrix.                                                          (b) Interaction probabilities.
+
+
+
+
+                                                                          6
+                                                                                              8
+                                                                              2
+                                                                1                         7
+
+                                                                     9            16              4
+                                                      10                          13
+                                                           14
+                                                                      3                   1511
+                                                                                      5
+
+
+
+
+                                                      (c) Latent positions.
+                                        Figure 1: Florentine families dataset.
+
+
+    Markov chain Monte Carlo (MCMC) algorithms can be used to explore the
+posterior distribution p(ζ, U, ω 2 , σ 2 | Y), where U = [u1 , . . . , uI ]T is a I × K
+matrix storing the latent positions by rows. By means of the MCMC procedure
+outlined in Section Appendix A.1, we obtain 50, 000 samples of the posterior
+distribution after a burn-in period of 10, 000 iterations. In this case and subsequent
+illustrations, convergence was monitored by tracking the variability of the joint
+distribution of data and parameters using the multi-chain procedure discussed in
+Gelman & Rubin (1992).
+   Notice that an inherent diﬃculty estimating U is that any rotation, reﬂection
+or translation of U produce the same likelihood value. Indeed, for any K × K
+
+                            Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                                    183
+
+orthogonal matrix Q, the likelihood associated with the reparametrization ũi =
+Qui is independent of Q, since ∥ui − ui′ ∥ = ∥ũi − ũi′ ∥. To address this issue,
+we restrict our attention to the Procrustean transformation of U closest to a
+ﬁxed (but arbitrary!) reference conﬁguration U0 . In particular, we consider a
+post-processing step in which posterior samples are rotated/reﬂected to a shared
+coordinate system. Thus, for each sample Υ(b) , an orthogonal transformation
+matrix Q(b) is obtained by minimizing the Procrustes distance,
+
+                                        {(                      )T (                      )}
+              Q̃   (b)
+                         = arg min tr        U0 − U   (b)
+                                                            Q          U0 − U   (b)
+                                                                                      Q        ,   (3)
+                             Q∈S K
+
+
+
+where S K denotes the set of K × K orthogonal matrices. The minimization
+problem in (3) can be easily solved using singular value decompositions (Borg
+& Groenen 2005, Section 20.2, for example). Once the matrices Q̃(1) , . . . , Q̃(B)
+have been obtained, posterior inference for the latent positions are based on the
+                            (b)       (b)
+transformed coordinates ũi = Q̃(b) ui . In this case, we let U0 be the ﬁrst value
+of U after the burn-in period of the chain. We plot the latent positions for each
+saved scan along with the corresponding point estimates for every family as shown
+in Panel (c) of Figure 1. Actors 14 and 10 are above or below actor 1 for any
+particular sample; the observed overlap of these actors is due to the bimodality of
+the posterior distribution.
+
+   Finally, we check the posterior means of the interaction probabilities,
+
+
+                                                 1 ∑
+                                                   B      (                   )
+                                                                     (b)  (b)
+       E [expit (ζ − ∥ui − ui′ ∥) | Y] ≈             expit ζ (b) − ∥ui − ui′ ∥ ,
+                                                 B
+                                                   b=1
+
+
+
+
+to examine the in-sample ﬁt of the model. Panel (b) of Figure 1 suggests that
+these posterior estimates are consistent with the adjacency matrix Y plotted in
+Panel (a), since we see high posterior probabilities where connections are observed.
+
+
+
+
+6.2. Village Dataset
+
+   In order to provide a community detection example by means of a class model,
+we consider the social and familial relationships among I = 99 households in a
+speciﬁc village located in rural southern Karnataka, India (Salter-Townshend &
+McCormick 2017). For these data, yi,i′ = 1 if household i and i′ have a social tie
+by being related or attending temple together, for example. The adjacency matrix
+Y associated with this network is depicted in Panel (a) of Figure 2.
+
+                         Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+                             12
+                                  17
+                                       21
+
+
+
+
+                                                        13
+                                                             14
+                                                                   15
+                                                                        19
+                                                                             20
+                                                                                  10
+                                                                                       11
+                                                                                            18
+
+
+
+
+                                                                                                             16
+                 7
+                     6
+                         8
+
+
+
+
+                                            3
+                                                5
+                                                    9
+
+
+
+
+                                                                                                 1
+                                                                                                     2
+                                                                                                         4
+           7
+           6
+           8
+          12
+184       17                                                                                  Juan Sosa & Lina Buitrago
+          21
+           3
+           5
+           9
+          13
+          14
+          15
+          19
+          20
+          10
+          11
+          18
+           1
+           2
+           4
+          16
+               (a) Adjacency matrix.                                         (b) Interacition probabilities
+
+                0                  0.25                      0.5                       0.75                   1
+
+
+
+
+        (c) Communities point estimate                                  (d) Co-membership propabilities
+                                          Figure 2: Village dataset.
+
+
+   The main idea behind class models is that similar actors can be clustered
+together into groups known as classes or blocks. Thus, the probability of having
+an edge between two actor can be modeled as a function of their respective blocks,
+                                                   (                  )
+                   yi,i′ | ui , ui′ , {ηk,ℓ } ∼ Ber expit ηϕ(ui ,ui′ ) ,
+                                              ind
+
+
+
+
+where u = (u1 , . . . , uI ) are unobserved cluster indicators taking values in
+{1, . . . , K}, with K the number of classes (assumed as ﬁxed), and ϕ(a, b) =
+(min{a, b}, max{a, b}). Notice that actors i and i′ belong to the same class if and
+only if ui = ui′ . The community parameters η = {ηk,ℓ : k, ℓ = 1, . . . , K, k ≤ ℓ}
+suﬀer from symmetry constraints because Y is a symmetric adjacency matrix,
+which makes ϕ(·, ·) necessary. A standard choice of prior distribution for the
+community parameters is achieved by letting these parameters be conditionally
+independent and follow a common distribution, ηk,ℓ | µ, τ 2 ∼ N(ζ, τ 2 ).
+                                                            iid
+
+
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                         185
+
+    Following a standard practice in the community detection literature (Nowicki
+& Snijders 2001, for example), it is commonly assumed that the entries of u
+are exchangeable (Gelman et al. 2014, Sec. 1.2, for example) and follow a
+categorical distribution on {1, . . . , K}, Pr [ui = k | ωk ] = ωk , k = 1, . . . , K, where
+                                                              ∑K
+ω = (ω1 , . . . , (ωK ) is a )probability vector such that      k=1 ωk = 1, satisfying
+ω | α ∼ Dir K       α       α
+                      ,..., K  . In the limit, as K → ∞, this formulation has a
+direct connection with a Chinese restaurant process prior (Ishwaran & Zarepour
+2000, Sec. 3). The model is completed by placing a hyperprior distributions on
+(ζ, τ 2 , α). A well-behaved choice is consist in independently letting ζ ∼ N(µζ , σζ2 ),
+τ 2 ∼ IGam(aτ , bτ ), and α ∼ Gam(aα , bα ), where µζ , σζ2 , aτ , bτ , aα , and bα are
+hyperparameters.
+    Once again, a sensible elicitation of the hyperparameters is strongly
+recommended to ensure appropriate model performance. To this end, we set
+µζ = 0, σζ2 = 3, aτ = 2, and bτ = 3, which a priori vaguely centers the prior
+interaction probabilities expit ηk,ℓ around 0.5 allowing a fair range of values in logit
+scale, and aα and bα = 1, which places a diﬀuse prior distribution for α around 1.
+Choosing K = 8 and following the MCMC algorithm provided in Section Appendix
+A.2, we obtain 50, 000 samples of the posterior distribution p(u, η, ω, ζ, τ 2 , α | Y)
+after a burn-in period of 10, 000 iterations, in order to compute the interaction
+probabilities and pairwise co-membership probabilities, respectively,
+
+                     [                      ]  1 ∑
+                                                 B
+                                                          (b)
+                    E expit ηϕ(ui ,ui′ ) | Y ≈     expit ηϕ(ui ,u ′ )
+                                               B                 i
+                                                     b=1
+
+and
+                                              1 ∑ [ (b)        ]
+                                                 B
+                                                           (b)
+                        Pr [ui = ui′ | Y] ≈        u i = u i′ ,
+                                              B
+                                                b=1
+
+where [·] denotes the Iverson bracket. We are quite conﬁdent about the in-sample
+adecuacy of the model because the interaction probabilities shown in Panel (b)
+of Figure 2 resemble very closely the adjacency matrix Y provided in Panel (a).
+On the other hand, We can obtain a point estimate of the communities by taking
+as input the co-membership probabilities shown in Panel (d) and employing the
+clustering methodology proposed in (Lau & Green 2007, Sec. 4) with a relative
+error cost of 0.5. Panel (c) provides a visual representation of such an estimate,
+which exhibits 12 communities with sizes ranging from 1 to 17. Notice that the
+pre-speciﬁed number of communities K used to ﬁt the model does not have to
+coincide necessarily with the number of communities provided by point estimate
+of the partition.
+
+
+6.3. Predictive Accuracy and Goodness-of-Fit
+   In order to compare the ability of distance, class, and eigen models to
+predict missing links, we evaluate their out-of-sample predictive performance
+through an exhaustive cross-validation experiment under a range of latent
+dimensions, on 21 networks exhibiting diﬀerent kinds of actors, sizes, and
+
+                    Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+186                                                              Juan Sosa & Lina Buitrago
+
+
+relations (see Table 2 for details about these datasets, which are freely
+available on-line. See for example, http://networkrepository.com/, http:
+//www-personal.umich.edu/~mejn/netdata/, http://vlado.fmf.uni-lj.si/
+pub/networks/data/ucinet/ucidata.htm, and links there in.). Graphs for three
+selected networks are shown in Figure 3.
+
+Table 2: Network datasets for which a series of cross-validation experiments are
+         performed using distance, class, and eigen models. Dens., Trans., and Assor.
+         stand for density, transitivity, and assortativity, respectively.
+            Acronym       No of actors   No of edges    Dens.   Trans.    Assor.
+            zach               34             78        0.139    0.256    -0.476
+            bktec              34            175        0.312    0.476    0.015
+            foot               35            118        0.198    0.329    -0.176
+            lazega             36            115        0.183    0.389    -0.168
+            hitech             36             91        0.144    0.372    -0.087
+            kaptail            39            158        0.213    0.385    -0.183
+            bkham              44            153        0.162    0.497    -0.391
+            dol                62            159        0.084    0.309    -0.044
+            glossgt            72            118        0.046    0.184    -0.158
+            lesmis             77            254        0.087    0.499    -0.165
+            salter             99            473        0.098    0.335    -0.064
+            polbooks           105           441        0.081    0.348    -0.128
+            adjnoun            112           425        0.068    0.157    -0.129
+            football           115           613        0.094    0.407    0.162
+            nine               130           160        0.019    0.163    -0.197
+            gen                158           408        0.033    0.078    -0.254
+            fblog              192           1,431      0.078    0.386    0.012
+            jazz               198           2,742      0.141    0.520    0.020
+            partner            219           630        0.026    0.107    -0.217
+            indus              219           630        0.026    0.107    -0.217
+            science            379           914        0.013    0.431    -0.082
+
+
+
+
+           (a) jazz                        (b) gen                    (c) netsciecne
+               Figure 3: Graphs for three selected networks from Table 2.
+
+
+                      Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                              187
+
+    We ﬁt distance and class models following the same speciﬁcation given in
+the previous sections. Now, for the eigen model, we assume that the sampling
+distribution is given by
+                                                  (     (             ))
+                                             ind
+                     yi,i′ | ζ, ui , ui′ , Λ ∼ Ber expit ζ + uTi Λui′    ,
+
+where ui = (ui,1 , . . . , ui,K ) is a vector of latent characteristics in RK and
+Λ = diag [λ1 , . . . , λK ] is a diagonal matrix of size K × K, which implies that
+           ∑K
+uTi Λui′ =   k=1 λk ui,k ui k is a quadratic form where λk weights the contribution
+                              ′
+
+of each latent dimension (positively of negatively) to the plausibility of observing
+an edge between actors i and i′ . Following the same prior formulation given
+for distance models, we let ζ | ω 2 ∼ N(0, ω 2 ) and ui | σ 2 ∼ N(0, σ 2 I), along
+                                                                 iid
+
+
+with ω 2 ∼ IGam(aω , bω ) and σ 2 ∼ IGam(aσ , bσ ). We complete the speciﬁcation
+by assuming that λk | κ2 ∼ N(0, κ2 ), where κ2 ∼ IGam(aκ , bκ ). Lastly, vaguely
+                                iid
+
+
+uninformative priors that have proven to work well in practice are obtain by setting
+aω = aσ = aκ = 2 and bω = bσ = bκ = 3.
+    Thus, for each combination of model, dataset, and latent dimension K ∈
+{2, 4, 8}, we run a 5-fold cross validation experiment as follows: First, we randomly
+divide the data into ﬁve sets of roughly equal size. Next, for each set s, we ﬁt
+the model conditional on {yi,i′ : (i, i′ ) ∈   / s}, and for each yk,ℓ assigned to s, we
+compute E [yk,ℓ | {yi,i′ : (i, i′ ) ∈
+                                    / s}], the posterior predictive mean of yk,ℓ using all
+the data not in s. Then, using such predictions, we construct a binary classiﬁer to
+obtain the corresponding receiver operating characteristic (ROC) curve. Lastly,
+we quantify the predictive performance of each ROC curve through the area under
+the curve (AUC). In this context, the AUC is a measure of how well a given model
+is capable of predicting missing links (the higher the AUC, the better the model is
+at predicting 0s as 0s and 1s as 1s). In every case, inferences are based on 50, 000
+samples of the posterior distribution after a burn-in period of 10,000 iterations,
+by following the corresponding MCMC algorithm provided in Appendix A.
+
+Table 3: Average AUC values to assess the predictive performance of distance, class,
+         and eigen models, using three selected networks provided in Table 2.
+ Network               jazz                        gen                       netscience
+    K         dist     class   eigen      dist     class    eigen     dist     class      eigen
+     2       0.914    0.721    0.910     0.596    0.779     0.723    0.950     0.670      0.845
+     4       0.949    0.749    0.940     0.668    0.822     0.727    0.944     0.747      0.957
+     8      0.971     0.742    0.876    0.742     0.822    0.785     0.944    0.820       0.849
+
+
+    For three selected networks, we report our ﬁndings in Table 3. In addition,
+Figure 4 displays the results for the smallest value of K that maximizes the
+AUC for all the datasets in Table 2. We note that there is no such a thing as
+a “best” model in terms of prediction. A model in particular is more adequate
+for a given network than another depending on the network’s structural features.
+Distance models have an outstanding predictive performance for those networks
+with predominant values of transitivity, as well as class models do for those
+
+                     Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+188                                                               Juan Sosa & Lina Buitrago
+
+
+networks exhibiting substantial assortativity levels. As expected, eigen models
+tend to behave quite well predicting missing links under several scenarios since
+they generalize both distance and class models, but the opposite is not true (Hoﬀ
+2008, Sec. 2.2). Lastly, from Table 2, it is quite evident that the choice of K is
+key for assuring model performance.
+
+
+
+                      1.0     dist
+                              class
+                              eigen
+                      0.9
+                AUC
+                      0.8
+                      0.7
+                      0.6
+
+                                  zach
+                                 bktec
+                                    foot
+                               lazega
+                                hitech
+                               kaptail
+                               bkham
+                                     dol
+                              glossgt
+                               lesmis
+                                salter
+                            polbooks
+                             adjnoun
+                              football
+                                   nine
+                                   gen
+                                  fblog
+                                   jazz
+                              partner
+                                 indus
+                             science
+Figure 4: AUC values for distance, class, and eigen models using each network provided in
+           Table 2. These results correspond to the smallest value of K that maximizes the
+           AUC.
+
+
+    Next, in the same spirit of Gelman et al. (2014, Chap. 6) and Kolaczyk &
+Csárdi (2020, Chap. 4), we replicate pseudo-data from all three ﬁtted models
+and calculate a battery of summary statistics (in our case, density, transitivity,
+over the selected networks) for each sample from the posterior distribution.
+This allows us to generate an estimate of the posterior predictive distribution
+of the summaries, which can then be compared against the value observed in
+the original sample (Figure 5). We see that all models are able to capture the
+density of each network, although class models are more uncertain in regard
+with the corresponding estimate. Furthermore, distance and eigen models are
+clearly capable of reproducing transitivity patterns, unlike class models that
+underestimate such feature. On the contrary, distance models tend to overestimate
+assortativity values, whereas both class and eigen models successfully register
+this characteristic. Not surprisingly, eigen models are able to capture most of
+the structural features of the data and have less uncertainty attached to their
+estimates.
+
+
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                                                                          189
+
+                                 jazz                                               gen                             netscience
+
+
+
+
+                                                   0.040
+                  0.150
+
+
+
+
+                                                                                                    0.0140
+                                                   0.036
+                  0.145
+   Density
+
+
+
+
+                                                                                                    0.0130
+                  0.140
+
+
+
+
+                                                   0.032
+
+
+
+
+                                                                                                    0.0120
+                  0.135
+
+
+
+
+                                                   0.028
+                          Dist   Class    Eigen                              Dist   Class   Eigen            Dist     Class      Eigen
+
+
+
+
+                                                  0.06 0.08 0.10 0.12 0.14
+                  0.52
+
+
+
+
+                                                                                                    0.4
+   Transitivity
+                  0.48
+
+
+
+
+                                                                                                    0.3
+                  0.44
+
+
+
+
+                                                                                                    0.2
+                  0.40
+
+
+
+
+                                                                                                    0.1
+                          Dist   Class    Eigen                              Dist   Class   Eigen            Dist     Class      Eigen
+                                                  0.2
+
+
+
+
+                                                                                                    0.05
+                  0.15
+
+
+
+
+                                                  0.1
+   Assorativity
+
+
+
+
+                                                                                                    0.00
+                  0.10
+
+
+
+
+                                                  −0.1 0.0
+                  0.05
+
+
+
+
+                                                                                                    −0.10
+                  0.00
+
+
+
+
+                                                  −0.3
+
+
+
+
+                          Dist   Class   Eigen                               Dist   Class   Eigen            Dist     Class      Eigen
+
+Figure 5: Posterior mean (black square) along with 95% and 99% credible intervals
+          corresponding to the empirical distribution of test statistics for replicated
+          data along with the observed value (red bullet) in three selected networks.
+
+
+    Finally, in order to asses the goodness-of-ﬁt of each model, we complement the
+results presented above by considering measures that account for both model ﬁt
+and model complexity. Such measures also serve as a tool for model selection,
+since the value of latent dimension K can potentially play a critical role in the
+results. The network literature has largely focused on the Bayesian Information
+Criteria (BIC) as a tool for model selection, e.g. Hoﬀ (2005), Handcock et al.
+(2007) and Airoldi et al. (2009). However, BIC is typically inappropriate for
+hierarchical models since the hierarchical structure implies that the eﬀective
+number of parameters will typically be lower than the actual number of parameters
+in the likelihood. Two alternatives to BIC that address this issue are the Deviance
+Information Criterion (Spiegelhalter et al. 2002, 2014, DIC),
+
+                                         DIC(K) = −2 log p(Y | Υ̂K ) + 2pDIC ,
+
+with pDIC = 2 log p(Y | Υ̂K ) − 2E [log p (Y | ΥK )],
+and the Watanabe-Akaike Information Criterion (Watanabe 2010, 2013, WAIC),
+
+                                  Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+190                                                            Juan Sosa & Lina Buitrago
+
+                                 ∑
+                WAIC(K) = −2            log E [p (yi,i′ | ΥK )] + 2 pWAIC ,
+                                 i<i′
+                   ∑      {                                        }
+with pWAIC = 2 i<i′ log E [p (yi,i′ |ΥK )] − E [log p (yi,i′ |ΥK )] , where Υ̂K
+denotes the posterior mean of model parameters assuming that the dimension
+of the social space is K, and pDIC and pWAIC are penalty terms accounting
+for model complexity. Note that in the previous expressions all expectations,
+which are computed with respect to the posterior distribution, can be
+approximated by averaging over Markov chain Monte Carlo (MCMC) samples (see
+Section 5 for details). A key advantage of the WAIC criteria is its invariance to
+reparameterizations, which makes it particularly helpful for models (such as ours)
+with hierarchical structures, for which the number of parameters increases with
+sample size (Gelman et al. 2014, Spiegelhalter et al. 2014). Table 4 presents the
+results for the smallest value of K that minimizes the WAIC for all the datasets
+in Table 2. We see that distance models and eigen models provide the best ﬁt
+according to the WAIC.
+
+Table 4: Values of WAIC for distance, class, and eigen models using each network
+         provided in Table 2. These results correspond to the smallest value of K
+         that minimizes the WAIC.
+                      net           Dist         Class      Eigen
+                      zach         378.7        377.5       296.8
+                      bktec        565.1        636.0       592.9
+                      foot         509.9        552.0       434.3
+                      lazega       454.9        545.5       452.5
+                      hitech       387.7        480.5       390.0
+                      kaptail      603.6        721.7       604.7
+                      bkham        591.2        579.9       454.3
+                      dol          739.2        958.1       834.8
+                      glossgt      775.1        893.7       805.0
+                      lesmis       999.8        1,667.2     919.2
+                      salter      2,200.3       2,789.7    2,275.7
+                      polbooks    2,003.2       2,904.4    2,011.2
+                      adjnoun     2,855.0       2,845.8   2,601.5
+                      football    2,700.9       3,759.7    3,351.4
+                      nine        1,101.5       1,384.0   1,070.2
+                      gen         3,455.6       3,134.5   2,813.5
+                      fblog       6,431.7       9,283.3    7,014.4
+                      jazz        8,938.6      13,590.5   8,707.7
+                      partner     5,163.2       5,488.1   4,624.0
+                      indus       5,159.7       5,096.4   4,725.8
+                      science     4,108.5       9,419.4    7,364.3
+
+
+
+
+                  Revista Colombiana de Estadística - Applied Statistics 44 (2021) 171–200
+
+A review of Latent Space models                                                         191
+
+    Here, we have adopted a standard procedure to selecting the dimension of the
+latent by means of the WAIC. However, the latent dimension can also be treated
+directly as a model parameter by placing a prior distribution on it, in the same
+spirit of Green & Hastie (2009). On the other hand, a similar approach discussed in
+Guhaniyogi & Rodriguez (2020), which can be understood as a truncation of a non-
+parametric process, could be incorporated here for selecting the latent dimension.
+Nonetheless, based on the evidence provided by Guhaniyogi & Rodriguez (2020),
+the results are likely to be quite similar.
+
+
+
+7. Discussion
+   Our fundings show that the performance of the latent space models is case-
+speciﬁc, in terms of both goodness-of-ﬁt and prediction. Each model has
+weaknesses and strengths. For example, class models are very suitable for networks
+exhibiting high levels of clustering, whereas distance models are preferred to
+represent major degrees of transitivity. However, eigen models seem to behave very
+well under a great variety of scenarios, which is quite logical since it generalizes
+(qualitatively) class and distance models (Hoﬀ 2008).
+    Latent space models have proven to be extremely in all sorts of applications
+involving social network data due to their ﬂexibility and interpretability. Some
+applications and extensions include modeling of multilayer networks (Salter-
+Townshend & McCormick 2017, Durante et al. 2018), cognitive social structures
+(Sosa & Rodriguez 2017), dynamic networks (Han et al. 2015, Hoﬀ 2015, Sewell
+& Chen 2015), record linkage (Sosa & Rodriguez 2018, 2019), and community
+detection (Regueiro Martinez 2017, Paez et al. 2019), among many others, with
+all sort of implications and ramiﬁcations, e.g., fast computation for “big networks”
+(Raftery et al. 2012b, Salter-Townshend & Murphy 2013). For more reviews in
+special topics related to latent space models, we refer the reader to Sweet et al.
+(2013), Rastelli et al. (2015), Kim et al. (2018), and Minhas et al. (2019).
+    As a ﬁnal note, we acknowledge that there are available many extensions of
+the basic latent models presented here, which are quite common in the network
+literature. Such modiﬁcations and extensions include incorporation of covariates
+(with its many variants) and popularity parameters, for instance. See Raftery
+(2017) for some ideas in this regard.
+
+               [                                                         ]
+                   Received: July 2020 — Accepted: December 2020
+
+
+
+References
+Airoldi, E. M., Blei, D. M., Fienberg, S. E. & Xing, E. P. (2009), Mixed membership stochastic blockmodels, in ‘Advances in Neural Information Processing Systems’, pp. 33–40.
+Albert, J. H. & Chib, S. (1993), ‘Bayesian analysis of binary and polychotomous response data’, Journal of the American Statistical Association 88(422), 669–679.
+Aldous, D. J. (1985), Exchangeability and related topics, Springer.
+Barabási, A.-L. & Albert, R. (1999), ‘Emergence of scaling in random networks’, Science 286(5439), 509–512.
+Bender, E. A. & Canﬁeld, E. R. (1978), ‘The asymptotic number of labeled graphs with given degree sequences’, Journal of Combinatorial Theory, Series A 24(3), 296–307.
+Bollobás, B. (1998), Random graphs, Springer.
+Borg, I. & Groenen, P. J. (2005), Modern multidimensional scaling: Theory and applications, Springer Science & Business Media.
+Chung, F. & Lu, L. (2006), Complex graphs and networks, Vol. 107, American Mathematical society Providence.
+Crane, H. (2018), Probabilistic foundations of statistical network analysis, CRC Press.
+Durante, D., Dunson, D. B. et al. (2018), ‘Bayesian inference and testing of group diﬀerences in brain networks’, Bayesian Analysis 13(1), 29–58.
+Erdös, P. & Rényi, A. (1959), ‘On random graphs’, Publicationes Mathematicae 6(290-297), 5.
+Erdös, P. & Rényi, A. (1960), ‘On the evolution of random graphs’, Publ. Math. Inst. Hung. Acad. Sci 5, 17–61.
+Erdös, P. & Rényi, A. (1961), ‘On the strength of connectedness of a random graph’, Acta Mathematica Hungarica 12(1-2), 261–267.
+Fortunato, S. (2010), ‘Community detection in graphs’, Physics reports 486(3), 75–174.
+Frank, O. & Strauss, D. (1986), ‘Markov graphs’, Journal of the American Statistical Association 81(395), 832–842.
+Gamerman, D. & Lopes, H. F. (2006), Markov chain Monte Carlo: stochastic simulation for Bayesian inference, CRC Press.
+Gelman, A., Hwang, J. & Vehtari, A. (2014), ‘Understanding predictive information criteria for Bayesian models’, Statistics and Computing 24(6), 997–1016.
+Gelman, A. & Rubin, D. (1992), ‘Inferences from iterative simulation using multiple sequences’, Statistical Science 7, 457–472.
+Gilbert, E. (1959), ‘Random graphs’, The Annals of Mathematical Statistics pp. 1141–1144.
+Goldenberg, A., Zheng, A., Fienberg, S. & Airoldi, E. (2010), ‘A survey of statistical network models’, Foundations and Trends in Machine Learning 2(2), 129–233.
+Green, P. J. & Hastie, D. I. (2009), ‘Reversible jump MCMC’, Genetics 155(3), 1391–1403.
+Guhaniyogi, R. & Rodriguez, A. (2020), ‘Joint modeling of longitudinal relational data and exogenous variables’, Bayesian Analysis .
+Han, Q., Xu, K. & Airoldi, E. (2015), Consistent estimation of dynamic and multi-layer block models, in ‘International Conference on Machine Learning’, pp. 1511–1520.
+Handcock, M. S., Raftery, A. E. & Tantrum, J. M. (2007), ‘Model-based clustering for social networks’, Journal of the Royal Statistical Society: Series A (Statistics in Society) 170(2), 301–354.
+Handcock, M. S., Robins, G., Snijders, T., Moody, J. & Besag, J. (2003), Assessing degeneracy in statistical models of social networks, Technical report, Citeseer.
+Hoﬀ, P. D. (2005), ‘Bilinear mixed-eﬀects models for dyadic data’, Journal of the American Statistical Association 100(469), 286–295.
+Hoﬀ, P. D. (2008), Modeling homophily and stochastic equivalence in symmetric relational data, in ‘Advances in Neural Information Processing Systems’, pp. 657–664.
+Hoﬀ, P. D. (2009), ‘Multiplicative latent factor models for description and prediction of social networks’, Computational and Mathematical Organization Theory 15(4), 261–272.
+Hoﬀ, P. D. (2015), ‘Multilinear tensor regression for longitudinal relational data’, The Annals of Applied Statistics 9(3), 1169.
+Hoﬀ, P. D., Raftery, A. E. & Handcock, M. S. (2002), ‘Latent space approaches to social network analysis’, Journal of the American Statistical Association 97(460), 1090–1098.
+Hoover, D. N. (1982), ‘Row-column exchangeability and a generalized model for probability’, Exchangeability in probability and statistics (Rome, 1981) pp. 281–291.
+Ishwaran, H. & Zarepour, M. (2000), ‘Markov chain Monte Carlo in approximate Dirichlet and beta two-parameter process hierarchical models’, Biometrika 87(2), 371–390.
+Kemp, C., Tenenbaum, J. B., Griﬃths, T. L., Yamada, T. & Ueda, N. (2006), Learning systems of concepts with an inﬁnite relational model, in ‘AAAI’, Vol. 3, p. 5.
+Kim, B., Lee, K. H., Xue, L. & Niu, X. (2018), ‘A review of dynamic network models with latent variables’, Statistics surveys 12, 105.
+Kolaczyk, E. D. (2009), Statistical Analysis of Network Data: Methods and Models, Springer Series in Statistics, Springer.
+Kolaczyk, E. D. & Csárdi, G. (2020), Statistical analysis of network data with R, 2nd edn, Springer.
+Krivitsky, P. N. & Handcock, M. S. (2008), ‘Fitting latent cluster models for networks with latentnet’, Journal of Statistical Software 24(5).
+Krivitsky, P. N., Handcock, M. S., Raftery, A. E. & Hoﬀ, P. D. (2009), ‘Representing degree distributions, clustering, and homophily in social networks with latent cluster random eﬀects models’, Social networks 31(3), 204–213.
+Lau, J. W. & Green, P. J. (2007), ‘Bayesian model-based clustering procedures’, Journal of Computational and Graphical Statistics 16(3), 526–558.
+Li, W.-J., Yeung, D.-Y. & Zhang, Z. (2011), Generalized latent factor models for social network analysis, in ‘Proceedings of the 22nd International Joint Conference on Artiﬁcial Intelligence (IJCAI), Barcelona, Spain’.
+Linkletter, C. D. (2007), Spatial process models for social network analysis, PhD thesis, Simon Fraser University.
+Lusher, D., Koskinen, J. & Robins, G. (2012), Exponential random graph models for social networks: Theory, methods, and applications, Cambridge University Press.
+Minhas, S., Hoﬀ, P. D. & Ward, M. D. (2019), ‘Inferential approaches for network analysis: Amen for latent factor models’, Political Analysis 27(2), 208–222.
+Newman, M. (2010), Networks: An Introduction, Oxford University Press.
+Newman, M. & Watts, D. J. (1999), ‘Scaling and percolation in the small-world network model’, Physical Review E 60(6), 7332.
+Nowicki, K. & Snijders, T. (2001), ‘Estimation and prediction for stochastic blockstructures’, Journal of the American Statistical Association 96(455), 1077–1087.
+Paez, M. S., Amini, A. A. & Lin, L. (2019), ‘Hierarchical stochastic block model for community detection in multiplex networks’, arXiv preprint arXiv:1904.05330 .
+Polson, N. G., Scott, J. G. & Windle, J. (2013), ‘Bayesian inference for logistic models using Pólya-Gamma latent variables’, Journal of the American Statistical Association 108(504), 1339–1349.
+Raftery, A. E. (2017), ‘Comment: Extending the latent position model for networks’, Journal of the American Statistical Association 112(520), 1531–1534.
+Raftery, A. E., Niu, X., Hoﬀ, P. D. & Yeung, K. Y. (2012a), ‘Fast inference for the latent space network model using a case-control approximate likelihood’, Journal of Computational and Graphical Statistics 21(4), 901–919.
+Raftery, A. E., Niu, X., Hoﬀ, P. D. & Yeung, K. Y. (2012b), ‘Fast inference for the latent space network model using a case-control approximate likelihood’, Journal of Computational and Graphical Statistics 21(4), 901–919.
+Rastelli, R., Friel, N. & Raftery, A. E. (2015), ‘Properties of latent variable network models’, arXiv preprint arXiv:1506.07806 .
+Regueiro Martinez, P. (2017), Scalable, Hierarchical and Dynamic Modeling of Communities in Networks, PhD thesis, UC Santa Cruz.
+Robins, G., Pattison, P., Kalish, Y. & Lusher, D. (2007), ‘An introduction to exponential random graph p* models for social networks’, Social networks 29(2), 173–191.
+Salter-Townshend, M. & McCormick, T. H. (2017), ‘Latent space models for multiview network data’, The Annals of Applied Statistics 11(3), 1217.
+Salter-Townshend, M. & Murphy, T. B. (2013), ‘Variational bayesian inference for the latent position cluster model for network data’, Computational Statistics & Data Analysis 57(1), 661–671.
+Schweinberger, M. & Snijders, T. (2003), ‘Settings in social networks: A measurement model’, Sociological Methodology 33(1), 307–341.
+Scott, J. (2000), Social network analysis: A handbook, 2 edn, SAGE Publications.
+Sewell, D. K. & Chen, Y. (2015), ‘Latent space models for dynamic networks’, Journal of the American Statistical Association 110(512), 1646–1657.
+Snijders, T. (2002), ‘Markov chain monte carlo estimation of exponential random graph models’, Journal of Social Structure 3(2), 1–40.
+Snijders, T. (2011), ‘Statistical models for social networks’, Annual Review of Sociology 37, 131–153.
+Sosa, J. & Rodriguez, A. (2017), ‘A latent space model for cognitive social structures data’, arXiv preprint arXiv:1711.03662 .
+Sosa, J. & Rodriguez, A. (2018), ‘A record linkage model incorporating relational data’, arXiv preprint arXiv:1808.04511 .
+Sosa, J. & Rodriguez, A. (2019), ‘A bayesian approach for de-duplication in the presence of relational data’, arXiv preprint arXiv:1909.06519 .
+Spiegelhalter, D. J., Best, N. G., Carlin, B. P. & Linde, A. (2014), ‘The deviance information criterion: 12 years on’, Journal of the Royal Statistical Society: Series B (Statistical Methodology) 76(3), 485–493.
+Spiegelhalter, D. J., Best, N. G., Carlin, B. P. & Van Der Linde, A. (2002), ‘Bayesian measures of model complexity and ﬁt’, Journal of the Royal Statistical Society: Series B (Statistical Methodology) 64(4), 583–639.
+Sweet, T. M., Thomas, A. C. & Junker, B. W. (2013), ‘Hierarchical network models for education research: Hierarchical latent space models’, Journal of Educational and Behavioral Statistics 38(3), 295–318.
+Wang, L., Zhang, Z. & Dunson, D. (2019), ‘Common and individual structure of brain networks’, The Annals of Applied Statistics 13(1), 85–112.
+Wasserman, S. & Faust, K. (1994), Social Network Analysis: Methods and Applications, Vol. 8, Cambridge University Press.
+Wasserman, S. & Pattison, P. (1996), ‘Logit models and logistic regressions for social networks:I. an introduction to markov graphs and p*’, Psychometrika 61(3), 401–425.
+Watanabe, S. (2010), ‘Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory’, Journal of Machine Learning Research 11(Dec), 3571–3594.
+Watanabe, S. (2013), ‘A widely applicable Bayesian information criterion’, Journal of Machine Learning Research 14(Mar), 867–897.
+Watts, D. J. & Strogatz, S. H. (1998), ‘Collective dynamics of small-world networks’, Nature 393(6684), 440–442.
+Xu, Z., Tresp, V., Yu, K. & Kriegel, H. P. (2006), ‘Learning inﬁnite hidden relational models’, Uncertainity in Artiﬁcial Intelligence (UAI2006) .

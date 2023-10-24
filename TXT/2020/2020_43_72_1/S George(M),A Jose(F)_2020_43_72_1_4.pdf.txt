@@ -1,0 +1,571 @@
+Generalized Poisson Hidden Markov Model for Overdispersed or Underdispersed Count Data. Modelo oculto de Markov de Poisson generalizado para datos de recuento sobredispersados o subdispersos
+St. Thomas College, Pala, India
+Abstract
+The most suitable statistical method for explaining serial dependency in time series count data is that based on Hidden Markov Models (HMMs). These models assume that the observations are generated from a finite mixture of distributions governed by the principle of Markov chain (MC). Poisson-Hidden Markov Model (P-HMM) may be the most widely used method for modelling the above said situations. However, in real life scenario, this model cannot be considered as the best choice. Taking this fact into account, we, in this paper, go for Generalised Poisson Distribution (GPD) for modelling count data. This method can rectify the overdispersion and underdispersion in the Poisson model. Here, we develop Generalised Poisson Hidden Markov model (GP-HMM) by combining GPD with HMM for modelling such data. The results of the study on simulated data and an application of real data, monthly cases of Leptospirosis in the state of Kerala in South India, show good convergence properties, proving that the GP-HMM is a better method compared to P-HMM.
+Key words: EM algorithm; Generalized Poisson distribution; Hidden Markov Model; Overdispersion.
+Resumen
+El método estadstico más adecuado para explicar la dependencia serial en los datos de recuento de series de tiempo se basan en los modelos ocultos de Markov (HMM). Estos modelos suponen que las observaciones se generan a partir de un finito mezcla de distribuciones regidas por el principio de la cadena de Markov (MC). El modelo de Markov oculto de Poisson (P-HMM) puede ser el método más utilizado para modelar las situaciones mencionadas anteriormente. Sin embargo, en el escenario de la vida real, este modelo no puede considerarse como la mejor opcin. Teniendo en cuenta este hecho, nosotros, en este artculo, apostamos por la distribucin generalizada de Poisson (GPD) para modelar datos de conteo. Este método puede rectificar la sobredispersin y subdispersin en el modelo de Poisson. Aquí desarrollamos Poisson generalizado Modelo de Markov oculto (GP-HMM) combinando GPD con HMM para modelando tales datos. Los resultados del estudio sobre datos simulados y una aplicacin de datos reales, casos mensuales de leptospirosis en el estado de Kerala en South India, muestra buenas propiedades de convergencia, lo que demuestra que el GP-HMM Es un método mejor en comparacin con P-HMM.
+Palabras clave: Algoritmo EM; Distribucin generalizada de Poisson; Modelo oculto de Markov; Sobredispersin.
+
+
+
+1. Introduction
+   Poisson model is the most commonly used method for modelling time series
+count data. Though equidispersion is the unique feature of Poisson distribution,
+in practical cases, either the mean will be greater than variance or vice-versa,
+making the Poisson assumption wrong. In many populations of Poisson nature,
+the probability of the occurrence of an event does not remain constant and is
+aﬀected by previous occurrences, resulting in unequal mean and variance in the
+data (Kendall & Stuart 1963). To deal with such situations, modification and
+generalization of the Poisson distribution were considered by Greenwood & Yule
+(1920) and by Neyman (1931). Wang & Famoye (1997) introduced generalized
+Poisson regression for modelling household fertility decisions. Recently, Cepeda-
+Cuervo & Cifuentes-Amado (2017) also developed mean and dispersion regression
+models to fit overdispersed data based on beta binomial and negative binomial
+models.
+    An important generalization for the Poisson distribution was introduced by
+Consul & Jain (1973) with two parameters λ1 and λ2 and it can be considered
+as a limiting form of the generalized negative binomial distribution. Consul &
+Shoukri (1984) obtained maximum likelihood estimators of the parameters of GPD.
+The properties of the GPD are discussed by Consul (1989) and Tuenter (2000).
+The variance of GPD model is greater than, equal to, or less than the mean
+when the second parameter λ2 is positive, zero or, negative respectively. Both
+the mean and variance tend to increase or decrease in value with respect to the
+change in λ1 . When λ2 is positive, the mean and the variance increase in value.
+However, when λ2 increases, the variance increases faster than mean which results
+in overdispersion or vice versa. The probability mass function of GPD is given by
+
+                         λ1 (λ1 + xλ2 )x−1
+         P r(X = x) =                      exp(−λ1 − xλ2 ), x = 0, 1, 2, . . .      (1)
+                                 x!
+where λ1 > 0 and |λ2 | < 1. The mean and variance of the GPD are
+
+                                           λ1
+                                   µ=             .
+                                        (1 − λ2 )
+
+                                       Revista Colombiana de Estadística 43 (2020) 71–82
+
+Generalized Poisson Hidden Markov Model                                                 73
+
+                                               λ1
+                                     σ2 =              .
+                                            (1 − λ2 )3
+    The GPD is often used in researches and studies for modelling data in many
+situations. It can be used to adjust overdispersion in Poisson model, as in the case
+of negative binomial model. The GPD is also apt for modelling underdispersed
+Poisson data. Going by all these details, one can consider GP-HMM as a better
+option than P-HMM as shown in Sebastian, Jeyaseelan, Jeyaseelan, Anandan,
+George & Bangdiwala (2019) for count data modelling. However, the idea of
+using GPD in HMM is not new. In 2014, Witowski et.al made a simulation study
+for using HMM to improve quantifying physical activity in accelerometer data
+(Witowski, Foraita, Pitsiladis, Pigeot & Wirsik 2014). They used P-HMM, GP-
+HMM and normal-HMM for their comparative study. The following part of this
+paper has been categorized into four sections, detailing the methods and estimation
+of parameters of GP-HMM, a simulation study and a real data application of GP-
+HMM.
+
+
+2. Generalized Poisson Hidden Markov model
+    In HMM, there is an underlying unobserved state of the system that changes
+with time in line with the Markov process. The distribution of observations at a
+given time is determined by the system’s state at that time (Zucchini & MacDonald
+2009). Let Ht , t ∈ 1, 2, . . . , T be an MC on a finite state space, S = {1, 2, . . . , m}
+with transition probability matrix A = (aij ), where aij = P r[Ht+1 = j|Ht = i]
+for any i y j ∈ S and with the initial distribution π = (π1 , π2 , . . . , πm )′ , where
+πi = P r[H1 = i] for any i ∈ S. The MC Ht , defined on a finite state space,
+is homogenous and irreducible. So, the initial distribution π is stationary, which
+satisfies the condition π ′ = π ′ A.
+    Let Xt , t ∈ N , an HMM, be a particular type of dependent mixture, with
+X (t) = (X1 , . . . , Xt ) and H (t) = (H1 , . . . , Ht ) having the following properties.
+
+                   P r[Ht | H (t−1) ] = P r[Ht | Ht−1 ], t = 2, 3, . . .
+
+                    P r[Xt | X (t−1) , H (t) ] = P r[Xt | Ht ], t ∈ N.
+The first property, ‘parameter process’, Ht , t = 1, 2, . . . satisfies Markov property,
+while the second one, ‘state-dependent process’, Xt , t = 1, 2, . . . such that the
+distribution of Xt , depends only on the current state Ht and not on previous
+states or observations. Now, we introduce some notations - the probability mass
+function (pmf) of Xt , given the Markov chain is in state i at time t, is denoted by
+pi and it is called state-dependent distribution of the model.
+
+                pi (x) = P r(Xt = x | Ht = i)        for   i = 1, 2, . . . , m.
+
+In the case of GPD, the pmf is given by
+
+                               λ1i (λ1i + xλ2i )x−1
+                    pi (x) =                        exp(−λ1i − xλ2i ).
+                                        x!
+
+                                          Revista Colombiana de Estadística 43 (2020) 71–82
+
+74                                                                       Sebastian George & Ambily Jose
+
+
+Now, πi (t) = P r(Ht = i) is the unconditional probabilities of MC being at state i
+at time t. Let Xt be a discrete valued random variable, such that
+
+                              ∑
+                              m                                                    ∑
+                                                                                   m
+         P r(Xt = x) =               P r(Ht = i)P r(Xt = x | Ht = i) =                    πi (t)pi (x).
+                              i=1                                                   i=1
+
+This expression can be rewritten in matrix form as
+
+                                         P r(Xt = x) = π(t)P (x)1′ ,
+
+where P (x) is defined as the diagonal matrix with ith diagonal element pi (x) and
+1′ is the m-dimensional vector of ones.
+     Now,
+                                              π(t) = π(1)At−1 ,
+
+and, therefore,
+                                  P r(Xt = x) = π(1)At−1 P (x)1′ .
+
+If the MC is stationary, then π(1)At−1 = π and in this case,
+
+                                           P r(Xt = x) = πP (x)1′ .
+
+In the case of a GP-HMM, the mean and variance of Xt are given by
+
+                                                     ∑
+                                                     m
+                                                                   λ1i
+                                          E[Xt ] =         πi              .
+                                                     i=1
+                                                                (1 − λ2i )
+
+
+                          ∑
+                          m          [                             ] [∑m
+                                                                                     ]2
+                                            λ21i          λ1i               πi λ1i
+             V (Xt ) =          πi                   +              −                   .
+                          i=1
+                                         (1 − λ2i )2   (1 − λ2i )3    i=1
+                                                                          (1 − λ2i )
+
+So, the model {Xt , Ht } t = 1, 2, . . . , T is characterized by (i) the stationary ini-
+tial distribution π, (ii) the transition probability matrix A and (iii) the state-
+dependent pmfs pi (x). Let Φ = (Π, A, Θ) denote the set of parameter space.
+The parameters to be estimated are: the (m2 − m) transition probabilities (aij )
+for any i = 1, 2, . . . , m and j = 1, 2, . . . , m − 1; the m entries of the vector Π and
+the m parameters of λ1i and λ2i of the GP random variables Xt . Hence, the vector
+of unknown parameters is given by
+
+  ϕ = (a11 , . . . , a1m−1 , . . . , am1 , . . . , amm−1 , λ11 , λ12 , . . . , λ1m , λ21 , λ22 , . . . , λ2m )′
+
+which belongs to the parameter space Φ. The initial distribution π will be es-
+timated by the equality π ′ = π ′ A, after the estimation of the matrix A. The
+estimators of the vector ϕ will be obtained by the EM algorithm. The likelihood
+function is given by:
+
+                         LT = πP (x1 )AP (x2 )AP (x3 ) · · · AP (xT )1′ .                                    (2)
+
+                                                     Revista Colombiana de Estadística 43 (2020) 71–82
+
+Generalized Poisson Hidden Markov Model                                                                           75
+
+2.1. Joint Probability Mass Functions of the Model
+   In HMM {Xt ; Ht } with the sequence of observations, x1 , x2 , . . . , xT and the
+sequence of states of the Markov chain h1 , h2 , . . . , hT , the joint pmf is given by
+
+ P r[x1 , x2 , . . . , xT , h1 , h2 , . . . , hT ] =πh1 ah1 h2 ah2 h3 . . . ahT −1 hT p[x1 |h1 ]p[x2 |h2 ]
+                                                                                         ∏
+                                                                                         T
+                                                   . . . p[xt |ht ] = πh1 p[x1 |h1 ]           aht−1 ht p[xt |ht ].
+                                                                                         t=2
+
+Summing over h1 , h2 , . . . , hT , we have the joint pmf
+
+                                        ∑∑              ∑                      ∏
+                                                                               T
+         P r[x1 , x2 , . . . , xT ] =             ...        {πh1 p[x1 |h1 ]         aht−1 ht p[xt |ht ]}.       (3)
+                                        h1   h2         hT                     t=2
+
+
+Define P (x) as the diagonal matrix with ith diagonal element pi (x), and we have
+
+                    P r[x1 , x2 , . . . , xT ] = π ′ P (x1 )AP (x2 ) . . . AP(xT )1′ .
+
+When π is stationary then it can be replaced by π ′ A. Now, the joint pmf becomes
+
+                  P [x1 , x2 , . . . , xT ] = π ′ AP (x1 )AP (x2 ) · · · AP (xT )1′ .
+
+If π is not stationary, then the state of the Markov chain has to be estimated.
+So, the estimate of the initial distribution from one observation at time 1 is not
+useful. If it is stationary, clearly π is fully estimated by its transition probabilities
+(Zucchini & MacDonald 2009).
+
+
+3. Estimation by EM Algorithm
+    A commonly used method of fitting HMMs is the EM algorithm introduced
+by Dempster, Laird & Rubin (1977) for the computation of maximum likelihood
+estimates based on incomplete data. Also Pereira, Marques & da Costa (2012)
+have studied the performance of the estimates produced by EM algorithm for
+mixture model. Here, we use this tool for the estimation of parameters of HMM
+with forward and backward probabilities (Baum 1972), which are also adopted for
+decoding and state prediction of HMM. For t = 1, 2, . . . , T , the (row) vector αt is
+as follows:
+
+                                                                                 ∏
+                                                                                 T
+               αt = π ′ P (x1 )AP (x2 ) . . . AP (xT ) = π ′ P (x1 )                    AP (xs ),
+                                                                                 s=2
+
+with π denoting the initial distribution of the MC. The elements of αt are called
+forward probabilities. For t = 1, 2, . . . , T , and j = 1, 2, . . . , m, we have the joint
+probability
+                         αt (j) = P r(X (t) = x(t) , Ht = j),                           (4)
+
+
+                                                   Revista Colombiana de Estadística 43 (2020) 71–82
+
+76                                                              Sebastian George & Ambily Jose
+
+
+which is the j th component of αt . Now, the vector of backward probabilities βt ,
+for t = 1, 2, . . . , T , is defined by
+                                                                 (                      )
+                                                                     ∏
+                                                                     T
+                 ′                                        ′
+          βt = π P (xt+1 )AP (xt+2 ) · · · AP (xT )1 =                     AP (xs ) 1′ .
+                                                                   s=t+1
+
+
+The j th component of βt is the conditional probability and the elements of βt are
+called backward probabilities. For t = 1, 2, . . . , T − 1, and j = 1, 2, . . . , m, we have
+the conditional probability
+
+                                          (T )     (T )
+                          βt (j) = P r(Xt+1 = xt+1 Ht = j),                                         (5)
+
+where Xab denotes the vector (Xa , Xa+1 , . . . , Xb ). For t = 1, 2, . . . , T , and i =
+1, 2, . . . , m, the probability
+
+                         P r(X (t) = x(t) , Ht = j) = αt (i)βt (i),                                 (6)
+
+and consequently αt βt′ = P r(X (T ) = x(T ) ) = LT , for each t. In HMM, this
+property is used for applying the EM algorithm and in local decoding. For t =
+1, 2, . . . , T , firstly
+
+                                                              αt (i)βt (i)
+                        P r(Ht = j | X (t) = x(t) ) =                      ,                        (7)
+                                                                  LT
+
+and secondly,
+
+                                                          αt−1 (j)ajk pk (xt )βt (k)
+           P r(Ht−1 = j, Ht = k | X (t) = x(t) ) =                                   .              (8)
+                                                                    LT
+
+The EM algorithm is an iterative method for performing maximum likelihood esti-
+mation when some data are missing. In this case, the complete-data log-likelihood
+(CDLL) –the log-likelihood of the parameters of interest θ, based on both the ob-
+served data and the missing data– is to be maximized. The algorithm is started
+by choosing values for the parameters Θ. Then, the following steps are repeated:
+
+     • E step: Compute the conditional expectations of those functions of the miss-
+       ing data that appear in the CDLL.
+
+     • M step: Maximize, with respect to Θ, CDLL with the functions of the missing
+       data replaced by their conditional expectations.
+
+The sequence of states h1 , h2 , . . . , hT followed by the MC is defined by the zero-one
+random variables and is given by
+
+                uj (t) = 1 if and only if ht = j               (t = 1, 2, . . . , T )
+
+        vjk (t) = 1 if and only if ht−1 = j and ht = k                    (t = 2, 3, . . . , T ).
+
+                                          Revista Colombiana de Estadística 43 (2020) 71–82
+
+Generalized Poisson Hidden Markov Model                                                                        77
+
+Now, the log-likelihood of the observations x1 , x2 , . . . , xT and the missing data
+h1 , h2 , . . . , hT are given by
+
+         ( (                 ))           ∏
+                                          T           ∏
+                                                      T
+      log P r X (T ) , h(T )    = log(πh1   aht−1 ,ht   pht (xt ))
+                                                          t=2           t=1
+                                                            ∑
+                                                            T                           ∑
+                                                                                        T
+                                            = log πh1 +           log (aht−1 ,ht ) +          log pht (xt ).
+                                                            t=2                         t=1
+
+Hence, the CDLL is
+                                                                         ( T                    )
+                                            ∑
+                                            m                        m ∑
+                                                                     ∑ m  ∑
+                  (T )        (T )
+      log(P r(X          ,h          )) =         uj (1) log πj +                       vjk (t) log ajk
+                                            j=1                      j=1 k=1      t=2
+                                                m ∑
+                                                ∑ T
+                                            +             uj (t) log pj (xt )).
+                                                j=1 t=1
+
+
+Here, π is to be understood as the initial distribution of the MC (the distribution
+of H1 ), not necessarily the stationary distribution. Of course, it is not reasonable
+to try to estimate the initial distribution from just one observation at time 1,
+especially as the state of the MC itself is not observed. The EM algorithm for
+HMMs proceeds as follows:
+
+   • E step: Replace the quantities vjk (t) and uj (t) by their conditional expec-
+     tations given the observations x(T ) , then it is given by
+
+                                                                           αt (j)βt (j)
+                                     ûj (t) = P r(Ht = j | x(T ) ) =
+                                                                               LT
+
+                                                                           αt−1 (j)ajk pk (xt )βt (k)
+            v̂jk (t) = P r(Ht−1 = j, Ht = k | x(T ) ) =                                               .
+                                                                                     LT
+
+   • M step: Replace vjk (t) and uj (t) by v̂jk (t) and ûj (t) and maximize the CDLL
+     with respect to the three sets of parameters: the initial distribution π, the
+     transition probability matrix A and the parameters of the state-dependent
+     distributions λ11 , λ12 , . . . , λ1m , λ21 , λ22 , . . . , λ2m .
+
+M step splits neatly into three separate maximizations: term 1 depends only on the
+initial distribution π, term 2 on the transition probability matrix A and term 3 on
+the state-dependent parameters of GPD and they are estimated using numerical
+maximization Zucchini & MacDonald (2009).
+
+
+4. A Simulation Study
+   This section shows the results of a simulation study conducted on the per-
+formance of the GP-HMM model. We assessed the performance of the estimates
+
+                                                       Revista Colombiana de Estadística 43 (2020) 71–82
+
+78                                                      Sebastian George & Ambily Jose
+
+
+using the mean squared error (MSE) on the simulated data. The simulations were
+repeated on diﬀerent sample sizes ranging from 500 to 10 000 and on diﬀerent pa-
+rameter values. Prior to checking the results obtained for the parameter estimates,
+we had run the EM algorithm with m = 2, . . . , 6 states to select the appropriate
+number of states of the GP-HMM. For this purpose, we computed the AIC and
+BIC for each GP-HMM. Upon computation, both Akaike information criterion
+(AIC) and Bayesian information criterion (BIC) gave the lowest value for m = 2
+state. So, we chose, two state GP-HMM for further computation. The initial
+values of the parameters are given below
+
+      a11 = 0.9, a12 = 0.1, λ11 = 10, λ12 = 30, λ21 = 0.7, and λ22 = 0.6.
+
+We had run 50 replications of the EM algorithm on the simulated data and then
+computed the MSE and biases (given in brackets), the results of which to shown
+in Table 1. It shows that MSE and biases of the estimate of the parameters tend
+to become zero as the sample size increases. Also, the mean estimates of the
+parameters come closer to the true parameter values.
+
+
+5. Real Data Application
+    The GP-HMM model is applied to a real-life data set. A series of monthly
+Leptospirosis incidence counts in the state of Kerala in South India during the
+2006-2017 period is considered for the analysis. The data are sourced from the
+oﬃcial website of the Directorate of Health Services, Government of Kerala, India.
+A graphical representation of the said data, with 144 time points, is shown in figure
+1. As many as 14,460 cases, having the mean value 100.42 and variance 3,342.41,
+are subjected to study. In this case, the sample variance is greater than its mean,
+which shows the data is clearly overdispersed. As per the data, February 2014
+recorded the minimum Leptospirosis cases of 20, while the maximum of 292 was
+reported in September 2008. two models, HMM with Poisson distribution and
+GP-HMM, were estimated and compared on the basis of -LogL, AIC and BIC.
+Table 2 presents the relevant comparison. In this, table k represents the number
+of parameters. For P-HMM k = m2 and GP-HMM k = m(m + 1). The model
+is considered to be the most apt one, which can be identified using BIC. So the
+model with two-state GP-HMM is the most appropriate.
+
+Table 1: MSE(Bias) of the GP-HMM parameters for 50 simulation runs of the EM
+         algorithm with m = 2 states.
+      N          500               1000                5000                10000
+     a11    0.0020(0.0374)    0.0005(0.0148)   5.674e−05 (−0.0027)    2.5e−05 (0.0005)
+     a12   0.0020(−0.0374)   0.0005(−0.0148)    5.674e−05 (0.0027)    2.5e−05 (0.0005)
+     λ11    0.2884(0.0118)   0.1547(−0.1520)     0.1588(−0.3633)       0.0102(0.0428)
+     λ12   0.0003(−1.1530)    0.0006(1.6355)     0.0002(−0.7830)     1.9e−05 (−0.1919)
+     λ21   0.0005(−0.0080)    0.0042(0.0003)      0.0001(0.0090)      1.4e−05 (0.0013)
+     λ22    0.0003(0.0058)   0.0006(−0.0195)      0.0002(0.0125)      1.9−05 (0.0019)
+
+
+
+
+                                        Revista Colombiana de Estadística 43 (2020) 71–82
+
+Generalized Poisson Hidden Markov Model                                                                                                   79
+
+                   Table 2: comparison of Poisson and GP HMMs by AIC and BIC.
+           Model                                                                k          -LogL            AIC            BIC
+           Poisson-Hidden Markov Model
+           Simple Poisson                                                   1              2696.54       5395.08          5398.05
+           2-state P-HMM                                                    4              1298.16       2610.31          2631.10
+           3-state P-HMM                                                    9               889.58       1813.15          1863.64
+           4-state P-HMM                                                    16              806.29       1674.57          1766.64
+           5-state P-HMM                                                    25              802.92       1703.84          1849.34
+           Generalized Poisson-Hidden Markov Model
+           Simple GP                                                        2              768.76        1541.51          1547.45
+           2-state GP-HMM                                                   6              741.06        1496.12          1516.92
+           3-state GP-HMM                                                   12             727.18        1482.36          1523.93
+           4-state GP-HMM                                                   20             721.87        1489.74          1558.05
+
+
+
+    Figure 1 shows the result of fitting four state P-HMM and two state GP-HMM
+to the leptospirosis series using EM estimates. The four-state model is fitted to the
+leptospirosis series by using HMM with Poisson distribution, while the two-state
+model is fitted to the data using GPD as state dependent distribution. However,
+on close analysis of the results, the GP-HMM model seemás to fit the data better.
+The estimated transition probability matrices for four-state P-HMM and two-state
+GP-HMM are
+                                                                   
+                                        0.7244 0.2756 0.0000 0.0000
+                                       0.2230 0.5452 0.1982 0.0337 
+                           AP −HM M =                              
+                                       0.0479 0.5435 0.2796 0.1290 
+                                        0.0000 0.0000 0.6022 0.3978
+
+and
+                                                            [                                        ]
+                                                                  0.8335 0.1665
+                                       AGP −HM M =
+                                                                  0.1322 0.8678
+           300
+
+
+
+
+                                                                          300
+           250
+
+
+
+
+                                                                          250
+           200
+
+
+
+
+                                                                          200
+   count
+
+
+
+
+                                                                  count
+           150
+
+
+
+
+                                                                          150
+           100
+
+
+
+
+                                                                          100
+           50
+
+
+
+
+                                                                          50
+
+
+
+
+                 2006   2008   2010   2012   2014   2016   2018                     2006     2008    2010   2012   2014     2016   2018
+
+                                      Time                                                                  Time
+
+Figure 1: The state-dependent means (horizontal lines), left: 4 state P-HMM and right:
+          2 state GP-HMM, compared to the observations.
+
+
+                                                           Revista Colombiana de Estadística 43 (2020) 71–82
+
+80                                                   Sebastian George & Ambily Jose
+
+
+     The Poisson parameters estimated by the HMM are
+
+                λ = ( 46.3694 101.4253      165.2471 250.2855 )
+
+and the GP parameters are λ1 = ( 18.9565 32.6556 ) and λ2 = ( 0.6512 0.7615 ).
+The whole analysis is done using R software. The package HM M pa is used for
+modelling Witowski & Foraita (2013).
+
+
+6. Discussion and Conclusion
+     We propose to deal with overdispersion and underdispersion in time series of
+count data by introducing GPD in HMM. Here, the is EM algorithm used for the
+estimation of the parameters, by implementing the R-package (Witowski & Foraita
+2013). Also, the validity of the estimates is verified by carrying out a simulation
+study. We take out an original data –monthly count of cases Leptospirosis in
+Kerala between 2006 and 2017– to show that GP-HMM performás much better than
+P-HMM. Leptospirosis, according to the World Health Organization, is a bacterial
+disease detected in places which witness excess rainfall and flooding. It transmits
+to humans through the cuts on the skin or through the mucous membranes of the
+eyes, nose and mouth with water contaminated with the urine of infected animals.
+In this study, the occurrences of the bacterial disease are modelled using the HMM
+because of the dependent nature of the leptospirosis data. The P-HMM is the most
+widely used method for modelling such data. In this case, we develop GP-HMM for
+fitting leptospirosis series and compare it with P-HMM using AIC and BIC. From
+all these findings, we prove that GP-HMM is much better compared to P-HMM.
+    For modelling overdispersed count data, a suitable model is a mixture of Pois-
+son model. It can be seen that the negative binomial distribution (NBD) and
+GPD are in fact mixtures of Poisson models, where the mixing distributions are
+continuous distributions. The mixing distribution in the case of NBD is a gamma
+distribution and is suitable for modelling data with excess zeroes (Joe & Zhu 2005).
+However, GPD is better suited when more mass is concentrated on the tail of
+the distribution compared to NBD. Further, also GPD is suitable for both over-
+dispersed and under-dispersed data. This might be the reason for getting better
+fit on GP-HMM for the data in our example. When excess zero and heavy tail
+are present, we may use a zero-inflated GP-HMM for modelling serially correlated
+data. We will concentrate our attention on this aspect in our further study. The
+results based on our simulation study and example will help both theoreticians
+and practitioners for making inference on unequal mean-variance scenario in the
+case of serially correlated time series count data.
+
+
+Acknowledgements
+   This paper is a part of the Ph.D. programme of the second author, under
+the Mahatma Gandhi University, Kerala, India. The authors are grateful to the
+
+                                      Revista Colombiana de Estadística 43 (2020) 71–82
+
+Generalized Poisson Hidden Markov Model                                            81
+
+editors and referees for sending valuable feedback and comments, which helped us
+improve the manuscript.
+             [                                                ]
+              Received: January 2019 — Accepted: December 2019
+
+
+References
+Baum, L. E. (1972), ‘An Inequality and Associated Maximization Technique in Statistical Estimation for Probabilistic Functions of Markov Processes’, Inequalities 3, 1–8.
+Cepeda-Cuervo, E. & Cifuentes-Amado, M. V. (2017), ‘Double Generalized BetaBinomial and Negative Binomial Regression Models’, Revista Colombiana de Estadística 40(1), 141–163.
+Consul, P. C. (1989), Generalized Poisson Distributions: Properties and Applications, Dekker, New York.
+Consul, P. C. & Jain, G. C. (1973), ‘A Generalization of Poisson Distribution’, Technometrics 15(4), 791–799.
+Consul, P. C. & Shoukri, M. M. (1984), ‘Maximum likelihood estimation for the generalized Poisson distribution’, Communication in Statistics - Theory and Methods 13(12), 1533–1547.
+Dempster, A. P., Laird, N. M. & Rubin, D. B. (1977), ‘Maximum Likelihood from Incomplete Data via the EM Algorithm’, Journal of the Royal Statistical Society, Serie B 39(1), 1–38.
+Greenwood, M. G. & Yule, G. U. (1920), ‘An inquiry into the nature of frequency distributions representative of multiple happenings, with particular reference to the occurrence of multiple attacks of disease or of repeated accidence’, Journal Royal Statistical Society 83, 255–279.
+Joe, H. & Zhu, R. (2005), ‘Generalized Poisson Distribution: the Property of Mixture of Poisson and Comparison with Negative Binomial Distribution’, Biometrical Journal 47(2), 219–229.
+Kendall, M. & Stuart, A. (1963), The Advanced Theory of Statistics, Vol. 1, Hafner Publishing Co., New York.
+Neyman, J. (1931), ‘On a new class of contagious distributions, applicable in entomology and bacteriology’, Technometrics 10, 35–57.
+Pereira, J. R., Marques, L. A. & da Costa, J. M. (2012), ‘An Empirical Comparison of EM Initialization Methods and Model Choice Criteria for Mixtures of Skew-Normal Distributions’, Revista Colombiana de Estadística 35(3), 457–478.
+Sebastian, T., Jeyaseelan, V., Jeyaseelan, L., Anandan, S., George, S. & Bangdi-wala, S. (2019), ‘Decoding and modelling of time series count data using Poisson hidden Markov model and Markov ordinal logistic regression models’, Statistical Methods in Medical Research 28(5), 1552–1563.
+Tuenter, H. J. H. (2000), ‘On the generalized Poisson distribution’, Statistica Neerlandica 54, 374–376.
+Wang, W. & Famoye, F. (1997), ‘Modelling household fertility decisions with generalized Poisson regression’, Journal of Population Economics 10, 273–283.
+Witowski, V. & Foraita, R. (2013), HMMpa: Analysing accelerometer data using hidden markov models, R package version 1.0.1. *https://cran.r-project.org/package=HMMpa
+Witowski, V., Foraita, R., Pitsiladis, Y., Pigeot, I. & Wirsik, N. (2014), ‘Using hidden Markov models to improve quantifying physical activity in accelerometer data - A simulation study’, PLOS ONE 9(12), 77–92.
+Zucchini, W. & MacDonald, I. L. (2009), Hidden Markov Models for Time Series: An Introduction Using R, Chapman and Hall, Boca Raton.

@@ -1,0 +1,468 @@
+Modelo de Markov de tres estados: comparación de parametrizaciones de la tasa de intensidad de transición. Aplicación a datos de artritis reumatoidea
+Universidad Nacional de Colombia;Corporación para Investigaciones Biológicas;Universidad del Rosario, Bogotá, Colombia;Clínica Universitaria Bolivariana, Medellín, Colombia
+Resumen
+Se considera un modelo múltiple de tres estados donde uno de ellos es absorbente. Se asume que la dependencia entre las observaciones registradas para un mismo sujeto sigue un proceso de Markov. Se comparan, vía simulación, tres diferentes parametrizaciones de la tasa de intensidad de transición: la primera está basada en el modelo de hazard multiplicativo de Andersen Gill (Andersen et al. 1993), la segunda, en el modelo logístico, y la tercera depende del modelo log-log complementario. El método de estimación de parámetros se basa en la función de verosimilitud la cual se optimiza usando las soluciones exactas de un sistema de ecuaciones de Kolmogorov hacia adelante junto con el algoritmo de Newton-Raphson (Abramowitz & Stegun 1972). Usando el sesgo relativo, se selecciona el mejor método de parametrización y se ilustra usando datos recopilados en la Corporación para Investigaciones Biológicas, CIB1 , acerca de pacientes con artritis reumatoidea.
+Palabras clave: procesos estocásticos, tasas de intensidad, datos longitudinales, artritis reumatoidea.
+Introducción
+Los modelos de estados múltiples2 conforman una importante familia de herramientas estadísticas que son apropiadas para el análisis de datos longitudinales con respuesta categórica; por ejemplo, la progresión de una enfermedad incurable, tal como la enfermedad de Alzheimer, artritis reumatoidea o la preferencia de un usuario de telefonía celular por un plan específico. Los modelos de estados múltiples han recibido gran atención en la literatura en años recientes. Con los notables avances en estadística, algunos autores han podido aplicar estos modelos en áreas tales como el estudio de datos longitudinales con valores perdidos y en el campo de los modelos lineales mixtos; ver por ejemplo, Gao (2004), Ten et al. (2000) y (Aitkin & Alfó 1998). Este tipo de modelos de estados múltiples han tenido una exitosa acogida en campos de la ciencia tan diversos como biología, física, farmacia, epidemiología, ciencias sociales y medicina. Este trabajo está motivado, básicamente, por los trabajos realizados por Kay (1986), Marshall et al. (1995), Frydman (1995), Joly & Commenges (1999) y Salazar et al. (2007).
+    La información acerca de la progresión de un fenómeno, tal como una enferme-
+dad incurable, usualmente se recolecta por medio de un proceso de mediciones re-
+petidas tomadas en diferentes ocasiones en el tiempo (datos longitudinales, Diggle
+et al. (2002)). Con esto se busca registrar el cambio en el tiempo de una respues-
+ta de interés. Es por esto que determinar la función de intensidad de transición3
+  1 www.cib.org.co/
+  2 También conocidos como modelos de compartimientos (Jacquez 1972).
+   3 Conocida también como tasa de intensidad de transición. Se define formalmente en la sec-
+
+ción 2.
+
+
+                                        Revista Colombiana de Estadística 30 (2007) 213–229
+
+Modelo de Markov de tres estados                                                   215
+
+(Bhat 1994) que se asocia con cada uno de estos cambios, resulta importante para
+entender e identificar que factores se relacionan con el riesgo que un paciente o
+una unidad experimental particular tiene de transitar a través de diferentes esta-
+dos de un proceso. Por tanto, es necesario contar con herramientas que permitan
+estimar estas tasas con un grado de precisión aceptable. Puesto que la manera
+de formular las tasas de intensidad en términos de las covariables no es única, es
+pertinente preguntarse cuál de esas formas resulta más adecuada para el proceso
+de estimación.
+    Un proceso cuidadoso de identificación de factores de riesgo debe incluir mo-
+delos estadísticos que permitan detectar características que se relacionan con los
+cambios de estado que una persona puede experimentar en el tiempo y medir su
+grado de asociación con la respuesta de interés (ver Woodward (1999)). Adicional-
+mente, debe tener en cuenta el proceso de recolección de datos, la estructura de
+asociación de las medidas repetidas y la naturaleza de la respuesta. Los modelos
+de Markov basados en parametrizaciones de las tasas de intensidad son de gran
+utilidad ya que tienen en cuenta estos elementos con la ventaja adicional que per-
+miten cuantificar el papel de las covariables en las distintas transiciones. Debido a
+que existen diferentes métodos para incorporar el efecto de las covariables sobre las
+tasas de intensidad de transición en este tipo de modelos es importante identificar
+cuál de ellos proporciona respuestas más razonables. El interés específico de este
+trabajo es estudiar metodologías para evaluar las tasas de intensidad de transición
+cuando el fenómeno bajo estudio se puede idealizar por medio de un modelo de
+tres estados con un estado absorbente como el que se ilustra en la figura 1.
+
+
+
+
+            Figura 1: Modelo de tres estados con un estado absorbente.
+
+
+
+    Como objetivo general se pretende evaluar diferentes metodologías para estimar
+el conjunto de tasas de intensidad de transición (por brevedad se denominarán de
+ahora en adelante tasas de intensidad) que gobiernan las transiciones de los sujetos
+dentro de un modelo múltiple de tres estados con un estado absorbente, y decidir
+cuál de ellas es más adecuada. Específicamente, se quiere:
+
+  1. Cuantificar el cambio, en términos del sesgo relativo, que experimentan los
+     estimadores de máxima verosimilitud de las tasas de intensidad en presencia
+     de distintas parametrizaciones.
+
+                                    Revista Colombiana de Estadística 30 (2007) 213–229
+
+216                                                                     Juan Carlos Salazar, et al.
+
+   2. Identificar condiciones con las cuales se pueden obtener estimadores de má-
+      xima verosimilitud de las tasas de intensidad más precisos dentro del modelo
+      múltiple de tres estados con un estado absorbente.
+
+    Este trabajo está organizado de la siguiente manera: en la sección 2 se presenta
+el modelo junto con el sistema de ecuaciones de Kolmogorov hacia adelante; luego,
+en la sección 3, se detallan las distintas parametrizaciones que se van a comparar;
+posteriormente, en la sección 4, se exponen los tipos de datos junto con la función
+de verosimilitud. La sección 5 está dedicada a un estudio de simulación, mientras
+que en la sección 6 se ilustra el modelo usando datos longitudinales de artritis
+reumatoidea. Finalmente, en la sección 7, se analizan los méritos y las limitaciones
+de los modelos.
+
+
+2. El modelo
+    Considere un proceso estocástico {Y (t) : t ≥ 0} con espacio de estados finito
+S = {1, 2, . . . , k}, (Y (t) ∈ S con probabilidad 1). Se asume que este proceso
+satisface la propiedad de Markov, esto es:
+                                                                        
+  P Y (tn ) = in | Y (t1 ) = i1 , Y (t2 ) = i2 , . . . , Y (tm ) = im
+                                                                                               
+                                                             = P Y (tn ) = in | Y (tm ) = im
+
+donde t1 < t2 < · · · < tm < tn .
+    Esto implica que el proceso es homogéneo. Adicionalmente, se asume que el
+estado k es absorbente y que t representa el tiempo transcurrido desde la primera
+visita. Por ejemplo, en el modelo de tres estados, el espacio de estados es S =
+{1, 2, 3} y solo se admiten las transiciones 1 → 2, 1 → 3 y 2 → 3.
+    Los estados de este proceso se pueden describir por medio de una matriz de
+probabilidades de transición dependientes del tiempo (Bhat 1994). Suponga que
+se toman n historias independientes de este proceso y que cada una de ellas se
+organiza de acuerdo con su patrón de transición. Este patrón de transición se
+observa a través de k estados previamente definidos y varía de historia a historia.
+    El interés es estimar las tasas de intensidad asociadas con los distintos estados
+del proceso. Formalmente hablando, una tasa de intensidad para una transición
+de un estado i a un estado j se define como:
+                                                                   
+                                     p Y (t + ∆t ) = j | Y (t) = i
+                      αij (t) = lı́m
+                               ∆t →0              ∆t
+
+donde, i, j = 1, . . . , k y αij (t) ≥ 0, i, j = 1, . . . , k.
+    Asumir la propiedad de Markov implica que las funciones de intensidad son
+funciones constantes del tiempo, y por esto resulta apropiado llamarlas tasas de
+intensidad. Además, esta propiedad sirve para vincular en el modelo la correlación
+entre las mediciones repetidas de una misma unidad. La relación entre estas tasas
+
+                                            Revista Colombiana de Estadística 30 (2007) 213–229
+
+Modelo de Markov de tres estados                                                      217
+
+de intensidad y las probabilidades de transición se establece a partir de un sistema
+de ecuaciones de Kolmogorov hacia adelante (Bhat 1994),
+                  d
+                     P(t) = P(t)Q,      P(0) = Ik+1 ,      con Q = [αij ]
+                  dt
+donde: P(t) es la matriz de probabilidades de transición, αij la tasa de intensidad
+del estado i al estado j y Q la matriz de tasas de intensidad. Cuando se considera
+el modelo de tres estados (ver figura 1) este sistema tiene una solución exacta dada
+por
+                                                     
+                     p11 (t) = exp − (α12 + α13 )t
+                               α12                  
+                     p12 (t) =      1 − exp(−α∗∗ t) exp(−α23 t)
+                               α∗∗
+                     p13 (t) = 1 − p11 (t) − p12 (t)
+                     p22 (t) = exp(−α23 t)
+                     p23 (t) = 1 − exp(−α23 t)
+                       α∗∗ = α12 + α13 − α23
+
+   En la práctica, las tasas de intensidad podrían estar influidas por covariables,
+y por esta razón se deben incorporar dentro del siguiente conjunto:
+
+                           A = {αi,j (θ; z) | i, j = 1, . . . , k}
+
+donde θ es un vector de parámetros y zT = [z1 , . . . , zp ]T es un vector de covariables.
+   La forma en que estas covariables se vinculan con las tasas de intensidad no
+es única. El plan de trabajo consiste en evaluar, vía simulación, tres diferentes
+metodologías para estimar el conjunto de tasas de intensidad que gobiernan las
+transiciones de los sujetos de un estado a otro. El objetivo de este trabajo es evaluar
+cuál de esas tres parametrizaciones consideradas resulta ser la más recomendable.
+   A continuación se detallan las parametrizaciones estudiadas.
+
+
+3. Parametrizaciones de la tasa de intensidad
+    Con el fin de estudiar el comportamiento de los estimadores de máxima ve-
+rosimilitud de las tasas de intensidad se hace una comparación, por medio de un
+estudio de simulación, de tres diferentes parametrizaciones de la tasa de intensidad.
+
+Modelo de Andersen-Gill : la primera parametrización está basada en el mo-
+    delo de hazard multiplicativo de Andersen-Gill (Andersen et al. 1993):
+                                                           T
+                                    αi,j (θ; Z) = α∗ij eβij Z
+
+      aquí, α∗ij es un número positivo no especificado por estimar y β ij es un vector
+      que representa los efectos desconocidos de las covariables en una transición
+      del estado i al estado j, i, j = 1, . . . , k.
+
+                                       Revista Colombiana de Estadística 30 (2007) 213–229
+
+218                                                                           Juan Carlos Salazar, et al.
+
+Modelo logístico: la segunda parametrización está basada en la distribución lo-
+    gística y se define como:
+                                                                  T
+                                                          α∗ij eβij Z
+                                     αi,j (θ; Z) =                    T
+                                                        1 + α∗ij eβij Z
+
+      donde α∗ij es un número positivo no especificado por estimar y β ij es un
+      vector que representa los efectos desconocidos de las covariables en una tran-
+      sición del estado i al estado j, i, j = 1, . . . , k.
+Modelo log-log complementario: la tercera parametrización está basada en la
+    transformación log-log complementario:
+
+                                                                 ∗    βT
+                                                                       ij Z
+                                     αi,j (θ; Z) = 1 − e−αij e
+      donde α∗ij es un número positivo no especificado por estimar y β ij es un
+      vector que representa los efectos desconocidos de las covariables en una tran-
+      sición del estado i al estado j, i, j = 1, . . . , k.
+
+    Estos tres métodos se comparan con el método no paramétrico (naive) para
+obtener estimaciones de las funciones de intensidad descrito en Kay (1986); bási-
+camente, este método propone estimar las tasas de intensidad usando la siguiente
+relación:
+                                          mij
+                                   αbij =
+                                           Ti
+donde mij es el total de transiciones del estado i al j y Ti es el total del tiempo
+que las unidades permanecieron en el estado i.
+
+
+4. Función de verosimilitud
+   El método de estimación de las tasas de intensidad dentro de cada parametriza-
+ción se basa en la función de verosimilitud. Por tratarse de un proceso homogéneo
+en el tiempo, las probabilidades de transición de un estado a otro para los indivi-
+duos solo dependen de la diferencia de tiempos entre visitas sucesivas. La tabla 1
+muestra el esquema general de la información recopilada longitudinalmente para
+un individuo particular.
+
+Tabla 1: Esquema de recolección de datos para un participante con historia de transi-
+         ción: 1 → 2, 2 → 2, y 2 → 3.
+                  Visita                     V1                  V2                   V3         V4
+          Tiempos de transición              t1                  t2                   t3         t4
+                 Estado                       1                   2                   2          3
+        Probabilidad de transición     p12 (t2 − t1 )      p22 (t3 − t2 )       p23 (t4 − t3 )
+
+
+   Para este ejemplo, la contribución de este individuo a la verosimilitud será:
+
+                       p12 (t2 − t1 ) ∗ p22 (t3 − t2 ) ∗ p23 (t4 − t3 )
+
+                                          Revista Colombiana de Estadística 30 (2007) 213–229
+
+Modelo de Markov de tres estados                                                      219
+
+                    (k)
+    En general, si Si representa el estado del k-ésimo participante en la i-ésima
+visita, n el número de participantes bajo estudio, mk número de visitas para el
+                        (k)
+k-ésimo participante y pSi ,Si+1 la probabilidad de que el k-ésimo participante pa-
+se del estado Si al estado Si+1 en el intervalo de tiempo (ti , ti+1 ), entonces la
+contribución del k-ésimo participante a la verosimilitud está dada por
+                               mk
+                               Y   (k)
+                                  pSi ,Si+1 (ti+1 − ti )
+                               i=1
+
+
+   Note que para obtener estimaciones de las tasas de intensidad en el modelo
+markoviano no es necesario conocer el momento exacto en el que el participante
+emigra de un estado a otro.
+   La función de verosimilitud para los n participantes está dada por
+                               mk
+                             n Y
+                             Y     (k)
+                                  pSi ,Si+1 (ti+1 − ti )
+                             k=1 i=1
+
+
+    Para estimar las tasas de intensidad, es necesario derivar esta última función
+de verosimilitud con respecto a los parámetros del modelo. La dificultad radica
+en que es muy complicado obtener una solución explícita para la ecuación de
+verosimilitud. Esto es especialmente cierto para modelos con más de tres estados,
+en donde la solución de las ecuaciones de Kolmogorov hacia adelante se obtienen en
+términos de la descomposición espectral de la matriz de tasas de intensidad, la cual
+puede generar soluciones que no son números reales (ver Kalbfleish et al. 1983).
+Es por esto que se debe usar un método numérico en asocio con las ecuaciones
+diferenciales para obtener estas estimaciones.
+
+
+5. Estudio de simulación
+    Para llevar a cabo el estudio de simulación se asume un proceso estocástico de
+Markov de tres estados que se denotarán 1, 2 y 3, y donde el estado 3 es absorbente;
+las únicas transiciones que se admiten son 1 → 2, 1 → 3 y 2 → 3.
+    Las condiciones en las cuales se ejecutaron las simulaciones se describen a
+continuación. Primero, se simularon 1000 muestras de tamaños n = 200, 300,
+400, 500 y 600 unidades, respectivamente, que contenían historias aleatorias de
+transiciones en el modelo de tres estados para los n participantes; luego para
+cada tamaño muestral se generaron un máximo de cinco o seis medidas repetidas
+por unidad y una covariable dicotómica, que para fines prácticos puede indicar la
+presencia o ausencia de una característica genética; la variable edad se incorpora
+en el modelo con tres categorías: ≤ 75 años, 75 − 85 años y ≥ 85 años. Para
+calcular los valores de referencia se usaron estimaciones de las tasas de intensidad
+reportadas en un artículo de Harezlak et al. (2003) obtenidas a partir de datos del
+Indianapolis-Ibadan Dementia Project (Hendrie et al. 2001), el cual es un estudio
+longitudinal acerca del envejecimiento y demencia realizado con participantes de
+
+                                       Revista Colombiana de Estadística 30 (2007) 213–229
+
+220                                                        Juan Carlos Salazar, et al.
+
+dos poblaciones ubicadas una en Indianapolis, Estados Unidos, y la otra en Nigeria,
+África. Estos valores se modificaron ligeramente para incorporar la dependencia
+de las transiciones en la variable dicotómica generada.
+    Cada ronda de simulación estimaba los efectos de las covariables y con estos
+se obtenían estimadores de α12 , α13 y α23 para cada grupo de edad. Todas las
+simulaciones se llevaron a cabo usando el software SAS IML c (SAS Institute Inc
+1990).
+    El proceso de selección del mejor modelo de parametrización se basa en el sesgo
+relativo (SR), que se define como:
+
+                               bij − αij
+                               α
+                        SR =             ,    i, j = 1, 2, 3
+                                  αij
+
+    El modelo asociado con los menores sesgos relativos se considera el más reco-
+mendable para obtener los estimadores de máxima verosimilitud de las tasas de
+intensidad.
+    En el proceso de simulación, la función de verosimilitud se optimizó iterativa-
+mente usando las soluciones exactas de un sistema de ecuaciones de Kolmogorov
+hacia adelante (asociado con el modelo de tres estados) junto con el método de
+Newton-Raphson (Abramowitz & Stegun 1972).
+   La tabla 2 muestra los resultados correspondientes a los tres métodos cuando se
+simuló con tamaños muestrales de 200, 300, 400, 500 y 600 y un número máximo
+de visitas de 5, mientras que la tabla 3 muestra los resultados con los mismos
+tamaños muestrales pero un número máximo de visitas por participante de 6.
+   En ambas tablas se nota que el método no paramétrico (naive) está asocia-
+do con las peores estimaciones y que, consistentemente, tiende a subestimar el
+valor de referencia. También, el modelo de Andersen-Gill subestima consistente-
+mente los valores de referencia, pero en general los SR están dentro de un rango
+razonablemente cercano a los valores de referencia.
+    En la tabla 2 se observa una sobreestimación de la tasa α12 , excepto para
+el método no paramétrico, en el grupo de edad de ≤ 75 años. A medida que se
+aumenta el tamaño muestral, las estimaciones de α12 se acercan más a los valores
+de referencia. Con n = 200 y usando el modelo logístico se observa el SR más alto
+(0.758), mientras que el modelo de Andersen-Gill generó el SR más bajo (0.053).
+Para el grupo de edad de 75 − 85 años también se registran valores estimados
+cercanos a los de referencia siendo el modelo logístico el que produce mejores
+estimaciones. En este mismo grupo y el de los ≥ 85 el desempeño del modelo
+logístico y el log-log complementario es mejor que el del modelo de Andersen-Gill.
+Para el caso de los ≤ 75, los tres métodos producen estimaciones similares.
+    En el grupo de edad de los ≥ 85 se observan estimaciones cercanas a los valores
+de referencia; de hecho, el SR oscila entre −0.292 y 0.136 con valores tan pequeños
+como 0.003 y 0.008.
+   Cuando el número de visitas máximo se incrementa a seis (ver tabla 3) y se
+aumentan los tamaños muestrales, se observa una mejora en las estimaciones,
+pero las tendencias son las mismas que las observadas en el caso de cinco visitas.
+
+          Tabla 2: Estimación (sesgo relativo). Número máximo de visitas = 
+          Tabla 3: Estimación (sesgo relativo). Número máximo de visitas = 
+A medida que el tamaño muestral aumenta, se evidencia una reducción en los
+sesgos relativos de la función α12 para el grupo de edad de menores de 75 años.
+Los sesgos relativos asociados con los otros grupos de edad y las otras funciones
+se mantienen en un rango razonablemente bajo (−29.2 % y 14.8 %).
+   De acuerdo con este estudio de simulación, tamaños muestrales cercanos a 200
+y un seguimiento de aproximadamente cinco visitas producen estimadores dentro
+de un rango razonablemente cercano a los valores de referencia.
+   El desempeño de los tres métodos es similar en todas las combinaciones de
+tamaños muestrales y número de visitas. Esto implica que cualquiera de ellos se
+puede recomendar en la práctica notándose una ligera ventaja en el modelo de
+Andersen-Gill por ser éste un estimador no acotado por encima; además, este
+método es más estable computacionalmente como se puede observar en las tablas
+4 y 5 donde se reportan las tasas de convergencia de cada simulación asociadas a
+cada modelo.
+   Según este estudio de simulación, el cambio que experimentan los estimadores
+de máxima verosimilitud de las funciones de intensidad bajo distintas parametri-
+zaciones no es muy significativo.
+
+Tabla 4: Tasas de convergencia asociadas a los tres métodos de estimación. Número
+
+Tabla 5: Tasas de convergencia asociadas a los tres métodos de estimación. Número
+
+6. Ejemplo: progresión radiográfica en artritis
+   reumatoidea
+    El registro radiográfico de daño en las articulaciones de manos y pies de un
+paciente con artritis reumatoidea (AR) es de considerable interés para entender
+esta enfermedad. Puesto que los patrones de daño radiográfico varían dentro del
+mismo paciente y también de paciente a paciente, es razonable modelar esta evo-
+lución asumiendo la existencia de estados predefinidos a través de los cuales la
+enfermedad progresa. Una pregunta de interés se relaciona con la identificación de
+
+factores que pueden incidir en el tránsito por los distintos estados de severidad de
+la enfermedad.
+    Los datos utilizados para ilustrar incluyen 464 radiografías de 146 pacientes
+diagnosticados con artritis reumatoidea, 84.9 % mujeres, edad promedio 47.1±13.4
+años, un promedio de tres radiografías de manos y pies.
+    La artritis reumatoidea (AR) es una enfermedad crónica autoinmune e inflama-
+toria que compromete las articulaciones que tienen movimiento (Anaya et al. 2006).
+Afecta principalmente a las mujeres entre la cuarta y quinta décadas de la vida.
+Con frecuencia compromete otros órganos distintos a las articulaciones. Dadas las
+características mencionadas, la AR tiene un impacto adverso en la esfera biopsi-
+cosocial y su costo es alto (Anaya et al. 2006).
+    Estos pacientes fueron monitoreados durante un promedio de 4.2±1.6 años por
+el mismo equipo médico y siguiendo un régimen terapéutico estándar. Las radio-
+grafías de cada paciente fueron leídas y evaluadas por dos profesionales calificados
+siguiendo el método de Sharp van der Heijde (Van der Heijde 1999). El objetivo
+consistía en registrar el promedio de erosiones en manos y pies. Las lecturas se
+hicieron de manera independiente y ninguno de los dos lectores conocía el nombre
+del paciente al cual pertenecía una radiografía específica (ver figura 2). El acuerdo
+en sus lecturas fue evaluado posteriormente haciendo uso del coeficiente de corre-
+lación intraclase (ICC) y se observó un acuerdo notable entre ambas lecturas; de
+hecho, el ICC para las lecturas de manos fue de 0.95 mientras que para pies fue
+de 0.80. El puntaje de erosión, correspondiente al promedio de manos y pies de
+acuerdo al método de Sharp van der Heijde, fue categorizado en tres niveles de
+acuerdo con su severidad: 1 = Leve (≤ 4), 2 = Moderado (> 4 y ≤ 16) y 3 =
+Severo (> 16).
+
+
+
+
+Figura 2: Radiografía de manos comparativas en proyección oblicua (1) y antero-
+          posterior (2) con compromiso moderado, según puntaje Sharp van der Heijde.
+          Se destacan erosiones a nivel de las articulaciones metacarpofalángicas (flecha
+          blanca).
+
+
+    Debido a la naturaleza progresiva de la enfermedad, la transición del estado
+leve al severo no es posible, y por tanto esta ilustración es un caso particular del
+modelo expuesto en el estudio de simulación (ver figura 1). Treinta pacientes que
+fueron observados en el estado severo al momento de la primera radiografía fueron
+
+excluidos del análisis ya que no aportaban información relevante para el proceso
+de estimaciones de las funciones de intensidad.
+    Para la estimación de las funciones de intensidad (αLM , αMS ) se incluyó la
+covariable ausencia o presencia de la secuencia del Share Epitope (SE): 0 = No, 1 =
+Sí. Esta característica genética ha sido reportada en la literatura como un factor
+de riesgo para la artritis reumatoidea (Delgado et al. 2006). La historia familiar
+no se incluyó en el análisis puesto que se contaba con muy poca información.
+    La función de verosimilitud se optimizó usando el algoritmo de Newton-Raphson
+implementado en el SAS IML c (SAS Institute Inc 1990) usando las tres parame-
+trizaciones. En la tabla 6 se observan los valores estimados de las funciones de
+intensidad para los grupos con presencia y ausencia de la secuencia genética del
+SE.
+
+Tabla 6: Estimación de las funciones de intensidad (error estándar) αLM y αM S usando
+
+    La tabla 6 muestra los valores estimados de las tasas de intensidad junto con
+el valor del estadístico z y su correspondiente Valor-p. Los errores estándar se
+calcularon usando un método reportado en Iral & Salazar (2006) que está basado
+en el método delta.
+   En el modelo de Andersen-Gill no se observa una diferencia significativa en las
+tasas de intensidad de Leve a Moderado en ausencia y presencia del SE (Valor-p =
+0.862); sin embargo, se observa una diferencia importante en las tasas de intensidad
+de Moderado a Severo en ausencia y presencia del SE (Valor-p = 0.059).
+    En el modelo logístico no se observa una diferencia significativa en las tasas de
+intensidad de Leve a Moderado en ausencia y presencia del SE (Valor-p = 0.843)
+pero el modelo sí detecta una diferencia importante en las tasas de intensidad de
+Moderado a Severo en ausencia y presencia del SE (Valor-p = 0.052).
+   Finalmente, en el modelo log-log complementario no se detecta ninguna dife-
+rencia importante entre las tasas de intensidad de Leve a moderado y de Moderado
+a Severo (Valor-p = 0.862 y Valor-p = 0.148, respectivamente).
+    Según estos resultados, la influencia del SE es más importante en transiciones
+del estado Moderado a Severo.
+
+7. Conclusiones y recomendaciones
+En este trabajo se ha discutido el problema de estimar las tasas de intensidad en un proceso de Markov de múltiples estados al comparar tres métodos distintos para parametrizar la tasa de intensidad. Por medio de un estudio de simulación intensivo se evaluó el comportamiento de cada una de estas parametrizaciones según diferentes especificaciones de tamaño muestral y número máximo de visitas. Se recomienda la parametrización basada en el modelo de Andersen-Gill ya que no está acotada por encima y es más estable computacionalmente; esto la hace más apropiada en la práctica. Sin embargo, las otras parametrizaciones se pueden usar en situaciones donde se sospecha que las tasas de intensidad son pequeñas. Una de las desventajas más notables del modelamiento discutido en este trabajo es que requiere una gran cantidad de datos. Otros autores han propuesto modelos que tienen en cuenta censura arbitraria, pero la complejidad en su implementación los hacen poco prácticos (Joly & Commenges 1999). No obstante, para respuestas categóricas recolectadas longitudinalmente este tipo de modelamiento ha demostrado efectividad siempre y cuando se cuente con un número apropiado de datos y visitas.
+Apéndice A.
+Solución del sistema de ecuaciones de Kolmogorov
+hacia adelante en el modelo de tres estados
+   En el modelo de tres estados, el sistema de ecuaciones de Kolmogorov hacia
+adelante resultante es:
+
+Agradecimientos
+Agradecimiento especial a todos los pacientes que hicieron parte del estudio radiográfico sobre progresión en artritis reumatoidea. Su aporte es esencial para avanzar en el entendimiento de este mal que afecta a una cantidad considerable de personas en la actualidad. Proyecto patrocinado por UNC-DIME Número 30802921.
+Referencias
+Abramowitz, M. & Stegun, I. A. (1972), Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables, Dover Publications, Inc., New York.
+Aitkin, M. & Alfó, M. (1998), ‘Regression Models for Binary Longitudinal Responses’, Statistics and Computing 8, 289–307.
+Anaya, J. M., Pineda, R., Gómez, L. M., Galarza, C., Rojas, A. & Martín, J. (2006), Artritis reumatoide: bases moleculares, clínicas y terapéuticas, CIB, Universidad del Rosario, FUNPAR, Medellín, Colombia.
+Andersen, P. K., Borgan, O., Gill, R. D. & Keiding, N. (1993), Statistical Models Based on Counting Processes, Springer-Verlag, New York.
+Bhat, U. N. (1994), Elements of Applied Stochastic Processes, second edn, Wiley, New York.
+Delgado, A. M., Martín, J., Granados, J. & Anaya, J. M. (2006), ‘Epidemiología genética de la artritis reumatoide: ¿Qué esperar en América Latina?’, Biomédica 26, 562–584.
+Diggle, P., Heagerty, P., Liang, K. Y. & Zeger, S. (2002), Analysis of Longitudinal Data, Oxford Statistical Science Series 25, second edn, Oxford University Press Inc., New York.
+Frydman, H. (1995), ‘Semiparametric Estimation in a Three-State Duration Dependent Markov Model from Interval-Censored Observations with Application to Aids Data’, Biometrics 51, 502–511.
+Gao, S. (2004), ‘A Shared Random Effect Parameter Approach for Longitudinal Dementia Data with Non-Ignorable Missing Data’, Statist. Med. 23, 211–219.
+Harezlak, J., Gao, S. & L., H. S. (2003), ‘An Illness-death Scholastic Model in the Analysis of Longitudinal Dementia Data’, Statistics in Medicine 22, 1465–1475.
+Hendrie, H. C., Ogunniyi, A., Hall, K. S., Baiyewu, O., Unverzagt, F. W. & Gureje, O. (2001), ‘Incidence of Dementia and Alzheimer Disease in 2 Communities: Yoruba Residing in Ibadan, Nigeria, and African Americans Residing in Indianapolis’, JAMA 285(6), 739–747.
+Iral, R. & Salazar, J. C. (2006), Efecto de las covariables en la estimación de intervalos de confianza para las tasas de transición en un modelo de Markov de tres estados, in ‘Memorias XVI Simposio de Estadística 2006: Estadística en la Industria. III encuentro Colombia-Venezuela de Estadística’, Universidad Nacional de Colombia, Bucaramanga, Colombia.
+Jacquez, J. A. (1972), Compartmental Analysis in Biology and Medicine: Kinetics of Distribution of Tracer-Labeled Materials, Elsevier Pub. Co., Amsterdam, New York.
+Joly, P. & Commenges, D. (1999), ‘A Penalized Likelihood Approach for a Progressive Three-State Model with Censored and Truncated Data: Application to AIDS’, Biometrics 55, 887–890.
+Kalbfleish, J. D., Lawless, J. F. & Vollmer, W. M. (1983), ‘Estimation in Markov Models from Aggregate Data’, Biometrics 39, 907–919.
+Kay, R. (1986), ‘A Markov Model for Analyzing Cancer Markers and Disease States in Survival Studies’, Biometrics 42(4), 855–865.
+Marshall, G., Guo, W. & Jones, R. H. (1995), ‘MARKOV: A Computer Program for Multi-State Markov Models with Covariables’, Computer Methods and Programs in Biomedicine 47, 147–156.
+Salazar, J. C., Schmitt, F. A., Yu, L., Mendiondo, M. & Kryscio, R. J. (2007), ‘Shared Random Effects Analysis of Multi-State Markov Models: Application to a Longitudinal Study of Transitions to Dementia’, Statist. Med. 26, 568–580.
+SAS Institute Inc (1990), SAS/IML Software: Usage and Reference, Version 6, 1st edn, SAS Institute Inc., Cary, NC.
+Ten, T. R., Miller, M. E., Reboussin, B. A. & James, M. K. (2000), ‘Mixed Effects Logistic Regression Models for Longitudinal Ordinal Functional Response Data with Multiple-Cause Drop-Out from the Longitudinal Study of Aging’, Biometrics 56, 279–287.
+Van der Heijde, D. (1999), ‘How to Read Radiographs According to the Sharp/Van Der Heijde Method’, J Rheumatol 26, 743–745.
+Woodward, M. (1999), Epidemiology: Study Design and Data Analysis, Chapman and Hall/CRC, New York.

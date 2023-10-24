@@ -1,0 +1,602 @@
+Comparação de algumas técnicas de previsão em análise de séries temporais
+Universidade Federal de Pernambuco
+Resumo
+Neste trabalho, nós comparamos o desempenho das metodologias de previsão de séries temporais Box & Jenkins, alisamento exponencial e redes neurais para diferentes horizontes de previsão previamente defininidos. São analizadas duas séries de acordo com estas metodologias e suas previsões sao comparadas sob diferentes medidas de ajuste.
+Palabras clave: Modelos Box & Jenkins, alisamento exponencial, redes neurais, previsão.
+Abstract
+In this work, we compared the forecasting performance of three approaches: Box & Jenkins, exponential smoothing and neural networks, under different forecasting horizons. Two series are considered.
+Key words: Box & Jenkins models, exponential smoothing, neural networks, forecast.
+Introdução
+Uma série temporal é um processo estocástico gerador de observações no tempo de uma determinada variável y a qual representa medições sucessivas de algum fenômeno de interesse. O principal objetivo do análise de séries temporais é investigar o mecanismo gerador dos dados, descrever seu comportamento através da construção de gráficos para verificação da existência de tendência, ciclos e variações sazonais, por exemplo. Por fim, objetiva-se fazer previsões de valores futuros que serviram para tomar decisões. O processo de obter previsões é muito mais que a posição simplista de aventurar valores, pois, precisa da construção de un modelo adequado do sistema a ser tratado. Os métodos de previsão, em geral, baseiam se na idéia de que observações passadas trazem informações (memória) sobre o padrão do comportamento da série temporal.
+Assim, o problema principal é tratar de distinguir estes padrões de possı́veis ruı́dos. Um procedimento de previsão que tenta tratar os dois aspectos é o alisamento exponencial, que é um método sem justificação probabilı́stica, mas que tem grande popularidade devido à sua simplicidade, à eficiência computacional e a sua razoável precisão. O método Box & Jenkins é uma modelagem paramétrica que consiste em ajustar modelos auto-regressivos e/ou modelos de médias móveis, ARIMA(p, d, q), a um conjunto de dados. Por sua vez, as redes neurais artificiais (RNAs) são sistemas processadores de informação que aceitam entradas, por exemplo, uma série temporal, que é processada gerando saı́das (previsões). As redes neurais são compostas por unidades simples, chamadas neurônios, inter-conectadas entre si por conexões ponderadas.
+Neste trabalho, apresentamos, na seção 2, os métodos de previsão utilizados no análise de duas séries temporais, na seção 3 se discutem os resultados sob as diferentes metodologias de previsão aplicadas a ditas séries mostrando que o método de alisamento exponencial apresenta um ótimo desempenho para previsões de curto prazo e que os modelos ARIMA e RNAs se comportam melhor nas previsões de longo prazo segundo os crı́titerios de avaliação adotados.
+Os métodos de previsão
+O método de Alisamento Exponencial Simples é apropriado para séries que não apresentam tendência nem sazonalidade1 . O nı́vel atual da série {Nt }t∈T
+é estimado através de uma média ponderada das observações anteriores, sendo
+   1 Os movimentos sistemáticos ao longo do tempo de aumento ou decréscimo de uma série
+
+temporal são chamados de tendência. Por sua vez, a sazonalidade indica flutuações periódicas
+que podem aparecer quando as observações são intra-anuais,isto é, registradas mensalmente,
+
+Comparação de algumas técnicas de previsão em análise de séries temporais    131
+
+
+que os pesos decrescem exponencialmente à medida que regredimos no tempo.
+A expressão do nı́vel atual é dada por
+
+                         Nt = (1 − α)Nt−1 + αyt , t ∈ T ,                         (2.1)
+
+onde,
+                Nt−1 = αyt−1 + α(1 − α)yt−2 + · · · ,      0 < α < 1.
+
+    O problema em questão é a determinação do valor de α. Uma forma razoável
+de escolhê-lo é através de inspeção visual, ou seja, se a série evolui de forma
+suave faz sentido usar um valor alto para α, ao passo que se a série evolui
+de forma errática faz sentido atribuir peso pequeno à última observação. Um
+método mais objetivo é escolher o valor de α que minimiza
+                                                       Pn         a soma dos quadra-
+dos dos erros de previsão um passoà frente, Sα = t=3 e2t , onde
+
+                et = yt − Nt−1 e Nt−1 = ybt−1 (1), t = 3, 4, . . . , n            (2.2)
+
+ybt−1 (1) denotando a previsão de yt feita no instante t − 1. Os algoritmos de
+alisamento exponencial podem ser vistos como um sistema de aprendizado, já
+que partir de (2.1) e (2.2) segue que Nt = Nt−1 + αet , 0 < α < 1, ou seja,
+a estimativa do nı́vel num instante é a soma da estimativa anterior e de um
+múltiplo do erro de previsão. Dentre esta metodologia se encontra o algoritmo
+de alisamento exponencial de Holt o qual permite obter estimativas do nı́vel e
+da tendência da série. A forma de recorrência é dada por
+
+                Nt = αyt + (1 − α)(Nt−1 + Tt−1 ),          0 < α < 1,
+
+                  Tt = β(Nt − Nt−1 ) + (1 − β)Tt−1 , 0 < β < 1,
+onde Nt e Tt são estimativas do nı́vel e da tendência, respectivamente, no
+instante t e α e β são constantes de suavização. A previsão de yt+h feita no
+instante t é
+                        ybt (h) = Nt + hTt , h = 1, 2, . . . .
+
+    Novamente, a escolha objetiva dos valores de α e β se dá pela minimização
+da soma dos quadrados dos erros de previsão um passo à frente. Uma variante
+do algoritmo de Holt é o algoritmo de alisamento exponencial de Holt-Winters
+cujo objetivo principal é a incorporação de movimentos sazonais. Consideremos
+uma série sazonal com perı́odo s, por exemplo para dados mensais, s = 12. O
+fator sazonal (Ft ) é multiplicativo, enquanto que a tendência é aditiva (série
+sazonal multiplicativa). A forma de recorrência do algoritmo é:
+trimestralmente ou semanalmente, por exemplo.
+
+132                            Raydonal Ospina Martı́nez & Bartolomeu Zamprogno
+
+
+
+
+             Nt = αyt /Ft−s + (1 − α)(Nt−1 + Tt−1 ),   0 < α < 1,
+             Tt = β(Nt − Nt−1 ) + (1 − β)Tt−1 , 0 < β < 1,
+             Ft = γyt /Nt + (1 − γ)Ft−s , 0 < γ < 1.
+
+   As previsões dos valores futuros da série são obtidas das seguintes ex-
+pressões:
+
+              ybt (h) = (Nt + hTt )Ft+h−s , h = 1, 2, . . . , s,
+              ybt (h) = (Nt + hTt )Ft+h−2s , h = s + 1, s + 2, . . . , 2s,
+
+                                      ..         ..
+                                       .          .
+   O procedimento anterior pode ser modificado para tratar com situações
+onde o fator sazonal é aditivo (série sazonal aditiva). As equações de atualização
+dos dados são
+
+            Nt = α(yt − Ft−s ) + (1 − α)(Nt−1 + Tt−1 ), 0 < α < 1,
+            Tt = β(Nt − Nt−1 ) + (1 − β)Tt−1 , 0 < β < 1,
+            Ft = γ(yt − Nt ) + (1 − γ)Ft−s , 0 < γ < 1.
+
+   Os valores futuros são previstos a partir das equações a seguir:
+
+              ybt (h) = Nt + hTt + Ft+h−s , h = 1, 2, . . . , s,
+              ybt (h) = Nt + hTt + Ft+h−2s . h = s + 1, s + 2, . . . , 2s,
+
+                                 ..         ..
+                                  .          .
+    Uma métodologia de previsão que é classificada como clásica é a mode-
+lagem Box & Jenkins a qual baseia-se na construção de funções baseadas em
+um ciclo iterativo que utiliza os próprios dados da série para encontrar uma
+estrutura que permita fazer previsões. Inicialmente, é proposta uma classe de
+modelos que permite a identificação de um “bom” modelo com base em al-
+gunos critérios especı́ficos, em seguida os parâmetros são estimados e, através
+da análise dos resı́duos, o modelo ajustado é avaliado; caso não seja adequado,
+o ciclo é repetido. Muitas vezes é útil avaliar mais de um modelo, pois, por
+exemplo, se o objetivo é fazer previsões, o melhor modelo pode ser aquele que
+apresente o menor erro quadrático médio de previsão. Em geral, os modelos
+mas convenientes são os parcimoniosos, ou seja, aqueles que contêm poucos
+parâmetros e tendem a fornecer previsões mais precisas.
+
+Comparação de algumas técnicas de previsão em análise de séries temporais                133
+
+
+    Dentre esta clase de modelos se encontra o modelo auto-regressivo de ordem
+p, denotado por AR(p) o qual é definido como
+
+                    yt = c + φ1 yt−1 + φ2 yt−2 + . . . + φp yt−p + ut ,
+
+onde ut ∼ RB(0, σ 2 ) é ruido branco2 , φ1 , . . . , φp são os parâmetros auto-
+regressivos e c é um parâmetro que permitir ao processo ter média diferente de
+zero. A notação mas utilizada é φ(B)yt = c + ut , onde
+
+                        φ(B) = (1 − φ1 B − φ2 B 2 − · · · − φp B p ).
+
+    Um outro modelo conhecido dentre esta metodologia é o denominado pro-
+cesso de média móvel de ordem q, denotado por MA(q), o qual é da forma
+
+                          yt = µ + ut + θ1 ut−1 + . . . + θq ut−q ,
+
+com ut ∼ RB(0, σ 2 ). A notação usual para describir este processo é
+
+                                       yt = µ + θ(B)ut ,
+
+onde θ(B) = 1 + θ1 B + · · · + θq B q . De forma mais geral definimos o proceso
+auto-regressivo de média móvel ARMA(p, q) o qual tem a forma
+
+            yt = c + φ1 yt−1 + · · · + φp yt−p + u+ θ1 ut−1 + · · · + θq ut−q ,
+
+onde ut ∼ RB(0, σ 2 ), os φ’s e os θ’s são os parâmetros auto-regressivos e de
+médias móveis respectivamente, ou ainda φ(B)yt = c + θ(B)ut , onde φ(B) e
+θ(B) são os polinômios AR e MA usuais e as condições de estacionaridade3 em
+relação ao processo AR e de invertibilidade em relação ao MA permanecem.
+Se a série não for estacionária, o processo pode ser integrado de ordem d, ou
+seja, yt é não estacionário, mas a diferencia4 de ordem d é estacionaria. Tem-se
+então um processo ARIMA(p, d, q) definido como
+                                 £               ¤
+                           φ(B) (1 − B)d yt − µ = θ(B)ut .
+
+    Com o objetivo de levar em consideração movimentos sazonal, ampliou-se
+a classe de modelos ARIMA, pois em muitas ocações não é possı́vel transfor-
+mar yt de forma a remover a sazonalidade, ou seja, a própria sazonalidade
+    2 Uma seqüência {ε }
+                        t t∈T de variáveis aleatórias é ruido branco quando estas variáveis são
+não correlacionadas com média zero e variância finita e constante.
+    3 Neste contexto a série {y }                                                   2
+                                t t∈T , é estacionária se: E(yt ) = µ, Var(yt ) = σ , para todo t
+e Cov(yt , yt+h ) depender apenas de h.                                   Pn           ¡ ¢
+    4 Definimos a n-ésima diferença da série {y }                n                r n
+                                                   t t∈T como 4 yt =         r=0 (−1) r yt−r , e o
+                                                              n
+operador de defasagem Byt = yt−1 ; mais geralmente, B yt = yt−n , n = 0, 1, 2, . . ..
+
+134                              Raydonal Ospina Martı́nez & Bartolomeu Zamprogno
+
+
+pode apresentar um padrão dinâmico. Isto significa que é necessário considerar
+uma componente sazonal estocástica dentro do modelo com o fim de ajustar à
+série original. O novo modelo ARIMA é conhecido como ARIMA sazonal ou
+SARIMA. Seja yt a série de interesse observada s perı́odos por ano e sejam
+
+                         Φ(B s ) = 1 − Φ1 B s − · · · − ΦP B sP ,
+
+o operador auto-regressivo sazonal de ordem P , estacionário, e
+
+                         Θ(B s ) = 1 − Θ1 B s − · · · − ΘQ B sQ ,
+
+o operador de médias móveis sazonal de ordem Q, invertı́vel, 4D          s D
+                                                                s = (1 − B ) ,
+onde D indica o número de “diferenças sazonais”. A classe de modelos sazonais
+multiplicativos (p, d, q) × (P, D, Q) é dada por
+
+(1 − φ1 B − · · · − φp B p )(1 − Φ1 B s − · · · − ΦP B sP )[(1 − B)d (1 − B s )D − µ]yt
+
+             = (1 − θ1 B − . . . − θp B p )(1 − Θ1 B s − . . . − ΘP B sP )ut ,
+onde ut ∼ RB(0, σ 2 ), ou ainda,
+
+               φ(B)Φ(B s )[(1 − B)d (1 − B s )D − µ] = θ(B)Θ(B s )ut .
+
+   Podemos supor que è possı́vel combinar o modelo ARMA com uma estrutura
+de regressão da forma
+
+                      yt = α + φ1 yt−1 + · · · + φp yt−p + β0 Zt +
+
+                β1 Zt−1 + · · · + βr Zt−r + εt + θ1 εt−1 + · · · + θq εt−q .
+onde yt é a variável dependente, Zt é a variável independente, εt é um ruı́do
+branco e α, φi , θj são parâmetros desconhecidos. O modelo acima é conhecido
+como ARMAX e pode ser estendido para incluir mais de uma variável explica-
+tiva (exógena). Para mas detalhes sob a fundamentação teórica dos modelos
+anteriormente descritos, ver Box & Jenkins (1970).
+     Para nossa análise, precisamos de uma breve descrição do processo de iden-
+tificação do modelo. Em modelos AR(p) os gráficos das estimativas das auto-
+correlações parciais5 devem ter ordenada nula para ordem superior a p. Já em
+processos MA(q) a ordenada nula deve corresponder a ordens superiores a q no
+gráfico das autocorrelações amostrais. Contudo, sendo o processo misto, a iden-
+tificação por este procedimento torna-se muito difı́cil e artesanal. Neste caso,
+   5 Entendemos a autocorrelação parcial de ordem k como a influência direta de y
+                                                                                     t−k sobre
+yt sem levar em consideração as observações entre elas.
+
+Comparação de algumas técnicas de previsão em análise de séries temporais   135
+
+
+existem dois critérios que permitem identificar o melhor modelo, no sentido de
+que maximizam a informação contida neles, a saber:
+                                      b + 2(p + q),
+                          AIC = 2 log L
+                          BIC = −2 log Lb + (p + q) log T,
+
+                                       b é a a função de verossimilhança maxi-
+onde T é o número de observações e L
+mizada. O melhor modelo é aquele que apresenta o menor AIC e/ou o menor
+BIC. Como uma observação, o AIC (Akaike Information Criterion) não é con-
+sistente e o BIC (Bayesian Information Criterion) é consistente e mais parci-
+monioso. Assim, o BIC escolhe modelos cuja dimensão não ultrapassa a do
+modelo selecionado pelo AIC. Mills & Prasad (1992), usando simulação de
+Monte Carlo, concluı́ram que o BIC apresenta melhor desempenho. Neste tra-
+balho serà adotado o AIC como critèrio de escolha del melhor modelo.
+     Finalmente, o último passo consiste em determinar se o modelo estimado
+fornece uma representação adequada aos dados. Uma das formas de checagem é
+atráves de um análise das autocorrelações residuais. Segundo Box & Pierce (1970)
+e McLeod (1978) as distribuições assintóticas das autocorrelações amostrais dos
+resı́duos de um modelo ARMA(p, q) é N (0, T1 ). Pórem, é de se esperar que se
+o modelo estiver bem             i as autocorrelações amostrais se encontrem
+                      h especificado
+                        −2     2
+dentro do intervalo     √
+                         T
+                            , T de confiança 95%. Um enfoque alternativo é
+                              √
+
+testar conjuntamente a significância das primeiras m autocorrelações, o que
+pode ser feito usando um teste Portmanteau. Há duas estatı́sticas para este
+teste, a saber:
+                                             X m
+                                 QBP = T          rj2 ,
+                                             j=1
+
+proposta por Box & Pierce (1970) e
+                                            m
+                                            X
+                         QLB = T (T + 2)          (T − j)−1 rj2 ,
+                                            j=1
+
+proposta por Ljung & Box (1978), onde
+                                 PT
+                                         bt u
+                                   t=j+1 u  bt−j
+                          u) =
+                      rj (b         PT           ,   j = 1, 2, . . . ,
+                                          b2t
+                                      t=j u
+
+  bt são os resı́duos do modelo escolhido. Temos que, sob a hipótese nula,
+e u
+   d
+Qi →χ2m−p−q , i = BP, LB. Assim rejeita-se a hipótese de que o modelo está
+especificado corretamente se Qi > χ2α,m−p−q , onde χ2α,m−p−q é o valor crı́tico
+
+136                           Raydonal Ospina Martı́nez & Bartolomeu Zamprogno
+
+
+de uma distribuição qui-quadrado para o nı́vel de significância α e (m − p − q)
+graus de liberdade. Se não for identificada nenhuma deficiência no modelo,
+então parte-se para a geração de previsões. Segundo as metodologias de pre-
+visão temos as redes neurais artificiais (RNAs) como modelos matemáticos
+inspirados na organização e no funcionamento dos neurônios biológicos. Exis-
+tem numerosas variações das RNAs, as quais estão diretamente relacionadas
+com tarefas especı́ficas. Uma RNA é basicamente um conjunto de elementos
+inter-conectados denominados neurônios, os quais estão distribuı́dos em três
+zonas: neurônios de entrada, neurônios intermediários e neurônios de saı́da.
+Os neurônios se inter-conectam e interagem conjuntamente com o fim de al-
+cançar um comportamento desejado para um sistema. Cada neurônio recebe o
+estado de suas correspondentes entradas e, mediante uma função aplicada ao
+vetor de pesos, produz um sinal (saı́da), que é tomado pelo neurônio seguinte.
+As RNAs se adaptam a um ambiente de acordo com um treinamento o qual
+consiste em procurar a relevância das conexões que codificam o conhecimento
+que o sistema deve adquirir. Para determinar completamente dita estrutura
+as RNAs necessitam de uma arquitetura de inter-conexão, funções de ativação
+que medem a importância de um dado, uma função de custo que avaliam a
+saı́da da rede e um algoritmo de treinamento (aprendizagem) que modifica os
+parâmetros de conexão com o objetivo de otimizar a função de custo. Para
+mas detalhes ver Hertz, Krogh e Palmer (1991).
+     O problema de previsão das séries temporais pode ser tratado como a busca
+de uma função (sistema dinâmico) F : Rd → R tal que yt = F(yt−1 , . . . , yt−p )+
+εt , onde {εt }t∈T corresponde a um ruı́do. Um perceptrón é uma RNA composta
+por uma coleção de neurônios de entrada e um neurônio de saı́da. Assim, um
+perceptrón simples com p neurônios de entrada e função de ativação linear
+na capa de saı́da corresponde a um modelo AR(p) com coeficientes estimados
+por mı́nimos quadrados. Nota-se que uma RNA compete com os modelos
+lineares para os quais existe uma fundamentação teórica sem questionamento;
+ver Gershenfeld & Weigend (1994). A metodologia de RNAs é mais eficiente
+na previsão de séries temporais não lineares, tratando o problema de previsão
+como um problema de aproximação. Tomando os valores pasados yt−1 , . . . , yt−p
+encontrar o valor yt corresponde a aproximar uma função F que, em geral, tem
+solução . O perceptrón multi-capa é a RNA mais utilizada na previsão de
+séries temporarias, a arquitetura tı́pica corresponde a três capas: uma capa
+de entrada com p neurônios que contém os valores yt−1 , . . . , yt−p , uma capa
+intermedia com k neurônios e uma capa de saı́da com um só neurônio que
+contêm o valor yt . As funções de ativação são as sigmoides; para mais detalhes
+ver Cheng & Titterington (1994).
+   Não existe uma fórmula geral para determinar o número de neurônios de
+
+Comparação de algumas técnicas de previsão em análise de séries temporais    137
+
+
+capa intermediária; se k é um número muito grande, existe o problema de
+que a rede não ajusta bem os dados, usualmente se determina esta capa de
+maneira “heurı́stica” dependendo o problema a ser resolvido existem teoremas
+sob dimensão que podem fornecer idéias sobre o número adequado de neurônios
+a ser usado; para mas detalhes ver Pi & Peterson (1994). O treinamento
+de este tipo de rede neurais pode ser feito em ciclo aberto, i.e., não utiliza
+os valores de saı́da da rede como novas entradas para predizer yt . No caso
+de se desejar prever vários valores yt , . . . , yt+s , então deve ser feito em ciclo
+fechado, o que implica usar como entradas o valor de saı́da da rede no instante
+anterior; para mas detalhes sobre este tipo de modelos ver Torres (1995). Na
+tabela 1 são apresentados os critérios de avaliação utilizados neste trabalho que
+permitiram determinar a qualidade das metodologias de previsão anteriormente
+mencionadas e que levam em consideração o grau de precisão das previsões
+consideradas.
+
+       Tabela 1: Critérios de avaliação sobre a qualidade das previsões.
+
+3.     Modelagem e previsões
+   Neste trabalho foram analisadas duas séries temporais, com a finalidade
+de gerar previsões, sob as diferentes metodologias discutidas anteriormente.
+A primeira série é composta de 264 observações mensais do PIB (Produto
+Interno Bruto) do Brasil, que cobre o perı́odo de janeiro de 1980 a dezembro
+de 2001. A fonte dos dados é o instituto de Pesquisa Econômica Aplicada
+(IPEA)6 . O horizonte de previsão é de 12 meses. O segundo conjunto de dados
+  6 http://www.ipeadata.gov.br
+
+138                                  Raydonal Ospina Martı́nez & Bartolomeu Zamprogno
+
+
+corresponde à série de variações do IPC (Índice de preços ao consumidor) da
+Colômbia, a qual é tomada mensalmente para o perı́odo compreendido entre
+janeiro de 1992 e fevereiro de 1998, cobrindo um total de setenta e quatro
+(74) meses. A fonte dos dados é o Departamento Administrativo Nacional de
+Estatı́tica da Colômbia (DANE)7 . O horizonte de previsão é de sete meses:
+agosto de 1997 a fevereiro de 1998. Os gráficos das figuras 1 e 2 representam
+o comportamento destas duas séries. Para a análise das séries na parte de
+modelos lineares e alisamento exponencial será utilizado o pacote R8 , no entanto
+para a previsão por redes neurais será utilizado o software Trajan Neuronal
+Network Simulator 9 .
+                              Figura 1: Série do PIB do Brasil.
+
+    Para a análise por redes neurais, o software Trajan Neuronal Network Sim-
+ulator procura automaticamente a melhor especificação de rede neural usando
+análise de sensibilidade (Golberg, 1989), seleção de caracterı́sticas (Hunter,
+et al., 2000) e regularização de Weigend (Weigend, Rumelhart & Huberman,
+1991).
+                    Figura 2: Série do IPC da Colômbia (variações).
+
+   Entre os tipos de RNAs usadas temos: Multilayer Perceptron (MLP) (Rumel-
+hart, Hinton & Williams, 1986), Linear Network (Linear) (Golub & Kahan,
+1965) e Radial Basis Function Network (RBFN) (Broomhead & Lowe, 1988).
+No software são apresentados os valores do número de neurônios de entrada
+(NE), número de neurônios intermediários (NI), a menor razão de regressão
+(RZ) e o menor erro de aprendizagem (ERA). A RZ e o ERA são duas medidas
+do ajuste da rede aos dados de entrada e servem para determinar a qualidade
+da rede a ser usada na previsão. Nas tabelas 2 e 3 se apresentam as melhores
+arquiteturas de previsão encontradas para as séries do PIB e IPC, respectiva-
+mente, ressaltando-se que a rede R6 , nas duas séries, é aparentemente a que
+apresentou a melhor arquitetura de previsão, pois mostra os menores valores de
+RZ e ERA. Escolhidas estas arquiteturas foram feitas as previsões ybt+h , sendo
+h o horizonte de previsão.
+
+           Tabela 2: Redes neurais ajustadas com os dados do PIB.
+
+           Tabela 3: Redes neurais ajustadas com os dados do IPC.
+
+    As tabelas 4 e 5 mostram os resultados das previsões. Usando o EQM como
+uma medida da qualidade da previsão, na tabela 4 se observa, para os dados do
+PIB, que as redes R4 e R6 têm o melhor desempenho em previsão dois passos à
+frente. No entanto, a rede R1 apresentou a melhor capacidade preditiva a longo
+prazo. De forma análoga, na tabela 5 se observa que para os dados do IPC
+a rede R6 tem o melhor desempenho em previsão dois passos à frente e que a
+rede R1 apresentou maior poder preditivo a longo prazo. Assim, neste trabalho
+será adotada a rede R1 , tanto para os dados do PIB, quanto para os do IPC,
+para serem comparadas suas previsões com as previsões obtidas a partir das
+outras metodologias. Na análise por alisamento exponencial e modelos Box &
+Jenkins foram inicialmente considerados os dados do PIB brasileiro.
+    Na figura 1, apresentamos o gráfico das observações e notamos um cresci-
+mento da série ao longo do tempo, caracterizando assim uma componente de
+tendência; adicionalmente, a série aparenta ter uma periodicidade marcante de
+12 meses, indicando assim a presença de uma componente sazonal. A figura
+3 apresenta o gráfico da função de autocorrelação amostral da série versus de-
+fasagens, as linhas tracejadas são limites assintóticos de significância ao nı́vel
+de 95%, considerando-se estatisticamente nulas a autocorrelações entre elas. O
+mesmo pode ser dito sobre as linhas do gráfico da função de autocorrelação
+parcial, figura 4. Verificamos através da figura 3 um decaimento muito lento
+em direção a zero, indicando um comportamento não-estacionário da série PIB.
+
+                               Tabela 4. Comparação das previsões da série por RNA versus a série original do PIB.
+
+                               Tabela 5. Comparação das previsões da série por RNA versus a série original do IPC.
+                                                                                                                                                 Comparação de algumas técnicas de previsão em análise de séries temporais
+
+                                Figura 4: Correlograma parcial da série PIB.
+
+Comparação de algumas técnicas de previsão em análise de séries temporais     143
+
+
+    Um procedimento utilizado para ser atingida a estacionariedade é realizar
+diferenças nas séries. É de se observar que nas figuras 5 e 6 estão apresentadas
+as funções de autocorrelação e autocorrelação parcial amostrais da série PIB,
+com diferenciação de ordem 1. Além disso, a análise do figura 4 evidencia a
+possibilidade da existência de uma componente sazonal. Estas percepções são
+consideradas para a escolha dos modelos mais adequados. A decomposição
+STL (Seasonal Decomposition of Time Series) decompõe uma série temporal
+em suas componentes sazonal, de tendência e irregular, utilizando um ajuste de
+regressão polinomial local. Uma referência sobre STL é Cleveland, et al. (1990).
+As figuras 7 e 8 apresentam a decomposição STL na série PIB e em sua difer-
+enciação de ordem 1, respectivamente.
+
+        Figura 5: Correlograma da série PIB com diferenciação de ordem 1.
+
+    Em cada um dos gráficos o painel superior apresenta o comportamento
+temporal da série; o segundo painel fornece a estimativa da componente sazonal
+PIB, sem deixar de lado a as caracterı́sticas cabı́veis a cada figura. O terceiro
+painel, por sua vez, contém o gráfico da tendência. O último painel apresenta a
+estimativa da componente irregular. Observase que o comentado sobre a figura
+2 se confirma a partir da análise da figura 7, ou seja, existe uma componente
+de tendência, indicando um comportamento do crescimento do PIB, e uma
+componente sazonal, que se torna mais evidente nesta decomposição.
+ Figura 6: Correlograma parcial da série PIB com diferenciação de ordem 1.
+    A análise da figura 8 indica que, mesmo após diferenciada com ordem 1, a
+componente sazonal ainda “perturba” a série. De acordo com as caracterı́sticas
+que a série apresenta aplicamos o algoritmo de Holt-Winters, que leva em con-
+sideração as componentes de tendência e sazonalidade. Consideramos sazonali-
+dade aditiva e multiplicativa e quanto às constantes de suavização, estas foram
+escolhidas de forma automática minimizando-se a soma dos erros quadrados de
+previsão um passo à frente.
+
+
+    A tabela 6 apresenta os resultados dos critérios de seleção. O critério de
+seleção utilizado para os modelos de Box-Jenkins foi o AIC e em contrapartida
+apresentamos o BIC dos modelos selecionados por AIC apenas como informação
+adicional. Observando os gráficos da função de autocorrelação amostral e da
+função de autocorrelação parcial amostral, figuras 3 e 4, percebe-se que o decai-
+mento da função de autocorrelação é lento, o que indica não-estacionariedade
+da série, e que a sazonalidade está presente. Diante disto, checamos os mode-
+los variando as partes auto-regressivas e médias móveis variando a ordem dos
+parâmetros até grau 3 em suas componentes. Adicionalmente, utilizamos dife-
+renciações d = 0, 1, 2 e D = 0, 1, 2, no modelo SARIMA.
+Figura 7: Decomposição STL da série PIB entre janeiro de 1980 a dezembro
+de 2001.
+
+146                          Raydonal Ospina Martı́nez & Bartolomeu Zamprogno
+
+
+    Os melhores resultados são apresentados na tabela 6. Para testar se o
+modelo estiver bem especificado foi investigado a correlação serial dos resı́duos
+e feitos testes de Portmanteau dos modelos da tabela 6 e se concluiu que to-
+dos os modelos considerados eram adequados. Além dos modelos SARIMA
+também consideramos modelos SARIMAX, i.e., o modelo ARMAX com sazon-
+alidade. Assim, investigamos a inclusão de algumas variáveis exógenas tais
+como: resı́duo, resı́duo elevado ao quadrado, tendência, sazonalidade e com-
+binações entre tendência e sazonalidade, como também tendência e resı́duo.
+Entre as variáveis exógenas avaliadas, a que apresentou melhores resultados foi
+a multiplicação entre a tendência e a sazonalidade da série.
+
+
+Tabela 4: Critérios AIC e BIC aplicados nos modelos SARIMA e SARIMAX
+para ajuste na série PIB.
+     Para ajustarmos o modelo SARIMAX utilizamos a ordem dos polinômios do
+modelo SARIMA(3,1,3)×(2,0,1) devido a este modelo apresentar, sobre nossas
+considerações, melhores resultados de previsão. Esta última combinação está
+representada na última linha da tabela 6 e também na última da tabela 7 b
+e denotamos por SARIMAXts . Apresentamos na tabela 7 medidas de erro de
+previsão para todos os modelos comentados até o momento. Observamos que
+de acordo com todas as medidas consideradas o modelo de Holt-Winters com
+sazonalidade aditiva se comporta melhor para h = 1 e h = 3, ou seja, um e
+três passos à frente, entretanto perde poder de previsão nos demais horizontes
+considerados. Dentre a classe de modelos SARIMA, o modelo (3,1,3)×(2,0,1)
+apresentou em geral os melhores resultados.
+    No entanto, na maioria das medidas consideradas, para os horizontes 1 e 3,
+este modelo apresenta resultados de previsão de qualidade inferior aos demais
+modelos investigados, contudo este modelo fornece as melhores previsões de
+longo prazo. Já o melhor modelo de redes neurais, i.e., a rede R1 , de acordo
+com a maioria das medidas, apresenta resultados de previsões com erros bem
+elevados nos primeiros lags e no decorrer do tempo de previsão passa a ter
+desempenho superior a alguns modelos SARIMA, constituindo assim um bom
+Figura 8: Decomposição STL da série PIB (diferenciada) entre janeiro de 1980
+a dezembro de 2001.
+Tabela 5: Medidas de previsão dos modelos SARIMA, do algoritmo dealisa-
+mento exponencial de Holt-Winters, redes neurais e SARIMAX, para s = 12
+(Série PIB).
+modelo para previsões de longo prazo devido a sua capacidade de aprendizado
+ao longo do tempo. Na figura 9 apresentamos o gráfico que corresponde à série
+do PIB entre o perı́odo de janeiro de 2000 e dezembro de 2001 juntamente
+com as previsões obtidas com os melho-res modelos das metodologias de Holt-
+Winters, Box-Jenkins e redes neurais.
+Tabela 6: Medidas de previsão dos modelos SARIMA, do algoritmo dealisa-
+mento exponencial de Holt-Winters, Redes neurais e SARIMAX, para s = 12
+(Série PIB).
+    Em nossa análise, encontramos que o modelo de Holt-Winters com sazona-
+lidade multiplicativa foi o que apresentou as melhores previsões em comparação
+com as demais metodologias. De maneira semelhante à série do PIB brasileiro
+será analisada a série do IPC da Colômbia. Na figura 23 foi apresentado o
+gráfico da série do IPC ao longo do tempo, onde é razoável considerar a exis-
+tência de uma componente sazonal. Na figura 10 é apresentado o gráfico da
+função de autocorrelação amostral da série, onde pode-se notar um decaimento
+senoidal em direção a zero o que sugere que a série possui uma parte auto-
+regressiva e uma componente sazonal bem definidas. Na figura 11 é apresen-
+tado o gráfico da função de autocorrelação parcial amostral, onde percebe-se
+a componente sazonal da série. Para confirmar a situação descrita acima, na
+figura 12 apresentamos a decomposição STL na série IPC, confirmando-se a
+existência da componente sazonal e verificamos a presença de uma componente
+de tendência que decresce levemente.
+Dadas as caracterı́sticas desta série é aplicado o algoritmo de Holt-Winters,
+onde a escolha das constantes de suavização foi feita de forma automática.
+Quanto à modelagem de Box-Jenkins, analisamos a série original e também
+a série obtida depois de aplicar a função logaritmo aos dados com o objetivo
+de tentar estabilizar a variância. Checamos os modelos variando as partes
+auto-regressivas e médias móveis variando a ordem dos parâmetros até grau
+3 em suas componentes e utilizamos diferenciações d = 0, 1 e D = 0, 1 para
+o modelo SARIMA. De acordo com os critérios AIC e BIC foram escolhidos
+alguns modelos, os quais estão apresentados na tabela 8.
+                        Figura 9: Previsões série PIB.
+                                   Figura 11: Correlograma parcial da série IPC
+                              Figura 12: Decomposição STL da série IPC.
+
+Comparação de algumas técnicas de previsão em análise de séries temporais   153
+
+
+    A análise da autocorrelação serial foi feita em todos estes modelos e não foi
+rejeitada a hipótese de adequação, o que indica uma forte inclinação a serem
+aplicados estes modelos para realizar previsões. Usando uma argumentação
+análoga à utilizada na análise da série do PIB, foram obtidas previsões sob as
+metodologias descritas anteriormente. Na tabela 9 são apresentadas as medidas
+de erro de previsão para todos os modelos para a série IPC da Colômbia.
+Dentre a classe dos modelos SARIMA considerados, o modelo (2,0,3)×(1,1,1)
+foi o que gerou as melhores resultados de previsões. Quanto ao modelo de
+redes neurais, observou-se um desempenho ruim nas previsões, que indica que
+este modelo não se ajustou adequadamente à série. Uma análise desta tabela
+indica que os algoritmos de Holt-Winters foram superiores a todos os outros
+modelos em praticamente todas as medidas consideradas. Observamos que o
+algoritmo de Holt-Winters com sazonalidade multiplicativa é o que apresenta
+o melhor desempenho em termos da qualidade das previsões, isto se confirma
+praticamente para todos os horizontes e para todas as medidas consideradas.
+            Tabela 7: Critérios AIC e BIC para ajuste na série IPC.
+    Na figura 13 apresentamos a parte correspondente da série do IPC entre o
+perı́odo de julho de 1996 a fevereiro de 1998 juntamente com as previsões obti-
+das com os melhores modelos das metodologias de Holt-Winters, Box-Jenkins
+e redes neurais.
+Conclusões
+Na seção anterior foram apresentados resultados que avaliam a qualidade das previsões sob diferentes metodologias de estimação de duas séries temporais: a série do PIB do Brasil e a série do IPC da Colômbia. Como critérios de
+avaliação foram utilizados o EQM, EAM, EM, EAT, ET de previsão sob dife-
+rentes horizontes de previsão. Os resultados obtidos revelam que as previsões de
+melhor qualidade um passo à frente para a série do PIB são obtidas através do
+modelo de Holt-Winters com sazonalidade aditiva; dentro da classe de mode-
+los SARIMA, as previsões obtidas com o modelo SARIMA(3, 1, 3) × (2, 0, 1)
+apresentam um melhor comportamento para longos perı́odos de previsão.
+Tabela 8: Erros de previsão dos modelos SARIMA, do algoritmo dealisamento
+exponencial de Holt-Winters e Redes neurais, para s = 12 (Série IPC). 
+Comparação de algumas técnicas de previsão em análise de séries temporais   155
+                                 Figura 13: Previsões série IPC.
+    De todos os modelos avaliados, o algoritmo de Holt-Winters com sazo-
+nalidade multiplicativa é o que apresenta os melhores resultados de previsão.
+Além disso, o custo computacional deste algoritmo é bem menor do que os
+modelos de Box-Jenkins. O modelo selecionado de redes neurais apresenta
+um desempenho melhor para longos perı́odos de tempo, pois parece que se
+ajusta mais rapidamente às mudanças estruturais através do tempo. De forma
+análoga, na análise da série do IPC, observamos que a metodologia de Holt-
+Winters se mostrou superior à modelagem de Box-Jenkins, onde o modelo de
+Holt-Winters com sazonalidade multiplicativa foi superior a todos os demais
+modelos em análise. Uma alternativa interessante a ser analizada para um tra-
+balho futuro de pesquisa é o de tratar de combinar as previsões de uma série
+temporal sob as metodologias tratadas neste trabalho com o fim de aumentar
+o poder preditivo e proporcionar previsões mais confiáveis.
+Agradecimentos
+Os autores agradecem a Francisco Cribari-Neto pela motivação e pelas pertinentes recomendações ao longo deste trabalho. Os autores agradecem também à CAPES e ao CNPq pelo apoio financeiro.
+References
+Box, G. E. P. & Pierce, D. A. (1970), ‘Distribution of residual autocorrelations in autoregressive integrated moving average time series moldels’, Journal of the American Statistical Association 65, 1509–1526.
+Box, G. P. & Jenkins, G. M. (1970), Time Series Analysis, Forecasting and Control, San Francisco, Holden Day.
+Broomhead, D. S. & Lowe, D. (1988), ‘Multivariable functional interpolation and adaptive networks’, Complex Systems 2, 321–355.
+Cheng, B. & Titterington, D. M. (1994), ‘A review from statistical perspective’, Statistical Science 9, 2–54.
+Cleveland, R. B., Cleveland, W. S., McRae, J. E. & Terpenning, I. (1990), ‘Stl: a seasonal-trend decomposition procedure based on loess’, Journal of Official Statistics 6, 3–73.
+Gershenfeld, N. A. & Weigend, A. (1994), The Future of Time Series: Learning and Understanding. Time Series Prediction: Forecasting the Future and Understanding the Past, Addison Wesley, New York.
+Goldberg, D. E. (1989), Genetic Algorithms, Reading: Addison Wesley, New York.
+Golub, G. & Kahan, W. (1965), ‘Calculating the singular values and pseudoinverse of a matrix’, SIAM Numerical Analysis B 2, 205–224.
+Hertz, J., Krogh, A. & Palmer, R. (1991), Introduction to the Theory of Neuronal Computation, Addison Wesley, New York.
+Hunter, A., Kennedy, L., Henry, J. & Ferguson, R. I. (2000), ‘Application of neural networks and sensitivity analysis to improved prediction of trauma survival’, Computer Methods and Algorithms in Biomedicine 62, 11–19.
+Ljung, G. M. & Box, G. E. P. (1978), ‘On a measure of lack of fit in time serie moldels’, Biometrika 65, 297–303.
+McLeod, A. I. (1978), ‘On the distribution and application of residual autocorrelations in box-jenkins moldels’, Journal of the Royal Statistical Society B 40, 296–302.
+Mills, J. A. & Prasad, K. (1992), ‘A comparison of moldel selection criteria’, Econometrika 11, 201–233.
+Pi, H. & Peterson, C. (1994), ‘Finding the embeddindg dimension and variable dependecies in time series’, Neural Computation 6(3), 509–520.
+Rumelhart, D. E., Hinton, G. E. & Williams, R. J. (1986), Learning Internal Representations by Error Propagation, Vol. 1, Cambridge, MA: MIT Press, Parallel Distributed Processing.
+Torres, L. G. (1995), ‘Redes neuronales y aproximación de funciones’, Boletín de matemáticas 2, 35–57.
+Weigend, A. S., Rumelhart, D. E. & Huberman, B. A. (1991), Generalization by weight-elimination with application to forecasting, Vol. 3 of Advances in Neural Information Processing Systems, pp. 875–882.

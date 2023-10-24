@@ -1,0 +1,1052 @@
+Regression Models with Heteroscedasticity using Bayesian Approach
+Universidad Nacional de Colombia;Universidade de São Paulo
+Abstract
+In this paper, we compare the performance of two statistical approaches for the analysis of data obtained from the social research area. In the first approach, we use normal models with joint regression modelling for the mean and for the variance heterogeneity. In the second approach, we use hierarchical models. In the first case, individual and social variables are included in the regression modelling for the mean and for the variance, as explanatory variables, while in the second case, the variance at level 1 of the hierarchical model depends on the individuals (age of the individuals), and in the level 2 of the hierarchical model, the variance is assumed to change according to socioeconomic stratum. Applying these methodologies, we analyze a Colombian tallness data set to find differences that can be explained by socioeconomic conditions. We also present some theoretical and empirical results concerning the two models. From this comparative study, we conclude that it is better to jointly modelling the mean and variance heterogeneity in all cases. We also observe that the convergence of the Gibbs sampling chain used in the Markov Chain Monte Carlo method for the jointly modeling the mean and variance heterogeneity is quickly achieved.
+Key words: Socioeconomic status, Variance heterogeneity, Bayesian methods, Bayesian hierarchical model.
+Introduction
+    Approximately 62% of Colombian children and teenagers lack of a satisfactory
+nutritional level and do not reach an optimal level of physical development. To get
+information about nutritional levels of this population, we model the mean of indi-
+vidual tallness in two groups of people, since the mean is one of the main nutritional
+level indicators. The first one includes children aging between 0 and 30 months old
+that belong to high socioeconomic level. The second one is a sample of people ag-
+ing between six months and 20 years old that belong to lower, medium and higher
+socioeconomic strata. Tallness seems to be influenced by genetic factors (Chumlea
+et al. 1998), but the genetic homogeneity of the studied population seems to be
+apparent. Given that our main goal is to analyze this data set taking into account
+the variance heterogeneity, it is convenient to consider an analysis with explicit
+modeling of the variance, including age and socioeconomic stratum as explanatory
+variables. In this case, the variance can be modeled through an appropriate real
+function of the explanatory variables that takes into account the positivity of the
+variance (Aitkin 1987, Cepeda & Gamerman 2001). Thus, one possibility to ana-
+lyze this data set is to use linear normal models with variance heterogeneity; other
+possibility is to consider hierarchical models (Bryk & Raudenbush 1992). The
+linear normal models with variance heterogeneity have two components: a linear
+function characterizing the mean response and a specification of the variance for
+each observation. In Section 2, we summarize the classical (Aitkin 1987) and the
+Bayesian methodologies (Cepeda & Gamerman 2001) used to fit these models. In
+the second model, a normal prior distribution is used and, given the orthogonality
+between mean and variance, a simple iterative process to draw samples from the
+posterior distribution can be performed. Hierarchical models are commonly used
+in educational and social statistics (Bryk & Raudenbush 1992, Raudenbush &
+Bryk 2002) to analyze this type of data. In this area, it is natural, for example, to
+consider that students are nested within classrooms and classrooms within schools;
+
+                                       Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                             269
+
+individuals nested within socioeconomic stratum; groups may be nested in organi-
+zations (Steenbergen & Bradford 2002), and so forth. In this paper, we present, in
+Section 3, a general theoretical review of hierarchical models, since our intention
+is to use this model approach to analyze data taking into account the variance
+heterogeneity. For this purpose, we initially apply linear regression model with
+random coefficients (De Leeuw & Kreft 1986, Longford 1993). In Section 4, an
+application section, we initially compare standard linear normal regression models
+with regression models modelling the heterogeneity of the variances and standard
+normal regression models with regression models with random coefficients. Next,
+we analyze a people tallness data set, including age and socioeconomic stratum as
+explanatory variables. In this case, we include dummy variables and interaction
+terms between the dummy variables and one or more predictors in the modeling
+of the mean. However, since in general, it is not enough to model the contextual
+heterogeneity (Steenbergen & Bradford 2002), we consider a joint normal regres-
+sion model for the mean and for the variance heterogeneity, where indicator and
+interaction factors are included in the mean and variance model. Here, we also
+analyze the data set using hierarchical models, including as many dummy vari-
+ables as there are subgroups (socioeconomic stratum) in the second level to take
+into account the contextual differences. In all the applications, several explana-
+tory models have been fitted and we include in all the cases, the estimates for the
+parameter of the model that produces the most satisfactory fit.
+
+
+
+2. Modelling Variance Heterogeneity in Normal
+   Regression
+    In this section, we summarize classical and Bayesian methodologies to get
+jointly maximum likelihood and posterior estimates, respectively, for the mean and
+variance parameters in normal regression models assuming variance heterogeneity.
+
+
+2.1. Maximum Likelihood Estimation Using the Fisher
+     Scoring Algorithm
+    Let yi , i = 1, . . . , n, be the observed response on the i-th values xi = (xi1 , . . . , xip )0
+and zi = (zi1 , . . . , zir )0 of the explanatory variables X = (X1 , . . . , Xp ) and Z =
+(Z1 , . . . , Zr )0 , respectively. Given the parameter vectors β = (β1 , . . . , βp )0 and
+γ = (γ1 , . . . , γr )0 , if the observations follow the model
+                                                        
+                         yi = x0i β + i , i ∼ N 0, σi2 , i = 1, . . . , n                    (1)
+
+where σi2 = g(zi , γ) and g is an appropriate real function, the kernel of the likeli-
+hood function is given by
+                                                               i2 
+                                      1             1 h
+                       L(β, γ) = Πni=1 exp                  0
+                                                  − 2 yi − xi β)
+                                      σi           2σi
+
+                                           Revista Colombiana de Estadística 32 (2009) 267–287
+
+270                                 Edilberto Cepeda Cuervo & Jorge Alberto Achcar
+
+    Thus, given that the Fisher information matrix is a block diagonal matrix, an
+iterative alternate algorithm can be proposed to get maximum likelihood estimates
+for the parameters (Aitkin 1987). The summary of this algorithm, as it is presented
+in Cepeda & Gamerman (2001), is given in the next steps.
+
+  a) Give the required initial values β (0) and γ (0) for the parameters.
+                                                       −1
+  b) β (k+1)
+           is obtained
+                       from β (k+1) = X 0 W (k) X X 0 W (k)      Y , where W
+                                                                                (k)
+                                                                                    =
+             (k)   (k)         2
+                                 (k)        2
+                                               (k)         0 (k)
+     diag wi , wi = 1/ σi             and σi        = exp zi γ     .
+                                                −1 0
+  c) γ (k+1) is obtained from γ (k+1) = Z 0 W Z      Z W Ye , where W = 21 In , with
+     In the n × n identity matrix, and Ye is a n-dimensional vector with i-th
+     component
+                                         1
+                              yei = ηi + 2 (yi − xi β)2 − 1
+                                        σi
+      where ηi = zi0 γ.
+  d) Steps (b) and (c) will be repeated iteratively until the pre-specified stopping
+     criterion is satisfied.
+
+
+2.2. Bayesian Methodology for Estimating Parameters
+    To implement a Bayesian approach to estimate the parameters of the model
+(1), we need to specify a prior distribution for the parameter of the model. For
+simplicity, we assign the prior distribution, p(β, γ), given by
+                                                     
+                           β              b        B C
+                                ∼N            ,
+                           γ              g       C0 G
+
+as in Cepeda & Gamerman (2001, 2005). Thus with the likelihood function L(β, γ)
+given by a normal distribution, and using the Bayes theorem, we obtain the pos-
+terior distribution π(β, γ | data) ∝ L(β, γ)p(β, γ). Given that the posterior distri-
+bution π(β, γ | data) is intractable and it does not allow easily generating samples
+from it and taking into account that β and γ are orthogonal, we propose sampling
+these parameters using an iterative alternated process, that is, sampling β and γ
+from the conditional distributions π(β | γ, data) and π(γ | β, data), respectively.
+Since the full conditional distribution is given by
+
+                            π(β, data | γ) = N (b∗ , B ∗ )                         (2)
+
+where b∗ = B ∗ (B −1 b + X 0 Σ−1 Y ) and B ∗ = (B −1 + X 0 Σ−1 X)−1 , with Σ =
+diag(σi2 ), samples of β can be generated from (2) and accepted with probability 1
+(Geman and Geman, 1984). Since π(γ | β, data) are analytically intractable and
+it is not easy to generate samples from them, the following transition kernel (3) is
+proposed to get posterior samples of the parameters using the Metropolis-Hastings
+algorithm.
+                                q(γ | β) = N (g ∗ , G∗ )                        (3)
+
+                                    Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                    271
+                                                              −1
+where, g ∗ = G∗ G−1 g + X 0 Σ−1 Ye and G∗ = G−1 + Z Σ−1 Z
+                                                          0
+                                                                     , with Σ = 2In
+and In the n×n identity matrix. The transition kernel q is obtained as the posterior
+distribution of γ, given by the combination of the conditional prior distribution
+γ | β ∼ N (g, G) with the working observational model yei ∼ N (zi0 β, σi2 ), where yei
+is defined in item c), above. In this case, the quantity θ is updated in two blocks
+of parameters, β and λ. One of these blocks is updated in each iteration, as it is
+specified in the following algorithm:
+                                                                                           
+  a) Begin the chain iteration counter in j=1 and set initial chain values β (0) , γ (0)
+     for (β, γ)0 .
+
+  b) Move β to a new value φ generated from the proposed density (2).
+
+  c) Update the γ vector to a new value φ generated from the proposed density
+     (3).
+                                                                             
+  d) Calculate the acceptance probability of the movement, α γ (j−1) , φ . If the
+     movement is accepted, then γ (j) = φ. If it is not accepted, then γ (j) = γ (j−1) .
+
+  e) Finally, update the counter from j to j +1 and return to b) until convergence.
+
+
+3. Hierarchical Models
+    Hierarchical data are commonly studied in the social and behavioral sciences,
+since the variables of study often take place at different levels of aggregation. For
+example, in educational research, this approach is natural since the students are
+nested within classroom, classrooms within schools, schools within districts, and
+so on. In the two-level hierarchical models, given by N individuals nested within
+J groups, each one containing Nj individuals, if for simplicity we only consider
+one explanatory variable X, the first stage of the analysis is defined by
+                                                               
+                    Yij = β0j + β1j Xij + ij , ij ∼ N 0, σ 2                    (4)
+
+where Yij is the random quantity of interest associated to the i-th individual
+belonging to j-th group, βj = (β0j , β1j )0 is the parameter vector associated to
+the j-th strata, j = 1, 2, . . . , J, and ij is the random error associated to the i-
+th subject belonging to j-th strata (Van Der Leeden 1998). In a second level,
+the regression coefficient behavior is explained by predicted variables of level 2,
+through the model
+
+                              β0j = γ00 + γ01 Zj + η0j
+                                                                                     (5)
+                              β1j = γ10 + γ11 Zj + η1j
+
+where Z denotes the set of explanatory variables of level 2, and ηkj ∼ N (0, σk2 ),
+k = 0, 1. In this model, Z is a context variable where its effect is assumed to be
+measured, for example, at the socioeconomic stratum, rather than at the individual
+
+                                      Revista Colombiana de Estadística 32 (2009) 267–287
+
+272                                  Edilberto Cepeda Cuervo & Jorge Alberto Achcar
+
+level. To complete the model, conjugate prior distributions are assumed for the
+hyperparameters.
+    The two level models are obtained by substitution of β0j and β1j , given by (5),
+into (4). Thus,
+
+           Yij = γ00 + γ01 Zj + γ10 Xij + γ11 Zj Xij + η1j Xij + η0j + ij           (6)
+
+    In this model, given the error structure, η1j Xij + η0j + ij , there is a het-
+eroscedastic structure of the variance conditioned to the fixed part γ00 + γ01 Zj +
+γ10 Xij + γ11 Zj Xij . Thus, for each group
+
+                                               ej0 + σe2 INj
+                                        e j Σ2 X
+                            V ar(Yj ) = X                                            (7)
+
+where X ej = (1Nj , Xj ), with Xj = (X1j , . . . , XNj j )0 . In (7) it is assumed that
+              
+eij ∼ N 0, σe2 , that (η0j , η1j ) ∼ N (0, Σ2 ) and that the Level-1 random terms are
+distributed independently from the Level-2 random terms.
+    There are several ways to specify the level-2 model (Van Der Leeden 1998). If
+Z consists only of a vector of ones, the model specifies a random variation of the
+coefficient across the two units level. Such models are called Random Coefficient
+Models (De Leeuw & Kreft 1986, Prosser et al. 1991). In our applications, we
+consider models where the intercept and slope parameters are random, but there
+are other possibilities. For example, a simple model with random intercept and
+fixed slope can also be considered for use in practical work.
+    To implement a Bayesian approach to estimate the parameters of Hierarchical
+models, we include an appendix where we show the analytical processes to obtain
+the posterior distribution of interest.
+
+
+4. Applications
+    In this section, we introduce some examples of growth and individual devel-
+opment studies for Colombian population. Studies about children’s growth and
+development are very important in clinical research because they allow detection
+of factors which can affect children’s health. As a first example, we consider a
+sample of babies between 0 and 30 months old. All the selected children in this
+example belong to a high socioeconomic stratum with a good welfare. In a second
+example, we consider a data set given by a group of 311 Colombian individuals
+aged from 6 months to 20 years old, sampled from different socioeconomic strata.
+For these examples, we consider as response variables of interest, the height mea-
+sures for the individuals in the sample in order to concentrate on an appropriate
+specification of the time and socioeconomic stratum dependence.
+
+
+4.1. Growth and Development of Babies
+    In this section, we analyze the growth and development of some groups of ba-
+bies between 0 and 30 months old. The data set was selected by Pediatricians of
+
+                                      Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                    273
+
+Bogota’s hospitals and by students of Los Andes University from the beginning of
+2000 to the end of the year 2002. The data set shows some interesting characteris-
+tics: (a) the height increases with time but it does not have a linear behaviour as
+shown in figure (1). (b) Sample variance is not homogeneous; it seems to increase
+at an initially small time interval and then it decreases.
+
+
+4.1.1. Applying Model 1
+                                                          √                             
+    For this data, we assume the model Yi = β0 + β1 ti + i , where i ∼ N 0, σi2
+and σi2 = exp(γ0 + γ1 ti ). Here Yi is the tallness of the i-th babies at age ti . The
+models were fitted by using a vague prior for the parameters. In allcases, we
+assigned a normal prior distributions βi ∼ N 0, 105 and γi ∼ N 0, 105 , i = 1, 2.
+The number 105 was chosen to impose large prior variances, but, as we have already
+checked in our analysis, increasing this value to larger orders of magnitude made
+no effective difference in the estimation process. Thus, the posterior means and
+standard deviations for the model parameters are given by: βb0 = 48.408(0.728),
+βb1 = 7.990(0.221), γb0 = 2.303(0.2529), γ b1 = −0.038(0.022). Estimated values for
+the correlation parameters are presented in table 1. From Table 1, we see that
+Corr(β0 , β1 ) and Corr(γ0 , γ1 ) are significatively different from zero. Statistically,
+the correlation between β-s and γ-s are equal to zero. This result agrees with the
+diagonal form of the information matrix.
+
+             Table 1: Bayesian estimator for the parameter correlations.
+                             β0        β1         γ0         γ1
+                      β0      1    -0.904**    -0.021       -0.018
+                      β1                  1     0.020      - 0.029
+                      γ0                             1   -0.775**
+                      γ1                                         1
+
+
+    Figure 1 shows the plot for the posterior mean height of babies and the corre-
+sponding posterior 90% credibility interval. From this figure, we can see that the
+babies, all of whom have nutritional wealth, have tallness between international
+standards according to NCHS. Thus, there is no evidence of problems in the growth
+process. It is important to see that tallness is the most important parameter to
+validate the nutritional state and growing condition of babies. Figure 2 shows the
+behavior of the chain for the sample simulated for each parameter, where each one
+has small transient stage, indicating the speed convergence of simulation for the
+algorithm. The chain samples are given for the first 4500 iterations. The other
+results reported in this section are based on a sample of 4000 draws after a burn-in
+of 1000 draws to eliminate the effect of initial values. In Figure 3 we have the his-
+tograms for the posterior marginal distributions of parameters. These histogram
+seem to show that the posterior marginal distribution for all the parameters are
+approximately normal.
+   Finally, in this application we also considered normal bivariate prior distri-
+butions for the mean parameter β = (β0 , β1 ) and for the variance parameters
+γ = (γ0 , γ1 ).
+
+                                      Revista Colombiana de Estadística 32 (2009) 267–287
+
+274                                   Edilberto Cepeda Cuervo & Jorge Alberto Achcar
+
+
+
+
+               90
+               80
+ Height (cm)
+               70
+               60
+               50
+
+
+
+
+                    0    5             10             15            20
+
+                                      Age (months)
+
+Figure 1: Predicted height for babies (the darker line represents the fitted posterior
+          mean. The dotted lines represent the 90 and 95% prediction interval. The
+          points correspond to the observations.)
+
+
+
+4.1.2. Applying Normal Regression with Random Coefficient
+                                                                √
+    In this case, we propose the model Yi = β0i + β1i ti + i , where i , i =
+1, 2, . . . , n, are independent,
+                                 identically distributed with normal distributions, that
+is i ∼ N 0, σ 2 . Here Yi is the tallness of the i-th individual at age ti . Variation
+in the mean regression parameters is written in the second level as
+
+                                    β0i = β0 + η0i
+                                    β1i = β1 + η1i
+                    
+where ηki ∼ N 0, σk2 , k=0,1. To complete the model, a conjugate prior is given
+                                        
+for the hyperparameters: βk ∼ N 0, 103 , σk−2 ∼ Gamma(0.01, 0.01) and σ −2 ∼
+Gamma(0.01, 0.01). Thus, the hierarchical model is given by
+                                   √              √
+                       Yi = β0 + β1 ti + η0i + η1i ti + i
+                                                                   √
+   In this model, given the error structure, ri = η0i + η1i ti + i , there is a
+heteroscedastic structure for the variance conditional on the level of the explana-
+tory variable t. In this application we assume independence between observations,
+where                                √
+               V ar(ri ) = σ02 + 2σ01 ti + σ12 ti + σe2 , i = 1, 2, . . . , n
+
+                                      Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                       275
+
+
+
+
+     44 48 52
+β0
+                  0     1000              2000                  3000             4000
+                                                  iteration
+
+     6 7 8 9
+β1
+
+
+
+
+                  0     1000              2000                  3000             4000
+                                                  iteration
+     2 3 4 5
+γ0
+
+
+
+
+                  0     1000              2000                  3000             4000
+                                                 iteration
+     -0.10 0.00
+γ1
+
+
+
+
+                  0     1000              2000                  3000             4000
+                                                   iteration
+Figure 2: Behavior of the chain sample for parameters of the mean model βi , and
+          parameters of the variance model γi , i=0,1.
+
+
+
+and the corr(ri0 , ri ) = 0, where σ01 = Cov(η0i , η1i ), σ02 = V ar(η0i ) and σ12 =
+V ar(η1i ). It is clear that, as in the last model, the variance decreases with time.
+                                                                                 2 −4
+In this case, if σ01 > 0 the variance is increasing as function of time for t > σ01 σ1
+and increasing for all t > 0 if σ01 > 0.
+    In this analysis, the posterior means and standard deviations for the param-
+eters models are: βb0 = 49.24(0.399), βb1 = 7.591(0.202). The estimates of other
+parameters are σb−2 = 0.942(0.097), σb0−2 = 0.943(0.096), σ
+                                                          b01 = −0.005(0.082) and
+  −2
+b1 = 1.026(0.096).
+σ
+
+                               Table 2: Model comparation.
+                              Model                SSE          ln L     BIC
+                      Variance heterogeneity     522.815      -174.022   5.003
+                      Hierarchical               538.236      -191.447   5.597
+
+
+
+    In all cases, the obtained mean parameter estimates given by the two models
+agree. However, there are considerable differences in BIC values (Bayes Informa-
+tion Criterion) used for discrimination of models (Table 2). From the result in
+Table 2, we conclude that the model with joint modeling of the mean and variance
+heterogeneity is the best, since its BIC value is the smallest one.
+
+                                         Revista Colombiana de Estadística 32 (2009) 267–287
+
+276                                                    Edilberto Cepeda Cuervo & Jorge Alberto Achcar
+
+
+
+
+                                                                1.5
+      0.5
+      0.4
+
+
+
+
+                                                                1.0
+      0.3
+      0.2
+
+
+
+
+                                                                0.5
+      0.1
+      0.0
+
+
+
+
+                                                                0.0
+            44       46   48        50       52   54                          6           7           8    9
+                               β0                                                             β1
+      1.5
+
+
+
+
+                                                                15
+      1.0
+
+
+
+
+                                                                10
+      0.5
+
+
+
+
+                                                                5
+      0.0
+
+
+
+
+                                                                0
+                 2        3              4        5                   -0.10       -0.05            0.00   0.05
+                               γ0                                                         γ1
+
+Figure 3: Histogram of the posterior marginal distributions. Parameter of the mean
+          model βi , and parameter of variance model γi , i=0,1.
+
+
+
+4.2. Growth and Development of Population
+   In this section, we apply a Bayesian analysis to the growth and body devel-
+opment considering a sample of Bogota’s individuals. We consider tallness as a
+response variable of interest to specify an appropriate dependence on age and
+socioeconomic level as possible factors associated with growing and body develop-
+mental processes (Adair et al. 2005).
+    The tallness of 311 person was measured and the age and socioeconomic stra-
+tum recorded. The individuals in the sample aged from 6 months to 20 years old
+and the socioeconomic strata were lower, medium and high, with approximately
+100 individuals in each stratum. The data set shows some interesting character-
+istics exhibited in Figure 4: (a) the mean height increases in time but it does
+not have a linear behavior. (b) the means of tallness have a socioeconomic level
+dependence. (c) the sample variances are not homogeneous, increasing with the
+time and it seems to be different for each socioeconomic level.
+
+
+4.2.1. A general approximation applying model 1
+
+  Taking into account these last points, we initially considered cubic polynomial
+models for the mean and variance. After a variable elimination process,
+                                                                       a quadratic
+model µt = β0 +β1 t+β2 t2 for the mean and simple model log σt2 = γ0 +γ1 t for the
+
+                                                       Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                               277
+
+
+
+
+                  180
+                  160
+    Height (cm)
+                  140
+                  120
+                  100
+                  80
+                  60
+
+
+
+
+                         0                5                10                 15              20
+                                                    Age (years)
+
+Figure 4: Plot for tallness versus age (the darkest line represents the fitted posterior
+          mean. The dotted lines represent 95% prediction intervals. The triangle,
+          point and square represent the observations corresponding to low, medium
+          and high socioeconomic levels.)
+
+
+
+
+variance seems to be appropriate for general data description, with t equal to age.
+These mean and variance models were fitted with vague priors distributions for
+each parameters. We further assumed prior independence among the parameters.
+The posterior means and standard deviations for the parameters model are given
+in Table 3.
+
+
+                        Table 3: Posterior summaries for the mean and variance model.
+                          Parameter        β0        β1        β2       γ0           γ1
+                          Mean        57,875       8,812    -0,162    4,573        0,024
+                          S.d.         1,836       0,438     0,022    0,169        0,013
+
+
+
+    From Figure 4, we can establish some features of the growing process of this
+group of Bogota’s individuals. We also can compare the fitted model with the
+existing mean international curves for human growing and developing. We observe
+for this data set, the mean height curve is lower than the standard curve for human
+growth at all times, that is, there is some evidence of problems in the growth and
+body developing process. The differences could be an indication of malnutrition
+for some members of this group, an opinion that is shared by pediatricians and
+nutritional specialists.
+
+                                                 Revista Colombiana de Estadística 32 (2009) 267–287
+
+278                                       Edilberto Cepeda Cuervo & Jorge Alberto Achcar
+
+4.2.2. General Approximation Using Normal Regression with Random
+       Variables
+
+                                                                        2
+               set, we also propose the model Yi = β0i + β1i ti + β2i ti + i , where
+   For this data
+            2
+i ∼ N 0, σe . In this model, Yi is the tallness of the i-th individual at age ti .
+Variation in the mean regression parameters is written in the second level as
+
+                                        β0i = β0 + η0i
+                                        β1i = β1 + η1i
+                                        β2i = β2 + η2i
+
+where ηki ∼ N (0, σk2 ), k=0,1,2. To complete the model, conjugate Gamma(0.00
+019, 0.0001) prior distributions are assumed for the hyperparameters. Thus, the
+hierarchical model is given by
+
+                    Yi = β0 + β1 ti + β2 t2i + η0i + η1i ti + η2i t2i + i                          (8)
+
+
+    In this model, given the error structure, ri = η0i + η1i ti + η2i t2i + i , there
+is a heteroscedastic structure of the variance conditional on the level of the ex-
+planatory variable t. As in the last application, we assume independence between
+observations, that is,
+
+  V ar(ri ) = σ02 + σ12 t2i + σ22 t4i + 2σ01 ti + 2σ02 t2i + 2σ12 t3i + σe2 ,     i = 1, 2, . . . , n
+
+where σi,i0 = Cov(ηi , ηi0 ), and σe2 = V ar(i ).
+    The posterior means and standard deviations for the parameters models are:
+βb0 = 56.020(1.747), βb1 = 8.491(0.440), βb2 = −0.168(0.023). The Bayesian esti-
+mates obtained using the interactive procedure introduced in this paper for the
+other parameters are: σ  b02 = 1.137(0.418), σ                     b22 = 7.115 ×
+                                              b12 = 0.066(0.0647), σ
+                         be2 = 10.421.
+10−4 (2.909 × 10−4 ) and σ
+
+                               Table 4: Model comparation.
+                     Model                    SSE               ln L              BIC
+             Variance heterogeneity      42923.206           -1205.666           7.864
+             Hierarchical                42526.431          -2392.7662          15.535
+
+
+    As in the last example, we can see the Monte Carlo estimates for the pos-
+terior means for the parameters of interest assuming the two models agree. We
+also observe that there are considerable differences in the BIC values for the two
+models (Table 4). From the results of Table 4 we conclude that the model with
+joint modeling for the variance heterogeneity is better fitted by the data than the
+hierarchical model, since its BIC value is the smallest in comparison with the BIC
+value for the hierarchical model.
+
+                                          Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                                 279
+
+5. Growth and Development by Socioeconomic
+   Stratum
+    In this section, we consider a second analysis for the tallness data. Here we are
+interested in determining if there are significant differences in the growing process
+depending on the socioeconomic levels, which are associated with nutritional status
+of the individuals, with a direct influence on their growing process.
+
+
+5.1. Applying Model 1
+   In this analysis we considered indicator variables Ii , i = 1, 2, 3, for lower,
+medium and high socioeconomic stratum, respectively, and interaction variables
+Xi = Ii t, obtained by the product of t and Ii . Thus, taking into account the last
+description of the data, we propose the following model
+                           2
+                           X                 3 
+                                             X                       
+                                                                  2
+               Yj = β0 +         βk Ikj +          λk Xkj + λk+3 Xkj   + eij
+                           k=1               k=1
+                                    2                 3
+                                                                                     !
+                                    X                 X                             
+              σj2 = exp    β00 +          βk0 Ikj +                            2
+                                                              λ0k Xkj + λ0k+3 Xkj
+                                    k=1               k=1
+
+
+    In the estimation process I3 was eliminated from the model for the mean,
+and I3 , X12 , X22 and X32 from the model for the variance. With this new model,
+we obtain Monte Carlo estimates for the parameters in the model also assuming
+approximate non-informative priors for the parameters. For the mean model: βb0 =
+61.735(1.712), βb1 = −17.137(2.452), λ                    b2 = 7.551(1.741) , λ
+                                      b1 = 10.301(0.571), λ                   b3 =
+9.702(0.351), λ                      b5 = −0.106(0.026), λ
+                b4 = −0.251(0.032) , λ                    b6 = −0.199(0.027). For
+                         b0               b 0
+the variance models: β0 = 4.249(0.207), β2 = −0.939(0.317), λ  b0 = 0.092(0.022),
+                                                                 1
+b 0                  b 0
+λ2 = 0.017(0.018), λ3 = 0.0146(0, 018)
+   Following the analysis, X2 and X3 were eliminated from the variance model.
+The parameter estimates of the resulting models are given in Tables 5 and 6.
+
+                           Table 5: (a) Model for the mean.
+ Parameter       β0          β1         λ1              λ2         λ3       λ4         λ5       λ6
+ Mean        61.789       -17.234     10.299          7.565      9.656    -0.251     -0.107   -0.196
+ S. d.        1.803         2.035      0.580          0.489      0.497     0.032      0.025    0.026
+
+
+
+                             Table 6: (b) Variance Model.
+                      Parameter          β00               β10          λ01
+                      Mean            4.412            -1.0981        0.092
+                      S. d.           0.121              0,266       0,0216
+
+
+   From Figures 5 and 6, we observe that people from lower socioeconomic back-
+grounds present through time a significantly lower tallness than people from others
+
+                                           Revista Colombiana de Estadística 32 (2009) 267–287
+
+280                                          Edilberto Cepeda Cuervo & Jorge Alberto Achcar
+
+
+
+
+               100 120 140 160 180
+ Height (cm)
+               80
+               60
+               40
+
+
+
+
+                                     0   5         10                15                20
+                                             Age (years)
+Figure 5: Mean of tallness of people by socioeconomic level. Continuous line for stratum
+          1, discontinuous line for stratum 2, and dotted line for stratum 3.
+
+
+
+socioeconomic strata. People from medium socioeconomic stratum show a signif-
+icantly lower tallness than people from high socioeconomic stratum, considering
+different ages. This fact is easy to understand, since in this case socioeconomic sta-
+tus has a special relevance on nutrition of people, and people from lower stratum
+probably have nutritional deficiencies (see Stein et al. 2004).
+   From the variance model, it can be seen that in the lower socioeconomic stra-
+                                       bi2 = 3.314 + 0.092Xi. In the other strata,
+tum, the variance behavior is given by σ
+the variance is constant through time, σ bi = 4.412. This behavior is shown in
+Figure 6.
+    This is a worrisome situation, since official reports from the Economic Commis-
+sion for Latin America and the Caribbean (ECLAC) show the situation of poverty
+and indigence for Colombian children and teenagers: 45% can be considered poor
+and 17% indigents. If we add these numbers we obtain 62% of Colombians who
+do not have high life expectancy and whose nutritional supplies are not the proper
+ones, which results in a lack of optimal level of physical development.
+
+
+5.2. Applying Hierarchical Models
+   In this section, the effect of socioeconomic stratum in the nutritional devel-
+opment of the people is evaluated through the tallness of the individuals. In our
+application, we have N individual belonging to low, medium and high socioeco-
+
+                                             Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                                               281
+
+
+
+
+               80 100 120 140 160 180
+ Height (cm)
+               60
+               40
+
+
+
+
+                                        0              5               10                15                20
+                                                                 Age (years)
+Figure 6: 95% prediction intervals for grown by stratum. Discontinuous line with point
+          for stratum 1, continuous line for stratum 2, and discontinuous line for stra-
+          tum 3.
+
+
+
+nomic strata. The tallness and the age of each individual were determined and
+denoted Yij and tij , respectively, where the subscript ij indicate that the mea-
+sures belong to the i-th individual belonging to j-th strata. Thus, as it is usual in
+multilevel analysis, in the first level, individuals are considered and a regression
+model (9) is defined for each group.
+                                                                        
+                  Yij = β0j + β1j tij + β2j t2ij + ij , ij ∼ N 0, σ 2          (9)
+
+    In this model, βj = (β0j , β1j , β2j ) is the parameter vector associated to the j-th
+stratum, j = 1, 2, 3, and ij is the random error associated in the i-th subject. In
+the second level of the model, the regression coefficient βi is explained by predicted
+variables Z, through the model
+
+                                            βkj = γk0 Z0j + γk1 Z1j + γk2 Z2j + ηkj ,   k = 0, 1, 2             (10)
+
+                                                          of level 2, set of indicator
+where Zkj , k = 0, 1, 2, is the set of explanatory variables
+variables of the stratums k + 1, and ηkj ∼ N 0, σk2 , k = 0, 1, 2. The model is
+completed with conjugate prior gamma for the hyperparameters.
+    Since in this application there is no prior information, we assume normal prior
+distribution with large variance, that is, approximate non informative prior. In
+this way, we assume normal prior distribution θ ∼ N (0, 10−5I9 ), where θ is the
+
+                                                                 Revista Colombiana de Estadística 32 (2009) 267–287
+
+282                                                  Edilberto Cepeda Cuervo & Jorge Alberto Achcar
+
+vector with components γk0 k , k 0 ; k = 0, 1, 2. In this application we assume the prior
+distributions σe−2 ∼ G(0.001, .0001) and σk−2 ∼ G(0.001, .0001), k = 0, 1, 2, for the
+hyperparameters. The estimates and standard deviations for the parameters of
+the model for the mean of the tallness in each one of the socioeconomic strata are
+given in Table 7. The estimate for the other parameters are: σ         be2 = 4.527(3.549),
+  2                  2                           2
+b0 = 5.137(3.438), σ
+σ                   b1 = 0.1982(0.09646), σ     b2 = 0.06458(0.004719).
+
+                          Table 7: Posterior mean estimation on hierarchical models.
+                                           γk0                 γk1             γk2
+                            k=0      47.82 (2.371)        61.56 (2.272)   64.89 (2.061)
+                            k=1     10.25 (0.7447)        8.468 (0.606)   10.39 (0.593)
+                            k=2     -0.267 (0.045)       -0.171 (0.034)   -0.267(0.035)
+                180
+                160
+                140
+ Height ( cm)
+                120
+                100
+                80
+                60
+                40
+
+
+
+
+                      0                5                   10                15                20
+                                                      Age (years)
+Figure 7: Mean tallness of people by socioeconomic level, hierarchical model. Continu-
+          ous line for lower stratum, discontinuous line for medium stratum and dotted
+          line for high stratum.
+
+
+   In Figure 7, we have the plot of the mean tallness against time for each one of
+the assumed stratum.We can see an agreement between average tallness behaviour
+showed in this figure and the behaviour showed in Figure 5, where the analysis was
+conducted using joint modelling of the mean and variance heterogeneity. In this
+example, we further observe considerable differences in the BIC values considering
+the different models as we can see in Table 8. From the results of this table, we
+again conclude that the model with joint modeling of the mean and of the variance
+heterogeneity is better fitted by the data than the hierarchical model.
+
+                                                     Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                    283
+
+                             Table 8: Model comparison.
+                    Model                 SSE           ln L         BIC
+            Variance heterogeneity   24842.694       -1113.897     387.928
+            Hierarchical             28610.283       -3397.753    1183.688
+
+
+6. Concluding Remarks
+     From this comparative study for the two proposed models, we conclude that it
+is better to jointly model the mean and variance heterogeneity, as observed in all
+examples, in comparison to the use of hierarchical models. Additionally, conver-
+gence of the chain used to simulate samples for the posterior distribution of interest
+is quickly achieved and the model is easily interpretable. The proposed analysis
+can be convenient in social applications since these models perfectly capture any
+clustering by subgroups that may exist in the data. Other good reason for the
+modelling of the variance heterogeneity is related to the use of the explanatory
+variables in the regression model, since we can use the same explanatory variables
+assumed for the regression model for the mean or other different variables, for
+each one of the assumed groups. That is, this analysis also takes into consider-
+ation one of the most important goals of the multilevel statistical analysis, that
+is, it “substantively take into account for causal heterogeneity”. Although there is
+no statistical differences between intercepts in the growing curves for medium and
+hight strata, apparently there is an advantage for hight strata through time. We
+also observe that the joint modeling of mean and variance heterogeneity is simpler
+and easier to interpret.
+Appendix A.
+Hierarchical Models
+
+   From the two level hierarchical model definition in Section 3, assuming inde-
+pendence between n0j and n1j , we have:
+                                                                              
+                       Yij | β0j , β1j , Xij , σ 2 ∼ N β0j + β1j Xij , σ 2
+
+   for i = 1, . . . , Nj , j = 1, . . . , J, and
+
+                         β0j | γ00 , γ01 , Zj , τ0 ∼ N (γ00 + γ01 Zj , τ0 )
+
+                         β1j | γ10 , γ11 , Zj , τ1 ∼ N (γ10 + γ11 Zj , τ1 )
+
+                                            Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                                      285
+
+    Thus the likelihood function is given by,
+                               J YNj                                              ff
+                           ´ Y           1          −1
+    f y | β0 , β1 , σ 2 , X =                                                    2
+     `
+                                      √       exp        (y ij − β0j − β1j Xij )
+                              j=1 i=1   2πσ 2       2σ 2
+                                                                        Nj
+                                                                                                       (11)
+                                                                  J                              ff
+                            ` ´ − 1 PJ N                   −1 X X
+                           ∝ σ 2 2 j=1 j exp                            (yij − β0j − β1j Xij )2
+                                                           2σ 2 j=1 i=1
+
+where β0 = (β01 , . . . , β0J )0 and β1 = (β11 , . . . , β1J )0 .
+    To apply the Bayesian methodology, we need to specify a prior distribution
+function for θ. For simplicity, we assume independence between parameters, and
+assign the following prior distributions:
+
+                       σ 2 ∼ IG(a, b)                                  τ02 ∼ IG(co , do )
+                     τ12 ∼ IG(c1 , d1 )                                γ00 ∼ N (0, e00 )
+                     γ01 ∼ N (0, e01 )                                 γ10 ∼ N (0, e10 )
+                     γ11 ∼ N (0, e11 )
+
+where co , do , c1 , d1 , e00 , e01 , e10 , e11 are known constants.
+   With the assumed prior distribution and likelihood function given in (11), the
+posterior distribution for θ = (γ00 , γ01 , γ10 , γ11 , τ0, τ1, β0 , β1 ) is given by
+
+    π(θ | y, z, X) ∝ f (y | β0 , β1 , σ 2 , X) × π(β0 | γ00 , γ01, τ0, z)π(β1 | γ10 , γ11, τ1, z)
+                                                   × π(γ00 , γ01 , γ10 , γ11 , σ 2 , τ0, τ1 )
+
+where
+                                     J
+                                     Y                                         
+                                           1         −1
+        π(β0 | γ00 , γ01, τ0, z) ∝       √     exp       (β0j − γ00 + γ01 Zj )2
+                                     j=1
+                                          2πτ0       2τ0
+                                                              J       Nj                         
+                                          − J2       −1 X X
+                                  ∝ (τ0 )        exp             (β0j − γ00 + γ01 Zj )2
+                                                     2τ0 j=1 i=1
+
+
+                                     J
+                                     Y                                       
+                                         1         −1                       2
+        π(β1 | γ10 , γ11, τ1, z) ∝     √     exp       (β1j − γ10 + γ11 Zj )
+                                   j=1
+                                        2πτ1       2τ1
+                                                              J       Nj                         
+                                          − J2       −1 X X
+                                  ∝ (τ1 )        exp             (β1j − γ10 + γ11 Zj )2
+                                                     2τ1 j=1 i=1
+
+
+                                                 γ2        γ2        γ2        γ2
+                                                     ff       ff       ff       ff
+ π(γ00 , γ01 , γ10 , γ11 , σ 2 , τ0, τ1 ) ∝ exp − 00 exp − 01 exp − 10 exp − 11
+                                                 2e00      2e01      2e10      2e11
+                                                                                                        2
+                                   × (τ0 )−(c0 +1) e−d0 /τ0 (τ1 )−(c1 +1) e−d1 /τ1 (σ 2 )−(a+1) e−b/σ
+
+
+
+
+                                             Revista Colombiana de Estadística 32 (2009) 267–287
+
+286                                            Edilberto Cepeda Cuervo & Jorge Alberto Achcar
+
+    Therefore, a joint posterior distribution for θ is given by:
+
+                                        J
+                                        X                      J   Nj                            
+                                    1                      −1 X X
+        π(θ | y, z, X) ∝ (σ 2 )− 2            Nj exp                    (yij − β0j − β1j Xij )2
+                                        j=1
+                                                           2σ 2 j=1 i=1
+                                                  J       Nj                        
+                                   J          −1 X X
+                         × (τ0 )− 2 exp                   (β0j − γ00 + γ01 Zj )2
+                                              2τ0 j=1 i=1
+                                           J Nj                          
+                                 − J2  −1 X X                           2
+                         × (τ1 ) exp               (β1j − γ10 + γ11 Zj )
+                                       2τ1 j=1 i=1
+                                                                          
+                                  γ2            γ2             γ2           γ2
+                         × exp − 00 exp − 01 exp − 10 exp − 11
+                                  2e00          2e01          2e10          2e11
+                                                                                                2
+                         × (τ0 )−(c0 +1) e−d0 /τ0 (τ1 )−(c1 +1) e−d1 /τ1 (σ 2 )−(a+1) e−b/σ
+
+
+where σ 2 > 0, τ0, > 0, τ1, > 0, γ00 , γ01 , γ10 , γ11 , R and β1j , β1j R; j = 1, . . . , J.
+The parameter vector θ = (γ00 , γ01 , γ10 , γ11 , σ 2 , τ0, τ1, β01 , . . . , β01 , β11 , . . . , β1J ) has
+25+7 components.
+    Thus, the conditional posterior distribution is given by
+
+                                         J              J Nj                           
+                                       1X             1 XX
+       σ 2 | θ(σ2 ) , y, z, X ∼ IG a +       Nj ; b +           (yij − β0j − βij Xij )2
+                                       2 j=1          2 j=1 i=1
+                                                 J                         
+                                       J       1X
+        τ0 | θ(τ0 ) , y, z, X ∼ IG c0 + ; d0 +       (β0j − γ00 − γ01 Zj )2
+                                       2       2 j=1
+                                                     J                         
+                                           J      1X
+        τ1 | θ(τ0 ) , y, z, X ∼ IG c1 + ; d1 +           (β1j − γ01 − γ11 Zj )2
+                                           2      2 j=1
+                                   2   P                       
+                                    e00 Jj=1 µ00j      τ0 e200
+      γ00 | θ(j00 ) , y, z, X ∼ N                 ;
+                                       τ0 + Je200   τ0 + Je200
+                                   2   P  J                    
+                                    e10 j=1 µ10j       τ1 e210
+      γ10 | θ(j10 ) , y, z, X ∼ N                 ;
+                                       τ1 + Je210   τ1 + Je210
+                                         P  J
+                                                                          !
+                                    e201 j=1 zj µ01j           τ0 e210
+      γ01 | θ(j01 ) , y, z, X ∼ N             PJ      ;           PJ
+                                    τ0 + e210 j=1 zj2 τ0 + e210 j=1 zj2
+                                         PJ                               !
+                                    e211 j=1 zj µ11j           τ1 e211
+      γ11 | θ(j11 ) , y, z, X ∼ N             PJ      ;           PJ
+                                    τ1 + e210 j=1 zj2 τ1 + e211 j=1 zj2
+
+
+where µ00j= β0j − γ01 Zj ; j = 1, . . . , J; µ10j= β1j − γ11 Zj ; j = 1, . . . , J; µ01j= β0j −
+γ00 ; j = 1, . . . , J; µ11j= β1j − γ10 ; j = 1, . . . , J.
+
+                                                Revista Colombiana de Estadística 32 (2009) 267–287
+
+Regression Models with Heteroscedasticity using Bayesian Approach                                   287
+
+   For β 0 s, given that
+                                                                            
+                                                   1                       2
+            π(β0j | θ(β0j ) , y, z, X) ∝ exp −        (β0j − γ00 − γ01 Zj )
+                                                 2τ0
+                                                    Nj                         
+                                               −1 X                           2
+                                       × exp            (yij − β0j − β1j Xij )
+                                               2σ 2 i=1
+
+then all posterior conditional distributions for β0j are given by:
+                                                                   PNj                         
+                                         σ 2 (j00 + j01 Zj ) + τ0    i=1 a0ij          σ 2 τ0
+       β0j | θ(β0j ) , y, z, X ∼ N                                              ;
+                                                     σ 2 + τ0 Nj                     2
+                                                                                    σ + τ0 Nj
+
+where a0ij = yij − β1j Xij ; j = 1, . . . , J.
+   In the same way, given that
+                                                                            
+                                                   1                       2
+           π(β1j | θ(β1j ) , y, z, X) ∝ exp −         (β1j − γ10 − γ11 Zj )
+                                                 2τ1
+                                                    Nj                         
+                                               −1 X                           2
+                                      × exp             (yij − β0j − β1j Xij )
+                                               2σ 2 i=1
+
+all posterior conditional distributions for β0j are given by
+                                                             PNj                  !
+                                     σ 2 (j10 + j11 Zj ) + τ1 i=1 a1ij     σ 2 τ1
+        β1j | θ(β1j ),y,z,X ∼ N                        PNj             ; 2
+                                             σ 2 + τ01 i=1   Xij        σ + τ1 Nj
+
+   where a1ij = yij − β0j ; j = 1, . . . , J.
+References
+Adair, L. S., Eckhardt, C. L., Gordon-Larsen, P. & Suchindran, C. (2005), ‘The Association Between Diet and Height in the Postinfancy Period Changes with Age and Socioeconomic Status in Filipino Youths’, The Journal of Nutrition 135(9), 2192–2198).
+Aitkin, M. (1987), ‘Modelling Variance Heterogeneity in Normal Regression using Glim’, Applied Statistics 36(4), 332–339.
+Bryk, A. & Raudenbush, S. (1992), Hierarchical Linear Models: Applications and Data Analysis Methods, Sage publications, Inc, Newbury Park, United States.
+Cepeda, E. & Gamerman, D. (2001), ‘Bayesian Modeling of Variance Heterogeneity in Normal Regression Models’, Brazilian Journal of Probability and Statistics 14(1), 207–221.
+Cepeda, E. & Gamerman, D. (2005), ‘Bayesian Methodology for Modeling Parameters in the two Parameter Exponential Family’, Revista Estadística 57(168-169), 93–105.
+Chumlea, W. C., Guo, S. S., Wholihan, K., Cockram, D., Kuczmarski, R. J.& Johnson, C. L. (1998), ‘Stature Prediction Equations for Elderly Non Hispanic white, Non-Hispanic Black, and Mexican-American Persons Developed from NHANES III Data’, Journal of the American Dietetic Association 98(2), 137–142.
+De Leeuw, J. & Kreft, I. (1986), ‘Random Coefficient Models for Multilevel Analysis’, Journal of Educational Statistics 11, 57–85.
+Longford, N. (1993), Random Coefficient Models, Oxford University Press, New York, United States.
+Prosser, R., Rasbash, J. & Goldstein, H. (1991), ML3. Software for Three-Level Analysis. User’s Guide for V. 2, GB: Institute of Education, University of London, London, England.
+Raudenbush, S. & Bryk, A. (2002), Hierarchical Linear Models: Applications and Data Analysis Methods, 2 edn, Sage Publications, Inc., Thousand Oaks,United States.
+Steenbergen, M. & Bradford, S. (2002), ‘Modeling Multilevel Data Structures’,American Journal of Political Science 46(1), 218–237.
+Stein, A. D., Barnhart, H. X., Wang, M., Hoshen, M. B., Ologoudou, K., Ramakrishnan, U., Grajeda, R., Ramírez, M. & Martorell, R. (2004), ‘Comparison of Linear Growth Patterns in the first three Years of Life Across two Generations in Guatemala’, Pediatrics 113(3), 270–275.
+Van Der Leeden, R. (1998), ‘Multilevel Analysis of Repeated Measures Data’,Quality & Quantity. Kluwer Academic Publishers. Netherlands 32, 15–29.

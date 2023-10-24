@@ -1,0 +1,855 @@
+Estudio de homogeneidad de la dispersión en diseño a una vía de clasificación para datos de proporciones y conteos
+Universidad de Córdoba;Universidad Nacional de Colombia
+Resumen
+En el modelamiento de datos donde se evidencia la presencia de sobredispersión, usualmente se asume que para todos los efectos de tratamiento el parámetro de sobredispersión es común. Esta situación no siempre se satisface antes; por el contrario, puede ser más frecuente que la variabilidad exhibida por los datos sea mayor que la variación teórica del modelo; debiendo incorporarse en el modelamiento esta situación. En este artículo se llevan a cabo desarrollos teóricos con los cuales se evidencia si es aceptable o no la hipótesis de homogeneidad del parámetro de dispersión entre tratamientos,cuando estos se ensayan en condiciones de uniformidad del material experimental y la respuesta de interés sea conteos o de proporciones, las cuales se modelan a través de la distribución Binomial Negativa (BN) y Beta Binomial (BB), respectivamente. Se usó la Prueba de Razón de Verosimilitud como criterio para decidir acerca de la hipótesis nula de homogeneidad en el parámetro de dispersión. Para determinar la eficiencia de la prueba propuesta, mediante simulación, con procedimientos algorítmicos desarrollados en R, se evaluó la potencia de las pruebas frente al supuesto de homogeneidad del parámetro de dispersión. Bajo el supuesto que los modelos BB y BN son correctos, se propone el ajuste de un modelo lineal generalizado ponderado como una alternativa para el análisis de datos de conteo y proporción con sobredispersión
+Palabras clave: sobredispersión, distribución beta-binomial, distribución binomial negativa, modelo lineal generalizado ponderado, razón de verosimilitud.
+Introducción
+    En el análisis de datos relacionados con proporciones y conteos es común que
+haya presencia de sobredispersión, situación que se presenta cuando la varianza
+exhibida por los datos es mucho más grande que la que predice el modelo. En
+el caso de datos resultantes de experimentos de una vía de clasificación, en la
+literatura comúnmente se aborda el problema asumiendo homogeneidad del pará-
+metro de dispersión, como puede verse en Crowder (1978) y Brooks (1978). En la
+parametrización que hacen del modelo beta-binomial, asumen que σi2 = σ 2 para
+i = 1, . . . , K.
+    Si bien es cierto que existen aplicaciones donde el supuesto de homogeneidad
+de la dispersión se satisface, como ocurre con los datos de germinación de las se-
+millas de Orobanche Cernua cultivadas en tres medios, analizados por Crowder
+(1978), existen situaciones donde, de acuerdo con la naturaleza del experimento,
+es posible que se justifique suponer heterogeneidad en el parámetro de dispersión.
+Por ejemplo, Crowder (1979), refiriéndose al análisis de un conjunto de datos que
+reportan la presencia o ausencia de tumores en ratones expuestos a un cancerígeno,
+comenta que el coeficiente de correlación entre respuestas binarias está asociado al
+efecto de la herencia sobre la respuesta, y demuestra que, para ese caso, es apro-
+piado asumir un coeficiente de correlación distinto para cada nivel de exposición
+al cancerígeno, con lo cual se evidencia sobredispersión.
+    De acuerdo con Prentice (1986), en muchas aplicaciones es natural asumir que
+la probabilidad en una respuesta binaria tenga un valor común p dentro de la
+unidad experimental y que pares de observaciones tengan una correlación común
+φ; estos supuestos dan origen al modelo beta-binomial. La falta de independencia
+entre respuestas binarias explica la presencia de sobredispersión y es posible que,
+por su naturaleza, dentro de cada tratamiento se tenga una correlación distinta
+
+                                        Revista Colombiana de Estadística 32 (2009) 59–78
+
+Homogeneidad de la dispersión en diseño a una vía                                     61
+
+entre pares de respuestas binarias, ocasionando heterogeneidad de la dispersión
+entre tratamientos.
+    Se tiene entonces la necesidad de contar con herramientas teóricas que permitan
+modelar datos en presencia de sobredispersión, diagnosticar si los tratamientos se
+pueden considerar homogéneos en cuanto a la dispersión o si, por el contrario, es
+necesario tener en cuenta que cada tratamiento “aporta” de una forma distinta a
+la sobredispersión, debiendo hacer correcciones en cada caso.
+   En este artículo se proponen métodos para juzgar acerca de la hipótesis de
+homogeneidad de la dispersión, es decir, se establece una metodología que permite
+contrastar el juego de hipótesis
+
+                   H0 : φ1 = φ2 = · · · = φK = φ
+                                                                                     (1)
+                   H1 : φi 6= φi0 para i 6= i0 , i, i0 = 1, . . . , K
+
+cuando se tienen datos provenientes de experimentos de una vía de clasificación,
+concretamente dentro de un diseño completamente al azar, cuando la variable res-
+puesta es de tipo conteo o proporción y modeladas por medio de las distribuciones
+BN y BB, respectivamente.
+   El parámetro φ en (1) para el caso de datos de proporción, corresponde, de
+acuerdo con Prentice (1986), al coeficiente de correlación entre respuestas binarias.
+Para el caso de datos de conteo, el parámetro φ se define como el inverso del
+parámetro de forma de la distribución gamma.
+
+
+2. Sobredispersión
+    En muchas situaciones prácticas, cuando se ajusta un modelo lineal generali-
+zado a un conjunto de datos, se puede observar un desvío mucho más grande que
+el esperado si el modelo fuera “correcto”. La explicación más común a este fenó-
+meno es que se tiene una forma estructural incorrecta para el modelo, es decir,
+no se han incluido los predictores apropiados; no se ha hecho la transformación o
+combinación apropiada de efectos; o no se han incluido todos los factores de ajuste
+en el modelo. Otra explicación común para un desvío grande es la presencia de un
+número pequeño de outliers.
+   Habiendo excluido todas las posibilidades anteriores, es posible que la variación
+de los datos sea mucho más grande aún que la predicha por el modelo. A este
+fenómeno se le conoce como sobredispersión, de acuerdo con Hinde & Demétrio
+(1998).
+    Las principales consecuencias de no tener en cuenta la sobredispersión, según
+Hinde & Demétrio (1998), son: errores incorrectos (subestimados), y por tanto la
+significación de los parámetros de regresión puede juzgarse de manera incorrecta;
+los cambios en el desvío asociados a los términos del modelo serían grandes y
+pueden conducir a la selección de un modelo demasiado complejo, lo cual lleva
+a que la interpretación del modelo sea incorrecta y las predicciones demasiado
+imprecisas.
+
+                                        Revista Colombiana de Estadística 32 (2009) 59–78
+
+62                                      Mario Alfonso Morales & Luis Alberto López
+
+2.1. Modelos de sobredispersión
+    Para ajustar datos en presencia de sobredispersión, el modelamiento estadís-
+tico presenta varias alternativas que surgen de los supuestos que se asumen para
+explicar este fenómeno. Según Hinde & Demétrio (1998), los modelos se pueden
+clasificar en dos grandes grupos: (i) Modelos de media varianza: que asumen una
+forma más general de la función de varianza, incluidos parámetros adicionales.
+Estos posiblemente no correspondan a una distribución de probabilidad específi-
+ca para la respuesta, pero se pueden ver como una extensión del modelo básico;
+cuando esto sucede, los parámetros pueden estimarse usando métodos de cua-
+siverosimilitud; (ii) Modelos en dos etapas: los cuales asumen que el parámetro
+asociado a la respuesta no es fijo, sino que tiene alguna distribución de probabili-
+dad conocida. Estos modelos conducen a un modelo de probabilidad compuesto;
+en principio, todos los parámetros pueden estimarse usando máxima verosimilitud.
+Sin embargo, en general, la distribución resultante no toma una forma simple.
+   Dos ejemplos concretos de modelos de dos etapas son el beta-binomial y el
+binomial negativo, de gran utilidad en el modelamiento de datos de proporciones
+y conteos respectivamente.
+
+
+3. Prueba de la hipótesis por medio de la razón de
+   verosimilitud
+    Para contrastar la hipótesis (1), cuando se tienen datos resultantes de un expe-
+rimento bajo un diseño sin ninguna restricción en la aleatorización, asumiendo que
+la variable respuesta sigue una distribución beta-binomial en el caso de proporcio-
+nes o distribución binomial negativa en el caso de datos de conteos, se procedió a
+hacer uso de la prueba de la razón de verosimilitud. En el desarrollo de la prueba,
+es necesario definir dos modelos. Uno donde se asume que la hipótesis alterna H1
+es verdadera, el cual se llamó modelo alternativo; y otro que es un caso particular
+del primero, cuando H0 es verdadera, conocido como modelo nulo. Para decidir
+entre los dos modelos, se siguen estos pasos: (i) se estiman los parámetros de am-
+bos modelos por el método de máxima verosimilitud; (ii) se obtiene la razón de
+verosimilitud:                                    
+                                         L θb0 ; y
+                                    λ=            
+                                         L θb1 ; y
+                         
+donde L θb0 ; y y L θb1 ; y son las verosimilitudes maximizadas bajo los modelos
+nulo y alternativo, respectivamente; y (iii) se decide entre los dos modelos según
+P χ2k−1 > −2 ln λ sean mayor o menor que el nivel de significación α fijado
+previamente.
+               por máxima verosimilitud implica la solución del sistema de
+    La estimación
+ecuaciones u θb = 0, donde u representa el vector de primeras derivadas de la
+log-verosimilitud. La solución del sistema no lineal de ecuaciones se hace mediante
+
+                                      Revista Colombiana de Estadística 32 (2009) 59–78
+
+Homogeneidad de la dispersión en diseño a una vía                                         63
+
+el algoritmo de Newton-Raphson, que consiste en obtener
+                                   h    i−1  m   m 
+                             bm − H m
+                      bm+1 = θ
+                      θ                      b u θ
+                                             θ      b                                    (2)
+        m
+donde θb es el vector de estimaciones en el paso m y H es la matriz de segundas
+derivadas de la log-verosimilitud estimada en el paso m. En las secciones que
+siguen se establecen los supuestos y la notación, se definen los modelos nulos y
+alternativos y se obtienen las funciones de log-verosimilitud. En las secciones 3.1
+y 3.2 se ilustra el procedimiento para el caso particular de este trabajo.
+
+
+3.1. Datos de proporción
+    Cuando se tiene el caso de datos de proporción, para efectos de este trabajo se
+deben tener en consideración los siguientes supuestos: se tienen datos provenientes
+de un experimento con diseño completamente al azar con K ≥ 2 tratamientos;
+se cuenta con ri repeticiones dentro del tratamiento i; la j-ésima observación del
+tratamiento i es yij con i = 1, . . . , K y j = 1, . . . , ri ; yij es el número de éxitos
+en mij ensayos tipo Bernoulli, por tanto yij puede tomar los valores 0, 1, . . . , mij ;
+yij es la realización de una variable aleatoria Yij tal que Yij | pi ∼ Bin(mij , pi )
+con pi ∼ Beta(ai , bi ), lo cual implica que la distribución no condicional de Yij es
+beta-binomial (véase Hinde & Demétrio 1998).
+    El modelo bajo el supuesto que la hipótesis alternativa es cierta debe considerar
+lo siguiente: la variable respuesta Yij se asume con distribución beta-binomial de
+parámetros mij , ai y bi y, por tanto, de acuerdo con Prentice (1986), se tiene que
+la probabilidad de éxito en el tratamiento i es πi = ai /(ai + bi ) y el coeficiente de
+correlación entre respuestas binarias en dicho tratamiento es φi = γi (1 + γi )−1 con
+γi = (ai + bi )−1 para i = 1, . . . , K. También se tiene que
+                                
+                    E Yij /mij = πi
+                                                    
+                  var Yij /mij = 1 + φi (mij − 1) πi (1 − πi )/mij
+
+de esta forma se está suponiendo un valor φi para cada tratamiento. Modelamos
+las probabilidades de éxito πi mediante g(πi ) = ηi con ηi = αi , con este enlace
+queda caracterizado las medias de celda en la parte sistemática. En resumen, el
+modelo alternativo es:
+                       
+             E Yij /mij = πi
+                                                                           (3)
+           var Yij /mij = 1 + φi (mij − 1) πi (1 − πi )/mij yg(πi ) = αi
+
+y la distribución de probabilidad de Yij , siguiendo a Prentice (1986) es:
+                          yij −1            mij −yij                 mYij −1
+                     mij Y                      Y
+ P (Yij = yij ) =                 (πi + γi s)          (1 − πi + γi s)         (1 + γi s) (4)
+                      yij    s=0               s=0                       s=0
+                                                                          Qx
+para yij = 0, 1, . . . , mij y como es usual, se adopta la restricción que i=0 ci = 1
+para cualquier x < 0. Este modelo tiene 2K parámetros, que corresponden a K
+
+                                          Revista Colombiana de Estadística 32 (2009) 59–78
+
+64                                                     Mario Alfonso Morales & Luis Alberto López
+
+proporciones de éxitos y K coeficientes de correlación entre respuestas binarias,
+uno dentro de cada tratamiento.
+    El modelo bajo el supuesto que la hipótesis nula es cierta resulta de la práctica
+usual al tomar (ai + bi )−1 = γ para i = 1, 2, . . . , K. Bajo ese supuesto se tiene
+que el coeficiente de correlación entre respuestas binarias es φ = γ(1 + γ)−1 para
+todo i = 1, . . . , K. Es decir, va a ser constante para todos los tratamientos. Los
+demás supuestos permanecen como en el modelo alternativo. Con esto se tiene que
+el modelo queda caracterizado por:
+                          
+             E Yij /mij = πi
+                                                                               (5)
+           var Yij /mij = 1 + φ(mij − 1) πi (1 − πi )/mij y g(πi ) = αi
+
+y la distribución de probabilidad de la respuesta Yij tiene la forma de la ecuación
+(4), remplazando γi por γ. Este modelo tiene K + 1 parámetros, que corresponden
+a K proporciones de éxito y el coeficiente de correlación entre respuestas binarias
+dentro de cada tratamiento, que se supone el mismo para todos los tratamientos.
+Se observa que φ1 = φ2 = · · · = φk = φ, es decir, se asume que la hipótesis H0 de
+(1) es cierta.
+    De la ecuación (4), tomando logaritmo natural, se obtiene la contribución de
+la observación yij a la log-verosimilitud, dada por
+
+                              yij −1
+                              X
+  l(πi , γi | yij , mij ) =            log(πi + γi s)+
+                              s=0
+                                         mij −yij −1                          mij −1
+                                            X                                  X
+                                                       log(1 − πi + γi s) −            log(1 + γi s) (6)
+                                            s=0                                s=0
+
+para i = 1, . . . , K, j = 1, . . . , ri , las sumas con índice superior negativo se toman
+iguales a cero, lo cual puede ocurrir cuando yij = 0 o cuando yij = mij . Para
+más detalle, véase Crowder (1978). La log-verosimilitud de toda la muestra es
+               PK Pri                                                                           t
+l(θ1 | y) =         i=1  j=1 l πi , γi | yij ; mij con θ 1 = [π1 , . . . , πK , γ1 , . . . , γK ] el
+vector de parámetros. La contribución de la observación yij a la log-verosimilitud,
+en el caso del modelo nulo, tiene la misma forma de la ecuación (6); basta con
+                                                                                               t
+reemplazar γi por γ. En ese caso, el vector de parámetros es θ = [π1 , . . . , πK , γ] . En
+Morales (2008) se encuentran los detalles de la obtención del vector u y la matriz
+H necesarios para implementar el algoritmo de Newton-Raphson, de acuerdo con
+la ecuación (2).
+
+Ejemplo 1. Se sometieron 58 ratas hembras a dietas deficientes en hierro, divi-
+didas en cuatro grupos. A un grupo de control se le proporcionó semanalmente
+inyecciones de suplemento de hierro para mantener su ingestión de hierro en ni-
+veles normales, mientras que a otro grupo se le proporcionó solo inyecciones de
+un placebo. A los otros dos grupos se les proporcionó menos inyecciones de suple-
+mento de hierro que a los controles. Las ratas fueron preñadas, sacrificadas y tres
+semanas después se registró el número total de fetos y el número de fetos muertos
+en cada camada. Los datos, que se muestran en la tabla 1, fueron analizados por
+
+                                                  Revista Colombiana de Estadística 32 (2009) 59–78
+
+Homogeneidad de la dispersión en diseño a una vía                                     65
+
+Agresti (2002) usando cuasiverosimilitud. De acuerdo con la notación adoptada en
+este trabajo se tiene: K = 4, r1 = 31, r2 = 12, r3 = 5, r4 = 10, y11 = 1, m11 = 10,
+y43 = 2 y m43 = 9.
+
+Tabla 1: Número de fetos (N ) y números de fetos muertos (R) de ratas sometidas a
+         dietas bajas en hierro. Fuente Agresti (2002).
+                             Grupo no tratado (bajo en hierro)
+            N   10   11   12    4    10   11     9    11   10     10   12   10
+            R    1    4    9    4    10    9     9    11   10      7 12      9
+            N    8   11    6    9    14   12    11    13   14     10   12   13
+            R    8    9    4    7    14    7     9     8     5    10   10    8
+            N   10   14   13    4     8   13    12
+            R   10    3   13    3     8    5    12
+                     Grupo 2: inyecciones de hierro solo en el día 7 ó 10
+            N   10    3   13   12    14    9    13    16   11      4    1   12
+            R    1    1    1    0     4    2     2     1     0     0    0    0
+                        Grupo 3: inyecciones de hierro en el día 0 y 7
+            N    8   11   14   14    11
+            R    0    1    0    1     0
+                        Grupo 4: inyecciones de hierro semanalmente
+            N    3   13    9   17    15    2    14     8     6    17
+            R    0    0    2    2     0    0     1     0     0     0
+
+
+
+    Las varianzas observadas dentro de cada tratamiento son, respectivamente,
+9.867, 1.454, 0.3 y 0.722, mientras que las varianzas esperadas, asumiendo la dis-
+tribución binomial para la respuesta, son: 1.932, 0.898, 0.386 y 0.476. Nótese que
+las varianzas observadas de los tratamientos 1, 2 y 4 son mucho más grandes que las
+esperadas, presentándose sobredispersión (véase Sudhir & Saha 2007). Al ajustar
+un modelo lineal generalizado usual, usando la distribución binomial y la función
+logit(·) como enlace, se obtiene un desvío residual de 173.45 con 54 grados de liber-
+tad, lo cual confirma que los datos presentan sobredispersión. Dado que la variable
+respuesta es el número de fetos muertos del total de fetos en cada camada, no es
+necesario verificar el supuesto de independencia entre respuestas binarias (muerto
+o vivo) en cada camada; luego la distribución beta-binomial es un buen modelo
+para el ajuste de estos datos. Los valores iniciales para implementar el algoritmo
+de estimación se obtienen a partir del ajuste del modelo lineal generalizado bi-
+nomial usual, del cual se obtiene α                  b α1 ) = 0.1292, α
+                                     b1 = 1.1440, ee(b                b2 = −2.1785,
+ b α2 ) = 0.3046, α
+ee(b                              b α3 ) = 0.7196 y α
+                   b3 = −3.3322, ee(b                                b α4 ) = 0.4584;
+                                                      b4 = −2.9857, ee(b
+aplicando la función inversa del enlace a αbi , se obtienen las probabilidades de éxi-
+to π
+   b1 = 0.7584, π b2 = 0.1017, πb3 = 0.0345 y π  b4 = 0.0481. El valor del estadístico
+de Pearson es X 2 = 154.707, n = 58, p = 4; en este caso, φ0 = 0.2, por lo que
+se toman los valores iniciales γ01 = γ02 = γ03 = γ04 = 0.2(0.2 + 1)−1 = 0.167.
+Después del ajuste del modelo alternativo (3) se obtiene π                b2 = 0.103,
+                                                              b1 = 0.777, π
+b3 = 0.032, π
+π                         b            b              b             −9    b
+             b4 = 0.062, φ1 = 0.3397, φ2 = 0.0398, φ3 = 2.23 × 10 y φ4 = 0.0658
+y, a partir del modelo nulo (5), se obtiene π   b1 = 0.793, πb2 = 0.146, πb3 = 0.074,
+b4 = 0.071 y φb = 0.2412. La log–verosimilitud para el modelo nulo, con 5 pa-
+π
+rámetros, es −93.46, mientras que para el modelo alternativo, con 8 parámetros,
+
+                                        Revista Colombiana de Estadística 32 (2009) 59–78
+
+66                                             Mario Alfonso Morales & Luis Alberto López
+
+es −88.40; por tanto, λ∗ = −2 × (−93.46 − (−88.40)) = 10.11, el valor p de la
+prueba es P χ23 > 10.11 = 0.01766, así que a un nivel de significación de 2 % se
+rechaza la hipótesis nula, luego los datos deben ajustarse con un parámetro de
+sobredispersión distinto para cada tratamiento, es decir, φ no es igual mismo para
+todos los tratamientos.
+
+
+3.2. Datos de conteo
+     En el caso de datos de conteo, para respuestas provenientes de ensayos sin
+restricción en la aleatorización de un experimento con K ≥ 2 tratamientos, con ri
+repeticiones dentro del tratamiento i, la j-ésima observación del tratamiento i es
+yij , con i = 1, . . . , K y j = 1, . . . , ri ; yij es el número de ocurrencias de un evento
+en una unidad de tiempo o espacio, por tanto yij puede tomar los valores 0, 1, 2, . . .;
+yij es la realización de una variable aleatoria Yij tal que Yij | θi ∼ Pois(θi ), donde se
+supone que θi es aleatorio con distribución gamma, de tal forma que la distribución
+no condicional de Yij es binomial negativa (véase Hinde & Demétrio 1998).
+    Para definir el modelo alternativo se asume que θi ∼ Γ(κi , λi ); por tanto la va-
+riable respuesta Yij i = 1, . . . , K, j = 1, . . . , ri tiene distribución binomial negativa
+con media y varianza dadas por
+                           κi
+                    E Yij =     = µi
+                             λi
+                                µ2
+                   var Yij = µi + i = µi + φi µ2i = (1 + φi µi )µi
+                                  κi
+
+donde φi = 1/κi . Al modelar la media de la variable respuesta mediante la función
+de enlace g(µi ) = ηi con ηi = αi , es decir, la parte sistemática corresponde al
+modelo de medias de celda, se tiene que el modelo bajo la hipótesis alternativa
+está caracterizado por
+                                         κi
+                                  E Yij =      = µi
+                                           λi
+                                                                                         (7)
+                                 var Yij = µi (1 + φi µi )
+                                        
+                                    g µi = αi
+
+y la distribución de probabilidad de la variable respuesta Yij es, según Hinde &
+Demétrio (1998),
+                                                    y
+                                Γ κi + yij         µi ij κκi i
+                    P Yij = yij =                                             (8)
+                                    Γ(κi )yij ! (µi + κi )κi +yij
+
+donde yij = 0, 1, 2 . . .. Tomando logaritmo natural, la contribución a la log-verosimilitud
+de la observación yij es
+                 
+  l µi , κi | yij = yij ln µi + κi ln κi −
+                                               
+                                       κi + yij ln(κi + µi ) + dlg(yij , κi ) − ln yij ! (9)
+
+
+                                             Revista Colombiana de Estadística 32 (2009) 59–78
+
+Homogeneidad de la dispersión en diseño a una vía                                     67
+                                   
+donde dlg(yij , κi ) = ln Γ κi +yij −Γ(κi ). La log-verosimilitud para toda la muestra
+                 PK Pri                    
+es l(µ, κ | y) = i=1 j=1 l µi , κi | yij .
+    En este caso, el modelo nulo es el usual descrito por Hinde & Demétrio (1998),
+en el cual se tienen los mismos supuestos del modelo alternativo, pero los θi ,
+i = 1, . . . , K son variables aleatorias con distribución Γ(κ, λi ), lo que equivale a
+tener igual parámetro de dispersión φ para todos los tratamientos. De esa forma
+se tiene
+                                        κ
+                                E Yij =      = µi
+                                         λi
+                                                                                   (10)
+                               var Yij = µi (1 + φµi )
+                                      
+                                  g µi = αi
+
+    Nótese que el modelo alternativo se reduce al modelo nulo cuando φ1 = · · · =
+φK = φ = κ1 . La distribución de probabilidad para la variable respuesta Yij tiene
+la misma forma de la ecuación (8); basta remplazar κi por κ. De manera similar,
+la contribución de la observación yij a la log-verosimilitud tiene la misma forma
+de (9), remplazando κi por κ.
+
+Ejemplo 2. Se realizó un experimento con un diseño completamente al azar, en el
+cual se sometieron larvas de bagre blanco (Sorubim cuspicaudus) a tres densidades
+de siembra; 100, 200 y 300 larvas por litro (tratamientos). Una de las variables
+medidas fue el número de larvas muertas después del cuarto día de cultivo. Las
+muertes ocurren bien sea por canibalismo o por estrés debido a la manipulación.
+Los datos, tomados de García & Pérez (2008), se muestran en la tabla 2. Las me-
+dias observadas dentro de cada tratamiento son, respectivamente, 139.3, 230.5 y
+321.6 mientras que las varianzas son: 9526.6, 2797.1 y 6190.3, las cuales son mucho
+más grandes que los valores de las medias. Asumiendo la distribución de Poisson
+para la respuesta, se espera que los valores de las medias sean similares a los de
+las varianzas. Estos resultados permiten concluir que los datos presentan sobre-
+dispersión (véase Sudhir & Saha 2007). Al ajustar un modelo lineal generalizado
+Poisson usual, con la función logaritmo natural como enlace, se obtiene un desvío
+de 457.58 con 15 grados de libertad, evidenciando la presencia de sobredisper-
+sión. Las estimaciones de los parámetros de regresión y sus errores estándar son:
+b1 = 4.93687, ee(b
+α                                 b2 = 5.44025, ee(b
+                b α1 ) = 0.03459, α              b α2 ) = 0.02689 y α b3 = 5.77352,
+ b α3 ) = 0.02276 y al aplicar la transformación inversa se tiene µ
+ee(b                                                                  b1 = 139.33,
+b2 = 230.50 y µ
+µ                b3 = 321.67. Asumiendo que la distribución binomial negativa
+es adecuada para el mecanismo aleatorio que generó estos datos, procedemos a
+verificar el supuesto φ1 = φ2 = φ3 .
+
+
+    Tabla 2: Número de larvas de bagre blanco muertas al cuarto día de cultivo.
+          Densidades de siembra de larvas         Número de larvas muertas
+                       100                  325    105  124    155   63    64
+                       200                  257    233  310    223   210   150
+                       300                  335    376  426    319   201   273
+
+
+
+                                        Revista Colombiana de Estadística 32 (2009) 59–78
+
+68                                        Mario Alfonso Morales & Luis Alberto López
+
+    Después de estimar por máxima verosimilitud los parámetros del modelo al-
+ternativo (7), se obtiene µ
+                          b1 = 139.394, µb2 = 230.579, µb3 = 321.548, φb1 = 0.3162,
+b               b
+φ2 = 0.0415 y φ3 = 0.0510, la log-verosimilitud es −100.2. Los valores estimados
+para el modelo nulo son: µ
+                         b1 = 139.3236, µ               b3 = 321.6874, φb = 0.1359,
+                                         b2 = 230.4857, µ
+                                              ∗
+y la log-verosimilitud es −104; por tanto, λ = −2(−104 − (−100.2)) = 7.6 con
+6 − 4 = 2 grados de libertad, el valor p de la prueba es 0.02207 así que a un nivel
+de significación de 3 % se rechaza la hipótesis nula H0 , luego estadísticamente el
+parámetro φ no es el mismo para los tres tratamientos.
+
+
+4. Modelo lineal generalizado ponderado: una
+   alternativa para el análisis
+    Nelder & Wedderburn (1972) demuestran que la estimación por máxima ve-
+rosimilitud de los parámetros de un modelo lineal generalizado es equivalente a
+un proceso de Mínimos Cuadrados Ponderados Iterativos (MCPI) con función de
+pesos
+                                              2
+                                     1     dµi
+                              wi =                                         (11)
+                                   V(µi ) dηi
+y una variable dependiente modificada
+                                                             
+                                                        dηi
+                             Zi = ηi + (Yi − µi )                                  (12)
+                                                        dµi
+
+    Los pesos wi , dados en la ecuación (11), corresponden al inverso de la varianza
+de Zi y, por tanto, son tales que wi var(Zi ) = 1. Sin embargo, si la variable res-
+puesta tiene una función de varianza de la forma var(Yi ) = δi V(µi ), entonces se
+tiene que wi var(Zi ) = δi ; con este último factor se evalúa la dispersión extra. Lo
+anterior sugiere, por analogía con el modelo lineal clásico (véase Ravishanker &
+Dey 2001), que en el ajuste de los datos se usen los valores 1/δi como ponderacio-
+nes, de tal forma que se cancele el efecto del factor δi , lo que es equivalente a usar
+wi∗ = wi /δi , en lugar de los pesos wi en la ecuación (11).
+    Así que con datos de proporción con presencia de sobredispersión y bajo el
+supuesto que el modelo beta-binomial es correcto, el razonamiento anterior conduce
+                                                ∗
+a que el proceso MCPI se realice con pesos wij    = wij /δij con δij = [1 + φi (mij −
+1)], donde wij son los pesos que se calculan, para cada observación, mediante la
+ecuación (11), los cuales resultan del modelo binomial usual. Cuando se tienen
+datos de conteos con sobredispersión y bajo el supuesto que el modelo binomial
+negativo es adecuado, usando MCPI para la estimación, los pesos correspondientes
+      ∗
+son wij = wij /δij con δij = (1 + φi µi ) y wij los pesos que se calculan para cada
+observación mediante (11), que resultan del modelo Poisson usual.
+    Los parámetros φi y µi no se conocen, pero después del proceso de prueba de
+la hipótesis de interés (1) se tienen las estimaciones por máxima verosimilitud,
+que se usarían en su lugar como estimaciones iniciales. La mayoría de los paquetes
+para el cálculo estadístico permiten la inclusión de ponderaciones en el ajuste de
+
+                                       Revista Colombiana de Estadística 32 (2009) 59–78
+
+Homogeneidad de la dispersión en diseño a una vía                                           69
+
+un modelo lineal generalizado. En particular, en R (Development Core Team 2007)
+solo hay que agregar la opción weights=1/deltai en la función glm(), así que
+una vez se han estimado los pesos que se deben usar, es muy sencillo llevar a cabo
+el análisis ponderado.
+    La matriz de varianzas y covarianzas del vector de parámetros estimados β        b
+está dada por la inversa de la matriz de información (véase Dobson 2002), I−1 =
+(X t W X)−1 , donde W = diag wij para i = 1, . . . , K, j = 1, . . . , ri y X es la
+matriz de diseño, la cual, de acuerdo conLK la estructura de los datos en el modelo
+                                                               Pri de información
+de medias de celda, tiene la forma X = i=1 1ri , así que la matriz
+I es diagonal con elementos en la diagonal dados por Ii = j=1         wij ; por tanto,
+                                                        P                −1
+                                                                   ri
+                                                    c βbi =
+si se ajusta un modelo lineal generalizado usual, var              j=1 w ij     , mien-
+tras que si se ajusta un modelo lineal generalizado ponderado con pesos 1/δij , se
+            P             −1
+                      ri
+       c βb∗ =
+tiene var   i            w∗
+                       j=1   ij  , donde los βb∗ hacen referencia a la estimación del
+                                                  i
+                                                        ∗
+parámetro βi a partir del ajuste con ponderaciones y wij  = wij /δij . Como en este
+                                           ∗
+                                                           Pri           Pri     ∗
+caso se tiene que δij ≥ 1, entonces wij ≥ wij y, por tanto, j=1 wij ≥ j=1      wij ,
+así que
+                                1            1            
+                   c βbi = Pri
+                  var                   ≤ Pri           c βbi∗
+                                                     = var
+                                j=1 wij      j=1 wij
+                                                   ∗
+
+con lo cual se concluye que la varianza estimada de los estimadores obtenida con
+el modelo ponderado es mayor o igual que la que se obtiene al ajustar un modelo
+generalizado usual sin ponderaciones. Es claro que la igualdad se presenta cuando
+δij = 1, es decir, cuando φi = 0. Se observa, además, que si δij = δij 0 = δi = para
+j 6= j 0 , es decir, si los pesos dentro del tratamiento i son todos iguales, entonces
+                                           δi              
+                             c βbi∗ = Pri
+                             var                        c βbi
+                                                   = δi var
+                                           j=1 wij
+
+es decir, la varianza estimada del estimador del parámetro βi queda multiplicada
+                                                                             √
+por el factor δi o, lo que es igual, el error estándar queda multiplicado por δi .
+La regresión ponderada resuelve el problema de la subestimación de los errores
+estándar de los estimadores de regresión, lo cual, según Hinde & Demétrio (1998),
+es una de las consecuencias más graves cuando no se tiene en cuenta la sobre-
+dispersión, porque se podría evaluar de manera incorrecta la significancia de los
+parámetros.
+    Las estimaciones de los parámetros de regresión también se ven afectadas por
+el uso de las ponderaciones 1/δij . A partir de βb = (X t W X)−1 X t W z, teniendo
+en cuenta la forma de las matrices X y W , se demuestra que
+                                      Pri wij
+                                        j=1 δ zij
+                                b
+                                β = Pr ijw
+                                  ∗
+                                    i         i       ij
+                                              j=1 δij
+                                                                 P ri
+                                                                         wij zij
+mientras que si no se usan las ponderaciones se tiene βbi =       j=1
+                                                                  P ri             . Nótese que
+                                                                     j=1 wij
+
+βbi∗ ≈ βbi cuando δij ≈ 1 y si se verifica que δij = δij 0 = δi , entonces las estimaciones
+del modelo sin ponderar coinciden con las del modelo que usa las ponderaciones,
+
+                                         Revista Colombiana de Estadística 32 (2009) 59–78
+
+70                                         Mario Alfonso Morales & Luis Alberto López
+
+es decir, βbi∗ = βbi . En el caso de datos de proporción, la igualdad se verifica cuando
+mij = mij 0 = mi , para todo j 6= j 0 , es decir, el número de ensayos a partir de los
+cuales se obtienen los yij éxitos es el mismo dentro del tratamiento i.
+
+Ejemplo 3 (continuación del ejemplo 1). En seguida se muestran los resultados
+del ajuste de un modelo lineal generalizado binomial con la función logit(·) como
+                                 
+enlace, pero usando los valores 1 δbij como ponderaciones con δbij = 1 + φbi (mij − 1)
+b1 = 1.2261, ee(b
+α              b α1 ) = 0.2736; α                 b α2 ) = 0.3626; α
+                                 b2 = −2.1736, ee(b                 b3 = −3.3322,
+b α3 ) = 0.7196 y α
+ee(b               b4 = −3.0011, ee(bb α4 ) = 0.6097. Además, se obtuvo un desvío
+de 53.685 con 54 grados de libertad, evidenciando un buen ajuste de los datos al
+modelo donde no hay homogeneidad del parámetro de dispersión.
+    De acuerdo con los resultados teóricos mostrados en esta sección, se observa
+que la estimación αb3 y su error estándar estimado no varían con respecto al ajuste
+no ponderado (véase el ejemplo 1). Eso es debido a que φb3 ≈ 0, lo cual implica que
+                                                       b1 , α
+δ3j ≈ 1 para todo j = 1, . . . , r3 . Las estimaciones α         b4 varían poco, pero los
+                                                            b2 y α
+errores estándar se modifican sustancialmente; por ejemplo, el del tratamiento 1
+pasa de 0.1292 a 0.2736, aproximadamente el doble. Una aproximación de este valor
+                      h                     i1/2            √
+se obtiene a partir de 1+ φ b1 ×(11−1)           ×0.1292 = 1 + 0.3397 × 10×0.1292 =
+2.0969 × 0.1292 = 0.2709, donde se ha tomado 11 como un valor promedio del
+número de fetos en ese tratamiento. Si el número de fetos de cada rata dentro del
+tratamiento 1 fuera igual, es decir, si se tuviera que m1j = m1j 0 para todo j 6= j 0 ,
+se obtendría exactamente el valor 0.2736. Se observa que las varianzas estimadas
+de los estimadores son más grandes en el modelo ponderado, como se esperaba, de
+acuerdo con los resultados de esta sección. A partir del ajuste se obtiene un desvío
+residual D = 53.68 con 54 grados de libertad, p = 0.486; el valor del estadístico
+X 2 de Pearson es 48.84 con 54 grados de libertad y p = 0.673. Ambas estadísticas
+indican que el modelo lineal generalizado ponderado proporciona un buen ajuste
+a los datos (véase Dobson 2002). El análisis de residuales, que se muestra en el
+apéndice, indica que no hay evidencia de violación de los supuestos del modelo y
+tampoco hay presencia de datos influyentes ni atípicos.
+
+Ejemplo 4 (continuación del ejemplo 2). En seguida se presentan los resultados
+de ajustar un modelo lineal generalizado tipo Poisson con la función log(·) como
+                       
+enlace y los valores 1 δbij con δbij = 1+ φbi µbi como ponderaciones. En este caso δ1j =
+45.081, δ2j = 10.560 y δ3j = 17.403 para todo j = 1, 2, . . . , 6. Se obtiene un desvío
+de 18.169 con 15 grados de libertad y las siguientes estimaciones de los parámetros
+de regresión α                 b α∗1 ) = 0.23222, α
+              b∗1 = 4.93687, ee(b                                    b α∗2 ) = 0.08738 y
+                                                     b∗2 = 5.44025, ee(b
+  ∗                  ∗
+b3 = 5.77352 , ee(b
+α                b α3 ) = 0.09496. Se observa que las estimaciones de los parámetros
+no varían con respecto a las √ obtenidas a partir del ajuste sin ponderaciones (véase
+                       ∗
+ejemplo
+√        2) pero  ee(b
+                  b  α 1 ) =            b √α1 ) = 0.23222, de manera similar ee(b
+                              45.081 × ee(b                                     b α∗2 ) =
+                                      ∗
+             b α2 ) = 0.08738 ee(b
+  10.560 × ee(b                  b α3 ) = 17.403 × ee(b b α3 ) = 0.09496.
+    A partir del ajuste se obtiene un desvío residual D = 18.17 con 15 grados de
+libertad y p = 0.253; el valor del estadístico X 2 es 18.86 con 15 grados de libertad y
+p = 0.22. Ambas estadísticas indican que el modelo lineal generalizado ponderado
+proporciona un buen ajuste a los datos, al confrontarlo con el ajuste del modelo
+maximal (sobreparametrizado), (véase Dobson 2002). El análisis de residuales,
+
+                                        Revista Colombiana de Estadística 32 (2009) 59–78
+
+Homogeneidad de la dispersión en diseño a una vía                                         71
+
+que se muestra en el apéndice, indica que no hay evidencia de violaciones de los
+supuestos del modelo y tampoco hay presencia de datos influyentes o atípicos.
+
+
+5. Análisis de la potencia de la prueba
+    Dado que el procedimiento de prueba propuesto para la hipótesis (1) involucra
+métodos numéricos iterativos, no es posible obtener una expresión explícita para
+la función de potencia de la prueba. Para obtener una aproximación gráfica, se
+llevó a cabo un proceso de simulación.
+    Se generaron datos por un modelo con una vía de clasificación, con K = 2, 3, 4
+y 5 tratamientos, a partir de la distribución beta-binomial, en el caso de propor-
+ciones, y de la distribución binomial negativa, en el caso de conteos, mediante las
+funciones rbetabin()1 y rnbinom(), respectivamente, ambas funciones del pa-
+quete estadístico R. Se generaron 5, 10, 15, 20 y 25 datos, dentro del tratamiento
+i, para cada valor de K. Se estableció, para i = 1, . . . , K, πi = 0.5 en el caso de
+proporciones y µi = 12 para conteos. Los valores de los parámetros φ’s se estable-
+cieron de la siguiente forma: en el caso de datos de proporción se tomó φ1 = 0.19 y,
+para i = 2, . . . , K, los valores de φi se establecieron de tal forma que la diferencia
+∆φ = φk+1 − φk tome los valores 0, 0.01, 0.03, 0.04, 0.06, 0.07, 0.09, 0.10, 0.11,
+0.13, 0.14, 0.16, 0.17, 0.19, 0.20. Por ejemplo, en el caso de K = 5 los valores de
+φi fueron φ1 = · · · = φ5 = 0.19 (hipótesis H0 verdadera) y para un ∆φ = 0.20 se
+tomó φ1 = 0.19, φ2 = 0.39, φ3 = 0.59, φ4 = 0.79, φ5 = 0.99 (hipótesis H0 falsa).
+En el caso de datos de conteo se tomó κ1 = 1.1 (φ1 = 1/1.1 = 0.9090) y los demás
+valores de κi , para i = 2, . . . , K, se establecieron de tal forma que la diferencia
+∆κ = κk+1 − κk tome los valores 0.00, 0.15, 0.30, 0.45, 0.60, 0.75, 0.90, 1.05, 1.20,
+1.35, 1.50, 1.65, 1.80, 1.95, 2.10. Por ejemplo, en el caso de K = 5 los valores de κi
+fueron κ1 = · · · = κ5 = 1.1, equivalente a φ1 = · · · = φK = 0.9090 (hipótesis H0
+verdadera); para un ∆κ = 1.20 se tomó κ1 = 1.1, κ2 = 2.30, κ3 = 3.50, κ4 = 4.70,
+κ5 = 5.90, lo que equivale a φ1 = 0.9090, φ2 = 0.4348, φ3 = 0.2857, φ4 = 0.2128,
+φ5 = 0.1695 (hipótesis H0 falsa).
+    Una vez generados los datos, se lleva a cabo el procedimiento de prueba como
+se explica en la sección 3, tomando α = 0.05. El proceso se repite 1000 veces y se
+cuenta las veces (R) que se rechaza la hipótesis nula. El valor R/1000 proporciona
+una estimación de la potencia de la prueba.
+
+
+5.1. Resultados de las simulaciones
+    En el caso de datos de proporción, para 5 repeticiones y 2 tratamientos, la
+prueba reporta una proporción de rechazo de 0.073 y un valor de 0.096 para tres
+tratamientos y 5 repeticiones, es decir, una proporción de rechazo moderadamente
+mayor que el valor esperado de 0.05. Se observa que para 15 repeticiones y 5
+tratamientos el valor de la proporción de rechazos es 0.06; con 5 tratamientos y 25
+repeticiones, es 0.055. De los resultados de las simulaciones es claro que cualquiera
+  1 Esta función pertenece a la librería VGAM
+
+
+
+
+                                            Revista Colombiana de Estadística 32 (2009) 59–78
+
+72                                                                                                                Mario Alfonso Morales & Luis Alberto López
+
+que sea el número tratamientos, a medida que aumenta el número de repeticiones
+la proporción de rechazos se acerca al valor 0.05, mostrando el comportamiento
+asintótico de la prueba.
+    En la figura 1 se muestra la función de potencia obtenida mediante las simula-
+ciones para cada combinación de número de repeticiones y número de tratamientos.
+La línea horizontal punteada corresponde al valor 0.05. A partir del gráfico se evi-
+dencia que a medida que aumenta el número de repeticiones mejora la capacidad
+de las pruebas para detectar alejamientos de la hipótesis nula (comportamiento
+asintótico). Por ejemplo, cuando se tiene ∆φ = 0.14, que corresponde, en el caso de
+5 tratamientos, a la parametrización πi = 0.5 para todo i = 1, . . . , 5 y φ1 = 0.19,
+φ2 = 0.33, φ3 = 0.47, φ4 = 0.61 y φ5 = 0.75 se observa, para 5 repeticiones,
+que la proporción de rechazos es de 80 %, para 10 repeticiones es de 94 %, con 15
+repeticiones es de 98 %, con 20 repeticiones la proporción de rechazos es de 99.7 %
+y, por último, con 25 repeticiones la prueba rechaza el 100 % de las veces.
+
+                                                                  0.00   0.05     0.10    0.15   0.20                                 0.00   0.05     0.10    0.15   0.20
+
+                                              Ntrat=5                           Ntrat=5                           Ntrat=5                           Ntrat=5                           Ntrat=5
+                                              Nrep=5                            Nrep=10                           Nrep=15                           Nrep=20                           Nrep=25
+                                                                                                                                                                                                              1.0
+                                                                                                                                                                                                              0.8
+                                                                                                                                                                                                              0.6
+                                                                                                                                                                                                              0.4
+                                                                                                                                                                                                              0.2
+
+                                              Ntrat=4                           Ntrat=4                           Ntrat=4                           Ntrat=4                           Ntrat=4
+                                              Nrep=5                            Nrep=10                           Nrep=15                           Nrep=20                           Nrep=25
+                          1.0
+                          0.8
+ Proporción de rechazos
+
+
+
+
+                          0.6
+                          0.4
+                          0.2
+
+                                              Ntrat=3                           Ntrat=3                           Ntrat=3                           Ntrat=3                           Ntrat=3
+                                              Nrep=5                            Nrep=10                           Nrep=15                           Nrep=20                           Nrep=25
+                                                                                                                                                                                                              1.0
+                                                                                                                                                                                                              0.8
+                                                                                                                                                                                                              0.6
+                                                                                                                                                                                                              0.4
+                                                                                                                                                                                                              0.2
+
+                                              Ntrat=2                           Ntrat=2                           Ntrat=2                           Ntrat=2                           Ntrat=2
+                                              Nrep=5                            Nrep=10                           Nrep=15                           Nrep=20                           Nrep=25
+                          1.0
+                          0.8
+                          0.6
+                          0.4
+                          0.2
+
+                                0.00   0.05    0.10     0.15   0.20                                 0.00   0.05     0.10    0.15   0.20                                 0.00   0.05     0.10    0.15   0.20
+
+                                                                                           ∆φ (Diferencia en el parametro de dispersión)
+
+
+Figura 1: Función de potencia simulada: Ntrat, número de tratamientos. Nrep, número
+          de repeticiones.
+
+
+    Con datos de conteo, la prueba reporta, para 5 repeticiones y 2 tratamientos,
+una proporción de rechazo de 0.077, y para tres tratamientos y 5 repeticiones, un
+valor de 0.079, es decir, una proporción de rechazo ligeramente mayor que el 5 %
+que se esperaba. Sin embargo, se observa que para 25 repeticiones y 5 tratamientos
+el valor de la proporción de rechazos es 0.045. De acá se induce que a medida que
+aumenta el número de repeticiones, la proporción de rechazos se acerca al valor
+0.05, mostrando el comportamiento asintótico de la prueba.
+    A partir del gráfico de la función de potencia obtenida mediante las simulacio-
+nes, se evidencia un aumento de la potencia de la prueba a medida que aumenta
+el tamaño de la muestra. Por ejemplo, cuando se tiene ∆κ = 1.5, que corresponde,
+en el caso de 4 tratamientos, a la parametrización µi = 12 para todo i = 1, . . . , 4
+
+                                                                                                           Revista Colombiana de Estadística 32 (2009) 59–78
+
+Homogeneidad de la dispersión en diseño a una vía                                     73
+
+y κ1 = 1.1, κ2 = 2.60, κ3 = 4.10, κ4 = 5.63 o equivalentemente a φ1 = 0.9090,
+φ2 = 0.3846, φ3 = 0.2439, φ4 = 0.1776, se observó que para 5 repeticiones la
+proporción de rechazos es de 40.7 %; para 10, de 52.4 %; para 15, de 64.4 %; para
+20, de 78.8 %; y para 25, de 87.6 %.
+
+
+6. Conclusiones
+    Cuando se analizan datos de proporción o conteos en presencia de sobredis-
+persión, en la literatura estadística lo usual es asumir un parámetro de dispersión
+φ común a todas las observaciones. Sin embargo, puede suceder que cada trata-
+miento tenga asociado su propio parámetro de sobredispersión. En este artículo se
+demuestra que hay situaciones en que es necesario verificar inicialmente la hipóte-
+sis de que el parámetro se mantiene constante a través de todos los tratamientos,
+es decir, hay homogeneidad de dicho parámetro. Una de las consecuencias de la
+sobredispersión es la subestimación de los errores estándar de los estimadores de
+regresión; una forma de evitar este problema es multiplicar los errores estándar
+por el factor δ de modo que la varianza de la variable respuesta sea δ V(µ), como
+lo sugieren Hinde & Demétrio (1998), pero si el parámetro δ no es igual para to-
+das las observaciones, se corre el riesgo de sobreestimar unos errores estándar y
+subestimar otros.
+    Para el análisis de datos de proporción o conteos en presencia de sobredis-
+persión, bajo el supuesto que los modelos beta binomial o binomial negativo son
+adecuados para el ajuste, es apropiado que se ajuste un modelo de regresión lineal
+generalizado ponderado con pesos 1/δij , donde δij es tal que var(Yij ) = δij V(µi )
+con V(µi ) la función de varianza usual. Los valores δij son desconocidos, pero en
+el caso de la distribución beta binomial o binomial negativa, después del procedi-
+miento de prueba de la hipótesis propuesta en (1), se cuenta con la estimación de
+estos, la cual se usa en su lugar.
+Apéndice
+Análisis de residuales y técnicas de diagnóstico
+   En la figura 2 se muestran seis gráficos para el análisis de residuos y detección
+de puntos influyentes en el ajuste del modelo lineal generalizado binomial con
+ponderaciones (ejemplo 3). En el gráfico a, que muestra los desvíos residuales
+(componentes de desvío) contra los valores ajustados se observa el dato y11 como
+un posible atípico (outlier ). En el gráfico b, que muestra los valores absolutos de los
+residuales contra los valores ajustados, no se observa tendencia alguna, por lo cual
+se concluye que la función de varianza asumida es adecuada, véase McCullagh
+& Nelder (1989). El gráfico del predictor lineal ajustado (b     η ) contra la variable
+dependiente ajustada (z), (gráfico c), muestra una tendencia lineal de los puntos,
+con lo cual se concluye que la función de enlace logit(·) es apropiada (McCullagh
+& Nelder 1989). El gráfico de hii , que se muestra en el gráfico d, indica que la
+observación y33 tiene un alto leverage y que podría ser una observación influyente,
+mientras que los gráficos e y f muestran que las observaciones y16 , y25 y y43 son
+las que más influencia ejercen sobre los parámetros de localización y escala. Sin
+embargo, todas las distancias de Cook en el gráfico medio normal (half normal
+plot ) de la figura 3b se encuentran dentro de la banda. Por tanto, no hay evidencia
+de observaciones influyentes en el ajuste, véase Atkinson (1981). El gráfico de
+los residuales con bandas simuladas, que se muestra en la figura 3a, confirma la
+ausencia de datos atípicos de acuerdo con Atkinson (1981).
+
+Figura 2: Gráficos para el análisis de residuales del modelo lineal generalizado binomial
+          ponderado, ejemplo 3.
+
+
+   En la figura 4 se muestran seis gráficos para el análisis de residuos y detección
+de puntos influyentes en el modelo lineal generalizado Poisson. El gráfico a, que
+muestra los desvíos residuales (componentes de desvío), permite concluir que no
+hay evidencia de datos atípicos. En el gráfico b, que muestra los valores absolutos
+de los residuales contra los valores ajustados, no se observa tendencia alguna,
+Figura 3: (a): gráfico de probabilidad normal con banda de confianza simulada para los
+          residuos y (b): gráfico de probabilidad medio normal con banda de confianza
+          al 95 % simulada para la distancia de Cook, (ejemplo 3).
+por lo cual se concluye que la función de varianza asumida es adecuada, véase
+McCullagh & Nelder (1989); el gráfico del predictor lineal ajustado (b   η ) contra la
+variable dependiente ajustada (z), gráfico c, muestra una tendencia lineal de los
+puntos, con lo cual se concluye que la función de enlace es apropiada (McCullagh
+& Nelder 1989). El gráfico d indica que no hay puntos con alto leverage, mientras
+que los gráficos e y f muestran que la observación y11 es la que más influencia ejerce
+sobre los parámetros de localización y escala; sin embargo, todas las distancias de
+Cook en el gráfico medio normal (half normal plot ) de la figura 5b se encuentran
+dentro de la banda simulada. Por tanto, no se tiene evidencia de observaciones
+influyentes en el ajuste (Atkinson 1981). El gráfico de los residuales con bandas
+simuladas, que se muestra en la figura 5a, confirma la ausencia de datos atípicos
+(Atkinson 1981).
+Referencias
+Agresti, A. (2002), Categorical Data Analysis, John Wiley & Sons, New Jersey,United States.
+Atkinson, A. C. (1981), ‘Two Graphical Displays for Outlying and Influential Observations in Regression’, Biometrika 68, 13–20.
+Brooks, R. J. (1978), ‘Approximate Likelihood-Ratio Test in the Analysis of Beta Binomial Data’, Applied Statistics 12, 1589–1596.
+Crowder, M. J. (1978), ‘Beta-Binomial Anova for Proportions’, Applied Statistics 27(1), 34–37.
+Crowder, M. J. (1979), ‘Inference About the Intraclass Correlation Coefficient in the Beta-binomial ANOVA for Proportions’, Journal The Royal Statistical Society 41(2), 230–234.
+Development Core Team, R. (2007), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria.ISBN 3-900051-07-0.*http://www.R-project.org
+Dobson, A. J. (2002), An Introduction to Generalized Linear Models, Chapmann & Hall/CRC, New York, United States.
+García, Y. B. & Pérez, J. A. (2008), Efecto de la densidad de siembra en la larvicultura de bagre blanco (sorubim cuspicaudus), Tesis de pregrado, Departamento de Acuicultura, Facultad de Medicina Veterinaria y Zootecnia, Universidad de Córdoba, Montería, Colombia.
+Hinde, J. & Demétrio, C. (1998), Overdispersion: Models and Estimation, ABE,São Paulo, Brazil.
+McCullagh, P. & Nelder, J. A. (1989), Generalized Linear Models, Chapmann & Hall/CRC, New York, United States.
+Morales, M. A. (2008), Estudio de homogeneidad de la dispersión en un diseño completamente al azar con datos de proporciones y conteos, Tesis de maestría,Departamento de Estadística, Universidad Nacional de Colombia, Bogotá,Colombia.
+Nelder, J. A. & Wedderburn, D. W. M. (1972), ‘Generalized Linear Models’, Journal The Royal Statistical Society: Series A 135(3), 370–384.
+Prentice, R. L. (1986), ‘Binary Regresion Using an Extended Beta-Binomial Distribution with Discussion of Correlation Induced by Covariate Measurement Errors’, Journal of the American Statistical Association 81(394), 321–327.
+Ravishanker, N. & Dey, D. K. (2001), A First Course in Linear Model Theory,Chapmann & Hall/CRC, New York, United States.
+Sudhir, P. & Saha, K. (2007), ‘The Generalized Linear Model and Extensions: a Review and some Biological and Environmental Applications’, Environmetrics 18, 421–443.

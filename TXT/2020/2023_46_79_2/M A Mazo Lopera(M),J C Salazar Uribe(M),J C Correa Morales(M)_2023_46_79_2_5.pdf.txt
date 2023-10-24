@@ -1,0 +1,1202 @@
+An Adaptive Method for Likelihood Optimization in Linear Mixed Models Under Constrained Search Spaces,  Un método adaptativo para optimizar la función de verosimilitud en modelos lineales mixtos bajo espacios de búsqueda restringidos
+Universidad Nacional de Colombia, Medellín, Colombia
+Abstract
+Linear mixed eﬀects models are highly ﬂexible in handling correlated data by considering covariance matrices that explain variation patterns between and within clusters. For these covariance matrices, there exist a wide list of possible structures proposed by researchers in multiple scientiﬁc areas. Maximum likelihood is the most common estimation method in linear mixed models and it depends on the structured covariance matrices for random eﬀects and errors. Classical methods used to optimize the likelihood function, such as Newton-Raphson or Fisher’s scoring, require analytical procedures to obtain parametrical restrictions to guarantee positive deﬁniteness for the structured matrices and it is not, in general, an easy task. To avoid dealing with complex restrictions, we propose an adaptive method that incorporates the so-called Hybrid Genetic Algorithms with a penalization technique based on minimum eigenvalues to guarantee positive deﬁniteness in an evolutionary process which discards non-viable cases. The proposed method is evaluated through simulations and its performance is compared with that of Newton- Raphson algorithm implemented in SAS® PROC MIXED V9.4.
+Key words: Hybrid genetic algorithm; Linear mixed model; Optimization; Positive deﬁnite matrices.
+Resumen
+Los modelos lineales mixtos son muy ﬂexibles cuando se trabaja con datos correlacionados ya que estos consideran matrices de covarianza que explican los patrones de variación entre individuos y dentro de sus observaciones. Para estas matrices de covarianza existe una amplia lista de posibles estructuras propuestas por investigadores en múltiples áreas cientíﬁcas. El método de máxima verosimilitud es el más común para la estimación de los parámetros en modelos lineales mixtos y depende de las matrices de covarianza estructuradas para efectos aleatorios y errores. Los métodos clásicos utilizados para optimizar la función de verosimilitud, como Newton-Raphson o Fisher’s scoring, requieren desarrollos analíticos para obtener restricciones sobre los parámetros que garanticen matrices estructuradas y deﬁnidas positivas, y en general, esto no es una tarea fácil. Para evitar lidiar con restricciones complejas, proponemos un método adaptativo que incorpora los llamados Algoritmos Genéticos Híbridos con una técnica de penalización basada en valores propios mínimos con el ﬁn de garantizar matrices positivas deﬁnidas en un proceso evolutivo que descarta casos no viables. El método propuesto se evalúa a través de simulaciones y se compara su desempeño con el algoritmo de Newton-Raphson implementado en SAS® PROC MIXED V9.4.
+Palabras clave: Algoritmo genético híbrido; Modelo lineal mixto; Optimización; Matrices deﬁnidas positivas.
+
+
+
+1. Introduction
+    Linear mixed models (LMM) are an extension of simple linear models to take
+into account ﬁxed and random eﬀects and are widely applied when there is depen-
+dency between observations. The most common case of this dependency appears
+when several measures are taken for the same individual inducing a within-subjects
+variation which is included in the LMM through an error term. Between-subjects
+variation is represented in the LMM by means of a random eﬀect term. The theo-
+retical assumption for these two sources of variation is that they are multivariate
+independent and normally distributed random variables with zero-mean vectors
+and structured covariance matrices. Laird & Ware (1982) proposed both Maxi-
+mum Likelihood (ML) and Restricted Maximum Likelihood (REML) to estimate
+the parameters in these covariance matrices and they claim that these methods
+are quite sensitive to the selection of the covariance structures.
+   For independent data, the covariance structure is a multiple of the identity and
+there is only one parameter to be estimated. A simple way to extend this struc-
+ture for taking into account the dependence on the data is to assume homogeneous
+covariances which implies including an additional parameter to be estimated. How-
+ever, this assumption may not be realistic because in general, the correlations are
+dynamic, as for example in longitudinal data.
+    Conversely, an unstructured covariance matrix, where all parameters are as-
+sumed to be diﬀerent, could lead to overparameterization problems. Therefore,
+it is desirable to select an intermediate structure to describe the variation pat-
+terns and, at the same time, to reduce the number of parameters to be estimated
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 123
+
+
+(Pinheiro, 1994).
+   Once the structures are selected, the optimization process of the likelihood
+function must ensure that these structures are maintained in addition to the
+positive-deﬁniteness condition.
+    Some convergence problems arise in the optimization process of the likelihood
+function when using algorithms based on derivatives. Verbeke & Molenberghs
+(1997), for instance, identify positive-deﬁniteness problems with respect to the
+estimated covariance matrices when the Newton-Raphson algorithm is used. This
+is because these matrices are structured and some parametric restrictions are re-
+quired to ensure that they are always positive deﬁnite (PD) during the optimiza-
+tion process, which is not an easy task. The PROC MIXED of SAS® , for example,
+imposes that diagonal elements in the covariance matrices are nonnegative, but
+this is not a suﬃcient condition and Verbeke & Molenberghs (1997) recommend
+that one should check the obtained maximum likelihood estimators for the covari-
+ance matrices to verify positive-deﬁniteness.
+    To avoid dealing with these restrictions in the function domain, we propose an
+optimization method, for the ML and REML functions, based on a penalty tech-
+nique and we use hybrid genetic algorithms (HGA) as optimizer (Scrucca, 2017).
+The main advantage of this proposed method is that it penalizes the parameters
+in the space of all feasible solutions or simply search space (see subsection 3.1 and
+Appendix B for more details) that leads to non-PD covariance matrices and also
+it combines the power of genetic algorithms as a global optimization technique
+with the speed of a local optimizer such as Newton-Raphson. Mebane & Sekhon
+(2011) implemented this method to solve diﬃcult optimization problems when the
+function to be optimized is discontinuous or nonlinear in their parameters.
+    This paper is organized as follows. In Section 2, we describe the theoretical
+aspects of linear mixed models as well as the likelihood functions. Conditions
+for the covariance matrices are exposed in Section 3. The proposed optimization
+method of the likelihood functions is presented in Section 4. Section 5 includes
+some simulations for diﬀerent structures. In Section 6 the conclusions are given. In
+Appendix A there is an additional proof and a general description for the Newton-
+Raphson algorithm. Finally, Appendix B gives some general aspects of hybrid
+genetic algorithms.
+
+
+2. Linear Mixed Models
+   Let us assume we have a random sample of N independent subjects from a
+target population, where the i-th member has ni observations. Let Yij denotes
+the j-th (j = 1, . . . , ni ) continuous response from the i-th (i = 1, . . . , N ) subject.
+By denoting Y i = (Yi1 , . . . , Yini )′ , the individual-LMM developed by Laird &
+Ware (1982), is given by
+                     Y i = X i β + Z i bi + ϵi , for i = 1, 2, . . . , N,               (1)
+where X i and Z i are the design matrices for both ﬁxed and random eﬀects, β and
+bi , respectively, and ϵi is an error vector. In addition, let us assume bi and ϵi are
+
+                    Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+124          Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+
+independent random vectors with bi ∼ N (0, D) and ϵi ∼ N (0, Σi ).
+      The covariance matrix of Y i , denoted by V i = V ar(Y i ), is given by
+
+                                    Vi     =    Z i DZ ′i + Σi .                                   (2)
+
+By denoting Y = (Y ′1 , . . . , Y ′N )′ , the design matrix by X = [X 1 . . . X N ]′ , ϵ =
+(ϵ′1 , . . . , ϵ′N )′ , b = (b′1 , . . . , b′N )′ , G = diag{D, . . . , D}, Σ = diag{Σ1 , . . . , ΣN },
+and Z = diag{Z 1 , . . . , Z N }, the general LMM can be written as
+
+                                    Y     =     Xβ + Zβ + ϵ,                                       (3)
+
+where β and ϵ are independent, β ∼ N (0, G) and ϵ ∼ N (0, Σ) and from (2)
+
+                                      V     =    ZGZ ′ + Σ.                                        (4)
+
+
+2.1. Log-Likelihood Function
+      The log-likelihood function for model (3) is given by
+
+                                1          1                          N
+ log L(β, D, Σ|Y )        =    − log |V | − (Y − Xβ)′ V −1 (Y − Xβ) −   log(2π).
+                                2          2                          2
+To simplify the optimization process of the previous log-likelihood function,
+Henderson (1984) proposes to assume that V is known, derivate with respect
+to β and equating by zero to obtain
+                                 b = (X ′ V −1 X)−1 X ′ V −1 Y .
+                                 β                                                                 (5)
+
+Then, the matrices G and Σ can be estimated by minimizing the function
+                  
+                 b = −2 log L(G, Σ|Y ) = log |V | + r ′ V −1 r + N log(2π).
+      ℓ G, Σ|Y , β                                                                                 (6)
+
+where | · | denotes the determinant function, and
+
+                           b = Y − X(X ′ V −1 X)−1 X ′ V −1 Y .
+                  r = Y − Xβ                                                                       (7)
+
+To correct the bias from estimating β, Patterson & Thompson (1971) proposed to
+minimize the REML function
+                 
+   ℓR G, Σ|Y , βb = log |V | + r ′ V −1 r + log |X ′ V −1 X| + (N − p) log(2π), (8)
+
+where r is given in (7) and p is the rank of X.
+    To save notation in the rest of this work, we will denote
+                                                                      and ℓR (G, Σ)
+                                                                ℓ (G, Σ)
+                                              b                     b
+or simply ℓ and ℓR , instead of ℓ G, Σ|Y , β and ℓR G, Σ|Y , β , respectively.
+
+
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 125
+
+                     Table 1: Examples of covariance structures.
+ Name                                  Abbreviation                  Example (3 × 3)
+                                                                                                      
+                                                           σ 2 + σ1             σ1            σ1
+                                                                                                      
+                                                                                                      
+ Compound Symmetry                          CS                 σ1          σ 2 + σ1          σ1       
+                                                                                                      
+                                                                σ1              σ1          σ 2 + σ1
+
+                                                                                             
+                                                                            1    γ     γρ
+                                                                                         
+                                                                                         
+ First-Order Autoreg. Moving Average   ARMA(1, 1)               σ2  γ           1      γ 
+                                                                                         
+                                                                     γρ          γ      1
+
+                                                                                            
+                                                                       σ2       σ1     σ2
+                                                                                         
+                                                                                         
+ Toeplitz                                 TOEP                    σ1           σ2     σ1 
+                                                                                         
+                                                                   σ2           σ1     σ2
+                            Source: SAS Institute Inc. (2008)
+
+
+
+3. Covariance Structures for G and Σ
+    Since G = diag{D, D, . . . , D} and Σ = diag{Σ1 , Σ2 , . . . , ΣN } are block diago-
+nal matrices, conditions for them depend on conditions for D and Σ1 , Σ2 , . . . , ΣN ,
+respectively. For example, symmetry and positive deﬁniteness can be ensured by
+assuming that their diagonals matrices are symmetric and PD. In addition, co-
+variance structures can be assigned to G and Σ through D and Σi . Regarding to
+these structures, diﬀerent authors have proposed several structures for covariance
+matrices to model variability patterns between correlated observations (Wolﬁnger,
+1993). PROC MIXED of SAS® (SAS Institute Inc., 2008) includes an extensive list of
+structures providing a detailed description with respect to the number of param-
+eters and variability patterns. Some useful structures in practice include Com-
+pound Symmetry (CS), First-Order Autoregressive Moving Average (ARMA(1,
+1)), Toeplitz (TOEP) and Multiple of the identity (MI) given by σ 2 I (where I
+is the identity matrix). Table 1 shows examples of (3 × 3) dimensions for these
+structures.
+
+
+3.1. Naive Search Spaces for the Covariance Parameters and
+     Positive-Deﬁniteness
+    The covariance structures depend on a set of parameters with certain particular
+restrictions. A “naive” approximation for the parameters search space is the cross
+product of the intervals that result after considering these particular restrictions.
+In this context, “naive” means that this ﬁrst approximation does not take into ac-
+count the positive deﬁniteness condition of the covariance matrices. Let Ω denotes
+the naive search space for the covariance parameters. As an example of Ω, consider
+the CS structure, which depends on θ = (σ, σ1 )′ and the particular restrictions for
+these parameters are σ > 0 and σ 2 + σ1 > 0, so the naive search space for θ is
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+126               Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+                         
+Ω = (0, ∞) × −σ 2 , ∞ . However, CS is not PD for all parameter vectors in Ω. To
+see this, let us consider the CS-(3 × 3) matrix with (σ, σ1 ) = (1.2, −1). It can be
+seen that σ = 1.2 > 0 and σ 2 + σ1 = 0.44 > 0, but the eigenvalues of this matrix
+are equal to 1.44, 1.44 and −1.56, respectively. The Cholesky decomposition is a
+method to guarantee PD matrices (Pinheiro & Bates, 1996), but it not an easy
+task to ﬁnd the parameterization when the matrix is not unstructured. To see
+this, let us consider the Cholesky decomposition for the CS-(3 × 3) structure,
+   2                                                                        
+     σ + σ1        σ1          σ1          a11 0        0         a11 a21 a31
+       σ1      σ 2 + σ1       σ1    =  a21 a22 0   0 a22 a32  .
+                             2
+        σ1         σ1      σ + σ1          a31 a32 a33             0     0 a33
+                                                             √
+It can                                                          2
+    √ be proved that√the solutions√are given by a11 = σ√ + σ1 , a√        21 = a31 = 
+        2                   4     2      2
+σ1 / σ + σ1 , a22 = σ + 2σ σ1 / σ + σ1 , a32 = σ1 σ/ σ 2 + σ1 σ 2 + 2σ1
+              √            √
+and a33 = σ σ 2 + 3σ1 / σ 2 + 2σ1 , with the restrictions σ 2 + σ1 > 0, σ 2 + 2σ1 > 0
+and σ 2 +3σ1 > 0. The intersection of these restrictions is σ1 > −σ 2 /3 and therefore
+the space where the CS-(3×3) structure is PD is given by θ ∈ (0, ∞)×(−σ 2 /3, ∞).
+Figure 1 (a) shows this PD region (vertical lines) compared with the naive search
+space Ω (horizontal lines) 1 .
+
+                        (a) CS                                               (b) TOEP                                        (c) ARMA(1, 1)
+
+     0
+                                                         1.0                                             1.0
+
+
+
+
+ −2000
+
+                                                         0.5                                             0.5
+
+
+
+ −4000
+σ1
+
+
+
+
+                                                   ρ2
+
+
+
+
+                                                         0.0                                             0.0
+                                                                                                    γ
+
+
+
+
+ −6000
+
+             Ω
+                                                        −0.5                                            −0.5
+             PD region
+ −8000
+
+
+
+
+                                                        −1.0                                            −1.0
+−10000
+
+
+         0   20    40            60     80   100               −1.0   −0.5     0.0      0.5   1.0              −1.0   −0.5        0.0         0.5   1.0
+
+                          σ                                                     ρ1                                                 ρ
+
+
+
+Figure 1: Naive search space Ω (horizontal lines) and PD region (vertical lines) for
+          the (3 × 3) matrices, considering the structures: (a) CS, (b) TOEP and (c)
+          ARMA(1, 1).
+          Source: Author.
+
+    The ARMA(1, 1) depends on θ = (σ, ρ, γ)′ with σ > 0, |ρ| < 1 and |γ| < 1 for
+stationarity and invertibility, respectively (Box et al., 1970).Therefore, the naive
+search space is Ω = (0, ∞) × (−1, 1) × (−1, 1). Following the method given by
+Madar (2015), we obtained the PD region (for all σ > 0) of Figure 1 (c) for
+the ARMA(1, 1)-(3 × 3) in contrast to the naive search space Ω. The border
+curves were obtained with the relationship ρ = (2γ 2 − 1)/γ. This condition can
+be extended for higher dimensions using the method of Madar (2015).
+   The AR(1) structure (a particular case of ARMA(1, 1) with γ = ρ) depends
+on θ = (σ, ρ)′ , with particular restrictions σ > 0 and |ρ| < 1 for stationarity
+     1 We selected 0 < σ < 100 to obtain the ﬁgure.
+
+
+
+
+                                      Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 127
+
+
+(Box et al., 1970). Madar (2015) showed that the elements of the lower triangular
+matrix, L, of the Cholesky decomposition LL′ for the AR(1) covariance structure
+are given by
+                             (
+                               ρj−1 ,p        j≥i=1
+                       lji =
+                               ρj−1 1 − ρ2 , j ≥ i ≥ 2,
+
+and therefore the condition for positive deﬁniteness of AR(1) structure is |ρ| < 1,
+which matches with the stationarity condition. So, the naive search space is Ω =
+(0, ∞) × (−1, 1) and the AR(1) structure is PD for all parameter vectors in this
+space.
+    The TOEP-(3 × 3) structure depends on θ = (σ, σ1 , σ2 )′ , with standard devi-
+ation σ > 0 and covariances −∞ < σ1 , σ2 < ∞. This structure can be rewritten
+as
+                                                                      
+     σ2    σ1    σ2       σ      0   0     1        ρ1   ρ2     σ      0   0
+    σ1    σ2    σ1  =  0      σ   0   ρ1       1    ρ1   0      σ   0 ,        (9)
+     σ2    σ1    σ2       0      0   σ     ρ2       ρ1   1      0      0   σ
+
+where ρ1 , ρ2 are correlations. So, the new restrictions are σ > 0 and −1 < ρ1 , ρ2 <
+1 and the naive search space is Ω = (0, ∞) × (−1, 1) × (−1, 1). However, the
+correlation matrix in (9) is not PD for all (σ, ρ1 , ρ2 ) ∈ (0, ∞) × (−1, 1) × (−1, 1).
+To see this, let us consider the following Cholesky decomposition
+
+                                                                      
+            1     ρ1   ρ2       a11        0     0      a11      a21   a31
+           ρ1    1    ρ1  =  a21       a22    0     0       a22   a32  .
+            ρ2    ρ1   1        a31       a32   a33      0        0    a33
+
+It can be proved thatpsolutions for the lower triangular matrixpare a11 = 1, a21 =
+             , a33 = (1 − ρ22 − 2ρ21 + 2ρ21 ρ2 )/(1 − ρ21 ), a22 = 1 − ρ21 , and a32 =
+ρ1 , a31 = ρ2p
+ρ1 (1 − ρ2 )/ 1 − ρ21 , with conditions 1 − ρ21 > 0 and 1 − ρ22 − 2ρ21 + 2ρ21 ρ2 > 0.
+Therefore, the restrictions for ensuring positive deﬁniteness for the TOEP-(3 × 3)
+matrix in the equation (9), are σ > 0, −1 < ρ1 < 1 and ρ2 > 2ρ21 − 1. Figure
+1 (b) shows this PD region (vertical lines) compared with the naive search space
+Ω (horizontal lines). This regions are given for all σ > 0. For higher matricial
+dimensions, Madar (2015) describes the structure for the lower triangular matrix
+of the Cholesky decomposition and this can be used to obtain the restrictions that
+lead to PD TOEP matrices. Finallly, the MI structure is PD for all σ > 0.
+    The above mentioned restrictions for positive deﬁniteness show that, in general,
+to obtain the parametrical restrictions to ﬁnd the PD region is not an easy task and
+we propose in Subsection 4.2 to use a penalization method for non-PD matrices
+based on HGAs to optimize the ML and REML functions in the LMM. This
+method uses the naive search space Ω which is easy to obtain in contrast to the
+region of positive deﬁniteness.
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+128       Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+
+4. Proposed Optimization Method of the Likeli-
+   hood Function
+    One of the most common iterative algorithms used to optimize the log-likelihood
+functions (6) and (8) is the so called Newton-Raphson (NR). This methods is based
+on derivatives and for each iteration it is necessary to ensure positive deﬁniteness
+for matrices G and Σ. Unfortunately, it is diﬃcult to meet these requirements
+and some software procedures establish simpler conditions that are necessary, but
+not suﬃcient, to ensure positive deﬁniteness constraints (West et al., 2006). For
+example, the PROC MIXED of SAS® restricts the diagonal elements of G and Σ to
+be positive in the NR algorithm during the entire iteration process but this is not
+suﬃcient to ensure positive deﬁniteness of covariance matrices and some warning
+messages may appear during the optimization process. Other optimization meth-
+ods are Fisher’s Scoring which is based on the expected information matrix instead
+of the observed information matrix (Wolﬁnger et al., 1994) and Expectation Max-
+imization (EM) algorithm proposed by Dempster et al. (1977) which is mainly
+used to ﬁnd starting values for other algorithms or to optimize complicated like-
+lihood functions. Lindstrom & Bates (1988) provide reasons for preferring NR to
+the EM based on time consuming and consistent convergence. In this section, we
+propose a heuristic method based on HGAs (see Appendix B) to optimize (6) and
+(8) by designing penalty functions to ensure that matrices G and Σ are PD. We
+also describe the NR algorithm in the context of LMM as well as the theoretical
+framework of the proposed method.
+
+
+4.1. Newton-Raphson Algorithm
+   Let us suppose that matrices G and Σ depend on the parameter vectors θ G
+and θ Σ , respectively, and denote this dependence by G(θ G ) and Σ(θ Σ ). So, the
+                                                        ′
+matrix V depends on the parameter vector θ = θ ′G , θ ′Σ and from equation (5),
+b also depends on θ. NR algorithm follows the general steps (Demidenko, 2004):
+β
+
+  1. With an initial parameter vector θ 0 compute the gradient vector g and the
+     Hessian matrix H.
+
+  2. Let λ = 1.
+                                                                           
+  3. Compute new estimates for θ, iteratively, using θ i = θ i−1 − λ H −1 g .
+
+  4. If θ i is a valid vector of covariance parameters and improves the likelihood,
+     continue to Step (5). Otherwise, reduce λ by half and return to Step (3).
+
+  5. Check for convergence and stop if some convergence criterion is reached.
+     Otherwise, compute g and H with the new estimates for θ and go back to
+     Step (2).
+
+   Wolﬁnger et al. (1994) recommended the Minimum Variance Quadratic Unbi-
+ased Estimators (MIVQUE) method proposed by Rao (1972) for computing the
+
+                  Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 129
+
+
+initial parameter vector, θ 0 . The gradient vector and the Hessian matrix for both
+ML and REML are described in Appendix A.2. Since they depend on matrix
+V , it is clear that for each iteration, NR method requires to ensure positive def-
+initeness for matrices G and Σ. A partial solution to reach this condition is to
+restrict the diagonal elements of G and Σ to be positive. Another alternative
+is to apply Cholesky decomposition (or other parameterizations) to these matri-
+ces to simplify the optimization problem. Pinheiro & Bates (1996) described some
+parametrizations that enforce the positive deﬁniteness and compared their compu-
+tational eﬃciency and statistical interpretability using ML and REML estimation.
+Those parameterizations are easy to use when covariance matrices G and Σ are
+not structured, that is, when it is assumed that the singular variances and covari-
+ances do not follow a pattern. However, the general assumption is that G and Σ
+are structured.
+
+
+4.2. Proposed Method
+   Let us suppose that G(θ G ) and Σ(θ Σ ) are continuous matricial functions and
+that the applications
+
+          TG : Ω G → A G                  and             TΣ : Ω Σ → A Σ
+                θ G 7→ G(θ G )                                  θ Σ 7→ Σ(θ Σ )
+
+are continuous, where ΩG and ΩΣ are Euclidean subspaces and AG , AΣ are the
+sets of symmetric matrices with the corresponding dimensions.
+   Since G(θ G ) and Σ(θ Σ ) are symmetric matrices, their eigenvalues are real
+numbers (see Schott (1997), Theorem 3.9 page 106 for details) and therefore, we
+propose to calculate their minimum eigenvalues, λmin , and compare them with
+zero for checking positive deﬁniteness. Let us deﬁne
+
+          ΛG : AG → R                     and             ΛΣ : AΣ → R
+               G 7→ λmin (G)                                   Σ 7→ λmin (Σ)
+
+where λmin (G) and λmin (Σ) are the minimum eigenvalues of G and Σ, respectively.
+Since ΛG and ΛΣ are continuous (see Schott (1997), Theorem 3.14 page 115 for
+details), the composite functions,
+
+     ΛG ◦ TG : Ω G → R                    and       ΛΣ ◦ TΣ : Ω Σ → R
+               θ G 7→ λmin [G(θ G )]                            θ Σ 7→ λmin [Σ(θ Σ )]
+
+are also continuous (see Munkres (2000), Theorem 18.2 page 107). So, if we have
+that λmin [G(θ 0G )] > 0, for some θ 0G ∈ ΩG , there is an open interval Iθ0G ∈ R+
+and, by deﬁnition of continuity functions, (ΛG ◦ TG )−1 (Iθ0G ) ∈ ΩG is also open,
+i.e., there is an open set around θ 0G for which all vectors in it yield PD matrices.
+An equivalent result is given for (ΛΣ ◦ TΣ ). As we will see later, these results are
+important to guarantee that local optimization for HGAs is possible.
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+130        Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+
+4.2.1. Penalized Fitness Function
+
+    To guarantee positive deﬁniteness as well as to preserve the speciﬁc structures
+for G and Σ, we propose to optimize the functions (6) and (8) by applying HGAs
+and penalizing the parameters vectors, θG and θΣ , when they do not lead to PD
+matrices. Coello (2002), Kuri-Morales & Gutiérrez-García (2002), Lin (2013) and
+Chehouri et al. (2016) explored diﬀerent penalization methods with GAs in the
+context of constrained optimization and we are using an equivalent idea to ensure
+the positive deﬁniteness of the covariance matrices.
+    Before describing those penalizations, note that both functions ℓ and ℓR include
+the logarithm of the determinants |V | and |X ′ V X|, so we take the absolute value
+to these terms to guarantee their existence for all (θG , θΣ ) ∈ ΩG ×ΩΣ . So, instead
+of ℓ and ℓR let us consider the modiﬁed functions
+
+                   ℓ∗ (G, Σ) = log[abs(|V |)] + r ′ V −1 r + N log(2π)                     (10)
+
+and
+
+ ℓ∗R (G, Σ) = log[abs(|V |)]+r ′ V −1 r +log[abs(|X ′ V −1 X|)]+(N −p) log(2π), (11)
+
+where abs(·) is the absolute value function. The purpose of deﬁning the functions
+ℓ∗ and ℓ∗R is to evaluate and identify the “undesired” cases when G and Σ are
+non-PD. However, for PD matrices this functions are equivalent to the functions
+given in (6) and (8), respectively. Therefore, this method does not induce bias in
+the maximum likelihood estimators. Our strategy consists in including a “naive”
+search space (as explained in subsection 3.1), even when the covariance matrices
+are not PD and then penalizing those cases by using the following penalized ﬁtness
+function (for REML use ℓ∗R instead of ℓ):
+                        
+                            ℓ∗ [G(θ G ) + ϵI G , Σ(θ Σ ) + ϵI Σ ], if mmin > 0
+  fϵ,K (θ G , θ Σ ) =                                                                      (12)
+                            abs(ℓ∗ [G(θ G ) + ϵI G , Σ(θ Σ ) + ϵI Σ ]) + K, otherwise
+
+where mmin = min{ΛG ◦ TG (θ G ), ΛΣ ◦ TΣ (θ Σ )} and K > 0 is a penalty term.
+Kuri-Morales & Gutiérrez-García (2002) provide several methods for selecting this  
+penalty term and the simplest one is to deﬁne K as a large constant (O 109 ).
+We propose a dynamic selection for K by taking into account the number of
+digits in the integer part of either ℓ∗ or ℓ∗R . Denote this integer value by ndigs
+and take K = 10ndigs+9 . We selected this penalization term because it has a
+simple structure and it also provides a high penalty for the parameter vectors
+that do not lead to PD matrices. However, as mentioned above, there are other
+penalization methods in the literature (Kuri-Morales & Gutiérrez-García, 2002),
+but we decided to use K for its simple form and because it is dynamic by giving a
+high penalization depending on the order of magnitude of the likelihood function.
+As an example, suppose that ℓR is equal to −345.1982 for some (θ G , θ Σ ) ∈ ΩG ×
+ΩΣ , with min{ΛG ◦ TG (θ G ), ΛΣ ◦ TΣ (θ Σ )} ≤ 0, so the integer part of this number
+is −345 (ndigs = 3) and therefore K = 103+9 = 1012 . Thus, the penalized value
+is abs(−365.1982) + 1012 = 365.1982 + 1012 .
+
+                        Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 131
+
+
+    The matrices ϵI G and ϵI Σ were included in the function f to avoid the estima-
+tion of G and Σ to be computationally singular in the optimization process (for
+all θ G and θ Σ in the search space), where I G and I Σ are the identity matrices
+with the corresponding dimensions of G and Σ, respectively. The value ϵ > 0 is
+used as a pivot and we choice ϵ = 10−10 . This selection is based on the tolerance
+or limit value in the determinant to declare a matrix as singular, the software R
+version 4.1.0, for example, considers a tolerance with order O(10−16 ).
+   The function (12) is deﬁned such that the parameter vectors that lead to non-
+PD covariance matrices have always the highest values in the minimization process.
+This implies that the HGA discard those cases in a evolutionary way because they
+are the worst candidates for optimizing the log-likelihood function compared to
+the parameter vectors that lead to PD matrices.
+
+4.2.2. Minimizing the Penalized Fitness Function
+
+   Given speciﬁc structures for G and Σ, we propose to apply the HGAs to the
+function f to obtain local optimum candidates and also carrying out local opti-
+mization iteratively until it reaches an optimum. This local optimization could be
+done with Newton-Raphson or another optimization method based on derivatives.
+An overview of the HGAs is available in Appendix B.
+    Since functions TG ◦ ΛG (θ G ) and TΣ ◦ ΛΣ (θ Σ ) are continuous for all θ G ∈ ΩG
+and θ Σ ∈ ΩΣ , the function min{TG ◦ ΛG (θ G ), TΣ ◦ ΛΣ (θ Σ )} is also continuous, for
+all (θ G , θ Σ ) ∈ ΩG ×ΩΣ . This means that if the GA ﬁnds a couple (θ G1 , θ Σ1 ) which
+produces PD matrices G1 and Σ1 , it is possible to conduct a local optimization
+search around it. This is because the log-likelihood functions ℓ∗ and ℓ∗R are diﬀer-
+entiable for all PD matrices G, Σ and, as we discussed before, the continuity of
+min{TG ◦ΛG (θ G ), TΣ ◦ΛΣ (θ Σ )} implies that there exists an open set C ⊆ ΩG ×ΩΣ ,
+with (θ G1 , θ Σ1 ) ∈ C, such that for all (θ G , θ Σ ) ∈ C, their corresponding matrices
+are PD.
+
+4.2.3. Algorithm
+
+   Given the ﬁtness function f , HGA (see Appendix B for details) is applied
+according to the following pseudocode:
+(1)  Initialize population P (0) of size npop in the search space Ω;
+(2)  set g = 0;
+(3)  for i = 1 to niter ;
+(4)    evaluate ﬁtness (f ) of population P (g);
+(5)    select the best-ﬁt individuals from P (g) to produce P ′ (g), according to
+       a probability pelitism ;
+(6)    encode the individuals of P ′ (g);
+(7)    apply the crossover method to produce the population P ′′ (g) from P ′ (g);
+(8)    perform the mutation method on P ′′ (g) to produce the decoded P ′′′ (g);
+(9)    select the best-ﬁt individual of P ′′′ (g);
+(10)    according to a probability plocal , take the decision of carrying out a local
+        optimization;
+
+
+                    Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+132         Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+
+(11)     if the decision of local optimization is aﬃrmative then;
+(12)          carry out local optimization with the best-ﬁt individual of P ′′′ (g) as
+              initial value;
+(13)          replace best-ﬁt individual of P ′′′ (g) with the obtained local optimum
+              to produce the next generation P (g + 1);
+(14)     else;
+(15)          P (g + 1) = P ′′′ (g);
+(16)     end if ;
+(17)     g = g + 1;
+(18)   end for;
+where g is the iteration number, P (g) is the initial population at iteration g, P ′ (g)
+is the resulting population after best-ﬁt individuals selection at iteration g, P ′′ (g)
+is the resulting population after crossover at iteration g and P ′′′ (g) is the resulting
+population after mutation at iteration g.
+
+
+5. Simulation Study
+    A simulation study were conducted to evaluate the proposed methodology
+for optimizing the likelihood functions in equations (6) and (8) given in Sub-
+section 4.2. The proposed methodologies based on HGAs were compared with the
+Newton-Raphson algorithm incorporated in PROC MIXED of SAS® version 9.4. For
+the HGAs, we used the package “GA” (Scrucca, 2017), version 3.2.2 of the sofware
+R, version 4.1.0. The simulations were run on Windows 10, Intel(R) Core(TM) i5-
+4590 3.30 GHz and 8.00 GB of RAM.
+    To carry out the simulation study, we use a dental growth measurements data
+for 11 girls and 16 boys at ages 8, 10, 12 and 14 from Pothoﬀ & Roy (1964) to
+obtain the reference parameters in the simulations. Let us denote Yij the dental
+growth measurement for i-th subject (i = 1, . . . , N ) at jth time (j = 1, . . . , s). We
+consider the model:
+
+ Yij = β0 + β1 Ageij + β2 Genderi + β3 (Ageij ∗ Genderi ) + b0i + b1i Ageij + εij , (13)
+
+where Ageij ∗ Genderi denotes the interaction between age and gender and ϵi =
+(εi1 , . . . , εis )T are independent random vectors following a multivariate normal
+distribution with mean 0 and covariance matrix Σi = Σ• , for all i. The random
+eﬀects vector bi = (b0i , b1i )T in the model (13) is independent of ϵi and follows a
+multivariate normal distribution with mean 0 and covariance matrix D.
+    To create diﬀerent simulation scenarios, we consider two sample sizes: N = 27
+(which is the sample size of the original dataset from Pothoﬀ & Roy (1964)), and
+N = 54 (twice the sample size in the original dataset). The repeated measures
+size was s = 4, which is the number of repeated measures of the original dataset.
+    We also consider two combinations of covariance structures: AR(1) for Σ• with
+Toeplitz for D (AR(1)-TOEP) and Multiple of the identity for Σ• with Toeplitz
+for D (MI-TOEP). We propose a TOEP (2 × 2) for D because we are interested in
+evaluate our proposed method with a structured matrix with equal variances. We
+
+                     Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 133
+
+
+analyze ML and REML methods for each simulation case and therefore, we have
+a total of 8 simulation scenarios. When the sample size is N = 54, we maintain
+the same proportion of boys and girls from the original data set, i.e., 22 girls and
+32 boys.
+    For each scenario, we carry out 500 simulations and the results were summa-
+rized using Means, Medians and Root-Mean-Square-Error (RMSE) for the pro-
+posed method versus Newton-Raphson algorithm of PROC MIXED of SAS® version
+9.4, respectively. The real parameters used in all simulation scenarios were ob-
+tained using the dataset from Pothoﬀ & Roy (1964).
+
+
+5.1. Calibration of HGAs Tuning Parameters
+    Before carrying out the simulations it is necessary “to calibrate” the HGAs
+tuning parameters (see Appendix B). To do this, we selected a simulated dataset
+for each scenario and then we applied the HGAs varying a set of tuning parameters
+until reaching “stability” in the optimal value of the ML and REML functions. In
+this context, the “stability” means that for each one of the 40 simulated datasets,
+we apply several times (we choose 100 times) the HGA with a set of tuning pa-
+rameters and all the optimal values obtained are equal. The tuning parameters
+obtained after this calibration process are:
+
+  • Number of iterations: niter = 250.
+  • Population size: npop = 50 (by default in “ga” function of R, version 4.1.0,
+    GA package).
+  • Crossover probability: pcross = 0.80 (by default in “ga” function of R, version
+    version 4.1.0, GA package ).
+
+  • Mutation probability: pmuta = 0.20.
+  • Local optimization probability: plocal = 0.05 (by default in “ga” function of
+    R, version version 4.1.0, GA package).
+  • Percentage of elitism: pelitism = 5% (by default in “ga” function of R, version
+    version 4.1.0, GA package).
+
+    The search space for the parameters vector (σ0 , ρ0 , σ1 , ρ1 )′ of AR(1)-TOEP
+structure is Ω = (0, 50) × (−1, 1) × (0, 50) × (−1, 1) and the search space for the
+parameters vector (σ0 , ρ0 , σ1 )′ of MI-TOEP combination is Ω = (0, 50) × (−1, 1) ×
+(0, 50). The Toeplitz structures has correlation parameters instead of covariance
+parameters because we used a matrix decomposition similar to the one given in
+the equation (9). Note that the search spaces are large enough to contain the real
+covariance parameters which is the main objetive in the calibration process.
+
+
+
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+134       Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+
+5.2. Results from Both ML and REML Likelihood Functions
+    The simulation results for structure AR(1)-TOEP in model (13) are in Table
+3, and for MI-TOEP structure are in Table 4. There are small diﬀerences for the
+means and medians between the proposed method and Newton-Raphson values.
+However the RMSE are similar to each other and relatively small. This diﬀerences
+are explained by the results obtained in Figures 2 for the combination AR(1)-
+TOEP and 3 for MI-TOEP. They show the comparison of functions −2 log(ML)
+and −2 log(REML) between the proposed method and Newton-Raphson for all dif-
+ferent simulated scenarios. Crosses indicate that the estimated covariance matrix
+for random eﬀects, D, is not PD when Newton-Raphson method is applied but
+with the proposed method it is PD. In these cases, the proposed method reaches
+higher values than Newton-Raphson, because the latter continues optimizing the
+log-likelihood function without taking into account the positive-deﬁniteness of ma-
+trix D. Table 2 shows the percentages of crosses for both structures. The values are
+higher for MI-TOEP structure and these percentages show that Newton-Raphson
+is less eﬃcient to reach PD matrices compared with the proposed method.
+
+Table 2: Percentage of non-PD covariance matrices D (% of crosses) obtained with
+         Newton-Raphson in contrast with the proposed method.
+                                      ML               REML
+                  Structure
+                                N = 27   N = 54   N = 27  N = 54
+                 AR(1)-TOEP      24.8      19.0    22.6    17.2
+                  MI-TOEP        43.8      33.6    38.6    30.4
+                                  Source: Author.
+
+   The results obtained in this subsection suggest that our method is better to
+guarantee PD covariance matrices in an evolutionary way compared to Newton-
+Raphson. Demidenko (2004) exposes this problem when Newton-Raphson is used
+to optimize the log-likelihood function and emphasizes the importance that a
+method yields PD covariance matrices.
+
+
+6. Conclusions
+    We presented an estimation method for the covariance parameters in linear
+mixed models using hybrid genetic algorithms as the optimization method of the
+likelihood function. This method was created to identify the parametrical regions
+where the structured covariance matrices (involved in the optimization process)
+were positive deﬁnite. To do this, we considered a penalized function based on
+either maximum likelihood or restricted maximum likelihood procedures and used
+the minimum eigenvalue function as the identiﬁcation technique. We penalized
+the regions where the eigenvalues were negative in such a way that the hybrid ge-
+netic algorithms evolved rejecting them and giving a good ﬁtness for parametrical
+regions where the eigeinvalues for the covariance matrices were greater than zero.
+
+
+
+
+                  Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 135
+
+Table 3: Results of Monte Carlo simulations for the proposed method compared with
+         Newton-Raphson and using the AR(1)-TOEP structure.
+                                 Maximum likelihood (ML)
+                               4-27                                     4-54
+                  Proposed            Newton-Raphson       Proposed            Newton-Raphson
+Parm    Real Mean Median RMSE Mean Median RMSE Mean Median RMSE Mean Median RMSE
+  σ0    2.069 1.989   1.985 0.295 1.994    1.988 0.291 2.029   2.015 0.207 2.032    2.016 0.206
+  ρ0    0.755 0.778   0.799 0.362 0.725    0.799 0.294 0.779   0.787 0.246 0.757    0.786 0.213
+  ρ1   -0.790 -0.789 -0.796 0.061 -0.793 -0.799 0.059 -0.786 -0.790 0.045 -0.788 -0.791 0.044
+  σ1    2.284 2.285   2.276 0.245 2.281    2.270 0.244 2.278   2.273 0.172 2.276    2.272 0.172
+  β0   16.270 16.286 16.335 0.876 16.286 16.335 0.876 16.251 16.252 0.624 16.251 16.252 0.624
+  β1    1.139 1.082   1.099 1.409 1.080    1.105 1.409 1.114   1.137 0.987 1.113    1.129 0.987
+  β2    0.797 0.814   0.816 0.542 0.814    0.815 0.542 0.776   0.775 0.370 0.776    0.774 0.369
+  β3   -0.321 -0.353 -0.327 0.858 -0.353 -0.325 0.858 -0.340 -0.349 0.567 -0.340 -0.349 0.567
+                          Restricted Maximum likelihood (REML)
+                               4-27                                     4-54
+                  Proposed            Newton-Raphson       Proposed            Newton-Raphson
+Parm    Real Mean Median RMSE Mean Median RMSE Mean Median RMSE Mean Median RMSE
+  σ0    2.069 2.075   2.070 0.297 2.081    2.079 0.294 2.071   2.059 0.208 2.074    2.060 0.207
+  ρ0    0.755 0.750   0.770 0.352 0.706    0.770 0.296 0.766   0.773 0.242 0.746    0.773 0.213
+  ρ1   -0.790 -0.785 -0.792 0.063 -0.788 -0.794 0.061 -0.784 -0.788 0.046 -0.785 -0.789 0.045
+  σ1    2.284 2.290   2.283 0.245 2.287    2.277 0.244 2.280   2.276 0.172 2.278    2.275 0.172
+  β0   16.270 16.286 16.334 0.875 16.286 16.334 0.875 16.251 16.252 0.624 16.251 16.253 0.624
+  β1    1.139 1.082   1.098 1.408 1.081    1.102 1.409 1.113   1.141 0.988 1.113    1.135 0.987
+  β2    0.797 0.814   0.815 0.542 0.814    0.815 0.542 0.776   0.775 0.370 0.776    0.774 0.370
+  β3   -0.321 -0.353 -0.326 0.858 -0.353 -0.326 0.858 -0.340 -0.349 0.567 -0.340 -0.349 0.567
+                                        Source: Author.
+
+    We used hybrid genetic algorithms among a broad list of evolutionary algo-
+rithms because it combines the search power of genetic algorithms as a global op-
+timization technique with the speed of a local optimizer such as Newton-Raphson.
+    The simulation results suggest that the proposed method has a good perfor-
+mance, in terms of the correct estimation of the covariance parameters in linear
+mixed models, compared to Newton-Raphson algorithm and it was even better
+in obtaining positive deﬁnite covariance matrices when both random eﬀects and
+error are included in the model with structured covariance matrices.
+    Finally, for the proposed optimization method based on hybrid genetic algo-
+rithms, there is still room for improvement in terms of calibration of the tuning
+parameters for the genetic algorithm and it is an interesting problem for further
+research.
+
+
+
+
+                      Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+136                                Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+
+
+
+                        −2log(ML) − AR(1)−TOEP − Sample size:27 − Measures:4                                  −2log(ML) − AR(1)−TOEP − Sample size:54 − Measures:4
+
+
+
+
+                                                                                                      1320
+                 660
+                 640
+
+
+
+
+                                                                                                      1280
+Newton Raphson
+
+
+
+
+                                                                                     Newton Raphson
+                 620
+
+
+
+
+                                                                                                      1240
+                 600
+
+
+
+
+                                                                                                      1200
+                 580
+
+
+
+
+                          580         600           620            640         660                               1200    1220   1240     1260     1280    1300    1320
+
+                                            Proposed methodology                                                                Proposed methodology
+
+
+
+                       −2log(REML) − AR(1)−TOEP − Sample size:27 − Measures:4                                −2log(REML) − AR(1)−TOEP − Sample size:54 − Measures:4
+                                                                                                      1320
+                 640
+
+
+
+
+                                                                                                      1280
+Newton Raphson
+
+
+
+
+                                                                                     Newton Raphson
+                 620
+
+
+
+
+                                                                                                      1240
+                 600
+
+
+
+
+                                                                                                      1200
+                 580
+
+
+
+
+                             580        600               620            640                                     1200    1220    1240     1260     1280    1300    1320
+
+                                            Proposed methodology                                                                Proposed methodology
+
+
+Figure 2: Comparison between the proposed methodology and the Newton-Raphson
+          algorithm of the 500 optimal values for both −2 log(M L) and −2 log(REM L)
+          using the combination of AR(1)-TOEP structures. The line x = y is added
+          in each scenario to facilitate comparison. Crosses indicate that the estimated
+          covariance matrix D is not PD for Newton-Raphson algorithm. Gray circles
+          indicate that both proposed method and Newton-Raphson are PD.
+          Source: Author.
+
+
+
+
+                                               Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 137
+
+Table 4: Results of Monte Carlo simulations for the proposed method compared with
+         Newton-Raphson and using the MI-TOEP structure.
+                                  Maximum likelihood (ML)
+                                4-27                                       4-54
+                  Proposed             Newton-Raphson         Proposed            Newton-Raphson
+Parm    Real Mean Median RMSE Mean Median RMSE Mean Median RMSE Mean Median RMSE
+ σ0     2.069 2.040   2.036 0.159 2.025     2.028 0.161 2.060    2.054 0.120 2.053     2.049 0.119
+ σ1     2.069 1.971   1.966 0.291 1.994     1.985 0.274 2.015    1.999 0.213 2.027     2.011 0.205
+ ρ1     0.755 0.919   0.928 0.673 0.699     0.928 0.399 0.816    0.837 0.427 0.726     0.837 0.300
+ β0    16.270 16.182 16.239 1.400 16.182 16.239 1.400 16.293 16.309 1.009 16.293 16.309 1.009
+ β1     1.139 1.267   1.229 2.044 1.267     1.229 2.044 1.067    1.098 1.507 1.067     1.098 1.507
+ β2     0.797 0.797   0.811 0.531 0.797     0.811 0.531 0.762    0.759 0.377 0.762     0.759 0.377
+ β3    -0.321 -0.371 -0.372 0.815 -0.371 -0.372 0.815 -0.300 -0.274 0.604 -0.300 -0.274 0.604
+                          Restricted Maximum likelihood (REML)
+                                4-27                                       4-54
+                  Proposed             Newton-Raphson         Proposed            Newton-Raphson
+Parm    Real Mean Median RMSE Mean Median RMSE Mean Median RMSE Mean Median RMSE
+ σ0     2.069 2.060   2.056 0.159 2.047     2.048 0.158 2.070    2.064 0.120 2.064     2.060 0.119
+ σ1     2.069 2.056   2.051 0.287 2.078     2.070 0.276 2.058    2.041 0.211 2.069     2.051 0.205
+ ρ1     0.755 0.867   0.871 0.633 0.680     0.871 0.402 0.792    0.814 0.414 0.713     0.814 0.302
+ β0    16.270 16.182 16.239 1.400 16.182 16.239 1.400 16.293 16.309 1.009 16.293 16.309 1.009
+ β1     1.139 1.267   1.229 2.044 1.267     1.229 2.044 1.067    1.098 1.507 1.067     1.098 1.507
+ β2     0.797 0.797   0.811 0.531 0.797     0.811 0.531 0.762    0.759 0.377 0.762     0.759 0.377
+ β3    -0.321 -0.371 -0.372 0.815 -0.371 -0.372 0.815 -0.300 -0.274 0.604 -0.300 -0.274 0.604
+                                        Source: Author.
+
+
+
+
+                      Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+138                           Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+
+                        −2log(ML) − MI−TOEP − Sample size:27 − Measures:4                                       −2log(ML) − MI−TOEP − Sample size:54 − Measures:4
+
+
+
+                 660
+
+
+
+
+                                                                                                       1320
+                 640
+Newton Raphson
+
+
+
+
+                                                                                      Newton Raphson
+
+                                                                                                       1280
+                 620
+
+
+
+
+                                                                                                       1240
+                 600
+
+
+
+
+                                                                                                       1200
+                                 600                620             640         660                           1200   1220     1240     1260       1280      1300     1320
+
+                                             Proposed methodology                                                                Proposed methodology
+
+
+
+                       −2log(REML) − MI−TOEP − Sample size:27 − Measures:4                                     −2log(REML) − MI−TOEP − Sample size:54 − Measures:4
+
+
+
+
+                                                                                                       1300
+                 640
+
+
+
+
+                                                                                                       1280
+Newton Raphson
+
+
+
+
+                                                                                      Newton Raphson
+
+                                                                                                       1260
+                 620
+
+
+
+
+                                                                                                       1240
+                 600
+
+
+
+
+                                                                                                       1220
+                 580
+
+
+
+
+                                                                                                       1200
+
+
+
+
+                        580            600                620             640                                 1200     1220     1240      1260           1280      1300
+
+                                             Proposed methodology                                                                Proposed methodology
+
+
+Figure 3: Comparison between the proposed methodology and the Newton-Raphson
+          algorithm of the 500 optimal values for both −2 log(M L) and −2 log(REM L)
+          using the combination of MI-TOEP structures. The line x = y is added in
+          each scenario to facilitate comparison. Crosses indicate that the estimated
+          covariance matrix D is not PD for Newton-Raphson algorithm. Gray circles
+          indicate that both proposed method and Newton-Raphson are PD.
+          Source: Author.
+
+
+
+
+Acknowledgments
+    We thank the school of statistics from the Universidad Nacional de Colombia
+at Medellín for its constinuous support to research initiatives. This work was par-
+tially supported by Colombian Institute for Science and Technology (Colciencias)
+Scholarship Program No. 647.
+                                                                                                                                             
+                                                   Received: July 2022 — Accepted: March 2023
+
+
+References
+Box, G., Jenkins, G. & Reinsel, G. (1970), Time Series Analysis: Forecasting and Control, fourth edn, John Wiley and Sons, New Jersey.
+Chehouri, A., R. Younes, J. P. & Ilinca, A. (2016), ‘A constraint-handling technique for genetic algorithms using a violation factor’, Journal of Computer Science 12(7), 350–362.
+Coello, C. (2002), ‘Theoretical and Numerical Constraint-Handling Techniques used with Evolutionary Algorithms: A Survey of the State of the Art’, Computer Methods in Applied Mechanics and Engineering 191, 1245–1287.
+Coley, D. A. (1998), Introduction to genetic algorithms for scientists and engineers, ﬁrst edn, World scientiﬁc, River Edge, NJ, USA.
+Demidenko, E. (2004), Mixed models: Theory and applications with R, second edn, Wiley, New Jersey.
+Dempster, A., Laird, N. & Rubin, E. (1977), ‘Maximum likelihood from incomplete data via the em algorithm’, Journal of the Royal Statistical Society 39(1), 1–38.
+El-Mihoub, T. A., Hopgood, A. A., Nolle, L. & Battersby, A. (2006), ‘Hybrid Genetic Algorithms: A review’, Engineering Letters 13, 124–137.
+Henderson, C. R. (1984), Applications of linear models in animal breeding, Technical Report Press, University of Guelph, Guelph, Canada.
+Holland, J. H. (1975), Adaptation in Natural and Artiﬁcial Systems, ﬁrst edn, University of Michigan Press, Ann Arbor.
+Kuri-Morales, A. F. & Gutiérrez-García, J. (2002), ‘Penalty Function Methods for Constrained Optimization with Genetic Algorithms: A Statistical Analysis’, MICAI 2002: Advances in Artiﬁcial Intelligence 2313, 108–117.
+Laird, N. M. & Ware, J. H. (1982), ‘Random-eﬀects models for longitudinal data’, Biometrics 38, 963–974.
+Lin, C. (2013), ‘A rough penalty genetic algorithm for constrained optimization’, Information Sciences 241, 119–137.
+Lindstrom, M. J. & Bates, D. M. (1988), ‘Newton-Raphson and EM Algorithms for Linear Mixed-Eﬀects Models for Repeated-Measures Data’, Journal of the American Statistical Association 83, 1014–1022.
+Madar, V. (2015), ‘Direct formulation to Cholesky decomposition of a general nonsingular correlation matrix’, Statistics & Probability Letters 103, 142–147.
+Mebane, W. R. J. & Sekhon, J. S. (2011), ‘Genetic optimization using derivatives: The rgenoud package for r’, Journal of Statistical Software 42(11), 1–26. https: //www.jstatsoft.org/v42/i11/
+Michalewicz, Z. (1998), Genetic algorithms + data structures= evolution programs, second edn, Springer-Verlag, Berlin Heidelberg.
+Munkres, J. R. (2000), Topology, second edn, Prentice Hall, Upper Saddle River.
+Patterson, H. D. & Thompson, R. (1971), ‘Recovery of inter-block information when block sizes are unequal’, Biometrika 58, 545–554.
+Pinheiro, J. C. (1994), Topics in Mixed Eﬀects Models, PhD thesis, University of Wisconsin-Madison, USA.
+Pinheiro, J. C. & Bates, D. M. (1996), ‘Unconstrained parametrizations for variance-covariance matrices’, Statistics and Computing 6, 289–296.
+Pothoﬀ, R. & Roy, S. (1964), ‘A generalized multivariate analysis of variance model useful especially for growth curve problems’, Biometrika 51, 313–326.
+Rao, C. (1972), ‘Estimation of variance and covariance components in linear models’, Journal of the American Statistical Association 67(337), 112–115.
+Reeves, C. & Rowe, J. E. (2002), Genetic algorithms: Principles and perspectives, ﬁrst edn, Springer, New York.
+SAS Institute Inc. (2008), SAS/STAT® 9.2 User’s Guide. The MIXED Procedure (Chapter). Cary, NC: SAS Institute Inc.
+Schott, J. R. (1997), Matrix analysis for statistics, third edn, Wiley, New Jersey.
+Scrucca, L. (2017), ‘On some extensions to ga package: hybrid optimization, parallelisation and islands evolution’, The R Journal. 9(1), 187–206.
+Verbeke, G. & Molenberghs, G. (1997), Linear Mixed Models in Practice- A SAS-Oriented Approach, ﬁrst edn, Springer, New York.
+West, B., Welch, K. & Galecki, A. (2006), Linear Mixed Models-A practical guide using statistical software, second edn, Chapman and Hall/CRC, London.
+Wolﬁnger, R. (1993), ‘Covariance structure selection in general mixed models’, Comunications in Statistics - Simulation and Computation 22, 1079–1106.
+Wolﬁnger, R., Tobias, R. & Sall, J. (1994), ‘Computing gaussian likelihoods and their derivates for general linear mixed models’, SIAM Journal on Scientiﬁc Computing 15(6), 1294–1310.
+
+
+
+Appendix A.
+Appendix A.1.
+   The matrix σ 2 I r + σ1 J r has eigenvalues (rσ1 + σ 2 ) with multiplicity 1 and σ 2
+with multiplicity (r − 1).
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 141
+
+
+Proof . The characteristic polynomial of σ 2 I r + σ1 J r is given by
+
+
+                   |σ 2 I r + σ1′ J r − λI r |    =    |σ1 J r − (λ − σ 2 )I r |
+                                                                  (λ − σ 2 )
+                                                  =    σ1r J r −             Ir
+                                                                     σ1
+
+But J r = 11′ , where 1 denotes the all-ones vector of length r, so 11′ and 1′ 1 = r
+have the same positive eigenvalue, r, and the others are equal to 0 with multiplicity
+(r − 1) (Schott, 1997, page 131). So
+                                                               r−1
+                            (λ − σ 2 )                 λ − σ2
+                                       = r or                          =0
+                               σ1                        σ1
+
+and therefore the eigenvalues of σ 2 I r + σ1 J r are λ = (rσ1 + σ 2 ) with multiplicity
+1 and λ = σ 2 with multiplicity (r − 1).
+
+
+Appendix A.2. Grandient and Hessian for Newton-Raphson
+              algorithm
+    The l-th element for gradient vector and (l, s)-th element for Hessian matrix
+to optimize the function (6) (ML case), Wolﬁnger et al. (1994) showed that they
+are given by:
+                                     ∂ℓ (G, Σ)
+                        glM L   =
+                                        ∂θl
+                                       (         )
+                                             ∂V               ∂V −1
+                                =    tr V −1       − r ′ V −1     V r
+                                             ∂θl              ∂θl
+and
+    ML         ∂ 2 ℓ (G, Σ)
+   Hl,s    =
+                  ∂θl ∂θs
+                     (                )     (             )
+                           ∂V −1 ∂V                ∂2V                  ∂V −1 ∂V −1
+           =   −tr V −1         V       + tr V −1           + 2r ′ V −1     V     V r
+                            ∂θl   ∂θs             ∂θl ∂θs               ∂θl   ∂θs
+                            ∂V −1 ∗ ∗′ −1 ∂V −1              ∂2V
+               −2r ′ V −1       V X X V       V r − r ′ V −1        V −1 r,
+                            ∂θl           ∂θs                ∂θl θs
+                                                                                   −1
+where X ∗ = XC for a matrix C satisfying CC ′ = X ′ V −1 X                               .
+   Wolﬁnger et al. (1994) also showed that the l-th element for gradient vector
+and (l, s)-th element for Hessian matrix to optimize the function (8) (REML case)
+are given by:
+                                                           (                 )
+                            ∂ℓR (G, Σ)                         ′     ∂V −1 ∗
+               glREM L =                  =      glM L − tr X ∗ V −1     V X
+                               ∂θl                                   ∂θl
+and
+                             (                             )
+                                 ′     ∂V −1 ∂V −1 ∗
+ REM L
+Hl,s      =     ML
+               Hl,s  + 2 × tr X ∗ V −1      V        V   X
+                                       ∂θl       ∂θs
+                   (                                         )     (                        )
+                        ′    ∂V              ′     ∂V −1 ∗             ′     ∂2V
+               −tr X ∗ V −1      V −1 X ∗ X ∗ V −1     V  X    − tr X ∗ V −1        V −1 X ∗ .
+                             ∂θl                   ∂θs                       ∂θl θs
+
+
+                    Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+142         Mauricio A. Mazo-Lopera, Juan C. Salazar-Uribe & Juan C. Correa-Morales
+
+
+Appendix B. Hybrid Genetic Algorithms
+    Genetic Algorithms are heuristic methods based on processes of natural selec-
+tion and genetic dynamics, as the key to solve optimization problems. Holland
+(1975) was the ﬁrst to implement the idea of a population evolutionary develop-
+ment to ﬁnd an optimal solution to a speciﬁc problem.
+   The advantage of evolutionary algorithms includes its ability to address prob-
+lems for which the objetive function has all types of discontinuities and restrictions,
+which are diﬃcult to control. The optimization of the functions (6) and (8) is not
+an easy task, given the condition of positive deﬁniteness for the covariance matrices
+and also the restriction to keep a speciﬁc structure for these matrices.
+    The power of GAs as a global optimization technique could be combined with
+the speed of a local optimizer (Scrucca, 2017). This extension of GAs is known
+as Hybrid Genetic Algorithms which incorporates a global search and also a lo-
+cal optimization based on the classical methodologies, such as Nelder-Mead or
+Newton-Raphson. This idea accelerates the search towards the global optimum
+El-Mihoub et al. (2006) and keeps the GAs ability to address restrictions diﬃ-
+cult to manage. Scrucca (2017) describes the HGAs technique and gives diﬀerent
+applications by using the package “GA” of the software R.
+
+
+Appendix B.1. HGAs Components
+      The HGAs are described by the following components:
+
+- Fitness function: used to describe a speciﬁc problem. It depends on a vector of
+  parameters and the goal of GAs is to optimize it (Coley, 1998).
+
+- Search space: a wide range of possible solutions to locate the optimum of the
+  ﬁtness function. In the continuous case, the search space is, in general, a hyper-
+  cube.
+
+- Population: a set of possible solutions in the search space. Individuals of this
+  population are coded in a ﬁxed-length bit string representation.
+
+- Crossover method: It mixes genetic fragments of the better solutions to form
+  new, on average even better solutions.
+
+- Mutation operator: It allows permanent diversity within the solutions.
+
+- Local optimizer: a classical methodology based on derivatives to carry out a local
+  optimization.
+
+
+Appendix B.2. HGAs Parameters
+    The parameters into the HGAs, related with the above components are de-
+scribed as follows:
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+
+An Adaptive Method for Likelihood Optimizar in LMM Under Restricted Search Spaces 143
+
+
+- Search space: It depends on the number of parameters in the ﬁtness function
+  and it is, in general, an euclidean subset which contains a wide range of possible
+  solutions. We denote it by Ω.
+
+- Number of iterations: It is a ﬁxed integer indicating how many times must be
+  repeated the optimization process. We denote it by niter .
+- Population size: It is the number of elements in the search space at each iteration.
+  We denote it by npop .
+
+- Crossover probability: It is a ﬁxed value in the interval (0; 1) which gives the
+  probability of applying the crossover procedure at each iteration. We denote it
+  by pcross .
+- Mutation probability: It is a ﬁxed value in the interval (0; 1) which gives the
+  probability of applying the mutation procedure at each iteration. We denote it
+  by pmuta .
+
+- Local optimization probability: It is a ﬁxed value in the interval (0; 1) which gives
+  the probability of applying the local search at each iteration. We denote it by
+  plocal .
+- Percentage of elitism: It is the percentage of the best ranked individuals in the
+  population to be selected for the crossover process. We denote it by pelitism ×100.
+
+   For a more detailed development of GAs and HGAs see, for instance Michalewicz
+(1998) and Reeves & Rowe (2002).
+
+
+
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 121–143
+

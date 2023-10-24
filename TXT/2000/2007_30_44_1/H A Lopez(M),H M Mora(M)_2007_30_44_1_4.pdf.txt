@@ -1,0 +1,601 @@
+Cálculo de los estimadores de regresión cuantílica lineal por medio del método ACCPM
+Universidad de la Sabana
+Universidad Nacional de Colombia
+Resumen
+Se muestra cómo calcular los estimadores en regresión cuantílica por medio del método de optimización no diferenciable ACCPM (Analytic Center Cutting Plane Method). El cálculo de dichos estimadores usualmente se encuentra por medio de programación lineal y sus respectivas técnicas de solución (método simplex, métodos de punto interior, etc.). La primera parte presenta las generalidades de la regresión cuantílica y su formulación como un problema de programación lineal. Además, se realiza una breve descripción del método ACCPM. Por último, se muestra la aplicación del método ACCPM para el cálculo de estimadores por cuantiles y los resultados numéricos y comparaciones del método ACCPM con el paquete estadístico R y el paquete de optimización GAMS.
+Palabras clave: optimización, estimador de regresión, programación lineal, estimación cuantílica.
+Introducción a la regresión cuantílica
+En los modelos de regresión, los errores se asumen como una sucesión un de variables aleatorias independientes e idénticamente distribuidas con media cero Generalmente la distribución que se asume es la normal. Sin embargo, no siempre se cumple el supuesto de normalidad ya que la distribución puede ser asimétrica. Koenker & Bassett (1978) introducen el concepto de regresión cuantílica (RC ) como una solución a dichos problemas y demuestran que los estimadores por cuantiles son más eficientes que el estimador máximo verosímil de muchos modelos paramétricos convencionales.
+    En los métodos de regresión clásicos el objetivo es minimizar la suma de los
+residuales al cuadrado y utilizar la media como estimador. La regresión cuantílica
+busca minimizar una suma de errores absolutos ponderados con pesos asimétricos
+y utiliza los cuantiles como estimadores.
+
+
+1.1.     Definición de cuantil
+     La RC utiliza la noción clásica de cuantil para el cálculo de las estimaciones.
+   Dado un τ ∈ (0, 1) y una variable aleatoria Y (continua o discreta), el τ −ésimo
+cuantil es definido como:
+
+                               Q(τ ) = inf {y : F (y) ≥ τ }
+
+donde F es la función de distribución de Y .
+    Por otro lado, si se tiene {Y1 , Y2 , . . . , Yn }, una muestra con observaciones inde-
+pendientes, es posible encontrar una estimación de la función de distribución por
+medio de la distribución empírica de la muestra definida como el cociente entre
+el número de las observaciones inferiores o iguales al valor de interés y el número
+total de las observaciones:
+                                                 #(Yi ≤ y)
+                                  Fb (y) =                                              (1)
+                                                      n
+Análogamente, es posible definir una estimación de los cuantiles por medio de la
+distribución empírica así:
+                                               
+                               b ) = inf y : Fb (y) ≥ τ
+                              Q(τ                                                       (2)
+
+     El problema (2) es equivalente a:
+                            (                                           )
+                               X                  X
+             b ) = argmin
+             Q(τ                   τ |yi − ετ | +   (1 − τ ) |yi − ετ |
+                       ετ ∈R    yi ≥ετ              yi <ετ
+
+
+                             b ) es a través de una función de chequeo definida
+    Otra manera de encontrar Q(τ
+de la siguiente manera:
+
+                       ρτ (r) = r(τ − I(r < 0)),        0<τ <1
+
+                                         Revista Colombiana de Estadística 30 (2007) 53–68
+
+Estimadores de regresión cuantílica lineal por medio del método ACCPM                     55
+                       
+                           1,       si r < 0;
+donde:   I(r < 0) =
+                           0,       si r ≥ 0.
+   De este modo el problema (3) correspondiente al cálculo del τ −ésimo cuantil
+queda reformulado así:
+                                      X
+                        b ) = argmin
+                        Q(τ              ρτ (yi − ετ )                     (3)
+                                          ετ ∈R       i
+
+
+1.2.     Regresión cuantílica
+    Dados m vectores x1 , . . . , xm ∈ Rn , que representan las variables explica-
+tivas y m valores reales y1 , y2 , . . . , ym , que representan la variable explicada1 ,
+en los problemas de regresión por mínimos cuadrados se busca un vector β =
+(β1 , . . . , βn−1 , βn )T ∈ Rn , solución del siguiente problema de optimización:
+                                                m
+                                                X                       2
+                                 min f (β) =              yi − β T xi                    (4)
+                                                i=1
+
+    Si asumimos que yi − β T xi = ui , i = 1, 2, . . . , n y que el valor
+                                                                        esperado condi-
+cional de ui con respecto a las observaciones es cero E(ui | xi = 0), entonces la
+media condicional de yi con respecto a xi es
+                                      E(yi | xi ) = β T xi
+La solución del problema de optimización (4) está dada por
+                                        −1 T
+                              β = XT X        X y
+                              T
+donde X = x1 x2 · · · xm          y y = [y1 , y2 , . . . , ym ].
+    Ahora, si se supone que yi = βτT xi + ui ,τ y además que el valor esperado con-
+dicional no necesariamente es cero, pero el τ −ésimo cuantil del error con respecto
+a las variables regresoras es cero Qτ (ui ,τ | xi ) = 0 , entonces el τ −ésimo cuantil
+de yi con respecto a las variables regresoras se puede escribir
+                                      Qτ (yi | xi ) = βτT xi
+La estimación de βτ se encuentra por medio de
+                                                                        
+                       X                      X                         
+       βbτ = arg minn          τ yi − βτT xi +      (1 − τ ) yi − βτT xi                 (5)
+                βτ ∈R                                                   
+                           T i
+                           yi ≥βτ x             T i           yi <βτ x
+
+que es equivalente al siguiente problema de optimización:
+                                                m
+                                                X                            
+                                βbτ = argmin          ρτ yi − β T xi                     (6)
+                                      βτ ∈Rn i=1
+
+donde ρτ es la función de chequeo y τ es un valor en (0, 1).
+   El problema (6) resulta ser un problema de optimización convexa.
+  1 Es decir, se tienen n variables explicativas y el tamaño de la muestra es m.
+
+
+
+
+                                            Revista Colombiana de Estadística 30 (2007) 53–68
+
+56                                              Héctor Andrés López & Héctor Manuel Mora
+
+
+1.3.     Cálculo de βbτ por medio de programación lineal
+   La técnica más usada para solucionar el problema de regresión cuantílica (6) es
+por medio de su representación como un problema de programación lineal (Koenker
+2005). La función de chequeo ρτ se puede escribir como la suma de dos funciones
+positivas:
+                         ρτ (r) = τ p+ (r) + (1 − τ ) p− (r)
+donde p+ (r) = max {0, r} y p− (r) = max {0, −r}.
+   Sean ui = p+ (yi −β T xi ), vi = p− (yi −β T xi ), u = (u1 , . . . , um ), v = (v1 , . . . , vm )
+y 1 = [1, 1, 1, . . . , 1] un vector de unos de dimensión adecuada.
+   La formulación del problema de regresión cuantílica como un problema de
+programación lineal está dada por:
+
+               min{τ 1T u + (1 − τ )1T v : y = Xβ + u − v, (u, v) ∈ R2m
+                                                                     + }                        (7)
+
+   El problema de programación lineal (7) tiene n + 2m variables, m restriccio-
+nes y 2m variables no negativas. La formulación dual del problema de regresión
+cuantílica es            
+                     max y T d : X T d = 0, d ∈ [τ − 1, τ ]m                (8)
+
+donde d = [d1 , d2 , . . . , dm ]T es el vector de variables duales. Dicho problema tiene
+n+2m restricciones y m variables. Es decir, son menos variables que en el problema
+primal. Por lo tanto, en la práctica es más fácil resolver el problema dual para
+regresión cuantílica que el problema primal.
+   La formulación del problema dual para regresión cuantílica es equivalente a la
+usada en la formulación estándar de los métodos de punto interior para progra-
+mación lineal con variables acotadas. Dicho algoritmo se encuentra descrito en
+Koenker (2005) e implementado en el paquete quantreg del software estadístico
+R. Este paquete es el más usado por las personas que trabajan regresión cuantílica.
+
+
+2.     Método ACCPM
+   El método ACCPM (Analytic Center Cutting Plane Method) fue creado por
+Goffin, Haurie & Vial (1992). El método ACCPM hace parte de los métodos
+de planos de corte. Se presentan los conceptos básicos del método y algunas
+observaciones sobre su implementación desarrollada en Petón & Vial (2001).
+
+
+2.1.     Métodos de planos de corte
+    La mayoría de algoritmos de planos de corte resuelven problemas como el
+siguiente:
+
+                                             min cT x
+                                           s.a. x ∈ X
+
+                                             Revista Colombiana de Estadística 30 (2007) 53–68
+
+Estimadores de regresión cuantílica lineal por medio del método ACCPM               57
+
+donde X ⊂ Rn es un conjunto convexo y acotado. Los problemas de la forma
+
+                                     min f (y)
+                                    s.a. y ∈ Y
+
+donde Y ⊂ Rn−1 es un conjunto convexo y f es convexa, se pueden convertir a
+problemas con la formulación del problema inicial de la siguiente manera:
+
+                                       min z
+                                 s.a. f (y) − z ≤ 0
+                                      y∈Y
+
+tomando x = (z, y) y X = {(z, y) : f (y) − z ≤ 0, y ∈ Y } .
+    Estos métodos construyen una aproximación lineal de la región factible X “me-
+jorándola” en cada iteración.
+    Sea P0 una aproximación poliédrica de X (X ⊂ P0 ) y x0 el punto óptimo de
+cT x en P0 . La formulación general de un algoritmo de planos de corte para resolver
+el problema anterior es:
+
+                           Método de planos de corte
+         Inicialización
+             k := 0
+             Definir P0 ⊃ X
+                                    ˘              ¯
+             Encontrar x0 = arg min cT x : x ∈ P0
+                     k
+         Mientras x ∈  / X hacer
+                                       ˘              ¯
+             Definir un hiperplano Hk : x : aTk x = bk que separe xk de X
+                          ˘     T
+                                       ¯
+             Pk+1 = Pk ∩ x : ak x ≤ bk
+                            ˘               ¯
+             xk+1 = arg min cT x : x ∈ Pk+1
+             k =k+1
+         Fin mientras
+
+    Los diversos algoritmos de planos de corte difieren en la manera de seleccionar
+el nuevo punto xk+1 . Este es el aspecto de mayor importancia ya que cuanto mejor
+sea el corte definido por xk+1 , más rápido convergerá el algoritmo.
+    Entre los métodos de planos de corte, se encuentran los métodos basados en
+centros. Estos métodos definen xk+1 por medio del cálculo del centro de un con-
+junto convexo y compacto llamado conjunto de localización L.
+   El conjunto de localización L está formado por la intersección de los semies-
+pacios generados por la aproximación lineal de la región factible y por una cota
+superior de la función objetivo
+                                
+                           L = x : Ax ≤ b, cT x ≤ z
+
+    Los métodos basados en centros difieren en la manera de definir dicho punto
+del conjunto de localización. Entre los métodos más conocidos se encuentran: el
+método del centro de gravedad, el método volumétrico y el ACCPM.
+
+                                      Revista Colombiana de Estadística 30 (2007) 53–68
+
+58                                       Héctor Andrés López & Héctor Manuel Mora
+
+2.2.     Fundamentos matemáticos del método ACCPM
+   El método ACCPM se aplica a los problemas de optimización que pueden ser
+representados de la siguiente manera:
+
+                              min{f (x) : x ∈ X ⊆ X0 }                              (9)
+
+donde el conjunto X ⊂ Rn es convexo, la función f : Rn → R es convexa y X0 es
+un poliedro acotado.
+    Los métodos de planos de corte se basan en la interacción de dos procedimien-
+tos: el oráculo y el programa principal.
+   El programa principal trabaja sobre la relajación lineal de la región factible del
+problema de optimización (9), calculando en cada iteración del método un nuevo
+punto central. Además, controla la convergencia del proceso.
+   El oráculo toma el punto central como entrada y retorna uno o varios planos de
+corte al programa principal. Estos planos son de dos tipos: cortes de optimalidad
+o cortes de factibilidad, dependiendo de la naturaleza del punto.
+
+
+2.2.1.    El oráculo
+
+     Dado el punto x ∈ X0 , la salida del oráculo está dada así:
+
+       Cortes de factibilidad: si x ∈   / X (x no es factible), el oráculo retorna el
+       vector (γ0 , γ) ∈ R × Rn y el corte de factibilidad:
+
+                               hγ, x − xi + γ0 ≤ 0, ∀x ∈ Xt                        (10)
+
+       Cortes de optimalidad: el punto es factible (x ∈ X); el oráculo retorna
+       f (x) y un subgradiente γ ∈ ∂f (x), que definen la desigualdad conocida como
+       corte de optimalidad:
+
+                            f (x) ≥ f (x) + hγ, x − xi , ∀x ∈ X                    (11)
+
+
+2.2.2.    Conjunto de localización
+
+   Sea (x1 , . . . , xK ) una sucesión de puntos centrales. El conjunto de índices K
+puede ser expresado como la unión de dos conjuntos disyuntos IK y JK donde
+
+                 Ik = {k : xk es no factible (corte de factibilidad)}
+                 Jk = {k : xk es factible (corte de optimalidad)}
+
+Si JK 6= ∅ se define la cota superior de la solución del problema (9) como
+z K = min{f (xk ) | k ∈ JK }. Tomando la unión de todos los cortes y desigualdades
+obtenidos anteriormente, se define un subconjunto del epígrafo de f . Este conjunto
+contiene la solución óptima y se conoce como el conjunto de localización y se
+
+                                       Revista Colombiana de Estadística 30 (2007) 53–68
+
+Estimadores de regresión cuantílica lineal por medio del método ACCPM                  59
+
+denota LK ⊆ Rn+1 . El conjunto de localización está constituido por las siguientes
+desigualdades:
+
+                         z ≥ f (xk ) + γ k , x − xk ,     k ∈ JK                     (12)
+                                k        k
+                        0 ≥ γ ,x − x         + γ0k ,   ∀k ∈ IK                       (13)
+                       zK ≥ z                                                        (14)
+                         b ≥ hB, xi                                                  (15)
+
+El primer conjunto de restricciones corresponde a los cortes de optimalidad (12), el
+segundo conjunto recibe el nombre de cortes de factibilidad, el tercer conjunto de
+restricciones (14) define la cota superior del problema de optimización, el último
+conjunto de restricciones son fijas. Usualmente se utilizan restricciones de caja
+para las variables de decisión con el objetivo de definir esta última desigualdad
+(15).
+   Por otro lado, es posible asociar con (12), (13), (14) y (15) las variables duales
+αjk ≥ 0, µk ≥ 0, ν ≥ 0 y ρ ∈ R que satisfacen la desigualdad
+             X                           X                        
+        z≥        αk f (xk ) − γ k , xk +        µk γ0k − γ k , xk + hb, ρi      (16)
+             k∈JK                             k∈IK
+
+para todo z tal que (z, x) ∈ LK . La expresión del lado derecho en (16) es una
+cota inferior del problema (9). Dicha cota se notará z K . Dadas las cotas superior
+e inferior es posible definir una brecha o salto de dualidad: dg,k = z K − z K . En la
+implementación del método es usual trabajar con la brecha de dualidad relativa:
+                                          zK − zK
+                                dg,k =
+                                         max {1, z K }
+Dicho valor es muy importante debido a que con él se construye el criterio de
+parada. El método se detiene cuando dg,k ≤ .
+
+2.2.3.   Método genérico de planos de corte
+
+   A continuación se presentan los pasos básicos de los métodos de planos de
+corte:
+                       Método genérico de planos de corte
+               1. Prueba de terminación del método
+               2. Escoger un punto central (x, z) ∈ LK
+               3. Calcular una cota inferior para z ∈ LK
+               4. Llamar al oráculo para x. El oráculo retorna
+                  (a) Cortes de factibilidad (si x es no factible)
+                  (b) Cortes de optimalidad (si x es factible)
+               5. Calcular la cota superior para z ∈ LK
+               6. Agregar el nuevo corte al conjunto de localización LK
+
+Los diversos métodos de planos de corte difieren en la forma de escoger el punto
+central en LK . El método ACCPM encuentra el centro analítico del conjunto
+
+                                         Revista Colombiana de Estadística 30 (2007) 53–68
+
+60                                                 Héctor Andrés López & Héctor Manuel Mora
+
+de localización LK . En la biblioteca desarrollada por Petón & Vial (2001) se
+encuentran implementados los pasos 2, 3 y 5 en Visual C++. Los pasos 1 y 4
+debe implementarlos el usuario. Dicha implementación depende del problema a
+resolver.
+
+
+2.2.4.    Cálculo del centro analítico
+
+    Como se mencionó anteriormente, ACCPM calcula el centro analítico del con-
+junto de localización. De forma compacta el conjunto de localización se escribe de
+la siguiente manera:
+                              LK = {ex : AT x
+                                            e ≤ c}
+El centro analítico del poliedro acotado LK es la única solución (en caso de existir)
+del siguiente problema de optimización2 :
+                                          K
+                                           X                           
+                                                                      T
+                          argmin       −         log(si ) : s = c − A x
+                                                                      e
+                                           i=1
+
+En la ecuación anterior, se penalizan los puntos cercanos a la frontera, es decir,
+las variables de holgura (si ) que tiendan a cero.
+    Para el cálculo del centro analítico, los métodos se basan en algoritmos de punto
+interior para programación no lineal, tales como método primal, método dual,
+método primal-dual y método primal proyectivo (Vial 1998). La implementación
+usada del método ACCPM obtiene el centro analítico por medio del método primal
+proyectivo desarrollado en Du Merle (1995).
+
+
+2.2.5.    Restricciones de caja
+
+    El conjunto de localización es acotado si X0 es acotado. En la mayoría de
+aplicaciones de optimización es posible asumir que cada una de las variables de
+decisión se encuentra restringida por unos valores máximos y mínimos (restriccio-
+nes de caja), es decir,
+
+                             xmín ≤ xi ≤ xmáx ,          i = 1, . . . , n
+
+La implementación de ACCPM supone la existencia de restricciones de caja.
+
+
+3.       Cálculo de los estimadores de regresión
+         cuantílica por medio del método ACCPM
+   En esta sección se presenta la forma de aplicar el método ACCPM en el cálculo
+de los estimadores de regresión cuantílica. Además, se presentan resultados nu-
+                                                                        x : AT x
+   2 Para que sea válido el cálculo del centro analítico se supone que {e      e ≤ c} es acotado y
+tiene interior no vacío.
+
+méricos y comparaciones con el paquete R (R Development Core Team 2006) y
+GAMS3 (López 2006b).
+
+
+3.1.     Subgradiente y oráculo para el problema de regresión
+         cuantílica
+   El modelo de optimización para regresión cuantílica se escribe de la forma
+                                                    m
+                                                    X                          
+                     βbτ = argminβ∈Rn f (β) =             ρτ yi − β T xi                (17)
+                                                    i=1
+
+donde yi ∈ R, xi ∈ Rn , i = 1, . . . , m. Es decir, m es el número de datos y n el
+número de variables explicativas, ρτ (u) es la función de chequeo con τ ∈ (0, 1).
+   Para el anterior problema un subgradiente (Mora 2005) está dado por
+                                            m
+                                            X                     m
+                                                                  X
+                       γ = γ(f, β) = −τ            xi − (τ − 1)           xi
+                                            i=1                    i=1
+                                           ri >0                  ri <0
+
+
+donde ri = yi − β T xi .
+   El subgradiente descrito anteriormente se puede escribir en forma desagregada
+Para efectos de programación se da el valor vectorial 0 al subgradiente γi cuando
+ri ∈ (−, ), con  positivo y pequeño, es decir, cuando el residuo es casi 0. En
+este caso γi queda reformulado de la siguiente manera:
+
+Por otro lado, como el problema de regresión cuantílica es un problema de op-
+timización sin restricciones, solo se generan cortes de optimalidad en el método
+ACCPM. Dichos cortes se expresan de la siguiente forma:
+
+                           f (β) ≥ f (β k+1 ) + γ k+1 , β − β k+1
+  3 GAMS (General Algebraic Modeling System) es un lenguaje de programación que tiene por
+
+objetivo encontrar solución a diversos problemas de optimización a pequeña y gran escala. Es
+posible obtener más información, manuales, ayuda y una versión demo en la página www.gams.com
+
+donde β k+1 y γ k+1 son, respectivamente, el centro analítico y el subgradiente
+generados en la k−ésima iteración.
+   A continuación se presenta la descripción del algoritmo del oráculo para el
+problema de regresión cuantílica.
+
+                 Oráculo para el problema de regresión cuantílica
+
+   En el caso del método ACCPM, βb se obtiene por medio del cálculo del centro
+analítico del conjunto de localización. Otro factor de gran importancia es el valor
+de εs . Dicho valor se llamará épsilon del subgradiente.
+    Otros aspectos importantes del método ACCPM son la brecha de dualidad y
+las restricciones de caja. La brecha de dualidad utilizada es
+                                                  |β k − β k |
+                                  dualitygap =
+                                                 max{1, |β k |}
+donde β k y β k son las cotas superior e inferior del valor óptimo obtenidas en la
+k−ésima iteración. Las restricciones de caja utilizadas son de la forma
+                                        −c ≤ βi ≤ c
+donde i = 1, . . . , n y c > 0.
+
+
+3.2.     Resultados numéricos y comparaciones
+    Los resultados numéricos presentados a continuación corresponden al tiempo
+de ejecución de los paquetes utilizados para hallar los estimadores del problema
+de regresión cuantílica (ACCPM, R y GAMS4 ). El equipo utilizado para el desa-
+rrollo de las pruebas fue un computador con sistema operacional Windows XP,
+procesador Pentium 4 con 2.4 GHz y 512 Mb de RAM.
+   4 El problema resuelto por GAMS fue el problema dual para regresión cuantílica debido a que
+
+es de menor tamaño que el problema primal.
+   El solver de optimización utilizado por GAMS es el BDMLP 1.3.
+    Los tiempos dados son aproximados e incluyen el tiempo de algunas tareas
+propias del sistema operativo. No se hacen comparaciones de requerimientos de
+memoria debido a que no se tiene esta información para GAMS ni para R. El
+criterio de parada utilizado en el método ACCPM es la obtención de una brecha
+de dualidad menor que un valor dado (θ):
+
+                                      dg,k ≤ θ
+
+    El valor de τ es 0.8. No es necesario presentar resultados con otros valores de τ
+debido a que cambios en dicho valor no generan cambios en el tiempo de ejecución
+de los algoritmos.
+    Todos los archivos de prueba utilizados fueron generados por medio de números
+aleatorios. Los valores de n se encuentran entre 5 y 20. Se supone que la matriz
+de datos no tiene variables redundantes y es de naturaleza densa. En todas las
+pruebas se tomó el épsilon del subgradiente como εs = 10−5 .
+   La tabla 1 muestra la solución obtenida con R, GAMS y ACCPM para una
+base de datos con m = 10000 y n = 13. Para el método ACCPM se hicieron
+dos pruebas, con θ = 10−3 y θ = 10−6 . Además, para las restricciones de caja
+c = 1000.
+           Tabla 1: Comparación de resultados para n = 13 y m = 10000.
+    Es importante notar que con tres cifras decimales, la solución obtenida con los
+tres paquetes es la misma.
+    La tabla 2 muestra las diferencias de cálculo del método ACCPM cambiando
+el valor de θ. Los diferentes valores son 10−3 , 10−4 , 10−5 y 10−6 con m = 25000
+y n = 10 y las restricciones de caja : −1000 ≤ βi ≤ 1000, con i = 1, . . . , 15.
+   Para una aproximación de 10−6 es necesario generar 57 cortes más que en el
+caso de 10−3 . Es decir un 62% más de cortes. Además, el tiempo de ejecución con
+θ = 10−6 fue 2.3 segundos mayor que con θ = 10−3 . Por lo tanto, utilizó el 61%
+más de tiempo.
+               Tabla 2: Tiempos y cortes dependiendo del valor de θ.
+
+   La tabla 3 muestra la solución de un problema con m = 15000 y n = 10,
+variando los valores de las restricciones de caja: −c ≤ βi ≤ c, con i = 1, . . . , 10.
+Se tomó θ = 10−4 .
+
+      Tabla 3: Tiempos y cortes para varios valores de c (restricciones de caja).
+
+   El tamaño de la caja no tiene mayor influencia en el tiempo de ejecución y
+número de iteraciones (cortes) del método ACCPM.
+    La tabla 4 muestra la solución del método ACCPM con n = 12, m = 18000 y
+θ = 10−3 para cuatro archivos distintos. El primer archivo es generado por nú-
+meros aleatorios en el intervalo (0, 1), el segundo archivo es generado por números
+aleatorios en (0, 100), el tercer archivo con números aleatorios en (100, 1000) y
+el cuarto archivo con números aleatorios en (1000, 100000). El objetivo de reali-
+zar dichas comparaciones es revisar las diferencias de ejecución del método para
+problemas de igual tamaño y datos diferentes.
+
+     Tabla 4: Solución de problemas con n = 12, m = 18000 para datos distintos.
+
+    Según la tabla 4, no existe mucha diferencia entre el número de iteraciones y
+el tiempo de ejecución para problemas con datos distintos y el mismo tamaño.
+    Las siguientes tablas (5, 6 y 7) presentan el tiempo de ejecución de cada uno
+de los paquetes, variando el valor de n y el valor de m. El símbolo X indica que
+no se dispone de ese valor de tiempo porque el problema resultó demasiado grande
+y no pudo ser resuelto por el paquete indicado.
+   La tabla 5 muestra los resultados para varios valores de m = 100, 300, 1000,
+5000, 10000, 30000, 50000, 80000, 100000, 200000 300000 y 400000 con n = 5. Se
+toma θ con un valor de 10−3 y c = 1000.
+
+        Tabla 5: Comparación de tiempos ACCPM, GAMS y R para n = 5.
+
+   Análogamente, la tabla 6 muestra los resultados para los mismos valores de m
+
+        Tabla 6: Comparación de tiempos ACCPM, GAMS y R para n = 10.
+
+   La tabla 7 muestra los resultados para los mismos valores de m de las tablas
+anteriores y n = 20, θ = 10−3 , c = 1000.
+    De las tablas 5, 6 y 7 es posible notar lo siguiente:
+    Para m ≤ 10000, el paquete R es muy eficiente debido a que en todas las pruebas
+realizadas encuentra los estimadores en menos de 2 segundos y para m ≥ 30000
+el tiempo del método ACCPM es menor que el tiempo de R y el de la solución
+obtenida por GAMS para el problema dual de regresión cuantílica. Además, el
+tiempo de ACCPM aumenta de forma más o menos lineal. Con los otros dos
+paquetes el tiempo de ejecución crece de forma más acelerada y en algunos casos
+no es posible encontrar la solución. Por ejemplo, para n = 5 los tiempos con
+
+       Tabla 7: Comparación de tiempos ACCPM, GAMS y R para n = 20.
+
+ACCPM se encuentran entre 0.8 y 3.1 segundos (0.8 segundos para m = 100 y
+3.1 segundos para m = 400000). Los tiempos de R se encuentran entre 0 y 492
+segundos. Gams entre 0 y 542 segundos. Este último no logra encontrar la solución
+cuando m ≥ 200000.
+   De forma análoga, para n = 20, los tiempos de ACCPM se encuentran entre 2.7
+y 27.9 segundos. Además, con el método ACCPM en todos los casos fue posible
+encontrar la solución. Con R los tiempos de ejecución se encuentran entre 0 y
+130 segundos. En este caso no fue posible hallar la solución cuando m ≥ 300000.
+Para GAMS los tiempos oscilan entre 0 y 778 segundos. Además, no fue posible
+encontrar la solución cuando m ≥ 200000.
+   Para un valor fijo de n y variando el valor de m, el número de cortes de
+optimalidad (iteraciones) no varía de forma significativa. Por ejemplo, cuando
+n = 10, el mínimo número de cortes generados es 52 con m = 100 y la mayor
+cantidad es 63 con m = 400000.
+    Con n = 20, el número de cortes (iteraciones) varía entre 106 y 127; se nota
+que para este caso hay menor cantidad de cortes con m = 400000 que cuando
+m = 30000, m = 50000, m = 1000, m = 5000. Es decir, el número de iteraciones
+del método depende exclusivamente del número de variables explicativas y no de
+la cantidad de datos. La diferencia del tiempo de ejecución depende del cálculo
+del subgradiente debido a que en problemas de mayor tamaño es necesario hacer
+más operaciones para su obtención.
+  Para problemas con m ≤ 1000, la solución del problema dual por medio de
+GAMS se encuentra más rápido que con ACCPM. Para m ≥ 1000, el método
+ACCPM es más rápido.
+
+
+3.3.   Dificultades del método ACCPM
+   El método ACCPM tiene restricciones para su ejecución y depende del valor de
+θ. En la tabla 8 se presentan diferentes tamaños máximos para la matriz de datos.
+Varias de las dificultades se generan por la capacidad de cálculo del computador
+
+y del método. En algunos casos fue posible resolver problemas de mayor tamaño
+que el indicado en la tabla 8 con valores de restricciones de caja de la forma
+
+con los valores de di y gi cercanos a los estimadores de los parámetros de regresión
+cuantílica y además no simétricos, es decir gi 6= −di .
+
+                    Tabla 8: Restricciones del método ACCPM.
+
+4.    Conclusiones
+
+    La implementación del método de punto interior primal-dual de programación
+lineal para la solución del problema de regresión cuantílica desarrollada en el soft-
+ware R por medio del paquete quantreg es la más eficiente cuando el número de
+datos es menor que 10000. Por otro lado, el método ACCPM resultó ser el más
+eficiente cuando el número de datos es mayor que 30000. Además, es bastante es-
+table tanto en el tiempo de ejecución como en el número de iteraciones generadas.
+Es decir, es recomendable usar el método ACCPM cuando se tiene un número
+grande de datos.
+    Según los resultados, para m ≥ 1000 el paquete de optimización GAMS resulta
+ser el menos eficiente. Esto se debe en parte a las restricciones de ejecución con
+respecto al tamaño del problema de programación lineal y al método utilizado
+para encontrar la solución (simplex). En el caso de m < 1000, GAMS resulta ser
+el más eficiente.
+    El número de cortes de optimalidad (iteraciones) generados en el método
+ACCPM depende del número de variables explicativas. En este caso, no es un
+factor influyente el número de datos, ni la naturaleza de los mismos.
+    El tamaño de las restricciones de caja no influye en el cálculo de los estimado-
+res. La solución generada para el problema de regresión cuantílica por medio de
+ACCPM no presenta cambios significativos con respecto a cambios sobre el valor
+de la cota para la brecha de dualidad (θ) y del épsilon del subgradiente (s ).
+
+Agradecimientos
+El presente trabajo se deriva de la tesis de maestría en Matemática Aplicada del primer autor (López 2006a).
+Agradecemos al profesor Edilberto Ruiz, del Departamento de Estadística de la Universidad Nacional de Colombia, por su asesoría y lectura del documento en el área de regresión cuantílica y al estadístico Rafael López por su apoyo e indicaciones en el manejo del paquete estadístico R. También, las sugerencias y comentarios hechos por los evaluadores de este artículo.
+
+Referencias
+Du Merle, O. (1995), Points intérieurs et plans coupants: mise en uvre et développement d’une méthode pour l’optimisation convexe et la programmation linéaire structurée de grand taille, Tesis de doctorado, Universidad de Ginebra.
+Goffin, J., Haurie, A. & Vial, J. (1992), ‘Decomposition and Nondiferentiable Optimization with the Projective Algorithm’, Management Science (2), 284–302.
+Koenker, R. (2005), Quantile Regression, Econometric Society Monographs, Cambridge University Press.
+Koenker, R. & Bassett, G. W. (1978), ‘Regression Quantiles’, Econometrica 46, 33–50.
+López, H. (2006a), Cálculo de la regresión cuantílica por medio del método ACCPM, Tesis para optar al título de Maestría en Matemática Aplicada, Universidad Nacional de Colombia, Departamento de Matemáticas, Bogotá.
+López, H. (2006b), Introducción a GAMS y su aplicación en la solución de modelos matemáticos de optimización, in ‘Memorias del XXII Coloquio distrital de Matemáticas y Estadística’, Universidad Nacional de Colombia, Bogotá.
+Mora, H. (2005), ‘Métodos numéricos para la estimación de parámetros en regresión cuantílica’, Revista Colombiana de Estadística 28(2), 221–231.
+Petón, O. & Vial, J. (2001), A tutorial of ACCPM. Version 2.01, Technical report, HEC/logilab. Universidad de Ginebra.
+R Development Core Team (2006), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria.
+Vial, J. P. (1998), ‘Analytic center of polytope’, Universidad de Ginebra. Manuscrito.

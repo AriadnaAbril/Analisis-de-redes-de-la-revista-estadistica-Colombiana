@@ -1,0 +1,598 @@
+Métodos de estimação em regressão linear múltipla: aplicação a dados clínicos
+Universidade de São Paulo
+Resumo
+Nesse artigo, tem se o interesse em avaliar diferentes estratégias de estimação de parâmetros para um modelo de regressão linear múltipla. Para a estimação dos parâmetros do modelo foram utilizados dados de um ensaio clínico em que o interesse foi verificar se o ensaio mecânico da propriedade de força máxima (EM-FM) está associada com a massa femoral, com o diâmetro femoral e com o grupo experimental de ratas ovariectomizadas da raça Rattus norvegicus albinus, variedade Wistar. Para a estimação dos parâmetros do modelo serão comparadas três metodologias: a metodologia clássica, baseada no método dos mínimos quadrados; a metodologia Bayesiana, baseada no teorema de Bayes; e o método Bootstrap, baseado em processos de
+reamostragem.
+Palavras chave: regressão linear múltipla, mínimos quadrados, análise bayesiana, bootstrap.
+Introdução
+A análise de regressão é uma técnica estatística para investigar e modelar a
+relação entre variáveis, sendo uma das mais utilizadas na análise de dados. Pode-
+se citar inúmeras aplicações de análise de regressão na área da saúde (Freedman
+et al. 2004, Lyles & Kupper 1997, Chen & Wang 2004).
+    Um dos objetivos da análise de regressão é estimar os parâmetros desconhecidos
+do modelo. Mesmo existem várias técnicas de estimação desses parâmetros, nesse
+artigo serão considerados o método dos mínimos quadrados (Montgomery et al.
+2001), o método bayesiano (Box & Tiao 1973) e o método bootstrap (Efron &
+Tibshirani 1993).
+    Em relação ao experimento clínico que será apresentado nesse artigo, alguns
+comentários devem ser feitos. Sabe-se que o tecido ósseo é formado por células
+que possuem em suas estruturas intercelulares, cálcio, protoplasma e fibras de
+colágenos, correspondendo a 70% do peso ósseo; o restante, por matriz extracelular
+(Bilezikian et al. 1994). Aproximadamente 80% da massa óssea esquelética é
+constituída por osso cortical e 20% por esponjoso, que ocupa a maior superfície
+do esqueleto (Szejnfeld 2000).
+    Durante a vida de uma pessoa, o sistema esquelético ajusta-se para manter as
+integridades estruturais dos ossos, que no cotidiano está sujeito a várias condições
+de carregamento mecânico. Conseqüentemente, a resposta estrutural, em parte,
+deve-se ao passado histórico de cargas impostas sobre o esqueleto e a necessidade
+presente (Keller et al. 1986).
+   A osteogênese pode ser estimulada por pequenas deformações na arquitetura
+óssea, provocadas por forças mecânicas aplicadas durante uma actividade física
+normal. Já a imobilização leva a um processo de reabsorção óssea (Turner 1999).
+Vários problemas podem acometer a estrutura óssea; entre estes destaca-se a di-
+minuição da prática esportiva.
+    Com o aumento da expectativa de vida do homem, as doenças crônicas dege-
+nerativas destacam-se como factor limitante da qualidade de vida. De acordo com
+a Organização Mundial da Saúde (OMS), a osteoporose é uma das patologias que
+mais acometem a população actualmente. Esta se define como “uma doença esque-
+lética sistêmica caracterizada por redução e massa e deterioração microarquitetural
+do tecido ósseo, com conseqüente aumento da fragilidade óssea e susceptibilidade
+à fratura” (Conference 1993).
+
+                                     Revista Colombiana de Estadística 31 (2008) 111–129
+
+Métodos de estimação em regressão linear múltipla: aplicação a dados clínicos       113
+
+    Por ser uma patologia de etiologia multifatorial, muitas variáveis podem pro-
+porcionar o desenvolvimento de um quadro osteoporótico, baseando-se nas consi-
+derações de Robbins (1993) e Carneiro (1996), pode-se citar: sexo, biotipo, etnia,
+cafeína, tabagismo, etilismo, sedentarismo e imobilização prolongada, menopausa
+precoce e nultiparidade, baixa ingestão de cálcio, ingestão exagerada de proteí-
+nas e fosfato. A osteoporose está principalmente relacionada com a deficiência
+dos hormônios ovarianos nas mulheres pós menopáusicas, afetando um terço delas
+(Johnell 1996). Dessa forma, o hormônio estrógeno possui importante função na
+homeostase do esqueleto, regulagem da freqüência de novos ciclos de remodela-
+mento e na manutenção do equilíbrio entre formação e reabsorção óssea.
+    Sabe-se que com o aumento da idade, a eficiência dos osteoblastos diminui e
+intensifica a produção das células reabsortivas-osteoclastos. Atualmente a osteopo-
+rose vem sendo tratada e diagnosticada precocemente, pois assim, um tratamento
+mais efetivo pode ser feito, visto que, com o quadro dessa patologia instalada, o
+osso não se encontrará em condições normais. A actividade física é a contramedida
+mais estudada para analisar ou prevenir a atrofia muscular e perda da massa óssea
+(Tuukanen et al. 1994, Van der Wiel et al. 1995). O treinamento físico estimula
+o crescimento do osso, em termos de largura, aumenta o diâmetro, o perímetro, o
+volume e o peso.
+    Com actividade física, a tábua óssea externa (cortical) e a parte esponjosa
+(trabecular) dos ossos treinados aumentam de espessura e há maior tolerância à
+solicitação externa (Eastell 2003). As adaptações ósseas dependem do tipo de
+exercício realizado, pois estímulos moderados demonstram que há um aumento
+pouco significativo da massa óssea. Em contrapartida, a actividade de suportar
+peso (na presença da gravidade) tem geralmente sido considerada como influência
+positiva na saúde do osso (Szejnfeld 2000).
+    Em particular, atividades como correr, saltar, que geram resistência externa
+no corpo humano entre 3 a 5 vezes o peso corporal e 7 a 10 vezes o peso corporal
+no impacto, respectivamente, são utilizadas para estimular o processo de remo-
+delação óssea. Vários autores têm centralizado suas pesquisas em protocolos de
+treinamento físico que comprovem a eficiência da actividade física na prevenção
+e tratamento da osteoporose (Rennó et al. 2001). Há pesquisas que relatam uma
+ausência de influência significativa na arquitetura óssea (Pohlman et al. 1985).
+    Como não estão totalmente elucidados os mecanismos pelos quais o esqueleto
+responde à actividade física, realizam-se estudos com maior freqüência sobre a te-
+rapêutica da osteoporose. De acordo com estudos realizados por Yeh et al. (1993),
+aumentaram a densidade mineral óssea e o conteúdo mineral de ratas ovariectomi-
+zadas e normais, ambos grupos treinados. Peng et al. (1997) monstraram através
+de estudos comparativos entre um grupo ovariectomizado e treinados, e outro não
+ovariectomizado e treinado, que o primeiro grupo citado obteve uma diminuição
+significativa da reabsorção óssea e um aumento da densidade óssea, em comparação
+com o segundo grupo.
+   As respostas ósseas à actividade física regular podem ser observadas em hu-
+manos ou animais experimentais. Diversos estudos em ossos humanos e de outros
+animais monstram que o desuso (paralisia, imobilização e ausência de descarga
+
+                                     Revista Colombiana de Estadística 31 (2008) 111–129
+
+114                                                  Emílio Augusto Coelho-Barros, et al.
+
+de peso) e a deficiência hormonal resultam em perda de massa óssea (Bain &
+Rubin 1990, Smith & Gilligan 1989).
+
+
+2. Metodologia
+   Geralmente, tem-se o interesse em avaliar a relação de uma variável de interesse
+Y (variável dependente ou variável resposta) em relação a k variáveis Xj (variável
+independente ou covariável), j = 1, 2, . . . , k. Portanto, um possível modelo para
+avaliar essa relação pode ser dado por
+
+            yi = β0 + β1 xi1 + β2 xi2 + · · · + βk xik + εi ,    i = 1, . . . , n      (1)
+
+em que, n é o número de indivíduos, yi é a observação da variável dependente para o
+i-ésimo indivíduo, Xi = (xi1 , xi2 , . . . , xik )′ é um vetor de observações das variáveis
+independentes para o i-ésimo indivíduo, β = (β0 , β1 , β2 , . . . , βk )′ é um vetor de
+coeficientes de regressão (parâmetros) e εi é um componente de erro aleatório.
+Assume-se que esses erros são independentes e seguem distribuição normal com
+média zero e variância desconhecida σ 2 .
+    O modelo (1) é chamado de regressão linear múltipla, pois envolve mais de
+um coeficiente de regressão. O adjetivo “linear” indica que o modelo é linear em
+relação aos parâmetros β = (β0 , β1 , β2 , . . . , βk ), e não porque y é uma função linear
+dos x′ s.
+    O objetivo deste artigo é estudar o uso do modelo de regressão linear múltipla
+e comparar três métodos de estimação dos parâmetros do modelo: método dos
+mínimos quadrados, bayesiano e bootstrap.
+    Nesta pesquisa foram utilizadas 60 ratas da raça rattus norvegicus albinus, va-
+riedade Wistar, com aproximadamente 260 g, que corresponde à fase adulta jovem.
+O presente estudo baseou-se na utilização do modelo experimental de osteopenia
+advinda do procedimento cirúrgico denominado ovariectomia. Os animais foram
+divididos em seis grupos; em cada um foram alocados dez ratas (tabela 1).
+
+
+2.1. Procedimentos experimentais
+    Os animais, após uma semana à coleta de sangue, foram submetidos a ovariec-
+tomia bilateral. A técnica cirúrgica aplicada nesse estudo seguiu a metodologia de
+Zarrow et al. (1964). Após 72 horas da cirurgia, os animais foram submetidos a um
+programa de treinamento físico em esteira rolante. O protocolo de treinamento
+que foi aplicado aos animais dos grupos C e F foi de caráter evolutivo de 60
+minutos/dia, 4 sessões por semana durante 12 semanas, com velocidade de 15
+m/min nas 6 primeiras semanas e 19 m/min nas demais semanas.
+    Os animais passaram por um período de adaptação à esteira durante 10 dias,
+este período iniciou-se com 10 minutos de exercitação, na velocidade de 8 m/min.
+Houve, a cada sessão de adaptação, o incremento da velocidade até a sétima sessão,
+mantendo-se constante até a sexta semana de exercitação e, o tempo evoluiu cinco
+minutos por dia.
+
+                                       Revista Colombiana de Estadística 31 (2008) 111–129
+
+Métodos de estimação em regressão linear múltipla: aplicação a dados clínicos           115
+
+                     Tabela 1: Divisão dos grupos experimentais.
+     Grupos                                       Procedimentos experimentais
+   A (Controle I)                     Animais submetidos à coleta de sangue e eutanásia
+                                      com 195 dias de idade.
+   B (Ovariectomizado)                Animais submetidos à coleta de sangue e após 1 se-
+                                      mana a ovariectomia e eutanasiados com 195 dias de
+                                      idade.
+  C (Ovariectomizado e treinado,      Animais submetidos à coleta de sangue e após 1 se-
+    antes da instalação osteopenia)   mana a ovariectomia. Após 1 semana iniciaram trei-
+                                      namento em esteira por 12 semanas e no fim do expe-
+                                      rimento foram eutanasiados com 195 dias de idade.
+   D (Controle II)                    Animais submetidos à coleta de sangue e após 1 se-
+                                      mana a ovariectomia e eutanasiados com 255 dias de
+                                      idade.
+   E (Ovariectomizado)                Animais, submetidos à coleta de sangue e após 1 se-
+                                      mana a ovariectomia e eutanasiados com 255 dias de
+                                      idade.
+   F (Ovariectomizado e treinado,     Animais submetidos à coleta de sangue e depois de 1
+     depois da instalação osteope-    sem. a ovariectomia. Após 9 semanas iniciaram trei-
+     nia)                             namento em esteira por 12 semanas e no fim do expe-
+                                      rimento foram eutanasiados com 255 dias de idade.
+
+
+
+    O treinamento físico para os animais do grupo C iniciou-se 72 horas após a
+cirurgia. Os animais do grupo F iniciaram a exercitação em esteira posteriormente
+a instalação da osteopenia. Segundo Kallu (1991), a osteopenia instala-se um
+mês depois da ovariectomia. O exercício foi realizado em uma esteira motorizada
+Insightr -modelo EP-131, para ratos, sem oscilação da inclinação; sucedendo-se no
+plano horizontal.
+   Ao término do treinamento físico (24 horas), os animais foram pesados e sub-
+metidos à eutanásia. Os fêmures direito foram retirados, limpos das partes moles,
+identificados, pesados na balança eletrônica Marter-modelo AS2000C com preci-
+são de 0.01g. Em seguida, realizaram-se as medidas antropométricas de diâmetro
+maior, diâmetro menor e comprimento total da peça através do paquímetro digital
+da marca Mitutoyor .
+    Subseqüentemente, os fêmures direito foram submetidos a ensaio mecânico de
+flexo-compressão na máquina universal de ensaio EMICr -10000N, no laboratório
+de bioengenharia da Faculdade de Medicina de Ribeirão Preto, Universidade de
+São Paulo.
+   Como foi visto, foram utilizadas 60 ratas no experimento; porém algumas ratas
+morreram antes da finalização do procedimento experimental ou não se adaptaram
+ao mesmo. Os dados obtidos podem ser observados na tabela 2.
+
+
+
+2.2. Modelo estatístico
+
+    Para verificar a associação entre a variável dependente EM-FM (y), em relação
+às variáveis independentes grupo, massa e diâmetro femorais, considere o seguinte
+
+                                        Revista Colombiana de Estadística 31 (2008) 111–129
+
+116                                              Emílio Augusto Coelho-Barros, et al.
+
+                           Tabela 2: Dados experimentais.
+
+modelo de regressão linear múltipla (ver (1)),
+
+  yi = β0 + β1 Xi1 + β2 Xi2 + β3 Xi3 + β4 Xi4 + β5 Xi5 + β6 Xi6 + β7 Xi7 + εi       (2)
+
+em que Xi1 , Xi2 , Xi3 , Xi4 , Xi5 são variáveis dummy que representam o grupo da
+i-ésima rata, em que
+                 (                                    (
+                     1, se grupo B;                       1, se grupo C;
+         Xi1 =                                Xi2 =
+                     0, caso contrário.                   0, caso contrário.
+                 (                                  (
+                     1, se grupo D;                   1, se grupo E;
+         Xi3 =                               Xi4 =
+                     0, caso contrário.               0, caso contrário.
+                                   (
+                                     1, se grupo F;
+                             Xi5 =
+                                     0, caso contrário.
+
+Xi6 representa a massa femoral da i-ésima rata; Xi7 representa o diâmetro fe-
+moral da i-ésima rata e εi representa o erro aleatório do i-ésimo indivíduo esses
+erros são independentes e seguem distribuição normal com média zero e variância
+desconhecida σ 2 .
+
+                                     Revista Colombiana de Estadística 31 (2008) 111–129
+
+Métodos de estimação em regressão linear múltipla: aplicação a dados clínicos                                                117
+
+2.3. Método dos mínimos quadrados
+    O método dos mínimos quadrados (MMQ) pode ser utilizado para estimar os
+coeficientes de regressão em (1). Suponha que n > k observações são avaliadas, em
+que k é o número de covariáveis, e seja yi a i-ésima variável resposta observada e xij
+a i-ésima observação da j-ésima variável independente (i = 1, . . . , n, j = 1, . . . , k).
+Assume-se que os erros εi são independentes e seguem distribuição normal com
+média zero e variância desconhecida σ 2 .
+    Reescrevendo (1), tem-se
+                                             k
+                                             X
+                               y i = β0 +          βj xij + εi ,             i = 1, 2, . . . , n                             (3)
+                                             j=1
+
+
+     A função de mínimos quadrados é dada por
+                                                   n              n                     k
+                                                                                                          !2
+                                                   X              X                     X
+                      S(β0 , β1 , . . . , βk ) =         ε2i =          y i − β0 −               βj xij                      (4)
+                                                   i=1            i=1                   j=1
+
+
+   A função S deve ser minimizada com respeito à β0 , β1 , . . . , βk . Os estimadores
+de mínimos quadrados (EMQ) de β0 , β1 , . . . , βk devem satisfazer,
+
+     De (5) e (6), tem-se as equações de mínimos quadrados,
+
+   É possível notar que há p = k + 1 equações, uma para cada coeficiente de
+regressão. Logo, as soluções dessas equações serão os EMQ para β0 , β1 , . . . , βk .
+     Escrevendo (3) na forma matricial, tem-se
+                               b no qual minimiza,
+   Tem-se o interesse em encontrar o vetor de EMQ β,
+                                 n
+                                 X
+                      S(β) =           ε2i = ε′ ε = (y − Xβ)′ (y − Xβ)
+                                 i=1
+                                                                                           (8)
+                            = y ′ y − β ′ X ′ y − y ′ Xβ + β ′ X ′ Xβ
+                            = y ′ y − 2β ′ X ′ y + β ′ X ′ Xβ
+
+   Os EMQ devem satisfazer,
+                                ∂S
+                                      = −2X ′ y + 2X ′ X βb = 0
+                                ∂β βb
+logo,
+                                          X ′ X βb = X ′ y                                 (9)
+   Tem-se que (9) são as equações de mínimos quadrados identicamente as mos-
+tradas em (7). Portanto o EMQ de β é dado por
+                                        βb = (X ′ X)−1 X ′ y                              (10)
+assumindo que (X ′ X)−1 existe.
+
+2.3.1. Intervalos de confiança para os coeficientes de regressão
+
+    Para construir um intervalo de confiança para o coeficiente de regressão βj ,
+assumir que os erros εi são normalmente e identicamente distribuídos com média
+zero e variância σ 2 . Logo, as observações yi são normalmente e identicamente
+                              Pk
+distribuídas com média β0 +      βj xij e variância σ 2 . Como o EMQ de βb é uma
+                                   j=1
+combinação linear das observações, então β é normalmente distribuídos com vetor
+de médias β e matriz de covariância σ 2 (X ′ X)−1 . Isso implica que a distribuição
+marginal do coeficiente de regressão βbj é normal com média βj e variância σ 2 Cjj ,
+em que Cjj é o j-ésimo elemento da diagonal da matriz (X ′ X)−1 . Conseqüente-
+mente,
+                       βbj − βj
+                       p         ∼ t(n−p) ,   j = 0, 1, . . . , k              (11)
+                          b2 Cjj
+                          σ
+em que, t(n−p) representa a distribuição t-student com n − p graus de liberdade, n
+é o número de observações, p é o número de parâmetros do modelo de regressão e
+                                                y′y − β′ X ′y
+                                        b2 =
+                                        σ
+                                                   n−p
+
+                                           Revista Colombiana de Estadística 31 (2008) 111–129
+
+Métodos de estimação em regressão linear múltipla: aplicação a dados clínicos        119
+
+   Portanto, um intervalo com 100(1 − α)% de confiança para o coeficiente de
+regressão βj , j = 0, 1, . . . , k, é dado por
+                                                       q
+                        IC(95%, βj ) = βbj ± t(α/2,n−p) σb2 Cjj         (12)
+
+
+2.4. Método bayesiano
+   Na inferência clássica, os parâmetros do modelo de regressão são vistos como
+quantidades fixas, mesmo que desconhecidas. Na inferência bayesiana, o conheci-
+mento que se tem sobre os parâmetros do modelo pode ser quantificado através
+de uma distribuição de probabilidade. Essa distribuição de probabilidade é de-
+nominada distribuição a priori do parâmetro, em que esta reflete a informação
+que o pesquisador tem sobre os parâmetros. As inferências para os parâmetros do
+modelo de regressão são obtidas pela distribuição a posteriori de cada parâmetro.
+   Seja θ um vetor de parâmetros a serem estimados. Logo, pelo teorema de
+Bayes, tem-se a seguinte distribuição de probabilidade a posteriori para θ,
+                                              π(θ)f (y | θ)
+                            π(θ | y) = R                                            (13)
+                                            θ π(θ)f (y | θ)dθ
+
+em que θ é contínuo, π(θ) é a distribuição a priori conjunta para θ e
+                                                 n
+                                                 Y
+                           f (y | θ) = L(θ) =          f (yi | θ)
+                                                 i=1
+
+a função de verossimilhança de θ, é
+
+                                π(θ | y) = cπ(θ)L(θ)
+
+em que                                  Z
+                                c−1 =       π(θ)L(θ) dθ
+                                        θ
+é uma constante normalizador; portanto,
+
+                                 π(θ | y) ∝ π(θ)L(θ)                                (14)
+
+    Um estimador bayesiano para θ é obtido minimizando o erro esperado (função
+risco) com respeito a distribuição a posteriori para θ. Para isso deve considerar-se
+                             
+uma função de perda θ,   b θ . Considerando o caso especial de função de perda
+quadrática dada por
+                                                
+                                   b θ = θb − θ 2
+                                   θ,
+                                                                       2    
+a estimativa de Bayes para θ será o valor de θb para qual E θb − θ | y seja
+mínima.
+   Portanto, o estimador de Bayes para θ, com respeito a perda quadrática, é
+dado por
+
+    Na inferência Bayesiana, os intervalos para os parâmetros do modelo (inter-
+valos de credibilidade) são obtidos directamente da distribuição a posteriori dos
+parâmetros. Seja θ um vetor de parâmetros a serem estimados, fixando uma proba-
+bilidade 1 − α. O intervalo de credibilidade para θ com probabilidade de cobertura
+1 − α é dado por (θ∗ , θ∗ ), tal que
+                  Z θ∗                        Z ∞
+                                      α                          α
+                        π(θ | y) dθ = ;            π(θ | y) dθ =
+                    −∞                2        θ ∗               2
+
+    Normalmente, as integrais que devem ser resolvidas em (14) e (15) podem ser de
+difícil solução. Neste caso, deve utilizar-se algum método numérico de aproximação
+para integrais. Um dos métodos mais utilizados para a resolução de integrais é o
+método de Monte Carlo em cadeia de Markov (MCMC). Trata-se de um método
+de simulação para se obter amostras da distribuição a posteriori de interesse (Chib
+& Greenberg 1995, Gelfand & Smith 1990).
+
+2.4.1. Análise bayesiana
+
+    Para a análise bayesiana dos dados da tabela 2, e considerando o modelo de-
+finido em (2), foram consideradas as seguintes distribuições a priori para β =
+(β0 , β1 , β2 , . . . , β7 ) e σ 2 ,
+
+                  βj ∼ N (aj ; b2j ),        a e b conhecidos, j = 0, 1, . . . , 7
+                   2
+                                                                                                   (16)
+                 σ ∼ IG(c; d),           c e d conhecidos
+
+em que, N (a; b2 ) denota uma distribuição normal com média a e variância b2
+                                                              d
+e IG(c; d) denota uma distribuição gamma inversa com média c−1   e variância
+    d2
+(c−1)2 (c−2) .
+    Além disso, foi assumido independência a priori entre os parâmetros. Assim, a
+distribuição a priori conjunta é dada por,
+
+    Considerando o modelo (2), a função de verosimilhança para β = (β1 , . . . , β7 ) e
+σ 2 dado os dados observados yi e as covariáveis Xij , i = 1, 2, . . . , 47, j = 0, 1, . . . , 7,
+é dada por,
+
+em que,
+
+   Como visto em (14), a distribuição a posteriori conjunta para os parâmetros é
+obtida combinando-se a distribuição a priori (17) com a função de verosimilhança
+(18) a partir da fórmula de Bayes.
+   As distribuições a posteriori condicionais, são dadas por
+
+  i) Para βj , em que, j = 0, 1, . . . , 7,
+
+     em que, β(j) = (β1 , . . . , βj−1 , βj+1 , . . . , βk ); y é o vetor dos dados observados
+     e xj é o vetor das covariáveis, j = 0, 1, . . . , 7.
+ ii) Para σ 2 ,
+
+   Para a análise bayesiana dos dados, foi considerado aj = 0, b2j = 1000000,
+j = 0, 1, . . . , 7, c = d = 0.01, nas distribuições a priori (16). Essa escolha dos
+hiperparâmetros foi motivada para se ter distribuições a priori aproximadamente
+não-informativas e tal que a convergência do algoritmo de simulação (Gibbs com
+Metropolis-Hastings) seja observada.
+
+
+2.5. Método bootstrap
+    Alternativamente aos intervalos de confiança assintótico e bayesiano, o intervalo
+de confiança para β pode ser obtido via simulação bootstrap. Amostras boot-
+strap não paramétricas são obtidas reamostrando, com reposição, directamente
+dos dados disponíveis (y1 , x11 , x12 , . . . , x1k ), . . . , (yn , xn1 , xn2 , . . . , xnk ) (Efron &
+Tibshirani 1993, DiCiccio & Efron 1996).
+
+2.5.1. Intervalo de confiança bootstrap para os coeficientes de regressão
+
+   Nesta seção são apresentados os passos utilizados na obtenção de intervalo de
+confiança bootstrap para os coeficientes de regressão β. Será apresentado o intervalo
+de confiança, proposto por Efron (1982), baseado nos percentis da distribuição
+bootstrap de β, p-bootstrap. Uma recente discussão a respeito dos intervalos de
+
+confiança obtidos via simulação bootstrap é apresentada em Carpenter & Bithell
+(2000).
+   Seja U = (y, x1 , x2 , . . . , xk ), em que, y = (y1 , . . . , yn ) é o vetor de observa-
+ções da variável dependente e xj = (x1j , . . . , xnj ), j = 1, . . . k, são os vetores de
+observações das variáveis independentes, xj é uma variável contínua para todo j.
+
+
+Intervalos p-bootstrap
+                                                                                       
+  I. Amostrar, com reposição     de U , uma amostra bootstrap y ∗
+                                                                 1 , x∗
+                                                                      11 , . . . , x∗
+                                                                                    1k  ,...,
+      yn∗ , x∗n1 , . . . , x∗nk .
+
+ II. Da amostra bootstrap (y1∗ , x∗11 , . . . , x∗1k ), . . . , (yn∗ , x∗n1 , . . . , x∗nk ), obter o EMQ
+     de β, definido em (10), representado por βb∗ .
+
+III. Repetir os passos I e II um número B grande de vezes.
+
+ IV. De βb∗ = (βb(1)
+                 ∗
+                     ≤ βb(2)
+                         ∗
+                             ≤ · · · ≤ βb(B)
+                                         ∗
+                                             ), para algum valor de α, (0 < α < 1), o
+     intervalo de confiança p-bootstrap 100 × (1 − α)% é dado por
+                                                                  
+                                                βb(q
+                                                  ∗
+                                                    1)
+                                                       ; βb(q
+                                                           ∗
+                                                             2)
+                                                                                                   (19)
+
+      em que, q1 = ⌈B × (α/2)⌉ e q2 = B − q1 .1
+
+    Como exemplo, em IV, para (α = 0.05 e B = 1000) =⇒ (q1 = 25 e q2 = 975).
+                                                                               
+Logo, o intervalo de confiança p-bootstrap de 95% é dado por βb(25)
+                                                                 ∗
+                                                                     ; βb(975)
+                                                                         ∗
+                                                                                . Os
+intervalos de confiança para quaisquer outros parâmetros de interesse são obtidos
+de maneira similar.
+    Quando uma variável independente xj não é contínua, deve-se fazer o processo
+de reamostragem (passos I, II e III) dentro de cada nível da variável (Wu 1986,
+Tibshirani 1988). Outras alternativas ao intervalo de confiança p-bootstrap são
+discutidas, por exemplo, em Efron & Tibshirani (1993), Davison & Hinkley (1997)
+e Carpenter & Bithell (2000).
+
+3. Resultados e discussões
+    Para obtenção das estimativas dos parâmetros do modelo (2), baseado na me-
+todologia clássica usando o MMQ, foi utilizado o comando lm() do software R
+(Apêndice A.) (R Development Core Team 2006). Na tabela 3 têm-se os estima-
+dores de mínimos quadrados para os parâmetros do modelo com seus respectivos
+erros padrão assintóticos. Após a realização de uma análise de resíduos, foi obser-
+vado um bom ajuste do modelo aos dados.
+    Para obtenção das estimativas dos parâmetros, baseado no método baye-
+siano via amostrador de Gibbs, foi utilizado o software Winbugs (Apêndice A.)
+  1 ⌈x⌉ indica o menor número inteiro maior ou igual ao argumento x.
+
+      Tabela 3: Resultados obtidos através do método de mínimos quadrados.
+
+(Spiegelhalter et al. 1995). Os parâmetros foram estimados via algoritmos Gibbs-
+Sampling e Metropolis-Hastings. Foram geradas 364000 amostras, das quais 4000
+foram descartadas (“burn in”) com a finalidade de eliminar o efeito dos valores
+iniciais usados no algoritmo de simulação. Além disso, foram consideradas as ite-
+rações 60a , 120a , 180a , . . ., resultando em uma amostra final de 6000 observações
+para cada parâmetro. A convergência do algoritmo foi verificada através de grá-
+ficos temporais das amostras geradas e utilizando técnicas usuais existentes na
+literatura (Gelman & Rubin 1992). Na tabela 4, tem-se os sumários a posteriori
+obtidos para os parâmetros do modelo.
+    Para obtenção das estimativas dos parâmetros foi desenvolvida uma rotina, ba-
+seada no método bootstrap, em linguagem S utilizando o software R (Apêndice A.).
+Na tabela 5, pode-se observar o intervalo de confiança p-bootstrap considerando
+B = 100000 reamostras do conjunto de dados originais (tabela 2). O número de
+reamostras bootstrap sugerido na literatura parece crescer com o avanço compu-
+tacional, seja em nível de hardware ou de software. Efron & Tibshirani (1993)
+comentam que “B = ∞” é o número ideal para se estimar erros padrão. Natural-
+mente, na prática, B deve ser um número finito restrito ao poder computacional
+disponível.
+
+             Tabela 4: Resultados obtidos através do método bayesiano.
+
+   A amplitude (R) e a forma (F ), para os 3 tipos de intervalos de confiança,
+são apresentados na tabela 6. Estas medidas são importantes para comparar os
+3 procedimentos de construção dos intervalos de confiança. Sejam θbLS e θbLI os
+limites superior e inferior do intervalo de confiança para os parâmetros do modelo.
+A forma para o intervalo de confiança dos parâmetros do modelo, calculada por
+             Tabela 5: Resultados obtidos através do método bootstrap.
+
+F = θbLS − θb / θb − θbLI , mede a assimetria do intervalo em torno de θ;
+                                               
+                               b     b    b b
+indica maior distância entre θLS − θ e θ − θLI . Como os intervalos de confiança
+assintóticos são simétricos, implica que F = 1 (Efron & Tibshirani 1993).
+
+Tabela 6: Amplitude (R) e forma (F ) para os intervalos de confiança 95% para os
+
+4. Conclusões
+    Dos resultados da tabela 6, pode-se observar que os intervalos de confiança
+bootstrap são bem mais precisos, isto é, com menores comprimentos do que os
+intervalos de confiança assintóticos e os intervalos de credibilidade bayesianos.
+Porém, a alternativa bayesiana se mostrou mais eficiente se comparada com o
+método clássico.
+    A comparação entre métodos de estimação deve ser feita utilizando simula-
+ção. Portanto, não é possível afirmar que, em geral, o método bootstrap retorna
+estimativas mais precisas se comparadas com as metodologias clássicas e bayesia-
+nas. Porém, pode-se concluir que, para esse exemplo clínico, o método bootstrap
+retornou estimativas mais precisas.
+    Em relação ao método bayesiano, é importante salientar que é possível obter re-
+sultados mais precisos e próximos da realidade, utilizando informações a priori as-
+sumindo o conhecimento prévio de profissionais da saúde (Dunson & Herring 2005),
+lembrando que se deve tomar muito cuidado na escolhas de prioris informativas.
+    Considerando o método bootstrap, pode-se concluir que existem evidências de
+que o grupo e a massa femoral influenciam na medida do ensaio mecânico da
+propriedade de força máxima (EM-FM). Essa conclusão foi tirada baseada nos
+intervalos de confiança dos parâmetros. Como pode observar-se (tabela 5), os
+intervalos de confiança para os parâmetros β5 e β6 não contem o valor zero.
+
+Agradecimientos
+Os autores agradecem os pareceristas por seus valiosos comentários e sugestões. A pesquisa de Emílio Augusto Coelho Barros e Priscila Angelotti Simões recebe auxílio financeiro da FAPESP (Fundação de Amparo a Pesquisa do Estado de São Paulo). Jorge A. Achcar agradece ao CNPq pelo apoio financeiro.
+Referências
+Bain, S. D. & Rubin, C. T. (1990), ‘Metabolic Modulation of Disuse Osteopenia: Endocrine-Dependent Site Specificity on Bone Remodeling’, J Bone Miner Res 5, 1069–1075.
+Bilezikian, J. P., Raisz, L. G. & Rodan, G. A. (1994), Principles of Bone Biology, Academic Press.
+Box, G. E. P. & Tiao, G. C. (1973), Bayesian Inference in Statistical Analysis, Addison-Wesley Publishing Co., Reading, Mass.-London-Don Mills, Ont. Addison-Wesley Series in Behavioral Science: Quantitative Methods.
+Carneiro, R. A. (1996), ‘Osteoporose problema mundial’, ARS CVRANDII Clínica Médica 29, 5.
+Carpenter, J. & Bithell, J. (2000), ‘Bootstrap Confidence Intervals: When, which, what? A Practical Guide for Medical Statistician’, Statistics in Medicine 19, 1141–1164.
+Chen, Z. & Wang, Y. G. (2004), ‘Efficient Regression Analysis with Ranked-Set Sampling’, Biometrics 60(4), 997–1004.
+Chib, S. & Greenberg, E. (1995), ‘Understanding the Metropolis-Hastings Algorithm’, The American Statistician 49(4), 327–335.
+Conference, C. D. (1993), Diagnosis, Prophylaxis and Treatment of Osteoporosis, American Journal of Medicine.
+Davison, A. C. & Hinkley, D. V. (1997), Bootstrap Methods and their Application, Vol. 1 of Cambridge Series in Statistical and Probabilistic Mathematics, Cambridge University Press, Cambridge. With 1 IBM-PC floppy disk (3.5 inch; HD).
+DiCiccio, T. J. & Efron, B. (1996), ‘Bootstrap Confidence Intervals’, Statistical Science 11(3), 189–228.
+Dunson, D. B. & Herring, A. H. (2005), ‘Bayesian Latent Variable Models For Mixed Discrete Outcomes’, Biostatistics 6(1), 11–25.
+Eastell, R. (2003), ‘Management of Osteoporosis due to Ovarian Failure’, Med. Pediatric Oncol 41(3), 222–227.
+Efron, B. (1982), The Jackknife, the Bootstrap and other Resampling Plans, Vol. 38 of CBMS-NSF Regional Conference Series in Applied Mathematics, Society for Industrial and Applied Mathematics (SIAM), Philadelphia, United States.
+Efron, B. & Tibshirani, R. J. (1993), An Introduction to the Bootstrap, Vol. 57 of Monographs on Statistics and Applied Probability, Chapman and Hall, New York, United States.
+Freedman, L. S., Fainberg, V., Kipnis, V., Midthune, D. & Carroll, R. J. (2004), ‘A new Method for Dealing with Measurement Error in Explanatory Variables of Regression Models’, Biometrics 60(1), 172–181.
+Gelfand, A. E. & Smith, A. F. M. (1990), ‘Sampling-Based Approaches to Calculating Marginal Densities’, Journal of the American Statistical Association 85, 398–409.
+Gelman, A. & Rubin, D. B. (1992), ‘Inference From Iterative Simulation Using Multiple Sequences’, Statistical Science 7, 457–511.
+Johnell, O. (1996), ‘Advances in Osteoporosis: Better Identification of Risk Factures can Reduce Morbidity and Mortality’, J. Int. Med 239, 299–304.
+Kallu, D. N. (1991), ‘The Ovariectomized Rat Model of Postmenopausal Bone Loss’, Endocrinology 124(1), 7–16.
+Keller, T., Spengler, D. M. & Carter, D. R. (1986), ‘Geometric, Elastic, and Structural Properties of Maturing Rat Femora’, Journal of Orthopedic Research 4, 57–67.
+Lyles, R. H. & Kupper, L. L. (1997), ‘A Detailed Evaluation of Adjustment Methods for Multiplicative Measurement Error in Linear Regression with Applications in Occupational Epidemiology’, Biometrics 53(3), 1008–1025.
+Montgomery, D. C., Peck, E. A. & Vining, G. G. (2001), Introduction to Linear Regression Analysis, Wiley Series in Probability and Statistics: Texts, References, and Pocketbooks Section, third edn, Wiley-Interscience, New York.
+Peng, Z. Q., Vaananen, H. K. & Tuukanen, J. (1997), ‘Ovariectomy-Induced Bone Loss can be Affect by Different Intensities of Treadmill Running Exercise in Rats’, Calcified Tissue International 60, 441–448.
+Pohlman, R. L., Darby, L. A. & Lechner, A. J. (1985), ‘Morphometry and Calcium Contents in Apendicular and Axial Bones of Exteriol Ovariectomized Rats’, American Journal Physiology 248, 12–17.
+R Development Core Team (2006), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0. http://www.R-project.org
+Rennó, A. C. M., Driusso, P. & Ferreira, V. (2001), ‘Atividade física e osteoporose: uma revisão bibliográfica’, Fisioterapia em movimento 13(2).
+Robbins, S. (1993), Patologia estrutural e funcional, Guanabara.
+Smith, E. L. & Gilligan, C. (1989), ‘Mechanical Forces and Bone’, J Bone Miner Res 6, 139–173.
+Spiegelhalter, D. J., Thomas, A., Best, N. G. & Gilks, W. R. (1995), BUGS: Bayesian Inference Using Gibbs Sampling, Version 0.50., MRC Biostatistics Unit Cambridge.
+Szejnfeld, V. L. (2000), Osteoporose: diagnóstico e tratamento, Sarvier.
+Tibshirani, R. (1988), ‘Correction to Discussion of: “Jackknife, Bootstrap and other Resampling Methods in Regression Analysis”’, Ann. Statist. 16(1), 479.
+Turner, R. (1999), ‘Mechanical Signaling in the Development of Postmenopausal Osteoporosis’, Lupus 8, 388–392.
+Tuukanen, J., Peng, Z. & Vaananen, H. K. (1994), ‘Effect of Running Exercise of the Bone Loss Induced by Orchidectomy in the Rats’, Calcified Tissue International 55, 33–37.
+Van der Wiel, H. E., Lips, P., Graafmans, W. C., Danielsen, C. C., Nauta, J., Van Lingen, A. & Mosekilde, L. (1995), ‘Additional Weight-Bearing During Exercise is more Important than Duration of Exercise for Anabolic Stimulus of Bone: A Study of Running Exercise in Female Rats’, Bone 16(1), 73–80.
+Wu, C. F. J. (1986), ‘Jackknife, Bootstrap and other Resampling Methods in Regression Analysis’, Ann. Statist. 14(4), 1261–1350. With discussion and a rejoinder by the author.
+Yeh, J. K., Aoia, J. F., Tierney, J. M. & Sprintz, S. (1993), ‘Effect of Treadmill Exercise on Vertebral and Tibial Bone Mineral Content and Bone Mineral Density in the Aged Adult Rat: Determined by Dual Energy X-Ray Absorptiometry’, Calcified Tissue International 52, 234–238.
+Zarrow, N. X., Yochim, J. M. & Mccarthy, J. L. (1964), Experimental Endocrinology: A Sourcebook of Basic Techniques, Academic Press, New York, United States.

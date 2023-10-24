@@ -1,0 +1,303 @@
+Métodos numéricos para la estimación de parámetros en regresión cuantı́lica
+Universidad Nacional de Colombia
+Resumen
+La regresión cuantı́lica es un problema de optimización convexa no diferenciable. Se examinan las ventajas y desventajas con relación a la necesidad de recursos de memoria y tiempo de cálculo de tres métodos clásicos de solución: dos de optimización lineal y el método de planos de corte.
+Palabras Claves: regresión cuantı́lica, optimización lineal, optimización no diferenciable, planos de corte.
+Introducción
+La regresión cuantı́lica, introducida por Koenker & Basset (1978), puede verse como una extensión de la estimación clásica de medias condicionales por mı́nimos cuadrados, a la estimación de un conjunto de modelos para varias funciones de cuantiles condicionales. El caso especial central es el estimador de regresión mediana que minimiza una suma de errores absolutos. Otras funciones de cuantiles condicionales se estiman minimizando una suma de errores absolutos ponderada asimétricamente.
+La regresión cuantı́lica tiene muchas aplicaciones, principalmente en economı́a (Fitzenberger, Koenker & Machado 2002). También se encuentran aplicaciones, por ejemplo, en ecologı́a (Cade & Noon 2003), estudios de microarreglos de ADN, finanzas, análisis de sobrevivencia, curvas de crecimiento y salud pública.
+    Dados m puntos x1 , x2 , . . . , xm en Rn×1 y m valores reales y1 , y2 , . . . , ym ,
+en el problema de regresión se busca un vector β = (β1 , β2 , . . . , βn ) ∈ Rn×1 de tal
+manera que el modelo
+                                       y = βTx
+represente “adecuadamente” los datos xi , y i .
+   En este artı́culo los vectores y las matrices columna serán exactamente lo mis-
+mo, o sea, Rn := Rn×1 , es decir, x = (x1 , x2 , . . . , xn ) := [x1 x2 . . . xn ]T , y ası́,
+xT = [x1 x2 . . . xn ] ∈ R1×n .
+   En la regresión usual, regresión por mı́nimos cuadrados, se busca un vector β
+que resuelva el siguiente problema de minimización
+                                                     m
+                                                     X
+                                 min f (β) =               (yi − β T xi )2                        (1)
+                                                     i=1
+
+
+    Usualmente los puntos xi se construyen a partir de puntos ξ i ∈ Rp , por ejemplo,
+si ξ = (ξ1 , ξ2 , . . . , ξp ), es muy frecuente tener
+
+                                       x = (1, ξ1 , ξ2 , . . . , ξp )
+
+o también,
+                       x = (1, ξ1 , ξ2 , . . . , ξp , (ξ1 )2 , (ξ2 )2 , . . . , (ξp )2 )
+   En el primer caso n = p + 1, en el segundo n = 1 + 2p.
+   La regresión cuantı́lica utiliza la función ρτ : R → R, con 0 < τ < 1 (Koenker
+& Basset 1978). Las siguientes tres definiciones son equivalentes.
+                                      (
+                                        (τ − 1)w si w < 0
+                            ρτ (w) =                                           (2a)
+                                        τw          si w ≥ 0
+                                ρτ (w) = max {(τ − 1)w, τ w}                                     (2b)
+                                              1      1
+                                ρτ (w) = (τ − )w + | w |                                         (2c)
+                                              2      2
+      Para τ = 2/3, se tiene la siguiente gráfica:
+
+                                                       ρτ (w)
+                                                       6
+
+
+                                                                       
+                                   PP                              
+                                      P                        
+                                            PP                              w
+                                                   P                        -
+
+Métodos para la estimación de parámetros en regresión cuantı́lica                     223
+
+   En la regresión cuantı́lica se busca un vector β = (β1 , β2 , . . . , βn ) ∈ Rn×1 que
+resuelva el siguiente problema de minimización
+                                             m
+                                             X
+                             min f (β) =           ρτ (yi − β T xi )                       (3)
+                                             i=1
+
+
+    En (1) se utiliza la función w2 , en (3) se utiliza la función ρτ (w).
+    Este es un problema de optimización sin restricciones. Como f no es diferen-
+ciable, se tiene un problema de optimización no diferenciable. Para su solución se
+pueden utilizar métodos de OND. También, mediante algunos cambios, se puede
+convertir (3) en un problema cuya solución se obtenga por métodos tradicionales,
+por ejemplo, por optimización lineal.
+
+
+
+2.     Optimización lineal
+    Esta sección y la siguiente siguen las ideas de Koenker & Basset (1978) para
+resolver (3). La función ρτ también se puede definir por medio de las funciones
+parte positiva y parte negativa:
+                                         (
+                                 +        0   si w < 0
+                                p (w) =
+                                          w si w ≥ 0
+                                         (                                                 (4)
+                                          −w si w < 0
+                                p− (w) =
+                                            0   si w ≥ 0
+
+Entonces
+                            ρτ (w) = τ p+ (w) + (1 − τ ) p− (w)                            (5)
+
+En particular,
+
+                                     w = p+ (w) − p− (w)
+                                  | w| = p+ (w) + p− (w)
+
+     Tomando ui = p+ (yi − β T xi ), vi = p− (yi − β T xi ), u = (u1 , u2 , . . . , um ), v =
+(v1 , v2 , . . . , vm ) y em = (1, 1, . . . , 1) ∈ Rm (en general, e es un vector de unos en el
+espacio que se requiera), el problema (3) se escribe de la siguiente manera:
+donde X es la matriz m×n cuyas filas son los vectores x , x2 , . . . , xm (obviamente
+
+transpuestos para que puedan ser filas de la matriz). El anterior es un problema de
+OL con n+2m variables, m restricciones (igualdades) y 2m variables no negativas.
+
+
+3.       Solución del problema dual
+    En optimización lineal siempre es aconsejable evaluar la conveniencia de re-
+solver directamente un problema, el primal, o de hallar su solución a partir de la
+solución de su dual.
+                             T
+    Sea δ = δ1 δ2 . . . δm el vector de variables duales. El problema dual de
+(7) es
+                                max y T δ
+                                    X Tδ = 0
+                                           δ ≤ τe
+                                          −δ ≤ (1 − τ )e
+                                           δ ∈ Rm
+
+      Visto como un problema con variables acotadas, se escribe:
+                                    max y T δ
+                                        X Tδ = 0                                   (8)
+                                  (τ − 1)e ≤ δ ≤ τ e
+
+    La matriz de restricciones es simplemente X T , de tamaño n × m, mucho más
+pequeña que la del problema (7) donde la matriz es de tamaño m × (n + 2m).
+    Después de obtener δ ∗ , solución de (8), es necesario encontrar la solución de
+(7). Para ello se utilizan los resultados de dualidad concernientes a las holguras.
+Sean s̄ el vector de holguras con respecto a las cotas superiores y s el vector de
+holguras con respecto a las cotas inferiores, o sea,
+                                  s̄ = τ e − δ ∗
+                                  s = δ ∗ − (τ − 1)e
+
+Métodos para la estimación de parámetros en regresión cuantı́lica                 225
+
+     Por las propiedades de complementariedad
+                                     s̄i > 0 ⇒ u∗i = 0
+                                     si > 0 ⇒ vi∗ = 0
+
+    Conocidos estos valores, los otros valores u∗i , vi∗ y los valores βi∗ se obtienen
+resolviendo
+4.      Planos de corte
+    El método de planos de corte, MPC, fue propuesto por Kelley (1960) y también
+por Cheney & Goldstein (1959). Se puede encontrar una descripción simplificada
+en Sagastizábal (1997) o en Du Merle (1995). La función f (β) en (3) es convexa y
+no diferenciable.
+    Este método de planos de corte utiliza los subgradientes. De manera más pre-
+cisa, dado un vector β se requiere un subgradiente de f . Una manera de calcular
+γ, subgradiente de f en el punto β es:
+                                           m
+                                           X                      m
+                                                                  X
+                     γ = γ(f, β) = −τ              xi − (τ − 1)           xi
+                                            i=1                    i=1
+                                           ri >0                  ri <0
+
+donde ri = yi − β T xi . En la práctica, en lugar de comparar con cero, se utiliza un
+valor ε positivo y pequeño, entonces
+                                          m
+                                          X                        m
+                                                                   X
+                    γ = γ(f, β) = −τ               xi − (τ − 1)            xi
+                                           i=1                      i=1
+                                          ri > ε                  ri <−ε
+
+    Como el problema (3) no tiene restricciones, entonces todos los puntos β son
+factibles. En el MPC se van construyendo puntos β 1 , β 2 , . . . , donde en la iteración
+k se calcula β k+1 como la solución del siguiente problema de optimización lineal
+(k restricciones en Rn+1 , las variables son β1 , β2 , . . . , βn , z).
+                                  min z
+                               1 T
+                        γ(f, β ) β − z ≤ γ(f, β 1 )T β 1 − f (β 1 )
+                        γ(f, β 2 )T β − z ≤ γ(f, β 2 )T β 2 − f (β 2 )
+                                         ..
+                                          .
+                        γ(f, β k )T β − z ≤ γ(f, β k )T β k − f (β k )
+
+
+     Para garantizar que el problema sea acotado se agregan restricciones de caja:
+                                        u≤β≤v
+
+226                                                               Héctor Manuel Mora Escobar
+
+
+5.        Un ejemplo
+   Consideremos los datos de un ejemplo pequeño, para mostrar algunos resulta-
+dos intermedios de los tres métodos:
+
+                              2            3    4              19.1
+                                                                 
+                            5             6    7            37.1 
+                         X=
+                            8
+                                                          y=      
+                                           9   11            57.8 
+                             10           12   13              71.1
+
+      Consideremos el problema de regresión cuantı́lica con τ = 1/5 .
+
+
+
+5.1.      Optimización lineal
+      En el planteamiento se usan los vectores columna:
+      Su solución es:
+Métodos para la estimación de parámetros en regresión cuantı́lica            227
+
+5.2.    Problema dual
+   Hay cuatro variables duales:
+   El problema de OL, dual del anterior, es:
+   Con δ , se calculan las holguras con respecto a las cotas superiores e inferiores:
+   Por el teorema de holgura complementaria: u∗1 = u∗3 = u∗4 = v1∗ = v2∗ = v3∗ =
+v4 = 0. Reemplazando estos valores en (9), se obtiene:
+5.3.      Planos de corte
+    Para resolver el problema por el MPC, supongamos que 0 ≤ βi ≤ 5 para todo
+i y tomemos β 0 = (2.5, 2.5, 2.5).
+    Para β 0 , uno de los subgradientes es γ 0 = (20, 24, 28) y f (β) = 31.92 . El
+primer corte es 20β1 + 24β2 + 28β3 − z ≤ 148.08 y el primer problema de OL que
+hay que resolver es:
+   Su solución es (β, z) = (0, 0, 0, −148.08). Para el nuevo β, un subgradiente es
+y las nuevas cotas para z
+   La solución del nuevo problema es (β, z) = (0, 0.3367, 5, 0). Para el nuevo β,
+un subgradiente es γ = (5, 6, 8) y f (β) = 2.14 , lo que produce el corte
+y las nuevas cotas para z
+      En la quinta iteración se obtiene (β, z) = (1.7, 1.3667, 2.9, 0.02).
+
+6.       Resultados
+    Los resultados de tiempo y utilización de memoria corresponden a la función
+linpro para optimización lineal del software Scilab 2.6, disponible en www.scilab.org
+en un computador con sistema operacional Windows 98 2 Ed., procesador Intel III
+de 450 MHz con 128Mb de RAM.
+    Como Windows es un sistema multitarea, los tiempos dados, en segundos, son
+tiempos aproximados pues incluyen el tiempo de algunas otras tareas solicitadas
+por el sistema para realizar operaciones diferentes del cálculo en cuestión. Por esa
+misma razón, al efectuar los cálculos para resolver exactamente el mismo problema
+los resultados de tiempo son diferentes, aunque parecidos.
+    Los valores de memoria utilizada corresponden al tamaño de la matriz de datos,
+parámetro de entrada de la función linpro. Es posible que esta función, dentro
+de su proceso de cálculo use memoria adicional para arreglos temporales.
+
+Métodos para la estimación de parámetros en regresión cuantı́lica             229
+
+    En el MPC la matriz de datos aumenta de tamaño de iteración en iteración. El
+tamaño máximo corresponde entonces a la matriz de la última iteración, cuando
+se obtiene la solución con la precisión deseada. Se utilizó como criterio de parada
+
+    Scilab utiliza internamente una pila (stack) para el manejo de los datos. El
+tamaño de la pila, por defecto, es de 106 “palabras” de doble precisión. Para
+problemas relativamente grandes fue necesario aumentar el tamaño de la pila. El
+tamaño máximo que puede tener la pila, en la configuración y condiciones de estos
+ensayos numéricos, es aproximadamente 33.5 × 106 .
+    En todos los ensayos, los datos fueron creados aleatoriamente utilizando la
+función rand. En todos los casos n = 5. La variación se hizo sobre el valor de m
+(número de puntos). Se utilizó el valor τ = 0.2 . Ensayos hechos con otros valores
+de τ no muestran diferencias de tiempo ni de número de iteraciones significativas.
+    En la tabla 1 están los valores máximos de m para que el problema pueda ser
+resuelto con un tamaño de pila dado.
+
+
+            Tabla 1: Valores máximos de m según el tamaño de la pila
+
+    La tabla 2 muestra los valores del número de iteraciones (k) y del tiempo
+utilizado (t en segundos) para la utilización del MPC para un ejemplo con m = 250
+y n = 5, al variar la precisión deseada.
+
+
+      Tabla 2: Iteraciones y tiempo en segundos según la precisión deseada
+    Al utilizar otros problemas de diferente tamaño se obtienen resultados análogos,
+lo que sugiere que el número de iteraciones y el tiempo varı́an poco al cambiar ε.
+    La tabla 3 muestra los resultados de número de iteraciones y tiempo (en se-
+gundos) obtenidos al aplicar el MPC, con ε = 10−4 , para diferentes valores de m.
+
+230                                                      Héctor Manuel Mora Escobar
+
+
+           Tabla 3: Iteraciones y tiempo en segundos en función de m
+    Los valores de k y de t, aumentan al aumentar m. Sin embargo, no hay propor-
+cionalidad, más bien, k tiene tendencia a estabilizarse. Para valores de k iguales
+o parecidos, el valor de t puede ser muy diferente. La razón es muy sencilla: los
+problemas de OL que se resuelven son del mismo tamaño, pero la diferencia en los
+tiempos se debe al cálculo de subgradientes con diferente número de puntos.
+    La tabla 4 muestra valores de tamaño de la matriz de datos (tamaño de la
+matriz en la última iteración para el caso del MPC) y tiempos de la solución por
+el primal, el dual y el MPC. Para el caso de la solución por el dual, el tiempo
+incluye la solución del dual y la solución del sistema lineal para la obtención de
+los valores primales.
+
+
+Tabla 4: Tamaño de la matriz en la última iteración y tiempos según el método
+    En la tabla 4 el signo de interrogación indica el tamaño necesario para la matriz
+si se puede resolver el problema. El sı́mbolo X indica que no se dispone de ese valor
+de tiempo porque el problema resultó demasiado grande y no pudo ser resuelto.
+
+Conclusiones
+Desde el punto de vista de tamaño, la mejor opción es el MPC. Si se piensa en tiempo de cálculo, a partir de valores de m entre 500 y 600 el MPC parece ser comparable a la solución por el dual. Para m ≥ 1000 el MPC resulta ser más rápido. Si m ≤ 500 es más conveniente obtener la solución mediante el dual.
+La solución directa por el primal es la más desventajosa en uso de memoria y en tiempo de cómputo.
+Otro método interesante y que vale la pena ensayar es el ACCPM (Analytic Center Cutting Plane Method) de Goffin, Haurie & Vial (1992) y Du Merle (1995). Sería además conveniente comparar con versiones del método simplex adaptadas para regresión cuantı́lica (Silva 2000).
+Referencias
+Cade, B. & Noon, B. (2003), ‘A Gentle Introduction to Quantile Regression for Ecologists’, Frontiers in Ecology and the Environment 1(8), 412–420.
+Cheney, E. & Goldstein, A. (1959), ‘Newton’s Method for Convex Programming ans Tchebycheff Approximations’, Numerische Mathematik (1), 253–268.
+Du Merle, O. (1995), Points intérieurs et plans coupants : mise en œuvre et développement d’une méthode pour l’optimisation convexe et la programmation linéaire structurée de grand taille, PhD thesis, Universidad de Ginebra.
+Fitzenberger, B., Koenker, R. & Machado, J. (2002), Economic Applications of Quantile Regression, Physica-Verlag, Heidelberg.
+Goffin, J., Haurie, A. & Vial, J. (1992), ‘Decomposition and Nondifferentiable Optimization with the Projective Algorithm’, Management Science 38(2), 284–302.
+Kelley, J. (1960), ‘The Cutting Plane Method for Convex Problems’, J. SIAM (8), 703–712.
+Koenker, R. & Basset, G. J. (1978), ‘Regression Quantiles’, Econometrica 46(1), 33–50.
+Sagastizábal, C. (1997), Optimisation non Differérentiable en Bonnans J.F. et al., Optimisation Numérique, Springer, Paris.
+Silva, M.A. Arenales, M. (2000), ‘Uma extensão do método simplex para a resolução do problema de regressão quantil’, Rev. Mat. Est., São Paulo (18), 125–144.

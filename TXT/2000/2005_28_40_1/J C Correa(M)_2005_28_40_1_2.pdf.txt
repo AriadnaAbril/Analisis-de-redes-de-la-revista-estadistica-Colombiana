@@ -1,0 +1,192 @@
+Una aproximación bayesiana al problema de heteroscedasticidad en el modelo lineal simple
+Universidad Nacional de Colombia
+Resumen
+Presentamos una implementación bayesiana para ayudar a resolver un problema de heteroscedaticidad en el modelo de regresión simple, fácilmente extendible al caso múltiple.
+Palabras Claves: Heteroscedasticidad, modelos de regresión, estadı́stica bayesiana, muestreador de Gibbs.
+Abstract
+We implement a bayesian solution to the heteroscedasticity problem in simple regression. This solution can be easily generalized to the multiple regression case.
+Keywords: Heteroscedasticity, Regression models, Bayesian statistics, Gibbs sampler.
+
+1.     Introducción
+   El modelo de regresión lineal es tal vez la herramienta estadı́stica de más amplio
+uso. El modelo de regresión simple presenta una estructura elegante, útil para
+representar gran cantidad de fenómenos reales de una forma aproximada.
+
+                                    yi = β0 + β1 xi + ǫi
+
+   Se asume usualmente que ǫi ∼ N (0, σ 2 ).
+   Un problema conocido es el de la heteroscedasticidad, o sea la violación de la
+condición de varianza constante de los errores.
+   Un modelo de heteroscedasticidad que se asume con frecuencia es σi2 = xνi σ 2 ,
+donde ν se convierte en otro parámetro del modelo, el cual desde el punto de vista
+
+tradicional se estima primero y se realiza una transformación antes de aplicar los
+procedimientos de estimación corrientes.
+    Aquı́ presentamos la aproximación bayesiana para la solución de este problema,
+mostrando cómo se puede generalizar al caso de la regresión múltiple y además lo
+ilustramos mediante un ejemplo utilizando el programa WinBUGS.
+
+
+2.      La aproximación bayesiana
+    Opuesto a la estimación clásica de parámetros, la estadı́stica bayesiana produ-
+ce distribuciones posteriores de las cantidades desconocidas (parámetros) teniendo
+en cuenta, tanto los datos, como las densidades a priori sobre estos parámetros.
+Como tal, la estadı́stica bayesiana proporciona un cuadro más completo sobre la
+incertidumbre en la estimación de los parámetros desconocidos. Una introducción
+completa puede buscarse en el libro de Lee (1997). Si θ es nuestro parámetro de
+interés y π(θ) es la distribución a priori de los parámetros que resume nuestra in-
+certidumbre sobre los mismos, entonces, una vez obtenidos los datos, el paradigma
+bayesiano se establece como:
+                                 π(θ| datos) ∝ π(θ)θ| datos)
+donde L es la función de verosimilitud y ∝ es el sı́mbolo de proporcionalidad, el
+cual indica que la cantidad debe dividirse por una constante para que sea una
+densidad propia.
+   Si (x1 , y1 ) , (x2 , y2 ) , · · · , (xn , yn ) es la información muestral, la función de verosi-
+militud será:
+                                     n
+                                                                                          !
+                                                                                        2
+                                   Y           1                1 (y i − β0  −  β1 xi )
+ L β, σ 2 , ν|Datos =
+                      
+                                         √             exp −
+                                   i=1     2πxi σ
+                                                 ν/2            2        xνi σ 2
+                                                                              n
+                                                                                                     !
+                                                                                                   2
+                                                   1                      1 X (yi − β0 − β1 xi )
+                            =                                    exp −
+                                    (2π)n/2 (
+                                                Qn          ν/2
+                                                        xi ) σ            2 i=1            xνi σ 2
+                                            i=1
+                                                                           
+     Si asumimos una distribución a priori no informativa sobre β, σ 2 , ν tal que:
+                                          π(β) ∝ c
+                                                   1
+                                         π(σ 2 ) ∝
+                                                   σ
+                                          π(ν) ∝ k
+donde c y k son constantes, entonces la distribución posterior de (β, σ 2 , ν) es:
+                                                        n
+                                                                                !
+                                                                              2
+           2
+                               1                   1 X (yi − β0 − β1 xi )
+    π β, σ , ν|Datos ∝ Qn                 exp − 2
+                         (
+                                    ν/2
+                                xi ) σ 2          2σ i=1          xνi
+                                   i=1
+
+    La anterior expresión puede resolverse utilizando métodos computacionales
+conocidos como MCMC (Monte Carlo Markov Chain) utilizados ahora para re-
+solver problemas bayesianos de gran complejidad. Uno de los procedimientos es
+
+Aproximación bayesiana a la heteroscedasticidad en el modelo lineal simple                      19
+
+el muestreador de Gibbs, técnica introducida por Geman & Geman (1984) y de-
+sarrolladas posteriormente por Gelfand & Smith (1990). En términos generales,
+la idea del muestreador
+                       de Gibbs es la de sobreponer las dificultades del cálculo
+de π β, σ 2 , ν|Datos con una sucesión de cálculos más fáciles de distribuciones
+condicionales que funciona ası́:
+                                                    
+   1. Seleccionar un punto arbitrario β 0 , σ02 , ν0 .
+
+   2. Generar:
+                               2
+                                            
+       a) β i de π β|Datos, σi−1     , νi−1 .
+                                          
+       b) σi2 de π σ 2 |Datos, β i , νi−1 .
+                                      
+       c) νi de π ν|Datos, β i , σi2 .
+
+   3. Repetir el paso anterior un número grande veces.
+
+   Dado que este proceso de generación de muestras es un proceso markoviano
+donde la distribución estacionaria es la distribución posterior de la cual se pretende
+extraer las muestras, se deben descartar los valores generados al comienzo del
+proceso. Este es un problema complejo pero se acostumbra eliminar los primeros
+1000 valores y generar 5000 valores o más.
+                                                                       2
+                                                                                
+  Es fácil probar que
+                      −1
+                          en
+                             el paso i, la distribución π β|Datos, σi−1 , νi−1 es una
+        2
+N β̂, σi−1    X ∗′X ∗       , donde la j-ésima fila de X ∗ es el vector
+                                                                                
+                                          1                       xj
+                                          ν        /2
+                                                        ,          ν        /2
+                                   σi−1 xj (i−1)            σi−1 xj (i−1)
+                   −1
+y β̂ = X ∗ ′ X ∗         X ∗ ′ y ∗ , donde la j-ésima componente de y ∗ es
+                                                            yj
+                                      yj∗ =                  ν(i−1)
+                                                                       .
+                                                                 2
+                                                σi−1 xj
+
+La distribución posterior condicional de σ 2 es una gamma inversa:
+                                                                   n
+                                                                 1 X (yj − β0i − β1i xj )2
+                                                                                            
+              2
+          π(σ | Datos, β i , νi−1 ) = IG 2,                                  ν
+                                                                 2 j=1      xj i−1
+
+    La distribución posterior condicional de ν no tiene una forma cerrada y por
+lo tanto debemos utilizar algún método para la generación de valores de esta
+distribución, tal como el muestreo por importancia u otro, ya que:
+                                                          n
+                                                     1 X (yi − β0i − β1i xi )2
+                                                                              
+                                     1
+      π(ν | Datos, β i , σi2 ) = Qn          exp  −
+                                 ( i=1 xi )ν        2σi2 i=1     xνi
+
+20                                                             Juan Carlos Correa
+
+
+3.    Ejemplo
+   La modelación del precio del metro cuadrado de apartamentos usados es un
+problema de interés para las lonjas de propiedad raı́z. Consideramos el modelo:
+
+                             Precio = β0 + β1 M ts2
+
+que relaciona el precio de oferta de un apartamento usado y su tamaño en metros
+cuadrados. Dada la complejidad del problema sólo consideramos apartamentos de
+un sector limitado de la ciudad de Medellı́n como es El Poblado, donde tienen una
+estructura homogénea: estratos socioeconómicos altos, calidad de construcciones
+similares, etc. Realizamos el ajuste del modelo con el programa WinBUGS, ver-
+sión 1.4. Como este programa no permite trabajar con distribuciones a priori no
+informativas, seleccionamos distribuciones con varianzas muy grandes con el fin
+de imitar dentro de un rango plausible a las no informativas. El código aparece a
+continuación:
+
+Aproximación bayesiana a la heteroscedasticidad en el modelo lineal simple              21
+
+    Se generaron 13000 muestras de las cuales se descartaron las primeras 4000 y
+para el proceso inferencial se utilizaron 9000. La tabla presenta algunos resúmenes
+de las distribuciones posteriores de los cuatro parámetros del modelo. Se observa
+como el intervalo de probabilidad para ν del 95 % es (1,22, 2,59), lo cual muestra
+cómo es de grave el problema de la varianza no constante en el modelo.
+4.     Conclusiones y recomendaciones
+     La aproximación bayesiana permite resolver el problema de varianza no cons-
+tante en regresión en un solo paso, ya que simultáneamente se hallan las distribu-
+ciones posteriores de todos los parámetros involucrados, un problema que para la
+aproximación tradicional es complejo y requiere primero modelar la heteroscedas-
+ticidad y luego estimar los parámetros del modelo realizando los ajustes necesarios.
+     Esta solución se extiende fácilmente al caso de la regresión múltiple, ya que
+simplemente una estructura como σi2 = xνi11 xνi22 · · · xνikk σ 2 , se modela en forma simi-
+lar.
+Bibliografía
+Gelfand, A. & Smith, A. F. M. (1990), ‘Sampling based approaches to calculating marginal densities’, J. Amer. Stat. Assoc 85, 398–409.
+Geman, S. & Geman, D. (1984), ‘Stochastic relaxation, Gibbs distributions and the bayesian restoration of images’, IEEE Trans. on Pattern Analysis and Machine Intelligence 6, 721–741.
+Lee, P. M. (1997), Bayesian Statistics: An Introduction, 2 edn, Arnold, London.
+Tanner, M. A. (1996), Tools for Statistical Inference, Springer-Verlag, New York.

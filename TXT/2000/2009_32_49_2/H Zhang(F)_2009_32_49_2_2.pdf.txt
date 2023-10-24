@@ -1,0 +1,991 @@
+Comparación entre dos métodos de reducción de dimensionalidad en series de tiempo
+Universidad Santo Tomás
+Resumen
+En este trabajo se analizan dos métodos de reducción de dimensionalidad en series de tiempo multivariadas estacionarias: el método de Peña y Box,basado en el dominio del tiempo, y el método de Brillinger, basado en el dominio de las frecuencias. Se encontraron dos fallas en el método de Peña y Box, y se propusieron correcciones a estas. También se compararon los dos métodos con respecto a la capacidad para identificar el número de factores latentes mediante simulaciones y se realizó una aplicación empírica.
+Palabras clave: series de tiempo multivariadas, reducción de dimensionalidad, dominio del tiempo, dominio de las frecuencias.
+1. Introducción
+   Dos de los aspectos más importantes en la estadística son las variables y los
+individuos, y existen métodos estadísticos de reducción tanto para el número de
+  a Docente investigadora. E-mail: hanwenzhang@usantotomas.edu.co
+
+individuos como para el número de variables. Entre de los métodos de reducción
+de variables se encuentran el método de componentes principales (ACP) y el mo-
+delo factorial. Estos métodos tienen como objetivo no solo reducir el número de
+variables sino hacerlo de forma óptima y así poder representar los datos en una
+dimensión inferior logrando una interpretación más simple y compacta; siendo de
+gran importancia y uso frecuente en diferentes áreas de la estadística, incluyendo
+su extensión al análisis multivariado de series de tiempo.
+    El aspecto más importante en el análisis de series de tiempo es que los datos
+son correlacionados, entonces cuando se trabaja con una serie de tiempo multiva-
+riada, el número de parámetros en los modelos es muy grande debido a la presencia
+de correlación tanto dentro de cada serie como entre las series univariadas que la
+componen. Por consiguiente, si se logra reducir el número de series, se puede sim-
+plificar considerablemente la estructura del modelo; además, descubrir los factores
+latentes que generan las series observadas es muy importante en series económicas,
+demográficas, meteorológicas, etc.
+    En el análisis de series de tiempo existen dos enfoques: análisis en el dominio del
+tiempo y en el dominio de las frecuencias. Las herramientas principales del enfoque
+en el dominio del tiempo son las funciones de autocorrelación y autocorrelación
+parcial; mientras que el enfoque en el dominio de las frecuencias asume que la
+serie es la suma de ondas de diferentes frecuencias y se estudian las frecuencias
+más importantes. Estos dos enfoques son matemáticamente equivalentes pues la
+función espectral en el dominio de las frecuencias es simplemente la transformada
+de Fourier de la función de autocovarianzas en el dominio del tiempo.
+    En el campo de reducción de dimensionalidad en series de tiempo, también se
+han usado estos dos enfoques. Dentro del enfoque del dominio de tiempo se encuen-
+tran el modelo de index propuesto por Reinsel (1983), el modelo de rango reducido
+de Ahn & Reinsel (1988) y el modelo de componente escalar de Tiao & Tsay (1989).
+Uno de los dos métodos considerados en esta investigación, el método de Peña &
+Box (1987), está restringido a series estacionarias, y tiene como herramienta prin-
+cipal las matrices de autocovarianzas muestrales. Debido a la popularidad de este
+método, ha sido extendido para series no estacionarias por Peña & Poncela (2006)
+y para series no lineales por Correal & Peña (2008). Por otro lado, en el enfoque del
+dominio de las frecuencias, se encuentra el método de Stoffer (1999) para detectar
+señales comunes en una determinada frecuencia y el método de Brillinger (1981).
+Este último es similar al método clásico de componentes principales, pues utiliza la
+varianza recogida por cada componente principal para determinar la reducción del
+número de variables. El método de Peña y Box y el método de Brillinger tienen
+básicamente el mismo objetivo, y es natural, al momento de tener la necesidad
+de reducir la dimensión de una serie multivariada, preguntar cuál de estos dos
+métodos es mejor o, equivalentemente, cuál método utilizar. Sin embargo, en la
+literatura estadística, no se ha presentado ningún estudio comparativo de estos
+métodos1 . Por consiguiente, el objetivo de esta investigación es llenar este vacío
+
+   1 Tampoco existe, en la literatura, una relación matemática directa entre estos dos métodos y
+
+el método clásico de componentes principales.
+
+
+                                         Revista Colombiana de Estadística 32 (2009) 189–212
+
+Comparación entre dos métodos de reducción de dimensionalidad...                      191
+
+comparando los dos métodos en términos de su capacidad de identificación del
+número de factores latentes usando tanto simulaciones como datos reales.
+
+
+2. Método de Peña y Box
+2.1. El modelo básico
+   El método de Peña & Box (1987) supone que el proceso observable {zt } cen-
+trado y de dimensión k es generado por factores {yt } de dimensión r con r ≤ k
+más un término de error t , específicamente:
+
+                                     z t = P yt + t                                  (1)
+
+donde P es una matriz de tamaño k × r cuyo elemento pij representa el peso del
+j-ésimo factor sobre la i-ésima serie observada, y t es un proceso ruido blanco con
+matriz de covarianzas Σ de rango completo k. Igual que en el modelo factorial
+clásico, la ecuación (1) no está determinada de manera única, pues para cualquier
+matriz invertible de tamaño r × r, H, si se definen P ∗ = P H y yt∗ = H −1 yt se
+tiene que zt = P ∗ yt∗ + t , y se logra la misma representación con nuevas matrices
+P ∗ y yt∗ . Para evitar este problema de identificación se toma P 0 P = I.
+    Otro supuesto es que el proceso {yt } obedece a un proceso V ARM A(py , qy ),
+donde los polinomios autorregresivos y promedio móvil se denotan por Φy (B) y
+Θy (B) con Φy (B) = I −Φ1y B −· · ·−Φpy y B py y Θy (B) = I −Θ1y B −· · ·−Θqy y B qy ,
+entonces el modelo de {yt } es Φy (B)yt = Θy (B)at . También se supone que las
+raíces de los determinantes |Φy (B)| y |Θy (B)| están fuera del círculo unitario;
+el ruido del proceso V ARM A {at } es un ruido blanco gaussiano con matriz de
+covarianzas Σa , además E(at 0s ) = 0 para todo t y s.
+
+2.1.1. Factores independientes
+
+   En primera instancia se supone que las componentes de yt son mutuamente
+independientes y las matrices Φiy y Θjy con i = 1, . . . , py y j = 1, . . . , qy son dia-
+gonales. Sea Γz (k) la función matricial de covarianzas del proceso observado {zt }
+y Γy (k) la función matricial de covarianzas del proceso estocástico {yt }. Algunas
+propiedades de estas matrices son:
+
+   • Γz (0) = P Γy (0)P 0 + Σ
+   • Γz (k) = P Γy (k)P 0 , para k ≥ 1
+   • r(Γz (k)) = r, para k ≥ 1,
+
+donde r(A) es el rango de la matriz A. Bajo el supuesto de que los factores son
+independientes y la matriz Σa es diagonal se tiene que Γy (k) es diagonal, entonces
+Γz (k) es simétrica para k ≥ 1 y las columnas de la matriz P serán los vectores
+columnas de Γz (k) asociado a los r valores propios distintos de cero, para todo
+k ≥ 1. Nótese también que si Γy (k) = 0 para todo k 6= 0, entonces Γz (k) = 0 para
+
+                                       Revista Colombiana de Estadística 32 (2009) 189–212
+
+192                                                                                          Hanwen Zhang
+
+todo k 6= 0, es decir, el proceso {zt } es un proceso ruido blanco, en cuyo caso se
+tiene el modelo factorial clásico representado por la ecuación (1).
+     Por otro lado, la identificación del número de factores r se puede realizar obser-
+vando la matriz de autocorrelaciones parciales ℘(l) (Tiao & Box 1981). Se puede
+demostrar que el rango de ℘(l) es a lo más r. Existe una tercera forma de iden-
+tificar el número de factores, que es consecuencia del siguiente teorema (Peña &
+Box 1987).
+
+Teorema 1. Si zt = P yt + t , donde yt ∼ V ARM A(py , qy ), P es de rango
+r con r ≤ k, {t } es un proceso ruido blanco, entonces {zt } sigue un proceso
+V ARM A(pz , qz ) con pz = py y qz = max(py , qy ).
+
+                                       P de identificar el número de factores: las
+   De este teorema se obtiene otra forma
+matrices Ψi en la representación zt = ∞ i=1 Ψi t−i también tienen rango igual a r.
+En conclusión, existen diferentes formas para encontrar el número de factores r,
+pero el cálculo de las matrices ℘(k) y Ψ es más complicado que el de las matrices
+Γ(k), y por eso la metodología de esta investigación se basa en el rango de las
+matrices Γ(k).
+
+
+2.1.2. Transformación canónica
+
+   Se puede encontrar una transformación del proceso {zt } de la cual se obtiene
+una reducción de dimensión del proceso. Esta transformación está dada por la
+matriz M definida por:
+                                     − 
+                                       P
+                                M=                                           (2)
+                                       B
+donde P − es la inversa de Moore-Penrose de la matriz P y B es una matriz con
+BP = 0. Es posible definir B como la matriz formada por los k − r vectores
+propios ligados a los valores propios nulos de la matriz P P 0 . Así, podemos obtener
+las siguientes igualdades:
+                                                                                                
+                        P − zt               yt + P − t               yt + P − t               x1t
+      xt = M zt =                    =                         =                         =                 (3)
+                        Bzt                  BP yt + Bt               Bt                       x2t
+
+     Es decir, los primeros r componentes de xt son iguales a los factores yt más
+un ruido y los restantes k − r componentes son iguales a un ruido blanco. De esta
+forma, la estructura del proceso zt queda resumida dentro del proceso x1t que tiene
+dimensión inferior, y así se logra una reducción de la dimensionalidad del proceso
+zt .
+
+
+2.1.3. Factores dependientes
+
+    Cuando los factores generadores {yt } son dependientes, se trabaja con las ma-
+trices de coeficientes del modelo V ARM A en vez de las matrices de covarianzas,
+y se tienen las siguientes propiedades:
+
+                                                Revista Colombiana de Estadística 32 (2009) 189–212
+
+Comparación entre dos métodos de reducción de dimensionalidad...                   193
+
+(1) Φy (s) = Ws Fs Ws−1 donde Fs de tamaño r×r es diagonal y contiene los valores
+    propios de Φy (s) y Ws contiene los vectores propios de Φy (s),
+(2) Φz (s)P Ws = P Ws Fs . Por ser Fs diagonal, esta contiene los valores propios
+    de Φz (s) y la matriz P Ws de tamaño k × r contiene los vectores propios de
+    Φz (s).
+
+   En conclusión, se puede establecer que los valores propios de Φy (s) son los
+mismos de Φz (s). Por el otro lado, se considera la primera matriz de coeficientes
+autorregresivos Φz (1) y suponga que H es la matriz de tamaño k × k que contiene
+a todos sus vectores propios. Entonces las r columnas de H conforman la matriz
+P W1 y estas corresponden a los vectores propios asociados a los valores propios
+no nulos de Φz (1).
+                                                
+                                        W1−1 P 0
+                                M=                                             (4)
+                                        V0
+donde V es la matriz de vectores propios de la matriz P P 0 = (P W1 )(W1−1 P 0 )
+asociados a los valores propios nulos. Definida M de esta forma podemos obtener
+una transformación similar al caso de factores independientes:
+                                                           
+                                  W1−1 yt + W1−1 t       x1t
+                   xt = M zt =                       =                      (5)
+                                  V 0 t                  x2t
+
+   Análogo al caso de los factores independientes, se obtiene un proceso x1t con
+dimensión inferior que la del proceso original zt .
+
+
+2.2. Implementación práctica
+    Esta sección introduce dos inconvenientes generados por el método de Peña y
+Box al momento de su implementación en la práctica. Así mismo, se proponen dos
+alternativas teóricas para lidiar con estos inconvenientes sin afectar los resultados
+finales del método.
+
+2.2.1. Identificación del número de factores
+
+    El método de Peña y Box sugiere determinar el número de factores, obser-
+vando los valores propios de las matrices de covarianzas  Pmuestrales de las series
+                                                 b z (h) = n−h (zt − z)(zt+h − z)0 /n
+            b z (h). Sin embargo, estas matrices Γ
+observadas, Γ                                               t=1
+claramente no son simétricas, y por consiguiente pueden tener valores propios ne-
+gativos y, más aún, complejos, lo cual dificulta la determinación del número de
+factores puesto que no es correcto usar las magnitudes de los valores propios para
+determinar el número de factores como lo ilustra el siguiente ejemplo de simulación.
+Se simuló una serie zt de dimensión 4 de acuerdo con la ecuación (1) con
+                                                     
+                                       0.51    0.30
+                                     0.54     0.60 
+                               P =  0.60 −0.54 
+                                                      
+
+                                       0.30 −0.51
+
+                                    Revista Colombiana de Estadística 32 (2009) 189–212
+
+194                                                                      Hanwen Zhang
+
+Σ = I, yt ∼ V ARM A(1, 0) con Φ = diag(0.3, 0.5) y
+                                              
+                                     1.0 0.6
+                              Σa =
+                                     0.6 1.0
+
+      La matriz de autocovarianzas muestrales de orden 1 está dada por:
+                                                             
+                                −0.11 −0.13 −0.23 −0.01
+                                                0.26 −0.01 
+                    b z (1) =  0.02 −0.1
+                    Γ                                                               (6)
+                               0.16    0.11 −0.09 −0.27 
+                                  0.02       0.16 −0.26 −0.18
+
+    Al calcular los valores propios de la matriz Γb z (1), se encontró que estos son
+−0.46, 0.043 ± 0.15i y −0.11. De tal forma que las magnitudes son: 0.46, 0.16,
+0.16 y 0.11, respectivamente. Los anteriores valores llevan a la conclusión que el
+número de factores es 1 (considerando a 0.16 como pequeño) o 3 (considerando
+a 0.16 significativo), lo cual es erróneo de cualquier forma puesto que el número
+correcto de factores es 2. Afortunadamente la anterior inconveniencia se puede
+resolver modificando la metodología de Peña y Box, de la forma sugerida en esta
+investigación, teniendo en cuenta que el número de factores es igual al rango de
+las matrices Γb z (h), y este es igual al número de valores singulares no nulos. En
+primer lugar, es necesario recordar la definición de los valores singulares de una
+matriz cuadrada (Jiménez 2004).
+Definición 1. Los valores singulares de una matriz real A de tamaño n× n son las
+raíces cuadradas de los valores propios asociados a la matriz simétrica A0 A (listados
+con sus multiplicidades algebraicas). Estos valores se denotan por σ1 , σ2 , . . . , σn ,
+y se colocan en orden decreciente:
+                                 σ1 ≥ σ2 ≥ · · · σn ≥ 0
+
+    Nótese que por definición, a diferencia de los valores propios, los valores singu-
+lares de una matriz son siempre reales positivos. El siguiente teorema establece la
+relación entre el rango de una matriz cuadrada y sus valores singulares.
+Teorema 2. (Descomposición en Valores Singulares) Sea A una matriz real de
+tamaño n × n con rango r, r < n. Entonces existen matrices ortogonales U y V
+de tamaño n × n, tales que
+                                A = U SV t                                (7)
+donde S es la matriz particionada de tamaño m × n, dada por
+                                            
+                                        Dr 0
+                                 S=
+                                        0 0
+con                                                     
+                                      σ1       ···    0
+                                      ..      ..     .. 
+                                Dr =  .          .    .
+                                         0     ···    σr
+donde los σi con i = 1, · · · , r son los valores singulares no nulos de A.
+
+                                      Revista Colombiana de Estadística 32 (2009) 189–212
+
+Comparación entre dos métodos de reducción de dimensionalidad...                     195
+
+    En el teorema anterior, como V t es una matriz invertible, entonces A y U S
+tienen el mismo rango; usando el mismo argumento y el hecho que U también
+es invertible, por consiguiente A y S tienen el mismo rango, y por construcción
+el rango de S es r, el número de valores singulares no nulos de A. Por lo tanto,
+se concluye que el rango de una matriz cuadrada es igual al número de valores
+singulares no nulo, y por consiguiente es más conveniente usar los valores singulares
+de Γb z (h), para determinar el rango, que usar los valores propios. Retomando el
+ejemplo formulado al principio de esta sección, donde se vio que el uso de valores
+propios no es siempre adecuado, se tiene que con la propuesta de usar valores
+                         b
+singulares de la matriz Γ(1)  dada por (6), se llega a que estos son 0.51, 0.34, 0.16,
+0.05. De esta manera, si consideramos los dos primeros valores singulares los más
+importantes, se puede llegar a la conclusión correcta de 2 factores; mientras que
+con el uso de los valores propios, el número de factores identificado será 1 o 3,
+mas nunca el valor correcto, 2. Ahora, observar directamente los valores de los
+valores singulares y decidir a simple vista que los dos primeros son importantes no
+es un método riguroso para identificar r, pues se necesitaría cierto tipo de prueba
+estadística para decidir sobre si estos son significativos o no; sin embargo, en la
+literatura estadística no existe tal prueba basada en valores singulares, y será un
+tema abierto para futuras investigaciones.
+
+
+2.2.2. Estimación del modelo
+
+    Según lo mencionado en la sección 2.1, solo se puede encontrar la matriz P
+cuando se asume que las componentes de yt son independientes para cada t. En
+este caso, existen dos formas de hacerlo:
+
+                                                  b z (k).
+   1. Usando los vectores propios de las matrices Γ
+
+   2. Usando los vectores propios de las matrices de coeficientes Φz (k) del modelo
+      V ARM A ajustado a la serie zt .
+
+    En ambos casos los vectores propios deben ser ortonormales para garantizar
+que P 0 P = I, de tal manera que el modelo quede determinado de forma única.
+Sin embargo, existen dificultades al momento de ejecutar cualquiera de estas dos
+alternativas en la práctica.
+    En el caso de usar Γ   b z (k), como se indica en la sección 2.1.1, bajo el supuesto
+(1), las matrices de autocovarianzas Γz (k) son simétricas; pero en la práctica la
+estimación de esta, Γ  b z (k) = 1 Pn−k (zt+k − z)(zt − z)0 puede no ser simétrica,
+                                    n  t=1
+y no siempre es posible encontrar vectores propios ortonormales de una matriz
+no simétrica y, por lo tanto, no siempre se puede hallar la matriz P . El mismo
+problema surge cuando se usan los vectores propios de Φz (k) para construir P . Sin
+embargo, este problema se puede resolver usando la representación del modelo de
+estados y el filtro de Kalman como lo sugieren por Peña & Poncela (2006), método
+que se describe a continuación.
+
+                                      Revista Colombiana de Estadística 32 (2009) 189–212
+
+196                                                                      Hanwen Zhang
+
+    Siguiendo a Brockwell & Davis (1996), un modelo de estados está dado por las
+siguientes ecuaciones:
+
+
+                                     zt = Gt xt + wt                                (8a)
+                                 xt+1 = Ft xt + Rt vt                               (8b)
+
+
+donde {zt } es de dimensión w × 1, que se expresa como una función lineal del
+vector de estado xt de dimensión v × 1 mediante la matriz Gt de tamaño w × v,
+{wt } ∼ RB(0, Rt ), {vt } ∼ RB(0, Qt ), E(wt vs0 ) = 0 para todo t y s. Además, el
+vector de estado inicial x1 es incorrelacionado con los errores vt y wt para todo
+t ≥ 1. La primera ecuación se llama ecuación de observación y la segunda, ecuación
+de estado o de transición.
+    La presentación del modelo de Peña y Box en forma de un modelo de estados
+es como sigue:
+
+
+                                       zt = Pe xt + t                              (9a)
+                                  xt = F xt−1 + Rvt                                 (9b)
+
+                   0
+donde xt = [yt0 , yt−1            0
+                       , . . . , yt−l+1 ]0 es de tamaño rl × 1 con l = max(py , qy + 1),
+donde py y qy denotan los órdenes del modelo V ARM A de {yt } y r es el número
+de factores. Pe es una matriz de tamaño r × rl que contiene la matriz P y matrices
+nulas,
+
+                                         
+        Φ1y     Φ2y    · · · Φl−1,y   Φly                                     
+      I                                           Ir       Θ1y   · · · Θl−1,y
+       r        0     ···     0       0        0
+                                                           0    ···     0 
+   F =  0       Ir    ···     0       0 , y R = 
+                                                  .         ..           .. 
+                                                                               
+                                                                                    (10)
+       .                                                         ..
+       .         ..   ..       ..     .. 
+                                                  ..        .       .    . 
+       .          .       .     .      . 
+                                                    0        0    ···     0
+         0       0     ···     Ir      0
+
+
+    Cabe resaltar que Peña & Poncela (2006) proponen el modelo de estados para la
+estimación puesto que su trabajo está enmarcado dentro del contexto de factores no
+estacionarios. Según lo señalado en este trabajo, en el caso de factores estacionarios,
+también es adecuado utilizar la misma metodología. Por otro lado, para estimar
+el modelo (9), es necesario conocer los órdenes py y qy . Para esto se hace uso
+del teorema 1, donde se establece que, bajo los supuestos en (1), se tiene que
+pz = py y qz = máx(py , qy ). Entonces el procedimiento será (i) obtener los valores
+adecuados para pz y qz usando las series observadas {zt }; (ii) usar las relaciones
+antes mencionadas para encontrar valores candidatos de py y qy ; por ejemplo, si
+pz = qz = 2, entonces se tiene que py = pz y los valores candidatos para qy serán
+2, 1 y 0; (iii) usar criterios adecuados (por ejemplo, los criterios de información)
+para escoger los valores finales de py y qy .
+
+                                      Revista Colombiana de Estadística 32 (2009) 189–212
+
+Comparación entre dos métodos de reducción de dimensionalidad...                     197
+
+3. Método de Brillinger
+3.1. Método teórico
+    El método de Brillinger (1981) hace supuestos inversos a los supuestos del mé-
+todo de Peña y Box, en el sentido de que este último expresa el proceso observado
+en términos de los factores generadores, pero el método de Brillinger expresa los
+factores generadores como combinación del proceso observado. Suponga que el pro-
+ceso observado Xt es de tamaño k × 1, y los factores generadores, que Brillinger
+llama los componentes principales, ζt son de tamaño r × 1 con r ≤ k. Brillinger
+plantea la siguiente relación entre estos dos procesos:
+                                         X
+                                 ζt =              bt−u Xu ,                        (11)
+                                           u
+
+donde las matrices bt son de tamaño r × k. Dada esta ecuación, la serie observada
+Xt se puede estimar mediante los ζt de la siguientes forma:
+                                           X
+                                    bt =
+                                    X               ct−u ζu                         (12)
+                                               u
+
+Entonces el problema de encontrar los componentes principales ζt se convierte en
+buscar las matrices bu y cu tales que Xbt sea cercano a Xt . El siguiente teorema
+provee la solución para este problema:
+
+Teorema 3. (Brillinger, 1981) Sea {Xt } de dimensión k × 1, un proceso esta-
+cionario en sentido débil con media cero, función matricial de autocovarianzas
+absolutamente sumable y función matricial
+                                     n      de densidad espectral f (ω). Entonces
+                                            P                P          o
+las matrices bt y ct que minimizan E [Xt − u ct−u ζu ]t Xt − u ct−u ζu están
+dadas por
+                                     Z 2π
+                                   1
+                             bt =         B(α)eitα dα                        (13)
+                                  2π 0
+y
+                                         Z 2π
+                                     1
+                             ct =                  C(α)eitα dα                      (14)
+                                    2π     0
+
+donde
+                                                
+                                         V1 (λ)t
+                                 B(λ) =  ... 
+                                                
+                                                                                    (15)
+                                         Vr (λ)t
+y
+                                                                        
+                      C(λ) = B(λ)t = V1 (λ)               · · · Vr (λ)              (16)
+
+    Aquí, Vj (λ) denota el j-ésimo vector propio de la matriz de densidad espectral
+f (λ) ligado al valor propio µj (λ), para j = 1, . . . , r y cada λ ∈ [0, 2π].
+
+                                      Revista Colombiana de Estadística 32 (2009) 189–212
+
+198                                                                                     Hanwen Zhang
+
+   Para encontrar el j-ésimo componente principal ζj (t) se debe escribir Xt en
+términos de la representación de Cramér dado por
+                                   Z 2π
+                              Xt =      eiλt dZX (λ)                       (17)
+                                            0
+
+donde                                            Z 2λ
+                              2πZX (λ) =                   dX (α)dα                             (18)
+                                                     0
+y
+                                                X
+                                                ∞
+                               dX (λ) =                  X(t)e−iλt                              (19)
+                                             t=−∞
+
+    Se obtiene que ζ(t) está dado por
+                                      Z 2π
+                             ζ(t) =             B(λ)t eiλt dZX (λ)                              (20)
+                                       0
+
+    Los componentes principales se pueden definir de otra manera como indica el
+siguiente teorema:
+Teorema 4. Brillinger (1981) suponga que se satisfacen las condiciones del teo-
+rema 3, entonces la componente j-ésima de ζt , ζj (t), está dada por
+                                Z 2π
+                                       Bj (λ)eiλt dZX (λ)                                       (21)
+                                 0
+
+j = 1, . . . , r y t ∈ Z, donde Bj (λ) es de tamaño 1×r que satisface Bj (λ)Bj (λ)t = 1,
+ζj (t) tiene varianza máxima y coherencia 0 con ζk (t) con k < j. La varianza
+máxima alcanzada por ζj (t) es
+                                       Z 2π
+                                                µj (α)dα                                        (22)
+                                        0
+
+
+    En la práctica, se obtiene la estimación de f (λ), y sus valores y vectores propios
+y finalmente los componentes principales. La forma de calcular los componentes
+principales se presenta en la siguiente sección.
+
+
+3.2. Implementación práctica
+    Análogo al método clásico de componentes principales, se puede escoger el nú-
+mero de componentes usando la cantidad de varianza recogida en cada componente
+definida en (22). En la práctica, esta integral se puede evaluar usando la definición
+de las integrales de Riemann-Stieltjes, esto es,
+                   Z 2π                n−1
+                                       X                            
+                                                         ti+1 + ti
+                          µj (α)dα ≈            µj                       (ti+1 − ti )           (23)
+                    0                  i=1
+                                                             2
+
+
+                                        Revista Colombiana de Estadística 32 (2009) 189–212
+
+Comparación entre dos métodos de reducción de dimensionalidad...                         199
+
+donde (ti , ti+1 ], con i = 1, . . . , n − 1, es una partición regular del intervalo [0, 2π].
+De manera análoga se evalúa las expresiones en las ecuaciones (18), (19) y (20).
+    Nótese que para calcular estas varianzas recogidas dadas por (23), es necesario
+calcular los valores propios de las matrices de densidad espectral; la estimación de
+estas matrices son matrices hermitianas, por lo tanto tienen valores propios reales,
+y finalmente las varianzas recogidas por cada componente también serán números
+reales. Esta es una ventaja frente al método de Peña y Box, pero como se verá
+en las simulaciones de la sección 4, si se modifica la metodología de Peña y Box
+siguiendo la sugerencia de la sección anterior, los dos métodos tendrán la misma
+capacidad para identificar el mismo número de factores.
+
+
+4. Comparación de los métodos
+    Para realizar la comparación de los dos métodos, recurrimos a simulaciones de
+procesos estacionarios debido a la complejidad teórica que se presenta al intentar
+relacionar valores y vectores propios de las matrices de autocovarianzas con los
+de las matrices de densidad espectral. La idea de las simulaciones es crear unas
+series observadas zt que seas generadas por un número conocido, r, de series no
+observables yt , y se aplican los dos métodos a fin de comparar sus capacidades
+para identificar el número r.
+    Sin embargo, el método de Peña y Box y el método de Brillinger tienen supues-
+tos diferentes con respecto a la relación existente entre las series observadas y las
+no observables. Y debido a esa diferencia, la forma de crear las series observadas
+no puede ser ninguno de estos dos métodos, pues de lo contrario se estaría dando
+ventaja a uno de los dos. Por lo tanto, se decide crear las series observadas a partir
+de cierta estructura de matriz de autocovarianzas de rango inferior a la dimensión,
+lo cual es una consecuencia del método de Peña y Box, y a la vez no está restringido
+a un modelo específico, pues, dada una función de autocovarianzas, pueden existir
+varios modelos que tienen a esa función como su función de autocovarianzas.
+    En esta investigación se derivó el siguiente teorema que permite crear una serie
+multivariada a partir de una estructura de matriz de autocovarianzas, y extiende
+los resultados del teorema 1.5.1 de Brockwell & Davis (1991, Pág.27).
+Teorema 5. Una sucesión de matrices, Γ(k), k = 0, 1, 2, . . ., de tamaño p × p, es
+una función matricial de autocovarianzas de un proceso estocástico multivariado
+{Xt }, con Xt de dimensión p, si para todo n entero positivo, la matriz
+                                                              
+                          Γ(0)        Γ(1)     · · · Γ(n − 1)
+                       Γ(1)0         Γ(0)     · · · Γ(n − 2)
+                                                              
+                  Σ=       ..          ..     ..       ..                   (24)
+                            .           .         .     .     
+                        Γ(n − 1)0 Γ(n − 2)0 · · ·      Γ(0)
+de tamaño np × np es definida no negativa.
+
+Demostración. Dado n cualquier entero positivo, sea t = (t1 , t2 , . . . , tnp )0 ∈ Znp
+con t1 < t2 · · · < tnp , y sea Ft la función de distribución con función característica
+
+                                        Revista Colombiana de Estadística 32 (2009) 189–212
+
+200                                                                                         Hanwen Zhang
+
+dada por
+                                      φt (u) = exp{−u0 Σu/2}                                         (25)
+con u = (u1 , u2 , . . . , unp )0 ∈ Rnp . Como la matriz Σ es definida no negativa,
+φt (u) es la función característica de una distribución Nnp (0, Σ). Entonces Ft es
+consistente y, por el teorema de Kolmogorov, existe un proceso estocástico {Xt }
+con Ft como su función de distribución finito-dimensional y φt (u) como su función
+característica.
+   Por otro lado, si se toma cualquier vector del proceso {Xt }, lo podemos escribir
+como
+
+           (X11 , X21 , . . . , Xp1 , X12 , X22 , . . . , Xp2 , . . . , X1n , X2n , . . . , Xpn )0
+
+y se toma el operador vec inversa para convertirlo en una matriz de tamaño p × n,
+vamos a obtener la siguiente matriz
+                                                        
+                        X11          X12      ···    X1n
+                      X21           X22      ···    X2n 
+                                                        
+                    X= .             ..      ..      ..  = [X1 , X2 , . . . , Xn ]                 (26)
+                       ..             .         .     . 
+                               Xp1   Xp2      · · · Xpn
+
+donde Xi con i = 1, . . . , n son vectores de dimensión p. Y, por construcción,
+tenemos que Cov(Xt+h , Xt ) = Γ(h), t = 1, . . . , n − h y h = 0, 1, . . . , n − 1. A
+{X1 , . . . , Xn } se puede considerar como un proceso estacionario de longitud n.
+
+     A continuación se consideran casos cuando k series observadas son generadas
+por r series no observadas con r ≤ k. Para el método de Peña y Box, se calcula
+los porcentajes acumulados de los valores singulares de Γ      b z (h). Como los valores
+singulares siempre son reales positivos, y el número de valores singulares no nulos
+es el rango de Γb z (h), entonces se pueden usar estos porcentajes acumulados para
+determinar el rango de Γ    b z (h). Por ejemplo, si estos porcentajes acumulados de
+b z (h) son (0.65, 0.92, 0.97, 0.99, 1), se puede decir que el rango de Γ(h) es 2. Por
+Γ
+otro lado, para el método de Brillinger, se calcula el porcentaje acumulado de
+varianza. En esta investigación se consideraron los siguientes casos:
+
+   • Tres series observadas generadas por uno, dos y tres factores.
+
+   • Cinco series observadas generadas por uno, dos, tres, cuatro y cinco factores.
+
+    Para cada uno de los anteriores casos, las simulaciones se realizaron con 1000
+réplicas, y las series simuladas son de tamaño 100. Para el método de Peña y Box,
+se calculó en cada iteración los porcentajes acumulados de los valores singulares
+    b
+de Γ(h)  con h = 0, 1, 2, 3; para el método de Brillinger, se calculó en cada iteración
+el porcentaje acumulado de varianzas. Si la serie de dimensión k es generada por r
+factores, un indicio de que el método de Peña y Box es adecuado es el hecho de que
+el r-ésimo porcentaje acumulado de los valores singulares toma un valor cercano a
+100 %; el criterio para evaluar el método de Brillinger es análogo, pero aplicado al
+
+                                               Revista Colombiana de Estadística 32 (2009) 189–212
+
+Comparación entre dos métodos de reducción de dimensionalidad...                     201
+
+porcentaje acumulado de varianzas. Por esta razón, los resultados de las simula-
+ciones corresponden al número de veces de las 1000 réplicas donde los porcentajes
+acumulados se ubican en rangos determinados. Por limitación de espacio, aquí se
+presentan únicamente los resultados de los siguientes tres casos:
+
+Modelo 1: 3 series generadas por 2 factores, con estructura de covarianzas de los
+   factores dada por Γ(0) = diag(1.09, 1.01), Γ(1) = diag(0.3, −0.1) y Γ(h) = 0
+   para h > 1; los resultados se encuentran en la tabla 1.
+
+Modelo 2: 3 series generadas por 3 factores, con estructura de covarianzas de los
+   factores dada por
+   Γ(0) = diag(1.39, 2.79, 2.11),
+   Γ(1) = diag(−0.28, 0.155, 1.46), Γ(2) = diag(−0.61, 2.22, 0.68) y Γ(h) =
+   Γ(h − 1)diag(−0.3, 0.1, 0.9) + Γ(h − 2)diag(−0.5, −0.8, −0.3) para h > 2; los
+   resultados se encuentran en la tabla 2.
+
+Modelo 3: 5 series generadas por 3 factores, con estructura de covarianzas de los
+   factores dada por
+   Γ(0) = diag(1.39, 2.79, 2.11), Γ(1) = diag(−0.28, 0.155, 1.46),
+   Γ(2) = diag(−0.61, 2.22, 0.68) y Γ(h) = Γ(h − 1)diag(−0.3, 0.1, 0.9) + Γ(h −
+   2)diag(−0.5, −0.8, −0.3) para h > 2; los resultados se encuentran en la tabla
+   3.
+
+Tabla 1: El número de iteraciones donde el porcentaje acumulado de valores singulares
+         (para el método Peña y Box) y de varianzas (para el método de Brillinger) se
+         ubica en determinados rangos para el modelo 1.
+
+De la tabla 1, se observa en primer lugar que para las matrices Γ(h)b     con h =
+0, 1, 2, 3, el número de veces que el segundo porcentaje acumulado de los valores
+singulares es mayor a 90 % es igual al número de réplicas 1000; por otro lado,
+para el método de Brillinger, el porcentaje de la varianza acumulada del segundo
+componente también es mayor a 90 % para cada una de las 1000 réplicas. Lo
+anterior indica que los dos métodos tienen la misma capacidad para identificar
+el número de factores. Nótese que, dentro del método de Peña y Box, con el uso
+    b
+de Γ(0),    en ninguna de las 1000 iteraciones, el primer valor singular pesa más
+
+                                      Revista Colombiana de Estadística 32 (2009) 189–212
+
+202                                                                      Hanwen Zhang
+
+                           b
+del 90 %, mientras que con Γ(h) con h > 0, hay más posibilidad de subestimar el
+número de factores. Con respecto a la tabla 2, nótese que en el modelo 2 el número
+
+
+Tabla 2: El número de iteraciones donde el porcentaje acumulado de valores singulares
+         (para el método Peña y Box) y de varianzas (para el método de Brillinger) se
+         ubica en determinados rangos para el modelo 2.
+
+de factores es igual al número de series observadas, esto es, 3; entonces un buen
+método debe tener poca posibilidad de subestimar el número de factores. Con el
+       b
+uso de Γ(0) del método de Peña y Box, en ninguna de las 1000 réplicas el segundo
+porcentaje acumula más del 90 %; también el número de veces que acumula entre
+                                                                           b
+80 y 90 % es bajo (105 de las 1000 réplicas). Mientras que con el uso de Γ(h)  con
+h > 0, hay más iteraciones donde se identifica erróneamente 2 factores. Por otro
+lado, con el método de Brillinger, el número de veces que el segundo porcentaje
+acumula más del 90 % también es muy bajo (8 de las 1000 réplicas). En conclusión,
+                                     b
+el desempeño de Peña y Box usando Γ(0)    es levemente mejor que el desempeño del
+                                                                   b
+método de Brillinger, y el desempeño de este es mejor que el de Γ(h)     con h > 0.
+Con respecto a la tabla 3, para los resultados de los métodos aplicados a datos
+simulados a partir del modelo 3, se observa, en primer lugar, que el desempeño del
+                                                  b
+método de Brillinger es, de nuevo, similar al de Γ(0)  del método de Peña y Box.
+                                b                       b
+Por otro lado, el desempeño de Γ(1) es mejor que el de Γ(0)   puesto que el número
+                                                           b
+de veces que el primer porcentaje de valores singulares de Γ(1) sea mayor de 90 %
+                                                b
+(149 de las 1000 réplicas) es menor que el de Γ(0) (484 de las 1000 iteraciones).
+                        b
+Es decir, con el uso de Γ(1) hay menos posibilidad de identificar erróneamente un
+                         b
+factor que con el uso de Γ(0). De la misma manera, se puede ver que con el uso de
+b
+Γ(1) hay menos posibilidad de identificar erróneamente 2 factores que con el uso
+    b
+de Γ(0).
+
+Tabla 3: El número de iteraciones donde el porcentaje acumulado de valores singulares
+         (para el método Peña y Box) y de varianzas (para el método de Brillinger) se
+         ubica en determinados rangos para el modelo 3.
+  
+   Para las simulaciones cuyos resultados por limitación de espacio, no se presen-
+tan aquí, se muestran comportamientos análogos a los presentados anteriormente.
+En síntesis, se observan los siguientes comportamientos:
+
+   • Para el caso cuando el número de factores, r, es estrictamente menor que el
+     número de series observadas, k:
+                     b z (0) conduce al mismo resultado que el método de Brillinger.
+        1. El uso de Γ
+                                                b z (h) para h > 1.
+                     b z (1) es mejor que el de Γ
+        2. El uso de Γ
+                               b z (1) conduce a los mismos resultados.
+                     b z (0) y Γ
+        3. El uso de Γ
+   • Para el caso cuando el número de factores, r, es igual al número de series
+                                                                   b z (h) para h > 1
+                              b z (0) es levemente mejor que el de Γ
+     observadas, k: el uso de Γ
+                                                b
+     y que el método de Brillinger, pues con Γz (h) o el método de Brillinger hay
+     más posibilidad de subestimar el número de factores.
+
+
+5. Una aplicación empírica
+   En esta sección se aplican los dos métodos a 9 variables económicos de Colombia
+analizadas en Melo et al. (2001): situación económica actual de la industria, volu-
+men actual de pedidos por atender de la industria, índice de producción real de la
+
+industria manufacturera sin trilla de café, índice de empleo de obreros de la indus-
+tria, producción de cemento, demanda de energía más consumo de gas residencial e
+industrial, importaciones reales exceptuando las de bienes de capital y duraderos,
+cartera neta real en moneda legal y saldo de efectivo en términos reales. En Melo
+et al. (2001) se analizaron estas series desde enero de 1980 hasta agosto de 2001;
+en esta aplicación se amplió el periodo de observación hasta diciembre de 2005.
+Los datos se desestacionalizaron usando métodos de suavizamiento y están libres
+de datos atípicos e intervenciones (Martínez 2007). La gráfica de estas nueve series
+económicas se encuentra en la figura 1.
+
+Figura 1: Series económicas de Colombia, concernientes a la aplicación de la sección 5,
+          sin diferenciar.
+
+
+    Los correlogramas y los p-valores de la prueba de raíz unitaria de Dickey y
+Fuller sugieren que cada una de las nueve series tiene una raíz unitaria, y con la
+aplicación de la diferenciación de orden 1 se obtiene la estacionariedad, de donde
+se encuentra que cada una de las nueve series son integradas de orden 1 (I(1)). Un
+
+                                            Revista Colombiana de Estadística 32 (2009) 189–212
+
+Comparación entre dos métodos de reducción de dimensionalidad...                       205
+
+análisis de cointegración muestra que las series son cointegradas de orden CI(1, 1).
+Aplicando la prueba de Johansen (1991) con la estadística de prueba λmáx para
+hallar el rango de integración s, se obtuvo que, con un nivel de significación del
+5 %,
+
+   • para la hipótesis nula de H0 : s ≤ 6, λmáx = 11.27, el valor crítico es 21.07,
+     de donde no se rechaza H0 ;
+
+   • para la hipótesis nula de H0 : s ≤ 5, λmáx = 28.77, el valor crítico es 27.14,
+     de donde se rechaza H0 .
+
+    Por lo tanto, se concluye que el rango de cointegración es 6, y por consiguiente
+las series comparten en total 3 tendencias estocásticas comunes. Nótese que un
+interesante estudio es aplicar el método de Peña & Poncela (2006) para series no
+estacionarias y comparar con el resultado del anterior análisis de cointegración.
+    A continuación se aplican los métodos de Peña y Box y el de Brillinger. Para
+tal fin las series deben ser estacionarias; por lo tanto, en adelante se trabajará con
+las series diferenciadas de orden 1 las cuales se presentan en la figura 2.
+
+
+5.1. Identificación del número de factores
+    Para identificar el número de factores comunes, se calculan los valores propios
+de las matrices de autocovarianzas muestrales siguiendo lo sugerido por Peña y
+Box. En la tabla 4 se muestran dichos valores; se observa que los dos primeros
+valores propios son los más importantes, lo cual indica que las nueve series se
+pueden reducir a dos; sin embargo, los primeros dos valores propios de las matrices
+de covarianzas muestrales de rezago 2 y 4 son complejos, por eso se examinan
+los valores singulares de la tabla 5. Estos conducen a la misma conclusión de
+dos factores. Se puede observar cómo el uso de los valores singulares corrige las
+inconveniencias que se presentan al usar los valores propios. Por el lado del método
+de Brillinger, la varianza acumulada de la primera componente pesa un 81 %, y los
+dos primeros componentes acumulan el 100 % de la varianza, de donde se concluye
+que también se identifican 2 factores.
+
+Tabla 4: Valores propios de las matrices de autocovarianzas muestrales de las series
+         económicas de la aplicación empírica para los rezagos h = 0, 1, 2, 3, 4.
+
+Figura 2: Series económicas de Colombia, concernientes a la aplicación de la sección 5,
+          después de diferenciar una vez.
+
+
+Tabla 5: Valores singulares de las matrices de autocovarianzas muestrales de las series
+         económicas de la aplicación empírica para los rezagos h = 0, 1, 2, 
+5.2. Extracción de los factores
+    Para estimar el modelo de Peña y Box con el modelo de estados, se necesitan los
+valores de py y qy . Siguiendo lo indicado en la sección 2.2.2, primero se identifican
+los valores de pz y qz . Para esto se examinaron las matrices de correlación muestral
+ρb(k) cuyo i, j-ésimo elemento está dado por
+
+
+y las estimaciones de matrices de autocorrelación parcial
+
+    Ninguna de las matrices ρb(k) y ℘(k)
+                                    b    muestra tendencia de extinguirse a medida
+que crece k, lo cual indica que el modelo apropiado para zt no es V AR o V M A
+puro, sino un modelo V ARM A mixto; pues para un proceso V AR(p) las matrices
+℘(k) son iguales a 0 para k > p, mientras que para un proceso V M A(q) las
+matrices de correlación son nulas para rezagos mayores que q, (Wei 2006, pg. 402).
+Debido a la dificultad que tiene identificar y estimar un modelo V ARM A para
+un número grande de series, se procede a estimar el modelo de estados (9) y (10)
+directamente para diferentes valores de py y qy . En la tabla 6 se encuentran los
+valores de algunos criterios de selección para diferentes valores de py y qy , donde
+se escoge el modelo V ARM A(2, 1) para los factores yt .
+    Para facilitar la interpretación de los factores, los modelos (9) y (10) fueron
+estimados con la restricción que los componentes de factores yt son independientes.
+Esta restricción es equivalente a que las matrices Φ y Θ del modelo V ARM A para
+
+Tabla 6: Valores de criterios de selección de diferentes modelos V ARM A para el proceso
+         de los factores latentes.
+ 
+
+yt son diagonales y el término de error, at , sea ruido blanco gaussiano con Σa = I.
+Finalmente el modelo estimado es:
+
+con Σa = I y Σ = diag(0, 0.05, 0.04, 0.22, 0.14, 0.29, 0.05, 0.28, 0.02). De las esti-
+maciones obtenidas2 , vemos que el primer factor está asociado principalmente con
+la variable P RCEM diferenciada, pues esta tiene el mayor peso, 0.94, sobre el
+primer factor; mientras que el segundo factor está asociado de manera negativa
+con las variables P RCEM , IP R, IEM OB y EF ECRC.
+
+
+5.3. Análisis de residuales
+   Para verificar que los residuales t son aproximadamente un proceso ruido
+blanco, se utiliza la estadística Q, siguiendo a Li (2004), definida como sigue:
+                                                  m
+                                                  X                              
+                                  Q(m) = n              tr Ck0 C0−1 Ck C0−1                                   (31)
+                                                  k=1
+
+donde
+                                                 n
+                                               1 X
+                                    Ck =           (b       t − )0
+                                                    t − )(b                                                 (32)
+                                               n
+                                                 t=k+1
+
+    2 Con el anterior modelo estimado, se puede extraer los dos factores identificados usando la
+
+presentación en modelos de estados; por el otro lado, aunque con el método de Brillinger también
+se puede calcular numéricamente los componentes principales, estos son complejos, lo que dificulta
+la interpretación, por lo cual se recomienda usar el método de Peña y Box en la práctica.
+
+
+                                                  Revista Colombiana de Estadística 32 (2009) 189–212
+
+Comparación entre dos métodos de reducción de dimensionalidad...                    209
+
+se tiene que la estadística se distribuye asintóticamente chi-cuadrado con l2 m
+donde l es la dimensión de la serie t . Se aplicó la anterior prueba a los residuales
+t del modelo (29); el valor de la estadística Q(m) fue de 150.5, un valor grande
+b
+a primera vista, pero al tener en cuenta que en esta aplicación la dimensión de b   t
+es l = 9, entonces para cualquier valor de m > 1 se tiene que el percentil 95 %
+de la distribución chi-cuadrado es mayor que 150.5, y así se acepta a b    t como la
+realización de un proceso ruido blanco.
+
+
+6. Conclusiones y sugerencias
+    En este trabajo se comparó el método de Peña y Box y el método de Brillinger
+para la reducción de dimensionalidad bajo los supuestos respectivos de los dos
+métodos. Se encontró que tanto en las simulaciones como en la aplicación empírica
+los dos métodos tienen la misma capacidad para identificar el número de factores
+comunes. Cabe resaltar que en las simulaciones y en la aplicación empírica se
+utilizó el método de Peña y Box modificado, según los resultados de este trabajo.
+Adicionalmente se encontró que:
+
+   • Con respecto a la identificación del número de factores comunes, el método
+     de Brillinger conduce a los mismos resultados que el método de Peña y Box
+     usando Γ b z (0).
+
+   • Cuando el número de factores es cercano al número de series observadas, el
+                                                                         b z (1), pues
+                                              b z (0) es mejor que el de Γ
+     uso del método de Brillinger o el uso de Γ
+     b z (1) tiende a subestimar el número de factores.
+     Γ
+
+   • Con respecto a la extracción de factores comunes, se encontró que el método
+     de Brillinger conduce a factores complejos que no tienen interpretación en la
+     práctica, mientras que el método de Peña y Box, mediante el uso de modelos
+     de estados, permite una interpretación más diáfana.
+
+Como resumen, en la tabla 7 se encuentran los principales inconvenientes de cada
+uno de los dos métodos. Para algunos se proveen algunas soluciones respectivos y
+en la tabla 8 se encuentran los principales resultados de comparación de los dos
+métodos.
+     Como motivo para futuras investigaciones, nótese que en el método de Peña y
+Box modificado propuesto en este trabajo, la identificación del número de factores
+se lleva a cabo observando la magnitud de los valores singulares de las matrices
+b z (k) de manera empírica o heurística, pues en la literatura aún no se conoce
+Γ
+la distribución probabilística de estos valores singulares, y por lo tanto tampoco
+existe una prueba estadística basada en valores singulares para determinar el nú-
+mero de factores. Otro tema abierto a investigación es probar matemáticamente
+que los dos métodos tienen las mismas capacidades de identificación del número
+de factores, y adicionalmente su capacidad predictiva. El tema de investigación
+de este artículo continúa abierto pues los resultados encontrados acá están supe-
+ditados a los supuestos originales de los autores de cada método. Sin embargo es
+
+                                     Revista Colombiana de Estadística 32 (2009) 189–212
+
+210                                                                              Hanwen Zhang
+
+                  Tabla 7: Inconvenientes y mejoras de los dos métodos.
+                                 Método de Peña-Box
+                   Inconveniente                            Solución
+                         d pueden ser ne-
+      Valores propios de Γ(k)               Usar valores singulares en vez de valo-
+      gativos o complejos, causando problema      res propios, pues son siempre reales y
+      para determinar el número de factores r.    positivos.
+
+      No se puede encontrar los vectores pro-   Usar el modelo de estado para estimar el
+                            b
+      pios ortonormales de Γ(k),  pues estas no modelo y extraer los factores
+      son simétricas.
+                                      Método de Brillinger
+                    Inconveniente                               Solución
+      Conduce a factores complejos que dificul- No hay solución
+      tan la interpretación
+
+
+                      Tabla 8: Comparaciones entre los dos métodos.
+                Método de Peña-Box                         Método de Brillinger
+           Tienen la misma capacidad para identificar el número de factores latentes.
+      La metodología original usa valores pro-  Usa varianza recogida por cada factor
+              b
+      pios de Γ(k) que pueden ser complejos o   que siempre es real y positivo.
+      negativos
+      Procedimientos relativamente sencillos    Procedimientos numéricos largos y costos
+
+      Conduce a factores reales                   Conduce a factores complejos
+
+      Factores con fácil interpretación           Factores carecen de interpretación
+
+      Se puede extender para series no estacio-   En la literatura no se conoce todavía ex-
+      narias                                      tensión para series no estacionarias
+
+
+
+posible plantearse qué tan robustos son los métodos mediante el uso de residuales
+caracterizados porque su función de densidad tuviese colas pesadas, o mostrasen
+evidencia de heterocedasticidad u otras características. Por otro lado, los resul-
+tados encontrados en este artículo se basan en el método de simulación de series
+multivariadas dado por el teorema 5. Cabe resaltar que no es la única alternativa
+para la simulación de las series. Por ejemplo, otra opción está dada por la simula-
+ción de una serie multivariada que sea una combinación convexa entre un proceso
+generado de acuerdo con el método de Peña y Box y otro respecto al método de
+Brillinger.
+
+
+
+Agradecimientos
+    El autor da gracias a Dios por su bondad, al profesor Fabio Nieto por su
+paciencia, a Andrés Gutiérrez por su ayuda en la redacción y a los árbitros por los
+valiosos comentarios.
+
+Referencias
+Ahn, S. K. & Reinsel, G. C. (1988), ‘Nested Reduced-Rank Autoregressive Models for Multiple Time Series’, Journal of the American Statistical Association 83, 849–856.
+Brillinger, D. R. (1981), Time Series: Data Analysis and Theory, Holden-Day, San Francisco, United States.
+Brockwell, P. J. & Davis, R. A. (1991), Time Series: Theory and Methods, 2 edn,Springer, New York, United States.
+Brockwell, P. J. & Davis, R. A. (1996), Introduction to Time Series and Forecasting, 1 edn, Springer, New York, United States.
+Correal, M. E. & Peña, D. (2008), ‘Modelo factorial dinámico threshold’, Revista Colombiana de Estadística 31(2), 183–192.
+Jiménez, J. A. (2004), Álgebra Lineal II, con aplicaciones en estadística, 1 edn,Unibiblos, Bogotá, Colombia.
+Johansen, S. (1991), ‘Estimation and Hypothesis Testing of Cointegration Vectors in Gaussian Vector Autoregressive Models’, Econometrica 59(6), 1551–1580.
+Li, W. K. (2004), Diagnostic Checks in Time Series, 1 edn, Chapman & Hall/CRC.
+Martínez, W. (2007), Uso de tendencias comunes en la construcción de índices coincidentes, Tesis de maestría, Departamento de Estadística, Facultad de Ciencias, Universidad Nacional de Colombia, Bogotá, Colombia.
+Melo, L. F., Nieto, F., Posada, C. E., Betancourt, Y. R. & Barón, J. D. (2001),‘Un índice coincidente para la actividad económica de Colombia’, Ensayos Sobre Política Económica 40, 46–88.
+Peña, D. & Box, G. B. P. (1987), ‘Identifying a Simplifying Structure in Time Series’, Journal of the American Statistical Association 82(399), 836–843.
+Peña, D. & Poncela, P. (2006), ‘Nonstationary Dynamic Factor Analysis’, Journal of Statistical Planning and Inference 136(4), 1237–1257.
+Reinsel, G. C. (1983), ‘Some Results on Multivariate Autoregressive Index Models’,Biometrika 70, 145–156.
+Stoffer, D. S. (1999), ‘Detecting Common Signals in Multiple Time Series using the Spectral Envelope’, Journal of the American Statistical Association 94(448), 1341–1356.
+Tiao, G. C. & Box, G. E. P. (1981), ‘Modelling Multiple Time Series with Applications’, Journal of the American Statistical Association 76(376), 802–816.
+Tiao, G. C. & Tsay, R. S. (1989), ‘Model Specification in Multivariate Time Series’,Journal of the Royal Statistical Society, B 51(2), 157–213.
+Wei, W. S. (2006), Time Series Analysis: Univariate and Multivariate Methods, 1 edn, Pearson, Boston, United States.

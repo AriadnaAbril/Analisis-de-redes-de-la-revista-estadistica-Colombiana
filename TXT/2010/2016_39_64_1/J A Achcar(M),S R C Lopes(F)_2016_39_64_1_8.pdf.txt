@@ -1,0 +1,1156 @@
+Linear and Non-Linear Regression Models Assuming a Stable Distribution. Modelos de regressión lineal y no lineal suponiendo una distribución estable
+Institute-UFRGS, Porto Alegre, Brazil
+Abstract
+In this paper, we present some computational aspects for a Bayesian analysis involving stable distributions. It is well known that, in general, there is no closed form for the probability density function of a stable distribution. However, the use of a latent or auxiliary random variable facilitates obtaining any posterior distribution when related to stable distributions. To show the usefulness of the computational aspects, the methodology is applied to linear and non-linear regression models. Posterior summaries of interest are obtained using the OpenBUGS software.
+Key words: Stable Laws, Bayesian Analysis, Mcmc Methods, OpenBUGS Software.
+Resumen
+En este trabajo, presentamos algunos aspectos computacionales de análisis bayesiano con distribuciones estables. Es bien sabido que, en general, no hay forma cerrada para la función de densidad de probabilidad de distribuciones estables. Sin embargo, el uso de una variable aleatoria latente facilita obtener la distribución a posteriori. La metodologia se aplica a regresión lineal y non lineal utilizando el software OpenBUGS.
+Palabras clave: leyes estable, análisis bayesiano, métodos MCMC, software OpenBUGS.
+
+1. Introduction
+    A wide class of distributions that encompasses the Gaussian one is given by the
+class of stable distributions. This large class defines location-scale families that are
+closed under convolution. This distribution family (see for instance Samorodnitsky
+& Taqqu 1994) is described by four parameters α, β, δ and γ. The α ∈ (0, 2]
+parameter defines the “fatness of the tails”, and when α = 2 this class reduces
+to Gaussian distributions. The β ∈ [−1, 1] is the skewness parameter and for
+β = 0 there are symmetric distributions. The location and scale parameters are,
+respectively, δ ∈ (−∞, ∞) and γ ∈ (0, ∞) (see Lévy 1924).
+   Stable distributions are usually denoted by Sα (β, δ, γ). If a random variable
+X ∼ Sα (β, δ, γ), then Z = X−δ
+                             γ  ∼ Sα (β, 0, 1), whenever α 6= 1 (see Lukacs 1970,
+Nolan 2015).
+    The difficulty associated with stable distributions Sα (β, δ, γ) is that, in general,
+there is no simple closed form for their probability density functions. However, it
+is known that the probability density functions of stable distributions are continu-
+ous (Gnedenko & Kolmogorov 1968, Skorohod 1961) and unimodal (Ibragimov &
+Chernin 1959, Kanter 1976). Also the support of all stable distributions is given
+in (−∞, ∞), except for α < 1 and |β| = 1 when the support is [δ, ∞) for β = 1
+and (−∞, δ] for β = −1 (see page 12 in Nolan 2015). The characteristic function
+ϕ(·) of a stable distribution is given by
+
+
+                     iδt − γ α |t|α [1 + iβ sign(t) tan( πα        1−α
+                 
+                                                          2 )(|γ t|    − 1)],   for α 6= 1
+  log(ϕ(t)) =                                   2
+                             iδt − γ|t|[1 + iβ π sign(t) log(γ|t|)],            for α = 1,
+            √                                                                                (1)
+where i =       −1 and the sign(·) function is given by
+                                         
+                                          −1,         if x < 0
+                               sign(x) =   0,          if x = 0                              (2)
+                                         
+                                           1,         if x > 0.
+
+    Although this is a good class for data modeling in different areas, there are
+difficulties in obtaining parameter estimates with a classical inference approach
+due to the lack of closed form expressions for the probability density functions.
+An alternative is the use of Bayesian methods. However, the computational cost
+can be further exacerbated in assessing posterior summaries of interest.
+   A Bayesian analysis of stable distributions is introduced by Buckle (1995) using
+Markov Chain Monte Carlo (MCMC) methods (also see Achcar, Lopes, Mazucheli
+& Linhares 2013). The use of Bayesian methods with MCMC simulation can
+have great flexibility by considering latent variables (see, for instance, Damien,
+Wakefield & Walker 1999, Tanner & Wong 1987), where samples of latent variables
+are simulated in each step of the Gibbs or Metropolis-Hastings algorithms.
+   Considering a latent or an auxiliary variable, Buckle (1995) proved a theorem
+that is useful to simulate samples from the joint posterior distribution of the
+
+
+                                          Revista Colombiana de Estadística 39 (2016) 109–128
+
+Linear and Non-Linear Regression Models Assuming a Stable Distribution                     111
+
+parameters α, β, δ and γ. This theorem establishes that a stable distribution for
+a random variable Z defined in R − {0}, is obtained as the marginal of a bivariate
+distribution for the random variable Z itself and an auxiliary random variable Y .
+This variable Y is defined in the interval (−0.5, aα,β ), when Z ∈ (−∞, 0), and in
+(aα,β , 0.5), when Z ∈ (0, ∞). The quantity aα,β is given by
+                                                    bα,β
+                                         aα,β = −                                           (3)
+                                                    απ
+where bα,β = β π2 min{α, 2 − α}.
+     The joint probability density function for random variables Z and Y is given
+by                                       (             )
+                                                     θ           θ
+                                 α             z            z      1
+              f (z, y|α, β) =         exp −                           ,                     (4)
+                              |α − 1|       tα,β (y)     tα,β (y) |z|
+           α
+where θ = α−1 ,
+                                                                               θ1
+                               sin(πα y + bα,β )               cos(πy)
+              tα,β (y) =                                                                    (5)
+                                   cos(πy)              cos(π(α − 1)y + bα,β )
+
+and Z = X−δ
+         γ , for γ 6= 0 and α 6= 1.
+    From the bivariate density (4), Buckle (1995) shows that the marginal distribu-
+tion for the random variable Z is Sα (β, 0, 1). Usually, the computational costs of
+obtain posterior summaries of interest using MCMC methods is high for this class
+of models, which could give some limitations for practical applications. Another
+problem could be the simulation algorithm convergence. In this paper, we propose
+the use of a software that is popular and free available to obtain the subsequently
+summaries of interest: the OpenBUGS software.
+    The paper is organized as follows: in Section 2, we present a Bayesian analysis
+for stable distributions; in Section 3 we introduce the use of stable distributions
+for linear regression models while non-linear regression models are considered in
+Section 4; in Section 5, we introduce some numerical illustrations; finally, in Section
+6, we present some concluding remarks.
+
+
+2. A Bayesian Analysis for General Stable
+   Distributions
+    Let us assume that xi , for i = 1, . . . , n, is a random sample of size n, where Xi ∼
+Sα (β, δ, γ), that is, Zi = Xiγ−δ ∼ Sα (β, 0, 1). Assuming a prior joint distribution
+for α, β, δ and γ, given by π0 (α, β, δ, γ), Buckle (1995) shows that the posterior
+joint distribution for the parameters α, β, δ and γ is given by
+                                    n           ( n                     ) n
+                     Z                                                θ                  θ
+                             α                        X       zi          Y       zi         1
+  π(α, β, δ, γ|x) ∝                    × exp −
+                          |α − 1| γ                    i=1
+                                                           tα,β (y i )    i=1
+                                                                              t α,β (yi )   |zi|
+
+                  × π0 (α, β, δ, γ) dy,                                                     (6)
+
+
+                                           Revista Colombiana de Estadística 39 (2016) 109–128
+
+112                                                             Jorge A. Achcar & Sílvia R. C. Lopes
+
+
+where θ = α−1α
+                , zi = xiγ−δ , for i = 1, · · · , n, α ∈ (0, 2], β ∈ [−1, 1], δ ∈ (−∞, ∞)
+and γ ∈ (0, ∞); x = (x1 , x2 , · · · , xn )0 and y = (y1 , y2 , · · · , yn )0 are respectively, the
+observed and non-observed data vectors. Notice that the multivariate distribution
+in expression (6) is given in terms of xi and the latent variables yi , and not in
+terms of zi and yi (there is the Jacobian γ −1 , multiplied by the right-hand-side of
+expression (4)).
+   It can be observed that when α = 2, θ = 2 and bα,β = 0. In this case, we have
+a Gaussian distribution with mean δ and variance 2γ 2 .
+   For a Bayesian analysis of the proposed model, we assume uniform U(a, b),
+independent priors for α, β, δ and γ, in which the hyperparameters a and b are
+assumed to be known in each application following the restrictions α ∈ (0, 2],
+β ∈ [−1, 1], δ ∈ (−∞, ∞) and γ ∈ (0, ∞).
+    In the simulation algorithm created to obtain a Gibbs sample for the random
+quantities α, β, δ and γ which have the joint posterior distribution (6), we assume
+an uniform U(−0.5, 0.5) prior distribution for the latent random quantities Yi , for
+i = 1, . . . , n. With this choice of prior, one has the possibility to use standard
+software package like OpenBUGS (see Spiegelhalter, Thomas, Best & Lunn 2003)
+that is very simple to obtain the simulated Gibbs samples for the joint posterior
+distribution. As such, we can obtain the following algorithm:
+
+  (i) Start with the initial values α(0) , β (0) , δ (0) , γ (0) ;
+ (ii) Simulate a sample y = (y1 , . . . , yn )0 from the conditional distributions
+      π(yi |α(0) , β (0) , δ (0) , γ (0) , x), for i = 1, . . . , n; that is, we simulate these latent
+      random variables y similarly to how we simulate the parameters;
+ (iii) Update α(0) , β (0) , δ (0) , γ (0) by α(1) , β (1) , δ (1) , γ (1) from the conditional distri-
+       butions π(α|β (0) , δ (0) , γ (0) , x, y), π(β | α(0) , δ (0) , γ (0) , x, y), π(δ|α(0) , β (0) , γ (0) , x, y)
+       and π(γ|α(0) , β (0) , δ (0) , x, y);
+ (iv) Repeat steps (i), (ii) and (iii) until convergence.
+
+   From expression (6), the posterior joint probability distribution for α, β, δ, γ
+and y = (y1 , y2 , . . . , yn )0 is given by
+                                                        n    ( n               )
+                                                  α               X      zi
+      π(α, β, δ, γ, y|x) ∝                                  exp −
+                                               |α − 1| γ          i=1
+                                                                      tα,β (yi )
+                                           n                θ          n
+                                           Y     zi              1     Y
+                              ×                                      ×    h(yi )π0 (α, β, δ, γ),         (7)
+                                               t (y )
+                                           i=1 α,β i
+                                                                |zi | i=1
+
+where θ and tα,β (·) are respectively defined in (4) and (5) and h(y) is a U(−0.5, 0.5)
+density function.
+    Since we are using the OpenBUGS software to simulate samples from the joint
+posterior distribution we are not presenting all the full conditional distributions
+needed for the Gibbs sampling algorithm. This software only requires the data dis-
+tribution and prior distributions for the interested random quantities. This gives
+
+
+                                               Revista Colombiana de Estadística 39 (2016) 109–128
+
+Linear and Non-Linear Regression Models Assuming a Stable Distribution               113
+
+great computational simplification to determine posterior summaries of interest as
+shown in the applications in Section 5.
+
+
+3. Linear Regression Models Assuming Stable
+   Distributions
+    Consider a random variable X related to a controlled variable V given by the
+linear relationship
+
+                     xi = d0 + d1 vi + εi , for i = 1, 2, . . . , n,                 (8)
+
+where
+
+   • the random variable Xi represents the response for the i-th unit associated
+     with an experimental value of the independent or explanatory variable v,
+     which is assumed to have a fixed value (a common regression model assump-
+     tion). In this way, xi it is an observation of Xi ;
+
+   • the variables ε1 , ε2 , . . . , εn are considered as components of unknown errors
+     and are unobserved random variables. Assume that these random variables
+     εi , for i = 1, 2, . . . , n, are independent and identically distributed with nor-
+     mal distribution N (0, σε2 );
+
+   • the parameters d0 and d1 are unknown.
+
+   From the above assumptions, we have normality for the responses, that is,
+
+                               Xi ∼ N (d0 + d1 vi ; σε2 ).                           (9)
+
+    In this way Xi has a normal distribution with mean d0 + d1 vi and common
+variance σε2 . Usually we get estimators for the regression parameters using the
+least squares approach or standard maximum likelihood methods (see, for instance,
+Draper & Smith 1981 or Seber & Lee, 2003).
+    Standard generalization for the linear model (8) is given in the presence of k
+independent or explanatory variables, that is, a multiple linear regression model
+given by
+                   xi = d0 + d1 vi1 + d2 vi2 + · · · + dk vik + εi .          (10)
+
+      From the normality assumption for the error εi in (10), the random variable Xi
+has a normal distribution with mean d0 + d1 vi1 + d2 vi2 + · · · + dk vik and variance
+σε2 .
+     In practical applications, we need to check if the above assumptions are sat-
+isfied. As such, we consider graphical approaches to verify if the model residuals
+satisfy the above assumptions.
+   In the presence of outliers or discordant observations, we could have a large
+impact on the estimators obtained for the regression model given by (10), which
+
+
+                                      Revista Colombiana de Estadística 39 (2016) 109–128
+
+114                                                   Jorge A. Achcar & Sílvia R. C. Lopes
+
+
+could invalidate the inferences obtained. In this situation, we could use non-
+parametric regression models or assume more robust probability distributions for
+the data. One possibility is to assume that the random variable X in (10) or (8)
+has a stable distribution Sα (β, δ, γ).
+    If this is the case, we assume that the response is xi in the linear regression
+model (10), for i = 1, . . . , n, has a stable distribution Xi ∼ Sα (β, δi , γ), that is,
+Zi = X−δ γ
+           i
+             ∼ Sα (β, 0, 1), where the location parameter δi of the stable distribution
+is related to the explanatory variables by a linear relation given by,
+
+                          δi = d0 + d1 vi1 + d2 vi2 + · · · + dk vik .                    (11)
+
+    Assuming a joint prior distribution for α, β, d and γ, where d = (d0 , d1 , d2 , . . . , dk )0
+given by π0 (α, β, d, γ), Buckle (1995) or Achcar, Achcar & Martinez (2013) show
+that the posterior joint distribution for parameters α, β, d and γ, is given by,
+                    Z             n
+                              α
+  π(α, β, d, γ|x) ∝
+                          |α − 1|γ
+                        ( n
+                                           θ
+                                             ) n
+                                                          θ                            (12)
+                            X       zi        Y     zi      1
+                  × exp                                        π0 (α, β, d, γ)dy,
+                            i=1
+                                tα,β (yi )        t (y ) |zi |
+                                              i=1 α,β i
+
+where θ = α−1 α
+                   , zi = xi −y
+                              γ , for i = 1, . . . , n, α ∈ (0, 2], β ∈ [−1, 1] and γ ∈ (0, ∞);
+                                i
+
+
+x = (x1 , x2 , . . . , xn )0 and y = (y1 , y2 , . . . , yn )0 are respectively the observed and
+non-observed data vectors.
+
+
+4. Non-Linear Growth Regression Models Assum-
+   ing Stable Distributions
+    Growth curves are included in a class of nonlinear models widely used in biology
+to model different problems such as the population size or biomass (in population
+ecology and demography, for population growth analysis) or the individual body
+height or biomass (in physiology, for growth analysis of individuals). A growth
+curve is an empirical model of the evolution of a quantity over time. Growth curves
+are employed in many disciplines besides biology, particularly in statistics, subject
+in which there is a large amount of literature on this subject related to nonlinear
+models. Under a more probabilistic and mathematical statistics approach, growth
+curves are often modeled as being a continuous stochastic process.
+   Standard classical inference methods to obtain point or interval estimates for
+the parameters of growth curves are presented within the nonlinear modeling
+methodology.
+    Nonlinear regression methodology is similar to linear regression methodol-
+ogy; it is, a modeling approach to relate a response X to a vector of covariates,
+v = (v1 , . . . , vk )0 , where v0 denotes the transpose of the vector v. Different from
+linear models, nonlinear regression is characterized by the fact that the prediction
+equation depends nonlinearly on one or more unknown parameters. Different from
+
+
+                                         Revista Colombiana de Estadística 39 (2016) 109–128
+
+Linear and Non-Linear Regression Models Assuming a Stable Distribution                  115
+
+the linear regression methodology , and often used for building a purely empirical
+model, nonlinear regression methodology is usually employed when there is some
+physical reason which implies that the relationship between the response and the
+predictors follows a particular functional form.
+   A nonlinear regression model has the general form,
+
+                                   Xi = f (vi , θ) + εi ,                               (13)
+
+where Xi are the responses, for i = 1, . . . , n; f is a known function of the covariate
+vector; vi = (vi1 , . . . , vik )0 is a vector of k covariates or independent variables;
+θ = (θ1 , . . . , θp )0 is the vector of p parameters and εi are random errors. The
+errors εi are usually assumed to be uncorrelated and normally distributed with
+mean zero and constant variance.
+    The most popular criterion to estimate the p parameter vector θ in the nonlin-
+ear model (13) is to find estimates for the parameters (via nonlinear least squares)
+which minimize the sum of squared errors, given by,
+                                   n
+                                   X
+                                         (xi − f (vi , θ))2 .                           (14)
+                                   i=1
+
+Note 1. If the errors εi , for i ∈ {1, 2, · · · , n}, follow a normal distribution, then
+the least squares estimator for θ is also the maximum likelihood estimator.
+    Usually, nonlinear regression estimates must be computed by iterative proce-
+dures using optimization methods to minimize the sum of squared errors given by
+the expression (14). It is important to point out that the definition of nonlinearity
+is related to the unknown parameters and not to the relationship between the co-
+variates and the response. As an example, X = β0 + β1 v + β2 v 2 + ε is considered
+as a linear model (see, for instance, Bates & Watts 1988, Ratkowsky 1983, Seber
+& Wild 1989).
+   A popular iterative technique to find the least squares estimator of nonlinear
+models is the Gauss-Newton algorithm. The Gauss-Newton algorithm increments
+the working estimate θ b at each iteration by an amount equal to the coefficients
+from the linear regression of the current residuals ui , defined as ui = xi − f (vi , θ),
+                                                                                      b
+on the current gradient matrix X.
+    If the function f (·) in (13) is continuously differentiable in θ, then it can be
+linearized locally as
+                           f (v, θ) = f (v, θ0 ) + V0 (θ − θ0 ),                 (15)
+where V0 is the n × p gradient matrix with elements ∂f (vi , θ0 )/∂θj and θ0 is a
+vector of initial values for the iterative procedure. This leads to the Gauss-Newton
+algorithm for estimating θ,
+
+                              θ1 = θ0 + (V0 0 V0 )−1 V0 0 e,                            (16)
+
+where e is the vector of working residuals ei = xi − f (vi , θ0 ), for i = 1, 2, . . . , n.
+  If the errors εi are independent and normally distributed N (0, σε2 ), then the
+Gauss-Newton algorithm is an application of Fisher’s method of scoring. This
+
+
+                                         Revista Colombiana de Estadística 39 (2016) 109–128
+
+116                                                     Jorge A. Achcar & Sílvia R. C. Lopes
+
+
+algorithm is implemented in many existing statistical softwares such as, R, Minitab
+(version 16) or SAS.
+    If X is of full column rank in a neighborhood of the least squares solution, then
+it can be shown that the Gauss-Newton algorithm converges to the solution from
+a sufficiently good starting value. Though, with practical applications, there is no
+guarantee, that the algorithm will converge from values further from the solution.
+Some improvement of the Gauss-Newton algorithm are given in the literature,
+such as the Levenberg-Marquart damping algorithm (see, for instance, Seber &
+Wild 1989).
+    Standard inferences for the parameters of nonlinear models are obtained from
+the asymptotical normality of the least squares estimators θ b with mean θ and
+                             2   0  −1                      2
+variance-covariance matrix σε (V V) , where the variance σε is usually estimated
+by,
+                                      n
+                                  1 X
+                          s2 =                         b 2.
+                                         [xi − f (vi , θ)]                   (17)
+                               n − p i=1
+
+    It is important to point out that since most asymptotic inference for nonlinear
+regression models is based on the linear models analogy, and since this inference
+is only approximated as the actual model differs from a linear model; various
+measures of nonlinearity have been proposed in the literature to verify how good
+linear approximations are likely to be in each case. One class of measurement
+focuses on curvature (intrinsic curvatures) of the function f (·) and it is based on
+the size of the second derivatives of f (see, for instance, Bates and Watts, 1980).
+Another class of measurement is the intrinsic curvature defined by the residuals
+ui = xi − f (vi , θ)
+                  b or parameters effect curvatures (see, for instance, Bates &
+Watts 1988).
+    In many applications, the systematic part of the response is known to be mono-
+tonic increasing in v, where v might represent time or dosage. Nonlinear regression
+models with this property are called growth models. The simplest growth model
+is the exponential growth model defined as
+
+                                   f (v, θ) = θ1 exp(−θ2 v),                             (18)
+
+where θ = (θ1 , θ2 )0 .
+   There are several growth models introduced in the literature. In this paper we
+consider the following special cases
+
+   1. f (v, θ) = θ1 + θ2 v θ3 , where θ = (θ1 , θ2 , θ3 )0 .
+   2. f (v, θ) = θ1 +θ2 exp(θ3 v) (exponential growth model ), where θ = (θ1 , θ2 , θ3 )0 .
+   3. f (v, θ) = θ1 exp(−θ2 v) + θ3 exp(−θ4 v), where θ = (θ1 , θ2 , θ3 , θ4 )0 .
+   4. f (v, θ) = θ1 v/(θ2 + v) (Michaelis-Menten), where θ = (θ1 , θ2 )0 .
+   5. f (v, θ) = θ1 exp(− exp(θ2 − θ3 v)) (Gompertz ), where θ = (θ1 , θ2 , θ3 )0 .
+   6. f (v, θ) = θ1 +(θ2 −θ1 )/[1+exp((v−θ3 )/θ4 )] (logistic), where θ = (θ1 , θ2 , θ3 , θ4 )0 .
+
+
+                                          Revista Colombiana de Estadística 39 (2016) 109–128
+
+Linear and Non-Linear Regression Models Assuming a Stable Distribution                           117
+
+     7. f (v, θ) = θ1 + (θ2 − θ1 ) exp(θ3 v θ4 ) (Weibull ), where θ = (θ1 , θ2 , θ3 , θ4 )0 .
+     8. f (v, θ) = 1 − exp[− exp(θ1 − θ2 v)] (sigmoid ), where θ = (θ1 , θ2 )0 .
+
+    All these different models could be considered to be model growth curves. Very
+often we have physical interpretations for the use of a particular model. In others
+we try different growth models to decide which one best fits the data.
+   In many situations the usual normality assumption for the errors in (13) will
+not be appropriate. For instance, this can be the case when we have discordant
+observations which could have an impact on the obtained inferences. In this way,
+we could assume more robust distributions for the data, like the stable distribution.
+    We point out that the use of asymptotical inference results may not be accurate
+depending on the sample sizes and on the intrinsic curvature of the function f (·)
+in (13). In those cases, we propose the use of stable distributions for the response
+Xi in (13).
+    Let us assume that the response xi , for i = 1, . . . , n, in the nonlinear regression
+model (13) has a stable distribution Xi ∼ Sα (β, δi , γ), that is, Zi = X−δ         γ
+                                                                                      i
+                                                                                         ∼
+Sα (β, 0, 1), where the location parameter δi of the stable distribution is related to
+the explanatory variables by a nonlinear relation given by,
+
+                                             δi = f (vi , d).                                   (19)
+
+    Assuming a joint prior distribution for α, β, d and γ, where d = (d0 , d1 , d2 , . . . , dk )0
+given by π0 (α, β, d, γ), Buckle (1995) shows that the joint posterior distribution
+for parameters α, β, d and γ, is given by the general form (12).
+
+
+5. Applications
+5.1. An Example of a Simple Linear Regression Model
+   In Table 1, we have a data set related to an industrial experiment, where x
+denotes the response and v denotes an explanatory variable associated with each
+response considering n = 15 observations (see Johnson & Bhattacharyya 1980).
+
+                          Table 1: An industrial experiment data set.
+ n      1      2     3      4     5     6        7     8     9    10    11    12    13    14     15
+ x     1.2    1.5   1.5    3.3   2.5   2.1      2.5   3.2   2.8   1.5   2.2   2.2   1.9   1.8    2.8
+ v     19     15    35     52    35    33       30    57    49    26    45    39    25    40     40
+
+
+    From a preliminary data analysis, we see that a linear regression model (8)
+is suitable for this data set. The estimated regression straight line obtained by
+minimum squares estimates and by using the software MINITAB (version 16) is
+given by xbi = 0.603 + 0.0444 vi , where the regression parameter d1 is statistically
+different from zero (p-value < 0.05). From standard residuals graphs we can verify
+that the required assumptions (residuals normality and homoscedastic variance
+are satisfied).
+
+                                              Revista Colombiana de Estadística 39 (2016) 109–128
+
+118                                               Jorge A. Achcar & Sílvia R. C. Lopes
+
+
+    Under a Bayesian approach, Table 2 shows the posterior summaries of interest
+assuming the linear regression model defined by (8) with a stable distribution for
+the response. Using the OpenBugs software we assume the following prior distri-
+butions: α ∼ U(0, 2), β ∼ U(−1, 0), d0 ∼ N (0, 1), d1 ∼ N (0, 1) and γ ∼ U(0, 3).
+It can be observed that we are assuming approximately non-informative priors for
+the parameters of the model. This procedure will be used in the other Bayesian
+analysis. We further assume independence among the random quantities. We
+also assume a uniform U(−0.5, 0.5) distribution for the latent variable Yi , for
+i = 1, 2, . . . , 15. We simulated 800,000 Gibbs samples, with a “burn-in-sample” of
+300,000 samples that were discarded to eliminate the effects of the initial values
+in the iterative simulation procedure. We took a final sample of size 1,000 (ev-
+ery 500th sample chosen from the 500,000 samples). Gibbs sampling algorithm
+convergence was monitored from standard trace plots of the simulated samples.
+   In Table 2, we also have the sum of absolute values (SAV) for the differences
+between the observed and fitted mean values, given by,
+                        n
+                        X
+                SAV =         absolute[observed(i) − fitted mean(i)].               (20)
+                        i=1
+
+    In Table 2, we also show the posterior summaries of the regression model (8)
+assuming a normal N (0, σε2 ) distribution for the error and the following priors for
+the parameters of the model: d0 ∼ N (0, 1), d1 ∼ N (0, 1) and ζ = 1/σε2 ∼ U(0, 3).
+In this case, we simulated 55,000 Gibbs samples taking a “burn-in-sample” of
+5,000 using the OpenBUGS software. We take a final sample of size 1,000 (every
+50th sample chosen from the 50,000 samples). From results show in Table 2,
+we can observe similar results, assuming both normality or stable distribution
+for the data. In this case, we conclude that we do not need to assume a stable
+distribution for the data, since the results are very similar to the results obtained
+from the normality assumption for the errors. Besides, the computational cost of
+using stable distributions is very high (see Achcar, Achcar & Martinez 2013).
+
+                  Table 2: Posterior summaries (linear regression).
+                           Stable distribution (SAV= 4.496)
+           Parameter    Mean      Standard Deviation 95% Credible Interval
+               α        1.7160           0.2123            (1.2380, 1.9890)
+               β       −0.6183           0.2391          (−0.9881, −0.0719)
+              d0        0.5431           0.3559           (−0.1981, 1.2270)
+              d1        0.0460           0.0093            (0.0283, 0.0652)
+               γ        0.2931           0.0638            (0.1960, 0.446)
+                           Normal distribution (SAV= 4.504)
+           Parameter    Mean      Standard Deviation    95% Credible Interval
+              d0        0.4802           0.4927          (−0.56587, 1.4230)
+              d1        0.0475           0.0131            (0.0213, 0.0737)
+               ζ        0.4949           0.1709            (0.2119, 0.8834)
+
+
+  Figure 1(a) shows the plots of observed and fitted means considering both
+models versus samples. The graphs in Figure 1(a), manifest similar fit for both
+models (linear regression model assuming both normality and stable distributions).
+
+                                      Revista Colombiana de Estadística 39 (2016) 109–128
+
+Linear and Non-Linear Regression Models Assuming a Stable Distribution                                        119
+
+It can be observed that we have SAV = 4.496 when we assume a stable distribution,
+and SAV = 4.504 when we assume a normal distribution. Hence, we have very
+close results.
+    Let us now consider the presence of an outlier or discordant response (consid-
+ered as a measurement error) by replacing the 15th response (equal to 2.8) in Table
+1 by the value 8.0. Table 3, presents the posterior summaries that were obtained
+assuming the same priors and the same simulation procedure as in Table 2. Figure
+1(b), show the plots of observed and fitted means considering both models versus
+samples in the presence of one outlier. This figure, demonstrates that the model
+with a stable distribution is very robust in terms of the presence of the outlier,
+given similar inference results that were obtained without its presence (see results
+in Table 2). Table 3 also reports the estimated regression parameters with normal
+error and we can observe how strongly the results are affected by the presence of
+this outlier. It can be seen that we have SAV = 4.623 assuming a stable distribu-
+tion (a value very close to the SAV values given in Table 2, without the presence
+of an outlier) and SAV = 6.394 assuming a normal distribution.
+
+
+
+                                Stable Mean,                                               Stable Mean
+                                X
+                                                     3.5
+
+
+
+
+                                Normal Mean                                                X
+ 3.0
+
+
+
+
+                                                                                           Normal Mean
+                                                     3.0
+ 2.5
+
+
+
+
+                                                     2.5
+ 2.0
+
+
+
+
+                                                     2.0
+ 1.5
+
+
+
+
+                                                     1.5
+
+
+
+
+       2   4     6     8   10             12   14          2    4    6     8    10    12                 14
+
+
+
+
+                     (a)                                                 (b)
+Figure 1: Observed and fitted means values, considering both models: (a) samples; (b)
+          presence of one outlier.
+
+
+
+               Table 3: Posterior summaries (presence of one outlier).
+                           Stable distribution (SAV = 4.623)
+               Parameter Mean Standard Deviation 95% Credible Interval
+                   α     1.3730         0.2195          (1.0580, 1.8430)
+                   β    −0.5726         0.2703        (−0.9821, −0.0426)
+                  d0     0.4797         0.3461         (−0.3483, 1.0400)
+                  d1     0.0465         0.0096          (0.0292, 0.0701)
+                   γ     0.3221         0.0802          (0.2004, 0.4856)
+                          Normal distribution (SAV = 6.394)
+               Parameter Mean Standard Deviation 95% Credible Interval
+                  d0     0.2408         0.7866         (−1.3100, 1.8200)
+                  d1     0.0632         0.0225          (0.0201, 0.1061)
+                   ζ     0.4949         0.1709          (0.2119, 0.8834)
+
+
+
+
+                                               Revista Colombiana de Estadística 39 (2016) 109–128
+
+120                                                                                       Jorge A. Achcar & Sílvia R. C. Lopes
+
+
+5.2. An Example With a Growth Non-Linear Model
+    In Table 4, shows a data set, reported by Bache, Serum, Youngs & Lisk (1972),
+which is related to the concentration of polychlorinated biphenyl (PCB) residues
+in a series of lake trout from Cayuga Lake, NY, USA. The ages of the fishes were
+accurately known, since they were annually stocked as yearlings and distinctly
+marked as to the year class. Every fish was mechanically chopped, ground, thor-
+oughly mixed, and 5-gram samples were taken. The samples were treated and PCB
+residues in parts per million (ppm) were estimated using column chromatography.
+                                                 Table 4: Lake trout data set.
+ Row         1       2      3       4      5      6      7      8      9     10
+ Age         1       1      1       1      2      2      2      3      3      3
+ PCB        0.6     1.6    0.5     1.2    2.0    1.3    2.5    2.2    2.4    1.2
+ log(PCB) −0.5118 0.4700 −0.6932 0.1823 0.6932 0.2624 0.9163 0.7885 0.8755 0.1823
+ Row        11      12     13      14     15     16     16     18     19     20
+ Age         4       4      4       5      6      6      6      7      7      7
+ PCB        3.5     4.1    5.1     5.7    3.4    9.7    8.6    4.0    5.5   10.7
+ log(PCB) 1.2528 1.4110 1.6229 1.7405 1.2238 2.2721 2.1518 1.3863 1.7048 2.3514
+ Row        21      22     23      24     25     26     27     28
+ Age         8       8      8       9     11     12     12     12
+ PCB       17.5    13.4    4.5    30.4   12.4   13.4   26.2    7.4
+ log(PCB) 2.8622 2.5953 1.5041 3.4144 2.5177 2.5953 3.2658 2.0015
+
+   From a preliminary data analysis, we can see that a nonlinear regression model
+(13) is suitable for the data set both in the original and transformed scales (see
+Figure 2).
+    We assume standard classical approach for nonlinear models considering the
+eigth growth models introduced in Section 4. The responses are in the logarithmic
+scale log(PCB), and we use the software MINITAB (version 16). Table 5 presents
+the estimation results for each assumed growth model, and we observe that for
+some growth models we need a large number of iterations for the Gauss-Newton
+algorithm convergence.
+
+                                                         ●                                                                      ●
+              30
+
+
+
+
+                                                                                                                                             ●
+                                                                                      3
+
+
+
+
+                                                                      ●                                                     ●
+              25
+
+
+
+
+                                                                                                                            ●                ●
+                                                                                                                                         ●
+                                                                                                                        ●
+                                                                                                              ●
+                                                                                                              ●
+              20
+
+
+
+
+                                                                                                                                             ●
+                                                                                      2
+
+
+
+
+                                                                                                          ●             ●
+                                                     ●                                                ●
+                                                                           log(PCB)
+
+
+
+
+                                                                                                                            ●
+        PCB
+
+
+
+
+                                                                                                      ●                 ●
+              15
+
+
+
+
+                                                                                                      ●       ●
+                                                     ●                ●
+                                                                                      1
+
+
+
+
+                                                                  ●                           ●   ●
+                                                                                                  ●
+                                                 ●                                            ●
+              10
+
+
+
+
+                                       ●
+                                                                                          ●
+                                       ●
+                                                                      ●                       ●
+                                                                                          ●       ●
+                                   ●
+                                                                                      0
+
+
+
+
+                                                 ●
+                               ●
+              5
+
+
+
+
+                                                     ●
+                               ●                 ●
+                               ●       ●
+                       ●   ●
+                           ●
+                       ●                                                                  ●
+                   ●   ●
+                   ●       ●
+                   ●                                                                      ●
+              0
+
+
+
+
+                       2       4       6             8       10       12                      2       4       6             8       10       12
+
+                                           Age                                                                    Age
+
+
+               Figure 2: Observed values against age for PCB and log(PCB).
+
+   Figure 3, shows the observed log(PCB) plots and fitted models versus the
+observations. From these plots, we can see that the most of the assumed models
+
+                                                                  Revista Colombiana de Estadística 39 (2016) 109–128
+
+Linear and Non-Linear Regression Models Assuming a Stable Distribution                                                      121
+
+give a reasonable fit for the data (models 1, 2, 4, 5, 6 and 7 given in Table 5). Only
+models 3 and 8 are not suitable for the data. It is important to note that the sum
+of absolute values for the differences (observed - estimated mean) for models 1, 2,
+4, 5, 6 and 7 are given, respectively, by 11.4412, 11.1411, 12.0196, 11.0047, 11.0209
+and 11.0310. That is, those values are very similar to each other, and indicate a
+similar fit. Considering models 3 and 8, the values for these differences are given,
+respectively by, 15.5568 and 23.4592 (also see Figure 3).
+
+
+                    Table 5: Classical estimates for the growth models.
+  Fitted model                                            Iteration                               Estimate
+                                                                                              (Standard Error)
+                                                                                     θ1         θ2         θ3          θ4
+  (1) log(PCB) = θ1 + θ2 Ageθ3                                  11                -4.8664     4.7033     0.1968         -
+                                                                                 (8.4290)    (8.2768)   (0.2739)
+
+  (2) log(PCB) = θ1 + θ2 exp[θ3 Age]                            17                3.1293      -3.9292     -0.1903       -
+                                                                                 (0.5785)    (0.4513)    (0.0744)
+
+  (3) log(PCB) = θ1 exp[−θ2 Age]+                               200            12.9631        0.0304      -12.7809   0.0495
+  θ3 exp[−θ4 Age]                                                             (10164.1)        (7.1)     (10163.5)    (8.1)
+
+  (4) log(PCB) = θ1 Age/[θ2 + Age]                              12                8.6431      23.9661        -          -
+                                                                                 (5.3952)    (20.0487)
+
+  (5) log(PCB) = θ1 ×                                           14                2.7062      1.5332      0.4354        -
+  exp[− exp(θ2 − θ3 Age)]                                                        (0.3003)    (0.4300)    (0.1358)
+
+  (6) log(PCB) = θ1 +                                           13                2.9168      -5.1460     -0.8508     3.5608
+  (θ2 − θ1 )/[1 + exp((Age − θ3 )/θ4 )]                                          (0.7308)    (22.1369)   (16.8113)   (4.2535)
+
+  (7) log(PCB) = θ1 +                                           18               2.92618      -0.5612     0.1445      1.1874
+  (θ2 − θ1 ) exp[θ3 Ageθ4 ]                                                      (0.8067)    (0.8808)    (0.1734)    (0.7762)
+
+  (8) log(PCB) = 1−                                             21                -3.4462     -1.2850        -          -
+  exp[− exp(θ1 − θ2 Age)]                                                        (5.8041)    (2.2605)
+
+
+
+
+                                         Log(PCB)
+                                         Fitted Model 1
+                             3
+
+
+
+
+                                         Fitted Model 2
+                                         Fitted Model 3
+                                         Fitted Model 4
+                                         Fitted Model 5
+                                         Fitted Model 6
+                                         Fitted Model 7
+                             2
+
+
+
+
+                                         Fitted Model 8
+                    Y−Data
+
+                             1
+                             0
+
+
+
+
+                                 0   5                     10               15          20         25
+
+                                                                      Observation
+
+
+Figure 3: Observed log(PCB) values against estimated means considering the eight
+          fitted models.
+
+
+                                                            Revista Colombiana de Estadística 39 (2016) 109–128
+
+122                                                    Jorge A. Achcar & Sílvia R. C. Lopes
+
+
+    We can observe that the obtained classical estimates shown in Table 5, could
+be very unstable depending on the initial values used in the iterative algorithm.
+It is usually difficult to obtain good initial empirical values to be used in the
+iterative procedure. We also point out that the estimates standard errors (given
+in parenthesis in the right panel of Table 5) could be very large as is observed in
+this table.
+    Using a Bayesian approach, Table 6, shows the posterior summaries of interest
+considering the eight growth models 1-8 introduced in Section 4 with a normal dis-
+tribution for the error (see expression (13)) and the OpenBUGS software assuming
+the following prior distributions: θj ∼ U(0, 1), j = 1, 2, 3, 4 and ζ = 1/σ 2 ∼ G(1, 1),
+where G(a, b) denotes a gamma distribution with mean a/b and variance a/b2 . We
+simulated 10,000 Gibbs samples, with a “burn-in-sample” of 1,000 samples that
+were discarded to eliminate the effects of the initial values in the iterative simula-
+tion procedure and we took a final sample of 900 (every 10th sample choosen from
+the 9,000 samples). Gibbs sampling algorithm convergence was monitored from
+the standard trace plots of the simulated samples.
+
+      Table 6: Bayesian estimates for the growth models assuming a normal error.
+  Fitted model                            DIC                    Posterior Mean
+                                                              (Standard Deviation)
+                                                       θ1         θ2         θ3        θ4
+  (1) log(PCB) = θ1 + θ2 Ageθ3            45.0      -0.7804     0.9227     0.5946       -
+                                                   (0.4839)    (0.3843)   (0.1458)
+
+  (2) log(PCB) = θ1 + θ2 exp[θ3 Age]      61.71     -0.5457    1.0960     0.1065        -
+                                                   (0.5339)   (0.4373)   (0.0279)
+
+  (3) log(PCB) = θ1 exp[−θ2 Age]+         52.56     -1.701     0.4978     1.0940      -0.0852
+  θ3 exp[−θ4 Age]                                  (0.6316)   (0.2242)   (0.2721)    (0.0241)
+
+  (4) log(PCB) = θ1 Age/[θ2 + Age]        67.6      2.3140     2.0540       -           -
+                                                   (0.3152)   (0.6620)
+
+  (5) log(PCB) = θ1 ×                     49.47     2.5060     1.5406     0.5010        -
+  exp[− exp(θ2 − θ3 Age)]                          (0.2677)   (0.4094)   (0.1404)
+
+  (6) log(PCB) = θ1 +                     51.17     2.3190     -1.4580    1.8730      1.7460
+  (θ2 − θ1 )/[1 + exp((Age − θ3 )/θ4 )]            (0.2294)   (0.6554)   (0.6762)    (0.4869)
+
+  (7) log(PCB) = θ1 +                     -6.609    -1.318     -0.4967    -0.7765     0.3727
+  (θ2 − θ1 ) exp[θ3 Ageθ4 ]                        (0.6242)   (0.4649)   (0.3716)    (0.1372)
+
+  (8) log(PCB) = 1−                       87.31     -0.3885    -0.7789      -           -
+  exp[− exp(θ1 − θ2 Age)]                          (1.0480)   (0.5216)
+
+
+   From the results shown in Table 6, we observe that the posterior standard
+deviation for each estimated parameter of the growth model is very small. It is
+important to point out that these posterior summaries obtained using MCMC
+methods are very accurate and do not depend on approximations as they do when
+using the classical approach. Figure 4 shows observe that we have a good fit for
+some of the data models.
+
+
+
+                                          Revista Colombiana de Estadística 39 (2016) 109–128
+
+Linear and Non-Linear Regression Models Assuming a Stable Distribution                                      123
+
+                                       Log(PCB)
+                                       Fitted Model 1
+
+
+
+
+                         3
+                                       Fitted Model 2
+                                       Fitted Model 3
+                                       Fitted Model 4
+                                       Fitted Model 5
+                                       Fitted Model 6
+                                       Fitted Model 7
+
+
+
+
+                         2
+                                       Fitted Model 8
+
+
+
+
+                Y−Data
+
+                         1
+                         0
+
+
+
+
+                             0     5                    10              15      20   25
+
+                                                                  Observation
+
+Figure 4: Log(PCB) values that were observed against posterior means considering
+          eight fitted models.
+
+
+   To decide on the best statistical model we could also use the selection Bayesian
+Deviance Information Criterion (DIC) introduced by Spiegelhalter, Best, Carlin
+& van der Linde (2002). This criterion is especially useful in problems in which
+samples of the posterior distribution for the parameters of the model have been
+simulated using Markov Chain Monte Carlo (MCMC) methods.
+   Define the deviation as
+                                       D(θ) = −2 log L(θ) + C,                                             (21)
+where θ is the vector of unknown parameters in the model, L(θ) is the likeli-
+hood function and C is a constant that does not need to be known in the models
+comparison. The DIC criterion is given by
+                                                     b + 2nD ,
+                                             DIC = D(θ)                                                    (22)
+         b is the deviation evaluated at the posterior mean θ
+where D(θ)                                                    b = E(θ|data) and
+nD is the effective number of parameters of the model, given by nD = D − D(θ),
+                                                                             b
+with D = E(D(θ)|data) being the posterior deviation that measures the quality
+of the data fit for the model. Smaller values of DIC indicate better models. It
+should be noted that these values can be negative.
+   Overall, model 5 (Gompertz) gives the smallest value for the sum of absolute
+values for the differences (observed - estimated mean) and smaller DIC (49.47)
+value. We could consider this model to be the best fitted model.
+    We now assume a stable distribution of the responses considering the Gom-
+pertz growth curve model (model 5) introduced in Section 4. Using a Bayesian
+approach, Table 7 shows the posterior summaries of interest assuming the non-
+linear regression model 5. It considers the regression model (13) for the location
+parameter of the stable distribution given by,
+                                 δi = d1 exp[− exp(d2 − d3 Agei )].                                        (23)
+
+   In the Bayesian analysis for this model, we use the OpenBugs software assuming
+the following prior distributions: α ∼ U(0, 2), β ∼ U(−1, 0), dj ∼ N (0, 1), j =
+
+
+                                                             Revista Colombiana de Estadística 39 (2016) 109–128
+
+124                                                                               Jorge A. Achcar & Sílvia R. C. Lopes
+
+
+1, 2, 3 and γ ∼ U(0, 3). We also assume a uniform U(−0.5, 0.5) distribution for
+the latent variable Yi , for i = 1, 2, · · · , 15. We simulated 4,000,000 Gibbs samples,
+with a “burn-in-sample” of 1,000,000 samples that were discarded to eliminate the
+effects of the initial values in the iterative simulation procedure. We took a final
+sample of 3,000 (every 1000th sample chosen from the 3,000,000 samples). Gibbs
+sampling algorithm convergence was monitored from standard trace plots from the
+simulated samples.
+
+Table 7: Bayesian estimates for the Gompertz growth model assuming a stable distri-
+         bution for the responses.
+            Parameter              Mean              Standard Deviation                   95% Credible Interval
+                α                 0.8859                   0.0759                            (0.7069, 0.9738)
+                β                 -0.7813                  0.0918                           (-0.9552, -0.5773)
+               d1                 2.6740                   0.4199                            (2.1720, 3.3060)
+               d2                 1.7300                   0.5028                            (0.8745, 2.6220)
+               d3                 0.4568                   0.1405                            (0.2735, 0.7191)
+                γ                 0.4554                   0.0805                            (0.2670, 0.5993)
+
+
+    Figure 5, shows the plot of the posterior means assuming a Gompertz growth
+model (model 5) with a normal error against the observations, together with the
+plot of the location posterior against observations assuming a stable distribution.
+We observe similar results. We also observe that the sum of absolute values for
+the differences (observed - estimated mean) for model 5 with a stable distribution
+is given by 12.1437, that is, similar to the obtained value assuming normal errors
+(11.0915).
+
+
+                                          Log(PCB)
+                          3
+
+
+
+
+                                          Posterior Mean Model 5
+                                          Location Posterior Mean
+                          2
+                 Y−Data
+
+                          1
+                          0
+
+
+
+
+                              0       5                      10           15         20          25
+
+                                                                    Observation
+
+
+
+Figure 5: Log(PCB) values that were against posterior means considering the Gompertz
+          growth model, with Normal error and assuming a stable distribution.
+
+    Let us now consider the presence of one outlier or discordant response (consid-
+ered as a measurement error) replacing the 5th PCB response (2.0) value in Table
+4 by the value 200.0. This high value is necessary as otherwise the effect can not
+be observed. Table 8, shows the obtained posterior summaries assuming the same
+priors and same simulation procedure as in Table 7. Figure 6, shows the plots
+of observed and fitted means considering both models versus samples. From the
+graphs in Figure 6, we can see that the model with a stable distribution is very
+
+                                                               Revista Colombiana de Estadística 39 (2016) 109–128
+
+Linear and Non-Linear Regression Models Assuming a Stable Distribution                                        125
+
+Table 8: Bayesian estimates for the Gompertz growth model assuming a stable distri-
+         bution for the responses (presence of one outlier).
+                                     Stable distribution (SAV = 11.8064)
+            Parameter              Mean      Standard Deviation    95% Credible Interval
+                α                 0.8682            0.0806            (0.6694, 0.9674)
+                β                 -0.6747           0.2485           (-0.9476, -0.0344)
+               d1                 2.4580            0.2719            (2.0980; 3.1040)
+               d2                 1.8230            0.4832            (0.9447; 2.6920)
+               d3                 0.5305            0.1201            (0.3114; 0.7528)
+                γ                 0.4202            0.1141            (0.1708, 0.6201)
+                                    Normal distribution (SAV = 16.1205)
+            Parameter              Mean      Standard Deviation    95% Credible Interval
+                θ1                2.0730            0.3714            (1.4060, 2.8870)
+                θ2                0.7145            0.6787           (-0.7258, 2.0210)
+                θ3                0.6920            0.3985            (0.1847, 1.6290)
+
+
+
+                                          Log(PCB)
+                          3
+
+
+
+
+                                          Posterior Mean Model 5
+                                          Location Posterior Mean
+                          2
+                 Y−Data
+
+                          1
+                          0
+
+
+
+
+                              0       5                      10           15      20    25
+
+                                                                    Observation
+
+
+Figure 6: Log(PCB) values that were against posterior means considering the Gompertz
+          growth model with Normal error, assuming a stable distribution (presence of
+          one outlier).
+
+
+
+robust in term of the presence of the outlier, given similar inference results that
+are obtained without this outlier (see results in Table 7). Table 8 also shows that
+the estimated regression parameters with normal error are strongly affected by the
+presence of this outlier. It can be seen that we have sum of absolute values for the
+differences (observed - estimated mean) equals to 11.8064 and assuming a stable
+distribution (a value very close to the respective one without the presence of an
+outlier), while the sum of absolute values for the differences (observed - estimated
+mean) is equal to 16.1205 assuming a normal distribution.
+
+
+6. Some Concluding Remarks
+    The use of stable distributions could be a good alternative, especially using
+Bayesian methods with MCMC simulation technique. This class of distributions
+is very robust in the presence of discordant observations. The presence of outliers
+
+
+                                                               Revista Colombiana de Estadística 39 (2016) 109–128
+
+126                                              Jorge A. Achcar & Sílvia R. C. Lopes
+
+
+or discordant observations, is often, due to measurement errors very common in
+practical applications of linear or nonlinear regression analysis. In the presence
+of these discordant observations, the usual obtained classical inferences on the re-
+gression parameters or in the predictions under the usually assumption of errors
+normality and homoscedastic variance could be greatly affected, which could imply
+in wrong inference results. In this way, the use of stable distributions could be a
+good alternative, since this distribution has a great flexibility to fit for the data.
+With the use of Bayesian methods and MCMC simulation algorithms it is possible
+to obtain inferences for the model despite the nonexistence of an analytical form
+for the density function, as was shown in this work. It is important to point out
+that the computational effort in the sample simulations for the joint posterior dis-
+tribution of interest can be largely simplified using standard free available software
+like the OpenBUGS software.
+   In the illustrative examples that have been shown, we observed that the use of
+data augmentation techniques (see, for instance, Damien et al. 1999) is the key to
+obtaining a good performance for the MCMC simulation method for applications
+using stable distributions.
+    We emphasize that the use of OpenBUGS software does not require large com-
+putational time to obtain posterior summaries of interest, even when the simulation
+of a large number of Gibbs samples is needed to achieve algorithm convergence.
+These results could be of great interest for researchers and practitioners when
+dealing with non Gaussian data, as in the applications presented here.
+
+
+Acknowledgments
+    J.A. Achcar’s research was partially supported by CNPq-Brazil. S.R.C. Lopes’
+research was partially supported by CNPq-Brazil and by CNPq-INCT em Matemá-
+tica. The authors are very grateful for the comments and suggestions made by both
+referees and the editor.
+                                                              
+                 Received: October 2014 — Accepted: March 2015
+
+
+References
+Achcar, J., Achcar, A. & Martinez, E. (2013), ‘Robust linear regression models: use of a stable distribution for the response data’, Open Journal of Statistics 3, 409–416.
+Achcar, J., Lopes, S., Mazucheli, J. & Linhares, R. (2013), ‘A bayesian approach for stable distributions: some computational aspects’, Open Journal of Statistics 3, 268–277.
+Bache, C., Serum, J., Youngs, W. & Lisk, D. (1972), ‘Polychlorinated bibhenyl residues: accumulation in cayuga lake trout with age’, Science 117, 1192–1193.
+Bates, D. & Watts, D. (1988), Nonlinear regression analysis and its applications, Wiley, New York.
+Buckle, D. (1995), ‘Bayesian inference for stable distributions’, Journal of the American Statistical Association 90, 605–613.
+Damien, P., Wakefield, J. & Walker, S. (1999), ‘Gibbs sampling for bayesian nonconjugate and hierarchical models by using auxiliary variables’, Journal of the Royal Statistical Society. Series B 61, 331–344.
+Draper, N. & Smith, H. (1981), Applied regression analysis, Wiley, New York.
+Gnedenko, B. & Kolmogorov, A. (1968), Limit distributions for sums of independent random variables, Addison-Wesley, Massachussetts.
+Ibragimov, I. & Chernin, K. (1959), ‘On the unimodality of stable laws’, Teoriya Veroyatnostei i ee Primeneniya 4, 453–456.
+Johnson, R. & Bhattacharyya, G. (1980), Statistical Principles and Methods, 1 edn, John Wiley, New York.
+Kanter, M. (1976), ‘On the unimodality of stable densities’, Annals of Probability 4, 1006–1008.
+Lévy, P. (1924), ‘Théorie des erreurs la loi de gauss et les lois exceptionelles’, Bulletin Society Mathematical 52, 49–85.
+Lukacs, E. (1970), Characteristic Functions, Hafner Publishing, New York.
+Nolan, J. (2015), Stable Distributions - Models for Heavy Tailed Data, Birkhäuser, Boston.
+Ratkowsky, D. (1983), Nonlinear regression modelling: a unified practical approach, Marcel Dekker, Boston.
+Samorodnitsky, G. & Taqqu, M. (1994), Stable Non-Gaussian Random Processes, Chapman & Hall, New York.
+Seber, G. & Lee, A. (2003), Linear regression analysis, Wiley, New York.
+Seber, G. & Wild, C. (1989), Nonlinear regression, Wiley, New York.
+Skorohod, A. (1961), On a theorem concerning stable distributions, in ‘Selected Translations in Mathematical Statistics and Probability’, Vol. 1, Institute of Mathematical Statistics and American Mathematical Society, Providence, Rhode Island.
+Spiegelhalter, D., Best, N., Carlin, B. & van der Linde, A. (2002), ‘Bayesian measures of model complexity and fit’, Journal of the Royal Statistical Society. Series B 64(4), 583–639.
+Spiegelhalter, D., Thomas, A., Best, N. & Lunn, D. (2003), WinBUGS User’s Manual, MRC Biostatistics Unit, Cambridge.
+Tanner, M. & Wong, W. (1987), ‘The calculation of posterior distributions by data augmentation’, Journal of American Statistical Association 82, 528–550.

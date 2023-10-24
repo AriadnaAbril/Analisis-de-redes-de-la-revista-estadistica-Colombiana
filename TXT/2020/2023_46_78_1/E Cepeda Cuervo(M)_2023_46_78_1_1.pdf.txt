@@ -1,0 +1,976 @@
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models. Modelos de regresión µσ 2 -Beta y µσ 2 -Beta binomial
+Universidad Nacional de Colombia, Bogotá D.C., Colomb
+Abstract
+This paper proposes new parameterizations of the beta and beta binomial distributions as functions of the mean and variance parameters. From these new parameterizations, new beta and beta binomial linear regression models are formulated by assuming that appropriate real functions of the mean and variance follow linear regression structures. These models were tted to real datasets by applying Bayesian methods, using the OpenBUGS software. The new beta regression models were tted to the Dyslexia Reading Accuracy dataset and the new beta binomial regression models were applied to the School Absenteeism Dataset. In both cases, the results obtained by tting these models were compared with those obtained by tting the usual mean and dispersion beta regression models and the mean and dispersion beta binomial regression models, respectively.
+Key words :   Mean and variance beta and beta binomial distributions; Beta and beta-binomial regression models; Bayesian methods.
+Resumen
+Este artículo propone nuevas parametrizaciones de las distribuciones beta y beta binomial como funciones de los parámetros de media y varianza.A partir de estas nuevas parametrizaciones, se formulan nuevos modelos de regresión lineal beta y beta binomial asumiendo que funciones reales apropiadas de la media y la varianza siguen estructuras de regresión lineal. Estos modelos se ajustaron a conjuntos de datos reales mediante la aplicación de métodos bayesianos,      utilizando el software OpenBUGS. Los nuevos modelos de regresión beta se ajustaron al conjunto de datos de precisión de lectura de niños con dislexia y los nuevos modelos de regresión beta binomial se aplicaron al conjunto de datos de ausentismo escolar. En ambos casos, los resultados obtenidos ajustando estos modelos se compararon con los obtenidos ajustando los modelos habituales de regresión beta de media y dispersión y los modelos de regresión beta binomial de media y dispersión, respectivamente.
+Palabras clave :   Media y varianza; Distribución beta; Distribución beta binomial; Modelos de regresión beta y beta-binomial; Métodos bayesianos.
+
+
+
+
+Introduction
+
+     This paper presents results of analyzing situations where the observations of
+the variables of interest are associated with the beta distribution.                 The beta
+distribution has applications in uncertainty of random variation of probability,
+fraction   or   prevalence,   among    others.        Thus,    this   distribution   has   many
+applications in areas such as nancial sciences, social sciences like education
+(Cepeda-Cuervo & Núñez Antón, 2013) and epidemiology (Hunger et al., 2012),
+where random variables are continuous in a bounded interval that is isomorphic to
+the interval (0, 1). To mention an example, in studies of the quality of education,
+a number in a continuous scale from 0 to 5 (or any other positive integer bounds)
+is assigned as a measure of performance in school subjects like math or language
+(Cepeda & Gamerman, 2005). In these cases, the measure assigned to each student
+can be expressed as a number from zero to one.                Thus, it can be assumed that
+the level of student performance is a random variable with a beta distribution.
+In education systems and other elds, a need often exist to model continuous
+random variables that assume values in a bounded interval on a set of explanatory
+variables. In these cases, if a continuous random variable W assumes values in a
+bounded open interval (a, b), a beta regression model can be proposed by dening
+a random variable Y     = (W − a)/(b − a), which can be assumed to follows the beta
+distribution.
+
+     Some variables can be assumed to follow beta distributions where their
+parameters are modeled as functions of explanatory variables.                   For example,
+students' performance can be explained by educational factors like educational
+level of mothers;     land concentration can be explained by random variables
+associated with social and political factors; and the proportion of income spent
+monthly can be explained by the number of persons in the household.                        With
+these ideas, beta Bayesian regression models, with joint modeling of the mean and
+dispersion parameters, were initially proposed by Cepeda-Cuervo (2001), p.                   63
+in the framework of joint modeling in the biparametric exponential family.                   He
+described beta regression models where the mean, µ = p/(p + q), and the so called
+dispersion parameter of the beta distribution, ν = p + q , follow linear regression
+structures:
+
+
+                                   h(µ)    = xt β and                                       (1)
+                                                  t
+                                    g(ν)   = z γ,                                           (2)
+
+
+where h(·) is the logit function and g(·) is the logarithmic function; x and z are
+vectors of explanatory variables and, β = (β0 , . . . , βk ) and γ = (γ0 , . . . , γp ) are the
+
+
+
+                      Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models                                       65
+
+
+
+respective vectors of regression parameters. Other appropriate link functions can
+be considered. These parameterization of the beta distribution can be appropriate
+in the beta regression models' denition, where ν can be interpreted as a precision
+parameter in the sense that, for xed values of µ, larger values of ν correspond to
+smaller values of the variance (a conditional interpretation of ν ). Independently
+of this proposal, in the same year, Paolino (2001) proposed beta regression models
+assuming that p and q , the parameters of the beta distribution B(p, q), follow
+regression structures.
+
+   Since 2001, beta regression models have been extensively studied and applied
+in statistics.    Using the µ-ν parameterizations of the beta distribution, Ferrari
+& Cribari-Neto (2004) proposed beta regression models with constant dispersion
+parameters, where the mean follows a regression structure given by                   h(µ) =
+xt β , in which h is an appropriate twice dierentiable function.                 With this
+parameterization,     they wrote the beta density function in terms of                µ and
+ν , obtained the parameter estimates using maximum likelihood.                 Smithson &
+Verkuilen (2006) propose frecuentist aproach to the beta regression models, where
+both mean and precision are modeled with distinct sets of predictors. Further work
+has been published by Simas et al. (2010), proposing nonlinear beta regression
+models, where the mean parameter varies through a nonlinear regression structure
+and the precision parameters vary through a linear structure. Cepeda & Achcar
+(2010) proposed nonlinear beta regression in the context of double generalized
+nonlinear models. The beta regression models were extended in Cepeda-Cuervo &
+Núñez Antón (2013), assuming that the observations are spatially correlated.
+
+   Taking into account the conditional and restricted interpretation of ν , the so
+called precision parameter, and following the proposal presented in Cepeda-Cuervo
+& Garrido (2015), in which a restricted mean and variance regression model was
+proposed, in this paper we propose the mean and variance parameterization of the
+beta distribution, with clear and straightforward parameter interpretation. With
+this parameterization of the beta distribution, new beta regression models are
+proposed:
+
+
+                                    h(µ)   = xt β and                                     (3)
+                                       2          t
+                                   g(σ )   = z λ,                                         (4)
+
+
+where h(.) and g(.) are appropriate real valued functions (one to one and two
+dierentiable) from the open interval (0, 1) to the real number set. There are many
+examples of the mean link function h(.), like logit, probit and complementary log-
+log functions. Examples of the variance link functions are given by the mean link
+functions, dened over an appropriate transformation of the interval (0, 1/4) to the
+interval (0, 1). Here we apply the beta regression models to the reading accuracy
+data for dyslexic and non-dyslexic Australian children (Smithson & Verkuilen,
+2006) and compare the results with that obtained by usual models presented in
+the literature.
+
+   From these new parameterizations of the beta distribution, many statistical
+                                                           2
+extensions can be proposed. For example, using a µσ            parameterization of the beta
+distribution, a new parameterization of the beta binomial distribution is proposed,
+
+
+
+                      Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+66                                                                       Edilberto Cepeda-Cuervo
+
+
+
+where this distribution is dened by assuming that                   Y | π ∗ follows binomial
+                        ∗                 ∗          ∗               2
+distribution, Y   | π ∼ Bin(n, π ), where π              follows µσ -beta distribution. From
+these parameterizations of the beta binomial distribution, new beta binomial
+regression models are proposed and applied to the School Absenteeism dataset
+analysis.
+
+     This paper is organized as follows.            After this introduction, in Section 1,
+                    2                                       2
+we dene the µσ -beta distribution and the µσ -beta binomial distribution.                    In
+                                      2                                         2
+Section 2, we propose the µσ              beta regression models and the µσ -beta binomial
+regression models. In Section 3, we describe the results of applying these models
+to the analysis of dyslexia and the School Absenteeism datasets.                    Finally, some
+conclusions of the paper are included in Section 4.
+
+
+
+
+1. New Parameterizations of the Beta and Beta
+      Binomial Distributions
+
+     A random variable Y has a beta distribution if its density function is given by:
+
+                                    Γ(p + q) p−1
+                   f (y|p, q) =              y   (1 − y)q−1 I(0,1) (y),                       (5)
+                                    Γ(p)Γ(q)
+where p > 0, q > 0 and Γ(.) denotes the gamma function. The mean and variance
+                            2
+of Y, µ = E(Y ) and σ           = V ar(Y ), are given by:
+                                              p
+                                   µ =             and                                        (6)
+                                            p+q
+                                                     pq
+                                  σ2 =                           .                            (7)
+                                            (p + q)2 (p + q + 1)
+Many random variables can be assumed to have a beta distribution.                          Some
+examples, are income inequality and land distribution when these are measured
+using the Gini index, as proposed by Atkinson (1970), or the performance of
+students in subjects such as mathematics and language.                      In last case, if the
+performance or some other continuous variable X takes values in an open interval
+(a, b), the random variable Y = (X − a)/(b − a) can be assumed to have a beta
+distribution.   Student performance can be explained, for example, by household
+socioeconomic variables, since these can have a large impact on students' cognitive
+achievement.      The level of students' achievement is also closely related to the
+educational level of their parents, especially by the educational level of the mothers
+and the number of hours devoted to studying a subject. Thus, the beta regression
+model can be appropriate to explain the behavior of school performance as a
+function of associated factors in a mean and variance regression structure.
+
+
+
+1.1. Mean and variance (µσ 2 ) beta distribution
+
+     From the beta density function dened in (5), the mean (µ) and dispersion (ν )
+beta distribution is dened by setting ν = p + q . A random variable Y follows a
+µν -beta distribution if it density function is given by:
+
+
+                        Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models                                                 67
+
+
+
+
+                                     Γ(ν)
+                 f (y|µ, ν) =                    y µν−1 (1 − y)ν(1−µ)−1 I(0,1) (y),                  (8)
+                                Γ(µν)Γ(ν(1 − µ))
+where  0 < µ < 1 and ν > 0. In this parameterization E(Y ) = µ and
+           2  µ(1−µ)             2
+Var(Y ) = σ =
+               1+ν . Hence, 0 < σ < 1/4. This parameterization, proposed in
+Jorgensen (1997) and in Cepeda-Cuervo (2001), p. 63, was presented in (Ferrari
+& Cribari-Neto, 2004).
+
+     Assuming the mean and variance parameterization of the beta distribution
+proposed in Cepeda-Cuervo (2015), the mean and variance beta density function
+                                                    µ(1−µ)
+                                                  Γ( σ2 −1)
+is given by (9), where K =                 2
+                                          µ (1−µ)       µ(1−µ)2
+                                                                        .
+                                        Γ( σ2     −µ)Γ( σ2      −(1−µ))
+
+
+                                      µ2 (1−µ)                  µ(1−µ)2
+                                               −µ−1                     −(1−µ)−1
+                 f (y|µ, σ 2 ) = Ky      σ2           (1 − y)      σ2              I(0,1) (y),       (9)
+
+This parameterization of the beta density function can be obtained from (8), by
+             µ(1−µ)
+setting ν =
+               σ2   − 1. Thus, the beta density function, written as a function of
+                                 2
+the precision parameter ϕ = 1/σ , is given by:
+
+                                    2                                 2
+                f (y|µ, σ 2 ) = Ky µ (1−µ)ϕ−µ−1 (1 − y)µ(1−µ) ϕ−(1−µ)−1 I(0,1) (y),                 (10)
+
+                              Γ(µ(1−µ)ϕ−1)
+where K =
+                    Γ(µ2 (1−µ)ϕ−µ)Γ(µ(1−µ)2 ϕ−(1−µ)) .
+
+
+
+1.2. µσ 2 -Beta Binomial Distribution
+
+     The beta binomial distribution assumes that the random variable Y, conditional
+on       π∗ ,   has binomial distribution         Bin(m, π ∗ ) and that π ∗ follows the beta
+distribution dened by (5). The beta binomial probability is given by:
+                                    
+                                    n B(y + p, n − y + q)
+                 f (y|n, p, q) =                          IA (y), p > 0, q > 0,                     (11)
+                                    y      B(p, q)
+where A = {0, 1, 2, . . . , n} and B(.) is the beta function.                      If Y follows the beta
+binomial distribution dened by (11), V (Y ) = mπ(1 − π)[1 + ρ(m − 1)], where
+ρ = 1/(1+p+q). As a consequence, ρ can be interpreted as a dispersion parameter,
+in the sense that for constant mean, the variance of Y increases when ρ increases
+and the variance Y decreases when ρ decreases. In this parameterization of the
+beta-binomial distribution, the variance of Y is 1 + ρ(m − 1) times the variance of
+the binomial model. In this distribution, if the random variable Y , conditional on
+π ∗ , has binomial distribution Bin(mi , π ∗ ) and π ∗ follows a µσ 2 -beta distribution
+           ∗                    ∗    2
+with E(π ) = π and Var(π ) = σ , the unconditional distribution of Y is given by:
+                                 
+                                  n B(y + µν, n − y + ν(1 − µ))
+             f (y|n, π, σ 2 ) =                                 IA (y),             (12)
+                                  y      B(µν, ν(1 − µ))
+           µ(1−µ)
+where ν =
+             σ2   − 1 (or ν = µ(1 − µ)ϕ − 1). In this case, Y is said to follow a
+     2
+πσ -beta binomial distribution with mean and variance (precision) given by:
+
+                            Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+68                                                                      Edilberto Cepeda-Cuervo
+
+
+
+
+                      E(Y )         = E(E(Y |π ∗ )) = mE(π ∗ ) = mπ         and
+                                                       ∗                ∗
+                      V (Y )        = E[V ar(Y |π )] + V ar[E(Y |π )]
+                                    = mE[π ∗ (1 − π ∗ )] + m2 V ar(π ∗ )
+                                    = mπ(1 − π) + σ 2 m(m − 1)                               (13)
+
+
+Thus, in model (12), σ     = V ar(π ∗ ) and σ 2 m(m − 1) is the overvariance of the
+                               2
+                                   2                                        2
+beta binomial distribution. If σ > 0, there is overvariance, while if σ = 0,
+        2
+the πσ -beta binomial distribution is reduced to the binomial distribution. If
+σ 2 = ρπ(1 − π) in (13), the variance of the beta binomial distribution (11) is
+                                                                              2
+obtained. In this new parameterization of the beta binomial distribution σ has
+                                                        ∗
+clear interpretation, given that it is the variance of π .
+
+
+
+
+2. Beta Regression Models
+
+     A beta regression model was proposed by Cepeda-Cuervo (2001), with joint
+modeling of the mean (µ) and dispersion (ν                     = p + q ) parameters of the beta
+distribution, assuming that the appropriate function of both follows a linear
+regression structure. Under a general framework, he assumed a random sample
+Yi ∼ Beta(pi , qi ), i = 1, 2, . . . , n, with mean and dispersion regression structures
+given by:
+
+
+                                              h(µi )   = xti β                               (14)
+
+                                              g(νi )   =   zti γ,                            (15)
+
+                                                                                                t
+where h is the logit function and g is the logarithmic function; β = (β0 , β1 , . . . , βk )
+                                    t
+and γ   = (γ0 , γ1 , . . . , γp )       are the vectors of the mean and dispersion regression
+parameters structures, respectively;     xi is the vector of the mean explanatory
+variables; and      zi is the vector of precision explanatory variables, at the i-th
+observation. This model implies a parameterizations of the beta density function
+(5) in terms of µi and νi .
+
+     In subsequent paper, Ferrari & Cribari-Neto (2004) presented a frequentist
+                                                                                   t
+approach to the beta regression models, assuming that h(µi ) = xi β , where h is
+an appropriate real valued function, strictly monotonic and twice dierentiable,
+dened on (0, 1), and ϕ, the dispersion parameter, is a constant in the range of
+values of the explanatory variables. The joint beta regression model proposed by
+Cepeda-Cuervo (2001), was later studied by (Smithson & Verkuilen, 2006), using
+Bayesian methods, and by Simas et al. (2010), from a frequentist perspective.
+Multiple studies and applications have been developed in recent years in the
+framework of beta regression models.                   Although many variations of mean and
+dispersion beta regression models have been developed since the work of Cepeda-
+Cuervo (2001), these proposals have at least two drawbacks.                       The rst is the
+interpretability of ν in the µν -beta regression model (8), given that ν is considered
+to be a precision parameter in the sense that, for constant mean, the variance
+
+
+
+                        Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models                                          69
+
+
+
+decreases when ν increases,          σ 2 = µ(1−µ)
+                                            ν+1 .      A second problem is the lack of an
+explicit regression structure for the variance, which impair the quality of the
+posterior regression parameter inferences.
+
+
+
+2.1. µσ 2 -Beta Regression Models
+
+   A rst approximation of the mean and variance beta regression models was
+proposed in (Cepeda-Cuervo, 2015), from a Bayesian perspective. In that model,
+the mean regression structure is dened as a function of the explanatory variables
+as in equation (14), where h is, for example, the logit function.               In that paper,
+the variance regression structure was dened as a function of the explanatory
+                     2
+                  = zti λ, where λ = (λ0 , λ1 , . . . , λs )t is the vector of variance
+variables as g(σi )
+regression parameter structure and g is assumed to be the logarithmic function.
+                          2
+However, given that 0 < σ < 1/4, posterior samples of λ should be obtained from
+restricted parameter spaces.
+
+   In this paper, from the new parameterization of the beta distribution given
+in (9), we propose the mean and variance beta regression models by dening
+appropriate variance link functions,            in order to obtain regression parameter
+estimates from unrestricted parameter spaces.               Thus, the parameter estimates
+can be obtained by applying Bayesian or maximum likelihood methods without
+any parameter restrictions, if the link functions are once and twice dierentiable,
+respectively.
+                2
+   In the µσ        beta regression models, the mean regression structure is given by
+(14), while for the variance, the proposed the regression structure is given by:
+
+
+                                       g(4σi2 ) = z t λ,                                    (16)
+
+
+where h(.) and g(.) are real functions dened in the open interval (0, 1) of the real
+number set R, like the logit, probit, log-log or the complementary log-log function.
+                              2
+                     ) = z t λ, the variance of the beta regression model is given
+If, for example, logit(4σ
+       2            t         t
+by: σ = exp(z λ)/(4 + 4exp(z λ)). Thus, the parameter estimates of the mean
+and variance regression structures are easily interpretable.              For example, if the
+logit link function is assumed for the mean and variance regression structure and:
+
+
+  1.   X1 is an explanatory variable associated with a parameter β1 where β1 > 0,
+       increasing behavior of X1 is associated with an increasing mean, while if
+       β1 < 0, increasing behavior of X1 is associated with a decreasing mean.
+
+  2.   Z1 is an explanatory variable associated with a parameter λ1 where λ1 > 0,
+       increasing behavior of Z1 is associated with increasing variance, while if
+       λ1 < 0, increasing behavior of Z1 is associated with decreasing of variance.
+
+                                               2
+   The mean and precision (ϕ = 1/σ ) beta regression model is dened by the
+                                                            t
+mean regression structure (14) and by g(ϕ−4) = z λ, where g(.) is the logarithmic
+function or some other appropriate real function dened from the positive real
+            +
+numbers ℜ       to the real numbers ℜ, such as the logarithmic function.
+
+
+
+                         Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+70                                                              Edilberto Cepeda-Cuervo
+
+
+
+2.2. µσ 2 -Beta Binomial Regression Models
+
+     In this section,µσ 2 -beta binomial regression models are dened by
+                        the
+                                 2
+assuming that Yi ∼ BB(mi , πi , σi ), i = 1, . . . , n, are n independent random
+variables that follow the beta binomial distribution dened in (12).             Thus, in
+        2
+the µσ -beta binomial regression models, it is assumed that the random variables
+Yi have, conditional on π ∗ , binomial distribution Bin(mi , πi∗ ), and that πi∗ follows
+the beta distribution dened by (9), with:
+
+                              ∗                           ∗     2
+                         E(πi ) = µi ,    and     Var(πi ) = σi
+
+                                                                          t
+The systematic and link function components are dened by h(πi ) = xi β and
+g(σi2 ) = z ti λ, assuming the probability (mean) regression structures given by
+(14) and variance regression structures dened in (16).             The use of this beta-
+binomial regression model is recommended when the researcher believes that the
+data come from a population having dierent subpopulations, and also when
+there is correlation between the Bernoulli events within each binomial observation
+(Quintero-Sarmiento et al., 2012).        This assumption allow us to have a larger
+variance than the onethat considered in the GLM with binomial response variable,
+but assuming that the overvariance follows regression structures as functions of the
+explanatory variables.
+
+
+
+
+3. Applications
+
+     In this section, posterior inferences of the    µσ 2 -beta and πσ 2 -beta binomial
+regression models are presented in the framework of two applications. Section 3.1
+includes results of analyzing reading accuracy dataset of dyslexic and non dyslexic
+students with    µσ 2 -beta regression models.      These results illustrate the good
+performance of the proposed models and the advantages of their interpretations
+against the usual beta mean and dispersion regression models. Section 3.2 presents
+                         2
+results of applying πσ -beta binomial regression models to a postnatal mortality
+dataset and their interpretations.
+
+
+
+3.1. Dyslexic versus Non-Dyslexic Reading Accuracy
+                                                      2
+     This section presents results of applying µσ -beta regression models to the
+analysis of the reading accuracy data for dyslexic and non-dyslexic Australian
+children (Smithson & Verkuilen, 2006).          The variable of interest is accuracy,
+measured by scores on a test of reading accuracy taken by 44 children, which
+is predicted by two regressors variables: dyslexia (a dichotomic variable which has
+value 1 for dyslexic children and        −1 for non-dyslexic children) and nonverbal
+intelligence quotient (IQ), converted to standardized        Z scores. The sample
+includes 19 dyslexic and 25 controls recruited from primary schools in the
+Australian Capital Territory.     The children's ages ranged from eight years ve
+months to twelve years three months. This dataset was analyzed by Smithson &
+Verkuilen (2006), using mean and dispersion beta regression models and applying
+
+
+
+                    Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models                                        71
+
+
+
+the Fisher scoring algorithm to t the models. In this paper, we initially analyze
+this data set by applying the Bayesian beta regression model proposed by Cepeda-
+Cuervo (2001) as in Smithson & Verkuilen (2006), assuming that:
+
+
+                     logit(µi )   =        β0 + β1 DIS + β2 IQ + β3 DISIQ                 (17)
+
+                       log(νi )   =        γ0 + γ1 DIS + γ2 IQ.                           (18)
+
+                                                   2
+After that, in order to apply the µσ -beta regression models, we assume a beta
+regression model where the mean and variance regression structures are given by
+(17) and (19), respectively.
+
+                                       2
+                            logit(4σ       )   =       λ0 + λ1 DIS + λ2 IQ.               (19)
+
+
+    The posterior parameter estimates of the beta regression model dened by
+(17) and (18) are given in Table 1. According to these estimates, the mean of the
+score reading decreases with IQ for dyslexic children and increases for non dyslexic
+children, given that logit(µ̂i ) = (β̂0 + β̂1 ) + (β̂2 + β̂3 )IQ for dyslexic children and
+logit(µ̂i )   = (β̂0 − β̂1 ) + (β̂2 − β̂3 )IQ for their non-dyslexic counterparts.        The
+so called dispersion parameter increases with IQ and is lower for non dyslexic
+children, but with the interpretation of the dispersion as in Section 2, for xed
+values of µ.      For this model, the deviance information criterion (DIC) value is
+−117.5. The error sum of squar SS = 0.4403. The error sum of square for the
+mean and precision beta regression model dened by (17) and (18), obtained from
+the parameter estimates reported by Cribari-Neto & Zeileis (2010), is SS=0.4618.
+Thus, the parameter estimates and the results obtained by tting this model via
+Bayesian methods are consistent with that obtained by Smithson & Verkuilen
+(2006) for this dataset. In both cases, the null hypothesis H : βi = 0, i=1,2,3, and
+H : γi = 0, j=1,2, are rejected at a level of 95%.
+
+Table 1: Parameter estimates, standard deviations, 95% credible intervals and DIC
+              values for of mean and dispersion beta regression parameters as dened by
+              (17) and (18).
+
+                                      logit-mean and log-dispersion log(ν)
+                    Parameter      Estimate         S.D.       95% C.I.
+                       β0            1.129         0.156       (0.813, 1.425)
+                       β1           -0.747         0.155       (-1.036, -0.429)
+                       β2            0.428         0.174       (0.079, 0.768)
+                       β3           -0.515         0.181       (-0.866, -0.146)
+                       γ0            3.104         0.250       (2.575, 3.555)
+                       γ1            1.583         0.305       ( 0.963, 2.156)
+                       γ2            0.997         0.444       (0.099, 1.839)
+                                  Dhat: -130.8 DIC: -117.5
+
+                                                                        2
+    Table 2 includes the parameter estimates of the µσ -beta regression model,
+assuming the logit-mean and logit-variance regression structures given by (17)
+and (19), respectively.        The mean parameter estimates agree for these two beta
+regression models, as seen by comparing Table 1 and Table 2, in the sense that β0
+and β2 are positive and, β1 and β3 are negative. However, the posterior parameter
+inferences are very dierent. In the mean and variance model, the null hypothesis
+
+
+
+                       Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+72                                                                     Edilberto Cepeda-Cuervo
+
+
+
+β2 = 0 and λ2 = 0 are not rejected at a level of 0.05, given that zero belongs to
+the 95% credible intervals.
+
+
+Table 2: Parameter estimates, standard deviations, 95% credible intervals for the
+                                                         2
+            parameter estimates and DIC values for the µσ -beta regression model dened
+            by (17) and (19).
+
+                                        logit-mean and logit-variance
+               Parameter        Estimates           S.D.          95% C.I.
+                  β0              1.208             0.141         (0.926, 1.490)
+                  β1             -0.830             0.146         (-1.133,-0.537)
+                  β2              0.215             0.128         (-0.025, 0.452)
+                  β3             -0.298             0.135         (-0.546, -0.018)
+                  λ0             -3.596             0.276         (-4.091,-3.023)
+                  λ1             -0.928             0.344         (-1.632,-0.205)
+                  λ2             -0.801             0.428         (-1.560, 0.056)
+                             Dhat = −128.7         DIC = −114.5
+
+
+     Figure 1 is the plot of variance versus Dyslexia and IQ, obtained by tting
+        2
+the µσ -beta regression model to the dyslexia dataset, where the variance follows
+the regression structure given by (19).                This plot shows that variance is bigger
+for non-dyslexic children than for dyslexic ones, and that it decreases when IQ
+increases. Figure 2 is the plot of the residuals of the logit-mean and logit-variance
+beta regression models. The plots of the residuals are very similar to those of the
+mean and dispersion beta regression models. From these plots, it is not possible
+to nd dierences between residuals of these two regression models. However, the
+sum of squared residuals for the logit-mean and logit-variance regression models
+(SS = 0.4044) is smaller than the sum of squared residuals for the logit-mean and
+logarithmic dispersion regression models (SS = 0.4052).
+
+     From these results, we applied a variable elimination process in the mean and
+variance regression structures, obtaining the beta regression models given by (20)
+and (21), where IQ and DISIQ were eliminated from the mean regression structure
+and IQ from the variance models.
+
+
+
+                                 logit(µi )        =    β0 + β1 DIS                       (20)
+                                           2
+                                logit(4σ       )   =    λ0 + λ1 DIS                       (21)
+
+
+
+For this model, given by equations (20) and (21), the parameter estimates and
+their respective standard deviations are: β̂0 = 1.300(0.137), β̂1 = −0.872(0.136),
+λ̂0 = −3.38(0.289), λ̂1 = −0.642(0.292); the hypotheses βi = 0 and λi = 0,
+i = 0, 1, are rejected at a level of 95%; their DIC value is equals −114.4 and the
+sum of square residuals equal to 0.4466. Finaly, under the DIC criterion, taking
+into account the 95% credibility intervals, this model is selected as the best.
+                                                          2
+     Thus, the results obtained by applying µσ -beta regression models shows a big
+dierence with that obtained from analysis of the dyslexic dataset by applying
+mean and dispersion regression models, as developed at the beginning of this
+section, or by Smithson & Verkuilen (2006) by applying ML estimation.
+
+
+
+                       Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models                                                                                       73
+
+
+
+
+                                     0.000 0.005 0.010 0.015 0.020 0.025 0.030
+                   Variance
+
+
+
+                                                                                 -1.0        -0.5         0.0         0.5        1.0
+                                                                                                     Dyslexia
+                              0.000 0.005 0.010 0.015 0.020 0.025 0.030
+                  Variance
+
+
+
+
+                                                                                        -1                0            1               2
+                                                                                                    IQ
+Figure 1: Variance behavior in the logit-mean and logit-variance beta regression models
+           dened by (17) and (19).
+                              0.1
+                 Residuals
+                              0.0
+                              -0.1
+                              -0.2
+
+
+
+
+                                                                                 0      10           20          30         40
+                                                                                                         Index
+
+     Figure 2: Residuals of logit-mean and logit-variance beta regression models.
+
+
+
+
+                              Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+74                                                                Edilberto Cepeda-Cuervo
+
+
+
+3.2. School Absenteeism Dataset
+
+     The second dataset analyzed in this paper was originally presented in Quine
+(1975) and comes from a sociological study of Australian Aboriginal and White
+children from Walgett, New South Wales, with nearly equal numbers of the two
+sexes and equal numbers from the two cultural groups. Children were classied by
+culture, age, sex and learner status, and the number of days absent from school
+in a particular school year was recorded. The response variable of interest is the
+number of days that a child was absent from school during the schol year. Children
+who had suered a serious illness during the year were excluded from this analysis.
+
+     The values for each observed variable were:
+
+
+      Age (A). Four groups: Primary (0), First form (1), Second form (2) and
+       Third form (3), where Primary" includes children under 12 years of age;
+       First form" refers to ages between 12 and 13 years; Second form" denotes
+       ages between 13 and 14 years, and Third form, represents ages between 14
+       and 15 years.
+
+
+      Gender (G). Factor with two levels: Female (0) or Male (1).
+
+      Cultural Background(CB). Ethnic background: Aboriginal (0) and White
+       (1).
+
+
+      Learning Ability(LA). Factor with two levels of learning capacity: Slow
+       learner (0) and Average learner (1).
+
+
+      Days Absent(Y): days absent from school in the year.
+
+     Since the variable of interest Y   (days absent) is the number of events that
+occurred during a year, this dataset was analyzed by applying overdispersed models
+associated with counts (Cepeda-Cuervo & Cifuentes-Amado, 2017), assuming that
+it follows a negative binomial distribution N B(µ, α), where the mean and the shape
+parameters follow linear regression structures. In this paper, assuming a schol year
+                                                              2
+of 200 days, this dataset is analyzed by applying the µσ -beta binomial regression
+model, where:
+
+
+                 logit(µi )   = β0 + β1 Ai + β2 Gi + β3 CBi + β4 LAi                   (22)
+                        2
+                logit(4σi )   = λ0 + λ1 CBi + λ2 LAi .                                 (23)
+
+
+This model was tted to this dataset by applying Bayesian methods using the
+Open Bugs software. The posterior parameter estimates, standard deviations and
+credible intervals are given in Table 3, Model 1a.         Assuming a mean structure
+(22) without Age (A) and Gender (G) as explanatory variables, eliminated from
+the model at a level of 95%, and the shape structure given by (23), the parameter
+estimates, standard deviations and 95% credible intervals are reported in the same
+                                                     2
+Table, Model 1b.       The DIC values for the µσ -beta binomial regression model
+dened by (22) and (23) is DIC        = 649.272 and the DIC value of the reduced
+model is DIC = 649.004. In this case, Model 1b is assumed to be the best, given
+
+
+
+                    Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models                                            75
+
+
+Table 3: Parameter estimates of the (mean and variance) beta-binomial regression
+             models. For Model 1a, DIC = 649.273. For Model 1b, DIC = 649.004.
+
+                               Model 1a                                Model 1b
+   Parameter     Estimate     S.D.     Cred.Interval     Estimate     S.D.     Cred.Interval
+        β0        -2.212      0.237   (-2.707,-1.773)     -1.929      0.146    (-2.211,-1.64)
+        β1         0.123      0.092   (-0.049,0.312)         -          -            -
+        β2        -0.009      0.127   (-0.261,0.240)         -          -            -
+        β3        -0.789      0.181   (-1.137,-0.429)     -0.777      0.188   (-1.154,-0.419)
+        β4        -0.401      0.189   (-0.765,-0.020)     -0.444      0.170   (-0.785,-0.112)
+        λ0        -3.261      0.293   (-3.805,-2.666)     -3.201      0.292   (-3.732,-2.588)
+        λ1        -0.825      0.404 (-1.610, -0.009)      -0.866      0.401   (-1.670,-0.093)
+        λ2        -0.997      0.422   (-1.774,-0.131)     -1.001      0.383 (-1.758,-0.238 )
+
+
+that it has the lower DIC value and all the null hypotheses of its parameters are
+rejected.
+
+   To compare the performance of the proposed model with the mean and
+dispersion beta binomial regression models, the beta binomial model obtained
+by assuming that Y     ∼ Bin(m, π ∗ ), where π ∗ follows the beta distribution dened
+by (8), was tted to this dataset, assuming the mean regression structure (22) and
+dispersion regression structure given by:
+
+
+                             log(νi )     = γ0 + γ1 CBi + γ2 LAi                           (24)
+
+
+Their   parameter    estimates,         standard   deviations   and   95%   credible   intervals
+obtained from the application of Open Bugs are given in Table 4, Model 2a.
+Assuming the mean regression structure (22) without the explanatory variables
+Age and Gender, eliminated from the model at a level of 95%, and the dispersion"
+structure given by (24), the parameter estimates, standard deviations and 95%
+credible intervals are reported in the same Table, Model 2b. The DIC values for
+the beta binomial model (11) with regression structures dened by (22) and (23)
+is DIC = 650.4. The DIC value of the reduced model is DIC = 649.7.
+
+Table 4: Parameter estimates of the beta-binomial (mean and dispersion) regression
+             model. For Model 2a, DIC = 650.4. For Model 2b, DIC = 649.7.
+
+                                Model 2a                               Model 2b
+   Parameter      Estimate     S.D.    Cred.Interval     Estimate     S.D.    Cred.Interval
+        β0         -2.325      0.307 (-2.927,-1.723)      -1.939      0.151 (-2.232,-1.640)
+        β1          0.185      0.115 (-0.040, 0.407)         -          -           -
+        β2         -0.063      0.163 ( 0.382, 0.261)         -          -           -
+        β3         -0.747      0.191 (-1.119,-0.367)      -0.759      0.186 (-1.121,-0.394)
+        β4         -0.415      0.190 (-0.788,-0.039)      -0.446      0.187 (-0.813,-0.074)
+        γ0          2.419      0.252 ( 1.901, 2.889)       2.346      0.248 ( 1.842, 2.825)
+        γ1          0.055      0.345 (-0.640, 0.711)       0.209      0.321 (-0.416, 0.825)
+        γ2          0.680      0.329 ( 0.029, 1.322)       0.653      0.327 ( 0.002, 1.292)
+
+
+   Finally, given that in Model 2b, zero belongs to the credible interval of γ1 ,
+we assumed a model with the mean regression structure (22), without age and
+gender variables, and a overdispersion regression structure given by (24), without
+cultural background (logit(πi ) = β0 + β3 CBi + β4 LAi and log(νi ) = γ0 + γ2 LAi ).
+For this model, the posterior parameter estimates, standard deviations and 95%
+
+
+
+                     Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+76                                                                       Edilberto Cepeda-Cuervo
+
+
+
+credible intervals are reported in Table 5, model 3.                For this model, the DIC
+value is DIC = 648.0. Of these mean and dispersion beta binomial regression
+models, Model 3 in the best. This model has the lowest DIC value and all the null
+hypotheses for the regression parameters are rejected at a level of 95%.
+
+
+Table 5:    Parameter estimates of the beta-binomial (mean and dispersion) regression
+           model. For Model 3, DIC = 648.0.
+
+                                                    Model 3
+                     Parameter    Estimate        S.D.     Cred.Interval
+                        β0         -1.951         0.145   (-2.237,-1.662)
+                        β3         -0.709         0.163 (-1.027, -0.389)
+                        β4         -0.460         0.184   (-0.823,-0.098)
+                        γ0          2.421         0.215   ( 1.988, 2.822)
+                        γ2          0.683         0.325   ( 0.044, 1.327)
+
+
+     The mean parameter estimations, although slightly dierent, agree in the sense
+that the estimates belong to the respective credible intervals. However, Cultural
+Background is an explanatory variable of the overdispersion variance regression
+structure (Model 1b) that does not belongs to the overdispersion regression
+structure (Model 3).    Of these two models, Model 1b is more appropriate given
+that it has smaller sum of square errors (the sum of square error is SSv = 245.138
+for Model 1b, and SSp = 245.885 for model 3) and it has better interpretation of
+the regression parameters.
+
+
+
+
+4. Conclusion
+
+     In this paper new parameterizations of the beta and beta-binomial distributions
+are proposed in terms of the mean and variance parameters.                      From these new
+parameterizations new beta and beta-binomial regression models are proposed
+by assuming that appropriate functions of the mean and variance (precision)
+parameters follow regression structures. The new regression models, improve the
+parameter interpretation and the posterior parameter inferences.
+
+     From the new parameterizations of the beta distributions, a new parameter-
+ization of the beta-binomial distribution is proposed by assuming that Y                  | n, π ∗
+                                           ∗                        2
+follows a binomial distribution, where π         follows the(µ, σ       ) beta distribution. From
+this distribution, the beta binomial regression model is proposed by assuming
+                                                                                                2
+the mean and variance (precision) beta regression structures. The proposed µσ
+beta and beta binomial regression models are tted respectively to the School
+Absenteeism dataset and the Dyslexia Reading dataset.                        These applications
+illustrate the good performance of the proposed models, in addition to the
+                                             2
+advantage of the interpretation of the σ         related to the interpretation of ν = p + q
+in beta regression models. In both models, the regression parameter estimates are
+obtained by applying Bayesian methods using the OpenBugs software.
+
+     Many extensions of this paper can be developed. Appendix A proposes mean
+and variance working variables to dene a Bayesian algorithm, like that proposed
+in Cepeda-Cuervo (2001), to obtain the posterior regression parameter estimates.
+
+
+
+                    Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models                                    77
+
+
+
+The respective frequentist parameter estimates can be obtained by applying
+maximum likelihood methods to dene and develop a Fisher scoring algorithm.
+Based on the advantages of the mean and variance (precision) parameterization of
+the beta distribution, a new parameterization of the tilted beta and tilted beta-
+binomial distributions can also be proposed.
+
+             
+              Received: October 2022  Accepted: December 2022
+References
+
+Atkinson, A. B. (1970), `On the measurement of inequality', Journal of Economic Theory 3(32), 244-263.
+Cepeda-Cuervo, E. (2001),  Modelagem da Variabilidade em Modelos Lineares Generalizados, Unpublished Ph.D. thesis, Mathematics Institute, Universidade Federal do Rio de Janeiro. URL: http://www.docentes.unal.edu.co/ecepedac/docs/TESISFINAL.pdf.
+Cepeda-Cuervo, E. (2015), `Beta regression models: Joint mean and variance modeling', Revista Colombiana de Estadística 9(1), 134-145.
+Cepeda-Cuervo, E. & Cifuentes-Amado, M. V. (2017), `Double generalized beta-binomial and negative binomial regression models', Revista Colombiana de Estadística (40), 141-163.
+Cepeda-Cuervo, E. & Garrido, L. (2015), `Bayesian beta regression models with joint mean and dispersion modeling', Monte Carlo Methods and Applications 21(1), 49-58.
+Cepeda-Cuervo, E. & Núñez Antón, V. (2013), `Spatial double generalized beta regression models: extensions and application to study quality of education in Colombia', Journal of Educational and Behavioral Statistics 6(38), 604-628.
+Cepeda, E. C. & Achcar, J. A. (2010), `Heteroscedastic nonlinear regression models', Communications in Statistics-Simulation and Computation 2(39), 405-419.
+Cepeda, E. & Gamerman, D. (2005), `Bayesian methodology for modeling parameters in the two parameter exponential family', Revista Estadistica 57(168-169), 93-105.
+Cribari-Neto, F. & Zeileis, A. (2010), `Beta regression in R', Journal of Statistical Software (34), 1-24.
+Ferrari, S. & Cribari-Neto, F. (2004), `Beta regression for modelling rates and proportions', Journal of Applied Statistics (31-7), 799-815.
+Hunger, M., Döring, A. & Holle, R. (2012), `Longitudinal beta regression models for analyzing health-related quality of life scores over time', BMC medical research methodology 1(12), 1-12.
+Jorgensen, B. (1997), `Proper dispersion models', Brazilian Journal of Probability and Statistics 11(2), 89-128. http://www.jstor.org/stable/43600934
+Paolino, P. (2001), `Maximum likelihood estimation of models with beta-distributed dependent variables', Political Analysis 4(9), 325-346.
+Quine, S. (1975), Achievement orientation of aboriginal and white Australian adolescents, Ph.D. thesis, Australia.
+Quintero-Sarmiento, A., Cepeda-Cuervo, E. & Nunez-Anton, V. (2012), `Estimating infant mortality in Colombia: some overdispersion modelling approaches', Journal of Applied Statistics 39(5), 1011-1036.
+Simas, A. B., Barreto-Souza, W. & Rocha, A. V. (2010), `Improved estimators for a general class of beta regression models', Computational Statistics and Data Analysis 2(54), 348-366.
+Smithson, M. & Verkuilen, J. (2006), `A better lemon squeezer? maximum-likelihood regression with beta-distributed dependent variables', Psychological Methods 1(11), 54.
+
+
+
+Appendix A. Appendix
+
+Appendix A.1. Bayesian Method
+                                                                    2
+     To propose a Bayesian method to t the µσ -beta regression models, a prior
+                                   ′
+distribution for θ = (β, λ)            should be specied. Following the Bayesian method
+proposed in Cepeda-Cuervo (2001), normal prior distribution should be assumed
+for the mean and variance regression parameters. Thus, given that the posterior
+distribution π(β, λ | data) is analytically intractable, samples of β and λ can be
+obtained from the full conditional posterior distributions, denoted by πβ and πλ ,
+respectively, updated by applying the Metropolis-Hastings algorithm.
+
+     This methods involves setting working variables to build kernel transition
+functions,        established   from      the    posterior         distribution       obtained    from   the
+combination of a normal working model and the normal prior distributions. When
+the mean link is assumed to be the logit function, the mean working variable (A.1),
+presented in Cepeda-Cuervo (2001), Cepeda & Gamerman (2005) and Cepeda-
+Cuervo & Garrido (2015), is used to build the mean kernel transition function.
+
+                                                        (c)
+                                                  Yi − µi
+                         Ỹi = xti β (c) +       (c)         (c)
+                                                                   , i = 1, . . . n.                    (A.1)
+                                             µi (1 − µi )
+
+The kernel transition function is obtained from a combination of the prior
+distribution and the working observational models obtained by assuming that the
+working variable (A.1) follows a normal prior distribution. To obtain samples of
+                                                                          2              2
+the posterior conditional distribution πλ , when g(σi ) = logit(4σi ) is assumed as
+
+
+
+                        Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+
+µσ 2 -Beta and µσ 2 -Beta Binomial Regression Models                                       79
+
+
+                                                                                2
+link function, the variance working variable is built from ti = (Yi − µi ) , a random
+                                 2
+variable ti such that E(ti ) = σi , from the rst order Taylor approximation of
+                                    2(c)     2
+logit(4t) around the current value σi    of σi . Thus, the working variable is given
+by:
+
+                                              (c)
+                                     (Yi − µi )2 ) − σi2
+                  Ỹi = zi′ λ(c) +                       − 1, i = 1, . . . n,          (A.2)
+                                       4σi2 (1 − 4σi2 )
+
+and the kernel transition functions, as for the mean regression parameters, is
+obtained from the combining the conditional prior distribution and the working
+observational model obtained by assuming that the working observational variable
+(A.2) follows a normal distribution.
+
+
+
+Appendix A.2. Maximum Likelihood Parameter Estimates
+                             2
+      Given that in the µσ -beta regression models, the likelihood function is given
+                 Qn
+by L(β, λ)  = i=1 L(µi , σi2 ), where L(µi , σi2 ) is given by (9), 0 < µi < 1 and
+           1
+      2
+0 < σi < 4 , h(µi ) = η1i , g(4σi 2 ) = η2i , η1i = xt β and η2i = z t λ. Thus, the
+rst-order derivatives of the i-th components of ℓ(β, γ) = log(L(β, γ)) are given
+by:
+
+                                 ∂ℓi            ∂ℓi ∂µi ∂η1i
+                                          =                                            (A.3)
+                                 ∂βr            ∂µi ∂η1i ∂βr
+                                 ∂ℓi            ∂ℓi ∂σi2 ∂η2i
+                                          =                   ,                        (A.4)
+                                 ∂λs            ∂σi2 ∂η2i ∂λs
+
+The second-order derivatives of the logarithm of the likelihood function should be
+obtained:
+
+               ∂ 2 ℓi       ∂ 2 ℓ  ∂µ ∂η
+                                  i    i   1i    ∂ℓi ∂  ∂µi ∂η1i 
+                         =                     +                                       (A.5)
+              ∂βs ∂βr       ∂βs ∂µi ∂η1i ∂βr     ∂µi ∂βs ∂η1i ∂βr
+               ∂ 2 ℓi       ∂ 2 ℓ  ∂µ ∂η
+                                  i    i   1i    ∂ℓi ∂  ∂µi ∂η1i 
+                         =                     +                                       (A.6)
+              ∂λs ∂βr       ∂λs ∂µi ∂η1i ∂βr     ∂µi ∂λs ∂η1i ∂βr
+               ∂ 2 ℓi       ∂ℓ  ∂σ 2 ∂η
+                                  i    i    2i    ∂ℓi ∂  ∂σi2 ∂η2i 
+                         =                     +                                       (A.7)
+              ∂λk ∂λs       ∂λk ∂σi2 ∂η2i ∂λs    ∂σi2 ∂λk ∂η2i ∂λs
+
+      Thus, the maximum likelihood estimates of            β and γ can be obtained, for
+example, by applying the Newton-Raphson algorithm.
+
+
+
+
+                      Revista Colombiana de Estadística - Theorical Statistics 46 (2023) 63-79
+

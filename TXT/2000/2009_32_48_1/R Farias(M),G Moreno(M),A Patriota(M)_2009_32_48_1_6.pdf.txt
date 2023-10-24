@@ -1,0 +1,1171 @@
+Reducción de modelos en la presencia de parámetros de perturbación
+Universidad de São Paulo, São Paulo, Brasil;Universidad Industrial de Santander (UIS)
+Resumen
+En muchos problemas de inferencia estadística existe interés en estimar solamente algunos elementos del vector de parámetros que definen el modelo adoptado. Generalmente, esos elementos están asociados a las medidas de localización, y los parámetros adicionales -que en la mayoría de las veces están en el modelo solo para controlar la dispersión o la asimetría- son conocidos como parámetros de perturbación o de incomodidad (nuisance parameters) de las distribuciones subyacentes. Es común estimar todos los parámetros del modelo y hacer inferencias exclusivamente para los parámetros de interés. Dependiendo del modelo adoptado, este procedimiento puede ser muy costoso, tanto algebraica como computacionalmente, por lo cual conviene reducirlo para que dependa únicamente de los parámetros de interés. En este artículo, hacemos una revisión de los métodos de estimación en la presencia de parámetros de perturbación y consideramos algunas aplicaciones en modelos recientemente discutidos en la literatura.
+Palabras clave: estimación, parámetro de perturbación, función de verosimilitud, suficiencia, información auxiliar.
+Introducción
+Uno de los principales objetivos de la estadística es inferir sobre determinada población apoyada solamente en la información de una parte de ella (muestra).Usualmente, estamos interesados en determinada cantidad como la media, mediana, varianza, asimetría, curtosis, coeficiente de correlación, entre otras. Algunas
+veces, deseamos encontrar y explicar relaciones entre variables y hacer previsiones
+sobre los valores futuros de la variable estudiada.
+    En cualquier situación práctica, inicialmente debemos identificar qué cantida-
+des de la población son de principal interés. Después de definidas estas cantidades,
+es natural suponer un modelo estadístico que se adecue al problema. Por ejemplo,
+supóngase que el investigador está interesado en los parámetros de localización
+                                                                            >
+y de escala. En este caso específico, el vector de interés es θ = µ, σ 2 , y su-
+poniendo el modelo estadístico F = N µ, σ 2 : µ ∈ IR y σ 2 ∈ IR+ , siendo IR
+el conjunto de los números reales y IR+ el conjunto de los números reales posi-
+tivos, tenemos que el vector de interés es el vector que define la familia F ; por
+tanto, no existen parámetros de perturbación. Si X1 , . . . , Xn es una muestra alea-
+toria de la población objetivo, entonces, para estimar el vector θ basta encontrar
+                                                                          
+un estadístico suficiente y completo que sea no sesgado; θ     b = X, S 2 > , siendo
+       P            2
+                         P            2
+X =      i Xi /n y S =     i Xi − X /(n − 1), cumple estas condiciones (véase
+Lehmann & Casella 1998); entonces, el problema inferencial se resuelve, dado que
+toda la información de la muestra está concentrada en el estadístico θ. b
+    Si el vector de interés define por completo el modelo estadístico adoptado,
+estamos en el problema de la inferencia usual. Se deben encontrar estimadores
+óptimos según algún criterio de optimización. Por ejemplo, estimadores no ses-
+gados de varianza uniformemente mínima (obtenidos minimizando una función
+de pérdida cuadrática), estimadores invariantes según algún grupo de transfor-
+maciones (de escala, de origen, de permutaciones, entre otras), estimadores que
+minimicen el riesgo máximo generado por un subespacio paramétrico (estimador
+minimax), estimadores que minimicen el riesgo según alguna distribución a priori
+(estimadores de Bayes). Todos esos estimadores dependen de estadísticos suficien-
+tes minimales o completos (si existen) que, a su vez, se relacionen con estadísticos
+auxiliares. Las propiedades de estos estimadores pueden ser vistas con detalles en
+Lehmann & Casella (1998) y Lindsey (1996). Si el vector de interés no define por
+completo el modelo estadístico, entonces existen parámetros de perturbación y es
+
+                                        Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                           101
+
+preciso encontrar estimadores óptimos siguiendo otros criterios, como suficiencia
+e información parcial.
+    Para ilustrar la idea de parámetros de perturbación, suponga que X1 , . . . , Xn es
+una muestra aleatoria de la población objeto de estudio. Considere que el modelo
+estadístico propuesto para describir el comportamiento de los datos observados es
+               n                      >                                 o
+         F = SN (θ) : θ = µ, σ 2 , λ , con µ, λ ∈ IR y σ 2 ∈ IR+                    (1)
+
+siendo SN (µ, σ 2 , λ) una distribución normal-asimétrica (Skew-Normal ), con µ, σ 2
+y λ los parámetros de localización, escala y asimetría, respectivamente. La función
+de densidad de la normal-asimétrica definida por Azzalini (1985) es dada por
+                                                    
+                           2      2    x−µ         x−µ
+               f x | µ, σ = φ                Φ λ           , x ∈ IR             (2)
+                                  σ      σ           σ
+siendo φ(·) y Φ(·) la función de densidad y la distribución acumulada de la dis-
+tribución normal estándar, respectivamente. Las propiedades de esta distribución
+pueden ser encontradas en Azzalini (1985). Considerando que estamos interesados
+solamente en los parámetros de localización y escala, podemos escribir el vec-
+tor de parámetros para la distribución definida en (2) como θ = (θ 1 , θ2 ), donde
+                 >
+θ 1 = µ, σ 2          y θ2 = λ. En este caso, el vector de interés θ1 no coincide con el
+vector de parámetros que indexa la familia de distribuciones F y λ es un parámetro
+de perturbación para la estimación de θ1 . Obsérvese que, cuando λ = 0, el modelo
+(2) se reduce al modelo normal y, por tanto, no existe parámetro de perturbación.
+    En ciertas ocasiones, la dimensión del vector de parámetros de perturbación
+crece con el tamaño de la muestra. Neyman & Scott (1948) definen estos pa-
+rámetros como parámetros incidentales. Para ilustrar esta definición, considere
+(Y1 , X1 ), . . . , (Yn , Xn ) una muestra aleatoria, cuya relación entre Yi y Xi está dada
+por Yi = g(θ1 , xi ) + ei y Xi = xi + ui , siendo ei y ui variables aleatorias indepen-
+dientes para todo i = 1, . . . , n y g(θ1 , xi ) una función conocida. Así, el vector de
+                                                             >
+                                                         (n)>            (n)
+parámetros que define el modelo es θ(n) = θ >       1 , θ2       , con θ 2 = (x1 , . . . , xn )> ,
+el vector de parámetros incidentales que generalmente no es de interés del investi-
+gador. Este modelo es conocido en la literatura como modelo funcional con errores
+en las variables y puede ser estudiado con más detalles en Fuller (1987). En este
+caso, es común hacer inferencias sobre los parámetros de interés usando la función
+de verosimilitud perfilada, definida en la sección 4.2.
+    A pesar de que existen diversas formas de tratar modelos que poseen paráme-
+tros de perturbación, el enfoque principal de este trabajo se basa en la reducción
+de modelos. La forma más simple y directa es encontrar una función de verosimi-
+litud ortogonal para el parámetro de interés. Así, en la sección 2.2, introducimos
+el concepto de verosimilitud ortogonal con algunos ejemplos en modelos asimé-
+tricos. En la sección 3, presentamos algunas técnicas de reducción de modelos a
+través de estadísticos e ilustramos la teoría con algunos ejemplos. En la sección 4,
+exhibimos dos funciones de verosimilitudes aproximadas que son utilizadas para
+construir funciones de verosimilitudes ortogonales para los parámetros de interés.
+Finalizamos el artículo con algunos comentarios de las técnicas presentadas.
+
+                                           Revista Colombiana de Estadística 32 (2009) 99–121
+
+102                                Rafael Farias, Germán Moreno & Alexandre Patriota
+
+   El principal objetivo de este artículo es motivar el uso de las técnicas de re-
+ducción de modelos ilustrándolas con ejemplos recientemente discutidos en la lite-
+ratura.
+
+
+2. Función de verosimilitud
+    Asumimos en este artículo que θ1 (la partición de interés) y θ 2 (el vector
+de parámetros de perturbación) tienen dimensiones p1 y p − p1 , respectivamente.
+Consideramos también que toda la información de la muestra está contenida en la
+función de verosimilitud, que está correctamente especificada. El problema consiste
+en estimar θ 1 minimizando la pérdida de información que puede ocurrir en la
+estimación de θ2 . La pérdida de información será definida con más detalles en el
+transcurso del texto.
+
+
+2.1. Función de verosimilitud genuina
+    Sea X una variable aleatoria en un espacio de probabilidad (Ω, A, ν), siendo Ω
+el espacio de posibilidades del experimento, A = σ(X) la σ-álgebra asociada a Ω
+tal que X es medible y ν una medida de probabilidad aplicada a los elementos de
+A. Sea X ⊂ IR el espacio de valores posibles que X puede asumir. Considere que
+la distribución de probabilidad de X pertenece a la familia
+                        n                        >           o
+                                                             p
+                   F = F (· | θ) : θ = θ >1 , θ >
+                                                2    ∈ Θ ⊆ R
+                                                           I                    (3)
+
+siendo F (· | θ) una función de distribución. Sea X = (X1 , . . . , Xn )> una muestra
+aleatoria de X; denotaremos por L(θ | x) la función de verosimilitud genuina
+asociada a F (· | θ). Si X es una variable continua, entonces
+                                   n
+                                   Y                    n
+                                                        Y
+                                     dF (xi | θ)
+                     L(θ | x) =                     =         f (xi | θ)               (4)
+                                   i=1
+                                           dxi          i=1
+
+   Si X es una variable discreta, entonces
+                           n h
+                           Y                            i Yn
+                                          
+              L(θ | x) =         F x+
+                                    i | θ   − F (x−
+                                                  i | θ) =   f (xi | θ)                (5)
+                           i=1                                    i=1
+                                      
+siendo lı́my↓x F (y | θ) = F x+                                  −
+                                i | θ y lı́my↑x F (y | θ) = F (xi | θ). La fun-
+ción f (xi | θ) denota la función de densidad en el caso continuo y la función de
+probabilidad en el caso discreto.
+    En el enfoque clásico es común maximizar la función de verosimilitud L(θ | x)
+en relación con los parámetros del modelo para obtener sus estimadores. Los
+estimadores de máxima verosimilitud (EMV) son ampliamente usados debido a
+sus buenas propiedades como invarianza, consistencia, eficiencia y normalidad
+asintótica, si se satisfacen algunas condiciones de regularidad (ver Lehmann &
+Casella 1998).
+
+                                         Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                   103
+
+2.2. Función de verosimilitud ortogonal
+   Suponiendo que X es un vector aleatorio con distribución de probabilidad
+perteneciente a F , decimos que la función de verosimilitud L(θ | x) es ortogonal
+en relación con la partición de interés si
+
+                          L(θ | x) = L1 (θ 1 | x)L2 (θ2 | x)                         (6)
+y los vectores θ1 y θ 2 tienen variaciones independientes, o sea,
+
+                                >
+                         θ>    >
+                          1 , θ2    ∈ Θ1 × Θ2 = Θ ⊂ IRp                              (7)
+
+donde Θk es el espacio paramétrico en que θk puede asumir valores, con k = 1, 2.
+Denotaremos Lk (θk | x) simplemente por Lk (θ k ) para k = 1, 2.
+      A partir de la ecuación (6) tenemos que el EMV para θ 1 depende de la función
+de verosimilitud genuina solamente a través de L1 (θ1 ). En este caso, el EMV de
+θ 1 no depende de θ2 ; luego podemos ignorar la estimación de θ2 , sin que esto
+interfiera la estimación de los parámetros de interés. Por tanto, podemos definir
+un nuevo modelo reducido, F1 = {L1 (θ 1 ); θ 1 ∈ Θ1 }, para hacer inferencias sobre
+θ 1 . Es importante notar que, en este caso, la información dada por la estimación
+de θ2 es irrelevante en la estimación de θ1 .
+
+Ejemplo 1. Análisis de supervivencia. El principal interés en análisis de super-
+vivencia es estudiar el tiempo hasta la ocurrencia de determinado evento. En esta
+área de la estadística es común encontrar la presencia de censuras antes de la ocu-
+rrencia del evento de interés. En algunas situaciones, es razonable asumir que las
+censuras no son informativas, o sea, su distribución no comparte parámetros con
+la función de distribución del tiempo de ocurrencia del evento. Además, se asume
+también independencia entre las censuras y el evento de interés. Sea T el tiempo
+hasta la ocurrencia del evento y C el tiempo hasta la censura.
+    (*) Suponga que T ∼ f (t | θ1 ) es independiente de C ∼ g(c | θ2 ), de modo que
+θ 2 no comparte parámetros con θ1 .
+   En la práctica se observa el tiempo hasta la ocurrencia del evento o el tiempo
+hasta la censura, o sea, Z = mı́n{T, C} y δ = I(C ≥ T ). La distribución conjunta
+de (Z, δ) se obtiene así:
+
+                    f (z, δ = 1 | θ) = P (δ = 1 | θ)f (z | δ = 1, θ)
+                            = P (C ≥ T | θ)f (z | θ 1 )                              (8)
+                          = G(z | θ2 )f (z | θ1 )
+
+pues, si δ = 1, entonces Z = T .
+
+                    f (z, δ = 0 | θ) = P (δ = 0 | θ)f (z | δ = 0, θ)
+                                    = P (C ≤ T | θ)g(z | θ2 )                        (9)
+                                    = S(z | θ 1 )g(z | θ2 )
+
+                                       Revista Colombiana de Estadística 32 (2009) 99–121
+
+104                                Rafael Farias, Germán Moreno & Alexandre Patriota
+
+y si δ = 0, tendremos Z = C. Así, la función de verosimilitud será
+
+           L(θ1 , θ2 ) = f (z, δ | θ)
+                                               δ                    1−δ
+                       = G(z | θ 2 )f (z | θ 1 ) S(z | θ 1 )g(z | θ 2 )               (10)
+                         h                           ih                         i
+                       = S(z | θ 1 )1−δ f (z | θ1 )δ G(z | θ 2 )δ g(z | θ2 )1−δ
+
+por tanto, la función de verosimilitud puede ser separada en una parte que solo
+depende del parámetro de interés θ1 y otra que solo depende del parámetro de
+perturbación θ2 . Si las censuras no son informativas, podemos usar únicamente
+L1 (θ 1 ) = S(z | θ 1 )1−δ f (z | θ1 )δ para hacer inferencias sobre θ1 , sin tener pérdida
+de información.
+
+    En la mayoría de las situaciones no es posible tener una función de verosimilitud
+ortogonal. En algunos modelos, podemos encontrar una reparametrización adecua-
+da, tal que la función de verosimilitud sea ortogonal para el nuevo vector de pará-
+                                                                                  >
+metros. Esto es, podemos definir un nuevo vector de parámetros, λ = λ>      1 , λ>
+                                                                                 2
+con λ1 = λ1 (θ 1 ) y λ2 = λ2 (θ) de forma que
+
+                                 L(λ) = L∗1 (λ1 )L∗2 (λ2 )                            (11)
+
+    Asumiendo que λ1 es una función biyectiva del vector de interés, podemos usar
+L∗1 para estimar λ1 y, en consecuencia, estimar θ 1 . Solo en algunos casos específicos
+la reparametrización existe y tiene interpretación para el problema analizado.
+    Lindsey (1996) define varios tipos de reparametrizaciones ortogonales, entre los
+cuales se pueden citar estimación ortogonal (el EMV de θ 1 no depende del EMV
+de θ 2 ), diseño ortogonal (cuando las columnas de la matriz de diseño del modelo
+de regresión son linealmente independientes), información ortogonal (la matriz de
+información de Fisher esperada es bloque diagonal en relación a θ1 y θ2 ) y la
+función de verosimilitud ortogonal.
+   Cuando la función de verosimilitud no es ortogonal y las reparametrizaciones
+no son viables, se puede escribir la función de verosimilitud de la forma
+
+                                  L(θ) = L1 (θ1 )L2 (θ)                               (12)
+
+o sea, siempre será posible factorizar la función de verosimilitud de modo que uno
+de los factores dependa solamente de θ1 y otro dependa de una función del vector
+completo θ. En el caso más extremo, L1 (θ 1 ) = 1 y L2 (θ) = L(θ).
+
+Ejemplo 2. Análisis de supervivencia (continuación). Considérese el ejemplo 1
+alterando la condición (*) para (**), siendo esta nueva condición definida por:
+   (**) Suponga que T ∼ f (t | θ1 ) es independiente de C ∼ g(c | θ), tal que
+             >
+θ = θ>      >
+       1 , θ2    .
+
+
+                                        Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                     105
+
+   Con la suposición (**), la función de verosimilitud está dada por
+
+            L(θ1 , θ 2 ) = f (z, δ)
+                                              δ                  1−δ
+                         = G(z | θ)f (z | θ 1 ) S(z | θ 1 )g(z | θ)
+                           h                          ih                     i        (13)
+                         = S(z | θ 1 )1−δ f (z | θ1 )δ G(z | θ)δ g(z | θ)1−δ
+                       = L1 (θ1 )L2 (θ)
+
+por tanto, si se ignora L2 (θ), se puede perder mucha información en la estimación
+de θ1 , si usamos únicamente el término L1 (θ 1 ).
+
+    Existen algunos criterios para escoger la función L1 (θ1 ) tal que conserve toda
+la información sobre θ1 contenida en la función de verosimilitud L(θ); por con-
+siguiente, sería razonable despreciar la función L2 (θ) en el proceso de estimación
+de θ1 . Esto genera la necesidad de definir más precisamente un concepto para
+pérdida de información, pues sería interesante encontrar L1 (θ 1 ) y L2 (θ) tal que la
+información que L2 (θ) cargue sobre θ1 sea mínima (o nula). En la próxima sección
+introducimos algunos conceptos esenciales para determinar tales funciones.
+
+
+
+3. Reducción de modelos a través de estadísticos
+    Sea X un vector aleatorio con distribución de probabilidad perteneciente a F ,
+            n                          >            o
+donde F = F (· | θ) : θ = θ>          >
+                                 1 , θ2    ∈ Θ ⊆ IRp . La reducción de modelos
+se basa en estadísticos, funciones de X, que concentren la mayor parte de la
+información relevante sobre el vector de interés θ1 disponible en X.
+   Considere T = T (X) y U = U (X), estadísticos que dependen únicamente de
+X. La función de densidad conjunta de (T, U, X) es dada por
+
+                   f (t, u, x | θ) = f (t | θ)f (u | t, θ)f (x | t, u, θ)             (14)
+
+   Factorizando el lado izquierdo de esta ecuación, obtenemos
+
+               f (t, u | x, θ)f (x | θ) = f (t | θ)f (u | t, θ)f (x | t, u, θ)        (15)
+
+    Como los estadísticos T y U son determinados por X, sus distribuciones con-
+dicionales en X son degeneradas. Se sigue que
+
+
+                  f (x | θ) = f (t | θ)f (u | t, θ)f (x | t, u, θ) c.s. ν             (16)
+
+siendo que “c.s. ν” significa “casi segura ν”, o sea, la relación (16) vale para todo
+x ∈ (X n − A) tal que ν (A) = 0, donde ν es la medida de probabilidad aplicada a
+los elementos de A.
+
+                                         Revista Colombiana de Estadística 32 (2009) 99–121
+
+106                                 Rafael Farias, Germán Moreno & Alexandre Patriota
+
+3.1. Función de verosimilitud marginal y condicional
+    En la teoría de la verosimilitud introducida por Fisher, la función de verosimili-
+tud ordinaria es la función de densidad conjunta (o probabilidad) de la muestra X
+en función del vector de parámetros que define por completo la familia. Siguiendo
+la idea de la factorización dada antes, podemos definir dos nuevas funciones de
+verosimilitud.
+Definición 1. Sea T un estadístico cuya distribución solo depende de θ 1 . La
+función de verosimilitud marginal está dada por
+                             LM (θ 1 ; t) = f (t | θ1 )    c.s. ν                      (17)
+
+   Suponga que (U , T ) sea un estadístico tal que sea posible obtener la factoriza-
+ción
+                    f (t, u | θ1 , θ2 ) = f (t | θ1 )f (u | t, θ1 , θ2 )       (18)
+  Despreciando el término f (u | t, θ1 , θ2 ), tenemos la función de verosimilitud
+marginal LM (θ1 ; t) basada en T = t.
+Definición 2. Sean U y T dos estadísticos tales que la distribución de T |U no
+dependa de θ2 . La función de verosimilitud condicional está dada por
+
+                         LC (θ 1 ; t | u) = f (t | u, θ 1 ) c.s. ν                     (19)
+
+   Suponga que (U , T ) sea un estadístico tal que es posible obtener la factorización
+                      f (t, u | θ1 , θ2 ) = f (u | θ1 , θ2 )f (t | u, θ1 )             (20)
+
+   Despreciando el término f (u | θ1 , θ2 ), tenemos la función de verosimilitud
+condicional LC (θ 1 ; t | u) basada en T | U = u.
+   Las funciones de verosimilitudes marginales y condicionales también pueden
+usarse para hacer inferencias sobre θ1 , pero el precio es la pérdida de información,
+dado que en los dos casos dejamos de considerar una parte de la función de verosi-
+militud original. Se pierde el mínimo de información si son utilizados estadísticos
+con propiedades óptimas como I-suficiencia, I-auxiliar y ausencia de información
+parcial en el sentido extendido, conceptos definidos en las siguientes secciones.
+
+
+3.2. Estadístico suficiente y auxiliar
+    Fisher definió el concepto de estadístico suficiente y auxiliar (ancillary statistic)
+para una familia de distribuciones, esto es, cuando el parámetro de interés coincide
+con el parámetro que determina por completo la familia. Lindsey (1996) llama a
+estas clases de estadísticos F-suficientes y F-auxiliares (F por Full, total, pues
+definen totalmente la familia). En el transcurso del texto hablaremos simplemente
+de estadísticos suficientes y auxiliares, y se definen así:
+Definición 3. Un estadístico T = T (X) es suficiente para el vector de parámetros
+θ si f (x | t, θ) = f (x | t) no depende de θ c.s. ν.
+
+                                          Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                       107
+
+    Para encontrar estadísticos suficientes para una familia se puede utilizar el
+criterio de la factorización1 (Halmos & Savage 1949) definido por:
+Definición 4. Un estadístico T es suficiente para el vector de parámetros θ si la
+función de verosimilitud puede ser factorizada de la forma L(θ) = g(t | θ)h(x).
+
+   Un ejemplo básico de aplicación de este criterio es el siguiente.
+Ejemplo 3. Distribución Poisson. Sea X1 , . . . , Xn una muestra aleatoria de X ∼
+P (λ), distribución de Poisson de parámetro λ. La función de verosimilitud está
+dada por
+
+
+              L(λ | X1 , . . . , Xn ) = P (X1 = x1 | λ) . . . P (Xn = xn | λ)
+                                     λx1 exp−λ      λxn exp−λ
+                                   =            ···
+                                        x1 !           xn !
+                                      Pn
+                                     λ i=1 xi exp−nλ                                     (21)
+                                   =     Qn
+                                           i=1 xi !
+                                      Pn                  1
+                                   = λ i=1 xi exp−nλ Qn
+                                                               i=1 xi !
+                                                                Pn
+    Por el criterio de la factorización, tenemos que T =           i=1 xi es un estadístico
+suficiente para λ.
+Definición 5. Un estadístico U = U (X) es auxiliar para θ si la distribución de
+U no depende de θ, o sea, f (u | θ) = f (u) c.s. ν.
+
+   Asumiendo que T y U son estadísticos suficiente y auxiliar para θ, respectiva-
+mente, una consecuencia de las definiciones 3 y 5 es que la función de verosimilitud
+para θ puede factorizarse como
+         L(θ | x) = f (t | θ)f (x | t) y L(θ | x) = f (x | u, θ)f (u) c.s. ν             (22)
+
+           dependiendo del estadístico
+   Por tanto,                          usado, podemos reducir el modelo F ,
+para F1 = F (t | θ) : θ ∈ Θ o F1∗ = F (x | u, θ) : θ ∈ Θ .
+Ejemplo 4. Distribución alfa-normal. Sea X1 , . . . , Xn una muestra aleatoria de
+X ∼ αN (α), alfa-normal estándar definida inicialmente por Durrans (1992) y
+estudiada recientemente por Jones (2004), cuya densidad es dada por
+                          f (x | α) = αφ(x)Φ(x)α−1 , x ∈ IR                              (23)
+estando φ(·) y Φ(·) definidas en (2). La función de verosimilitud está dada por
+                                    "n        #" n        #α−1
+                                     Y          Y
+                                  n
+                    L(α | x) = α        φ(xi )      Φ(xi )                    (24)
+                                        i=1           i=1
+                                                              Q
+    Por el criterio de la factorización, tenemos que T =         i Φ(Xi ) es un estadístico
+suficiente para α.
+  1 También conocido en la literatura como criterio de factorización de Neyman-Fisher.
+
+
+
+
+                                         Revista Colombiana de Estadística 32 (2009) 99–121
+
+108                                  Rafael Farias, Germán Moreno & Alexandre Patriota
+
+Ejemplo 5. Distribución normal   asimétrica. Sea Y1 , . . . , Yn una muestra aleatoria
+de la variable Y ∼ SN 0, σ 2 , λ definida en (2), con σ 2 = 1. Usando las propieda-
+          distribución Normal-Asimétrica derivadas por Azzalini (1985), tenemos
+des de la P
+             n
+que U = i=1 Yi2 ∼ χ2 (n), distribución chi-cuadrado con n grados de libertad.
+Entonces, por la definición 5, el estadístico U es auxiliar para λ.
+
+    Si optamos por un estadístico suficiente T , es deseable que este sea minimal
+(función de todos los estadísticos suficientes), pues así tendremos la mayor re-
+ducción posible en los datos (Pace & Salvan 1997, Lehmann & Casella 1998). Si
+optamos por un estadístico auxiliar U , es conveniente que la misma sea maximal,
+o sea, no existe otro estadístico auxiliar que sea función de este.
+    Como el objetivo de este trabajo es estimar solo una parte del vector θ, es
+conveniente definir estadísticos que contengan información solo sobre una partición
+del vector que define la familia o modelo en cuestión, es decir, estadísticos que
+generalicen los conceptos de suficiencia e información auxiliar introducidos por
+Fisher. A continuación definimos los conceptos de información parcial y ausencia
+parcial de información.
+
+
+3.3. Suficiencia y ausencia parcial de información
+Definición 6. Si (T , U ) es suficiente para θ y, en (16), f (u | t, θ) = f (u | t, θ2 ),
+o sea, la densidad de U | T solo depende de θ 2 , entonces decimos que T es
+parcialmente suficiente para θ 1 . Además, si los campos de variación de θ1 y θ2
+son independientes entre sí, entonces T es llamada S-suficiente para θ1 .
+
+                                                                           alea-
+Ejemplo 6. Distribución exponencial truncada. Sea X1 , . . . , Xn una muestra
+toria de X con distribución exponencial truncada perteneciente a F = E(θ) :
+θ = (α, β)> ∈ Θ = IR × (0, ∞) , cuya densidad es dada por
+                                  (           )
+                             1        (x − α)
+                  f (x | α) = exp −             , x ∈ (α, ∞)                  (25)
+                             β           β
+
+y su función de verosimilitud por
+                                                        ( P     )
+                               −n             nα             i xi                
+             L(α, β | x) = β        exp                exp −        I(α)                     (26)
+                                               β             β           −∞,x(1)
+
+
+donde x(1)
+          = mı́n{x     . . . , xn }. Utilizando el criterio de la factorización, tenemos
+                     1, 
+                 P
+que V = X(1) , i Xi es suficiente para θ = (α, β)> . Al mismo tiempo, el vector
+                                            P              
+V ∗ = (U, T ), con U = X(1) y T = 2n i Xi − X(1) , también es suficiente, pues
+es función 1 : 1 de V . El estadístico V ∗ también es completo2 , pues satisface la
+condición                  
+                  IE g(V ∗ ) = 0 ⇐⇒ g(V ∗ ) = 0, ∀θ ∈ Θ c.s. ν                 (27)
+  2 Si X es una variable aleatoria con distribución perteneciente a una familia F , θ ∈ Θ, se dice
+                                                                                 θ    ˆ     ˜
+que un estadístico T es completo si para cualquier función medible g se verifica IEθ g(T ) = 0,
+si y solo si ∀θ ∈ Θ, g(T ) = 0, c.s. ν.
+
+
+                                              Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                        109
+
+    Dado que U es estadístico suficiente y completo, T es estadístico auxiliar para
+β, y esto vale para todo β ∈ (0, ∞), por el Teorema de Basu3 , U y T son indepen-
+dientes y la distribución de T | U es igual a la distribución de T , y esta última no
+depende de α, pues U ∼ E(α, n/β) y T ∼ β χ2 (2n). Entonces U es un estadístico
+parcialmente suficiente para α y también es S-suficiente, pues (α, β) ∈ IR × (0, ∞).
+Definición 7. Si T es degenerada y, en (16), f (u | t, θ) = f (u | θ2 ), o sea, la
+densidad de U solo depende de θ2 , decimos que U es parcialmente auxiliar para
+θ 1 . Además, si los campos de variación de θ 1 y θ2 son independientes entre sí,
+entonces se dice que U es S-auxiliar para θ1 .
+Ejemplo 7. Distribución normal asimétrica (continuación). Considere el ejemplo
+5, SN (0, σ 2 , λ), con σ 2 desconocido. El estadístico U ∼ σ 2 χ2 (n) es parcialmente
+auxiliar para λ, y como los parámetros varían independientemente, entonces U
+también es S-auxiliar.
+
+    En las definiciones 6 y 7 establecemos los conceptos de suficiencia e información
+auxiliar parcial para particiones de un vector. Con tales definiciones es posible
+retirar de la función de verosimilitud parte de la información que no es relevante
+en el proceso de estimación del parámetro de interés. Por ejemplo, si el vector
+(U , T ) es suficiente para el vector completo θ y T es un estadístico parcialmente
+suficiente para θ1 , entonces la función de verosimilitud puede ser factorizada de la
+forma
+                       L(θ) = f (t|θ)f (u | t, θ2 )f (x | t, u) c.s. ν           (28)
+    Así, se puede proponer un modelo reducido usando únicamente f (t | θ). Si U
+es parcialmente auxiliar para θ 1 , entonces
+                      L(θ) = f (t | u, θ)f (u | θ 2 )f (x | t, u) c.s. ν                 (29)
+
+   Por tanto, el modelo reducido puede usar solo f (t | u, θ).
+    A pesar de reducir la función de verosimilitud, esta no se torna ortogonal y, por
+tanto, el parámetro de perturbación continúa presente. La función de verosimilitud
+será ortogonal, usando las definiciones 6 y 7, solo cuando exista un estadístico
+T ∗ parcialmente suficiente para θ 1 y parcialmente auxiliar para θ 2 , o exista un
+estadístico U ∗ parcialmente suficiente para θ 2 y parcialmente auxiliar para θ 1 .
+Además, los vectores de parámetros θ 1 y θ2 deben variar independientemente, o
+sea, el campo de variación de θ1 debe ser igual para cada θ2 fijo, y viceversa.
+Esta propiedad puede encontrarse en la familia exponencial de rango completo
+(ver Lindsey 1996).
+    Por tanto, si las anteriores condiciones se satisfacen, el estadístico T ∗ separa
+la función de verosimilitud de la forma
+                    L(θ) = f (t∗ | θ 1 )f (x | t∗ , θ2 ) = L1 (θ1 )L2 (θ2 )              (30)
+y usando el estadístico U ∗ , obtenemos
+                   L(θ) = f (x | u∗ , θ1 )f (u∗ | θ2 ) = L1 (θ1 )L2 (θ2 )                (31)
+  3 El Teorema de Basu dice que dos estadísticos U y T son independientes si U es suficiente y
+
+completo para θ y T es auxiliar para θ.
+
+
+                                          Revista Colombiana de Estadística 32 (2009) 99–121
+
+110                                Rafael Farias, Germán Moreno & Alexandre Patriota
+
+Ejemplo 8. Análisis de supervivencia (continuación). Considere el ejemplo 2.
+Supóngase también que T ∼ exp(λ) y C ∼ exp(κλ). En este caso, θ = (λ, κ),Psiendo
+λ el parámetro
+      P          de interés y κPel parámetro de perturbación. Haciendo A = i δi zi ,
+B =      i (1 − δi )zi y d =     i δi , se puede mostrar que λA | d ∼ gamma(d, 1),
+λB | d ∼ gamma(d, κ) y d ∼ Bin (n, 1/(1 + κ)). Por consiguiente, la distribución
+conjunta de W = A/B y d no depende de λ. La función de verosimilitud está dada
+por
+                                              
+                       L(λ, κ) = λn κn−d exp λ(1 + κ)Σi zi
+                                              
+                               = λn κn−d exp λ(1 + κ)(A + B)                 (32)
+                                   n n−d
+                                              
+                               =λ κ        exp λ(1 + κ)B(1 + W )
+
+    Por el criterio de la factorización, se nota que (B, W, d) es suficiente para (λ, κ).
+Haciendo U ∗ = (W, d) tenemos que B | U ∗ ∼ gamma(d, λW ). Así, se pueden hacer
+inferencias sobre λ usando solo la distribución de B | U ∗ . El estimador de máxima
+verosimilitud de λ usando esta distribución está dado por λ     b = d/(BW ) = d/A.
+
+Definición 8. Un estadístico T ∗ que sea parcialmente suficiente para θ1 , y par-
+cialmente auxiliar para θ2 y cuyos parámetros sean ortogonales, es llamado “corte
+propio” (proper cut) por Lindsey (1996); también se denomina estadístico que de-
+fine un corte de Bardorff-Nielsen en el modelo F .
+
+   Si T ∗ define un corte de Bardorff-Nielsen para θ = (θ1 , θ 2 ), entonces T ∗ es
+un estadístico S-suficiente para θ1 y S-auxiliar para θ 2 . Además, la función de
+verosimilitud es ortogonal y siempre puede ser escrita de la forma
+                            L(θ) = f (t∗ | θ1 )f (x | t∗ , θ2 )                      (33)
+
+   En este caso no tendremos pérdida de información al usar el modelo L1 (θ 1 )
+dado en (30) o (31).
+    Es raro encontrar estadísticos T ∗ y U ∗ con estas propiedades. Jorgensen (1993)
+usó la definición de modelo saturado para introducir nuevos conceptos de suficien-
+cia e información auxiliar, con el objetivo de reducir al máximo el modelo. El
+concepto de modelo saturado corresponde a la idea de un parámetro para cada
+observación, y se define a continuación.
+Definición 9. Se dice que un modelo estadístico F = {F (· | θ) : θ ∈ Θ} es
+                                                                        b
+                                                                    b = θ(X)
+saturado si, para todo X ∈ X , el estimador de máxima verosimilitud θ        es
+único y función 1:1 de X.
+
+   En las definiciones 10 y 11 considere que el vector (T , U ) es suficiente para
+θ = (θ 1 , θ2 ).
+Definición 10. Sea T un estadístico S-auxiliar para θ2 ; entonces
+                   L(θ) = f (t | θ1 )f (u | t, θ) = L1 (θ1 )L2 (θ)                   (34)
+
+    Para θ1 fijo, si f (u | t, θ) es un modelo saturado, entonces se dice que el
+estadístico T es I-suficiente para θ1 .
+
+                                        Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                   111
+
+Definición 11. Sea U un estadístico S-suficiente para θ2 ; entonces
+
+                  L(θ) = f (t | u, θ1 )f (u | θ) = L1 (θ1 )L2 (θ)                   (35)
+
+para θ1 fijo, si f (u | θ) es un modelo saturado, entonces se dice que el estadístico
+U es I-auxiliar para θ1 .
+
+    En la definición 10, toda la información relevante sobre θ1 está contenida en
+el primer término f (t | θ 1 ). En la definición 11, la idea es contraria: no existe
+información relevante sobre θ1 en el segundo término f (u | θ). Además, en la
+definición 10, cuando θ 1 está fijo, la saturación del modelo L2 (θ) = f (u | t, θ)
+no garantiza que el estadístico U sea totalmente no informativo para diferentes
+valores de θ1 .
+                       
+                      b2 la función de verosimilitud f (u | t, θ1 , θ2 ) cuando substi-
+    Sea f u | t, θ1 , θ
+                                                                                     
+tuimos θ2 por su EMV θ                                                             b2
+                         b2 . Pace & Salvan (1997) argumentan que si f u | t, θ1 , θ
+fuera no identificable o no existiera el EMV para θ1 , entonces L2 (θ) podría ser ig-
+norado en la estimación de θ1 . Este concepto de falta de información se denomina
+ausencia de información parcial en el sentido extendido.
+
+Ejemplo 9. Distribución exponencial truncada (continuación). Considere el ejem-
+plo 6, donde X1 , . . . , Xn es una muestra aleatoria de una distribución E(α, β). El
+parámetro de escala β es el parámetro de interés y α es el parámetro de perturba-
+ción.
+   Por el ejemplo 6, tenemosque el vector de estadísticos V ∗ = (U, T ), con U =
+              P
+X(1) y T = 2n i Xi − X(1) , es suficiente para (α, β); además, U ∼ E(α, n/β)
+y T ∼ βχ2 (2n) son independientes. El estadístico T es S-auxiliar para α, pues la
+distribución de T no depende de α y la distribución U | T = t es igual a la de
+la distribución marginal de U por la independencia. Fijando el valor de β en la
+distribución de U | T = t, el EMV de α es α  b = U ; luego el modelo es saturado, y
+consecuentemente T es I-suficiente para β. Así, toda la información relevante que
+la muestra tiene sobre β está contenida en la distribución marginal de T . Entonces,
+el factor ignorado en la función de verosimilitud será L2 (θ) = f (u | t, θ).
+   Si sustituimos α por su estimador de máxima verosimilitud en L2 , tenemos la
+nueva función de verosimilitud dada por
+                                         (          )
+                                     n      (u − u)     n
+                                 b) = exp −
+                    f (u | t, β, α                    =                   (36)
+                                     b         β        β
+
+   Como L2 es una función decreciente en β, tenemos que su EMV no está definido,
+y dado T = t, la distribución de U no es informativa en la estimación de β en el
+sentido extendido.
+
+Ejemplo 10. El test exacto de Fisher es una de las pruebas más famosos para
+verificar si existe asociación entre variables categóricas, este test se deriva de la
+distribución binomial como veremos a continuación.
+
+                                       Revista Colombiana de Estadística 32 (2009) 99–121
+
+112                                Rafael Farias, Germán Moreno & Alexandre Patriota
+
+    En la tabla 1 presentamos una tabla de contingencia 2 × 2, básicamente, una
+tabla de contingencia es la representación de las frecuencias conjuntas entre dos
+o más características que deseamos estudiar. Sea A y B la representación de dos
+eventos independientes de interés, A0 y B 0 sus respectivos eventos complementarios;
+tal que a es el número de ocurrencias del evento A∩B, b es el número de ocurrencias
+del evento A0 ∩ B, c es el número de ocurrencias del evento A ∩ B 0 y d es el número
+de ocurrencias del evento A0 ∩ B 0 .
+                        Tabla 1: Tabla de Contingencia 2 × 2.
+                                       A     A0     Total
+                                B      a     b       m
+                                B0     c     d      m−n
+                               Total   t    n−t      n
+
+
+   Si n y m son fijos, entonces a ∼ Bin(m, p1 ) y c ∼ Bin(m − n, p2 ), donde
+Bin(n, p) denota la distribución binomial con parámetros n y p. La función de
+verosimilitud puede ser escrita como
+                                        
+                                     m m−n a
+              f (a, c | p1 , p2 ) =         p1 (1 − p1 )b pc2 (1 − p2 )d (37)
+                                     a   c
+
+    Suponga que estamos interesados en estimar la razón de ventajas (odds ratio)
+       p1 (1 − p2 )
+θ1 =                . Así, haciendo θ2 = p2 , la función de verosimilitud puede ser
+       (1 − p1 )p2
+reescrita de la forma
+                                                 
+                                           m m − n θ1a θ2> (1 − θ2 )n−t
+                    f (a, t | θ1 , θ2 ) =                                      (38)
+                                           a   t − a (1 − θ2 + θ1 θ2 )m
+
+   La distribución condicional de a dado t está dada por
+                                              
+                                            m m−n a
+                                                    
+                                            a   t−a θ1
+                         f (a | t, θ1 ) = P m m−n k                               (39)
+                                           k k    t−k θ1
+
+
+   La distribución de a | t se utiliza para hacer pruebas de asociación entre A y
+B. La distribución de t está dada por
+                                                             
+                                 θ1a θ2> (1 − θ2 )n−t X m m − n k
+              f (t | θ1 , θ2 ) =                                 θ1           (40)
+                                 (1 − θ2 + θ1 θ2 )m     k   t−k
+                                                    k
+
+
+   Si θ1 = 1, la derivada del logaritmo de f (t | θ1 , θ2 ) es
+
+                           ∂ log f (t | θ1 , θ2 )    t   n−t
+                                                  =    −                            (41)
+                                   ∂θ2              θ2   1 − θ2
+
+y el estimador de máxima verosimilitud de θ2 es t/n. Así, f (t | θ1 , θ2 ) es un modelo
+saturado y, por tanto, el estadístico T es I-auxiliar para θ1 .
+
+
+                                       Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                  113
+
+4. Funciones de seudoverosimilitudes
+    Cuando existen modelos donde no es posible aplicar las técnicas vistas en las
+secciones anteriores o la información contenida en L2 no puede ser ignorada debido
+a su importancia en la inferencia, es indispensable definir otras alternativas. Las
+funciones de seudoverosimilitudes pueden utilizarse como una aproximación a la
+clase de funciones de verosimilitudes genuinas. Las funciones de verosimilitudes ca-
+nónica, perfilada, perfilada corregida, perfilada modificada, predictivas bayesianas
+(no bayesianas) y cuasiverosimilitud son algunos ejemplos de funciones de seudo-
+verosimilitudes. Para ilustrar este tipo de técnicas de reducción de modelos, en
+esta sección presentamos ejemplos de las funciones de verosimilitudes canónica y
+perfilada.
+
+
+4.1. Función de verosimilitud canónica
+
+    Sea L(θ) una función de verosimilitud de dos parámetros, con θ = (θ1 , θ2 ) ∈
+Θ1 × Θ2 ⊂ IR2 , es decir, los parámetros de interés θ1 y de perturbación θ2 son
+escalares. Ya vimos que si L(θ) = L1 (θ1 )L2 (θ2 ), entonces L(θ) será ortogonal en
+relación con la partición de interés y la inferencia sobre θ1 estará basada inte-
+gralmente en L1 (θ1 ). Dado que no siempre es posible obtener con exactitud esta
+separación, Hinde & Aitkin (1987) propusieron realizar una aproximación a esta
+factorización. La idea central es considerar una factorización aproximada para la
+función de verosimilitud original, esto es,
+
+                             L(θ1 , θ2 ) ≈ L1 (θ1 )L2 (θ2 )                        (42)
+
+donde la distancia entre las funciones de verosimilitudes original y aproximada es la
+menor posible. Las funciones L1 (θ1 ) y L2 (θ2 ) se obtienen por una descomposición
+de autofunciones de L(θ). Estas funciones se llaman verosimilitudes canónicas para
+los parámetros θ1 y θ2 , respectivamente.
+    Para determinar las funciones L1 (θ1 ) y L2 (θ2 ), Hinde y Aitkin consideraron
+tres casos, dependiendo de la naturaleza del espacio paramétrico: i) ambos discre-
+tos; ii) uno discreto y el otro continuo y iii) ambos continuos. La idea principal
+de los autores es integrar (o sumar) L(θ1 , θ2 )L2 (θ2 ) con respecto al parámetro de
+perturbación θ2 ; el resultado es la función de verosimilitud canónica para el pa-
+rámetro de interés θ1 . A continuación se presenta un ejemplo clásico para ilustrar
+esta técnica.
+
+Ejemplo 11. Distribución normal. Sea X una variable aleatoria con distribución
+N (µ, 1). Defina θ1 = |µ| y θ2 = signo(µ), esto es, θ1 ∈ IR+ y θ2 ∈ {−1, 1}.
+Suponga que estamos interesados en hacer inferencias sobre θ1 = |µ|. La función
+de verosimilitud genuina es
+                                                           
+                                      1     1             2
+                    L(θ1 , θ2 | x) = √ exp − (x − θ1 θ2 )                          (43)
+                                      2π    2
+
+                                      Revista Colombiana de Estadística 32 (2009) 99–121
+
+114                                Rafael Farias, Germán Moreno & Alexandre Patriota
+
+   Sean T = |X| y S = signo(X), entonces
+                                                       
+                                  1      1            2
+             L(θ1 , θ2 | t, s) = √ exp − (ts − θ1 θ2 )
+                                  2π     2
+                                                                                    (44)
+                                  1      1
+                               = √ exp − t2 − 2tsθ1 θ2 + θ22
+                                  2π     2
+luego, T y S son conjuntamente suficientes para θ1 y θ2 . Note que la función de
+verosimilitud no es ortogonal.
+   Siguiendo la idea de Hinde y Aitkin, se debe minimizar
+                    2 Z        h
+                    X                                      i2
+                                L θ1 , θ2j − L1 (θ1 )L2 θ2j     dθ1                    (45)
+                    j=1   Θ1
+
+cuyas soluciones son
+
+           L(θ1 , −1 | x)L2 (−1 | x) + L(θ1 , 1 | x)L2 (1 | x) = λL1 (θ1 |x)           (46)
+                  Z
+                       L(θ1 , 1 | x)L1 (θ1 | x) dθ1 = λL2 (1 | x) y                    (47)
+                   Θ1
+                  Z
+                       L(θ1 , −1 | x)L1 (θ1 | x) dθ1 = λL2 (−1 | x)                    (48)
+                    Θ1
+    En la expresión (46), L1 (θ1 | x) depende de las cantidades desconocidas L2 (1 |
+x) y L2 (−1 | x). En la expresión (48) las cantidades L2 (1 | x) y L2 (−1 | x)
+dependen de L1 (θ1 | x). Con el fin de simplificar la notación en este problema,
+considere M1 = L(θ1 , 1 | x), M2 = L(θ1 , −1 | x), N1 = L2 (1 | x) y N2 = L2 (−1 |
+x). Como N1 y N2 no dependen de los parámetros, (46) y (48) pueden reescribirse
+matricialmente de la forma:
+                                              
+                                     N1         N1
+                                 λ2       =M                                  (49)
+                                     N2         N2
+
+donde M es la matriz de dimensión 2 × 2 cuyo elemento en la posición (j, j 0 ) es
+dado por                         Z
+                                mjj 0 =         Mj Mj 0 dθ1                            (50)
+                                           Θ1
+   Resolviendo las integrales para cada elemento de la matriz M , tenemos que
+                          "          √                  #
+                              1               1
+                             √
+                            2 π
+                                Φ − 2x      4
+                                             √
+                                                π
+                                                  exp −x2
+                    M=       1
+                                               1
+                                                     √                    (51)
+                             √
+                            4 π
+                                exp −x2        √
+                                              2 π
+                                                   Φ 2x
+
+donde Φ(·) es la función de distribución acumulada de la distribución normal
+estándar. Los autovalores de la matriz M están dados por
+                             q     √       2     
+                        1+      2Φ 2x − 1 + exp −2x2
+                   η1 =                                                  (52)
+                                         2
+
+                                          Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                     115
+
+y
+                                q        √     2    
+                           1−       2Φ    2x − 1 + exp −2x2
+                    η2 =                                                              (53)
+                                                2
+    Se comprueba fácilmente que la suma de los autovalores η1 y η2 es 1. Ahora,
+dado que la solución de la ecuación (46) es λL1 (θ1 ), y en la ecuación (49) tenemos la
+             √
+relación λ = η, entonces la función de verosimilitud canónica será completamente
+informativa cuando ηmáx = 1 (siendo ηmáx el mayor autovalor de M ).
+                                                                    2        1/2
+   El autovector asociado
+                             √ es b =(r(x), 1), donde r(x) = (v (x) + 1) −
+                          a ηmáx
+v(x), con v(x) = exp x2 2Φ 2x − 1 . Remplazando en la ecuación (46) con
+        √               √
+λmáx = ηmáx , tenemos, ηmáx · L1 (θ1 ) = M1 · r(x) + M2 · 1, y por consiguiente
+
+                       "                                        #
+                  1          1                         1
+     L1 (θ1 ) = √       exp − (x + θ1 )2 · r(x) + exp − (x − θ1 )2 · 1
+                 ηmáx       2                         2
+
+   Para cualquier valor que tome el parámetro de perturbación θ2 , la función de
+verosimilitud canónica L1 (θ1 ) será siempre igual.
+
+    Las principales ventajas de la función de verosimilitud canónica son fundamen-
+talmente que la inferencia sobre θ1 se basa integralmente en L1 (θ1 ); y la función de
+verosimilitud canónica siempre existe para modelos con dos parámetros, en con-
+traste con las funciones verosimilitudes marginal y condicional, que generalmente
+no existen. Dos de las principales desventajas de este método son: tiene álgebra pe-
+sada, aun para espacios paramétricos de baja dimensión y para cada configuración
+de la función de verosimilitud existe una solución particular.
+
+
+4.2. Función de verosimilitud perfilada
+    Inferir sobre el parámetro de interés a partir de la función de verosimilitud mar-
+ginal o condicional es muy adecuado, porque estas son verosimilitudes genuinas; el
+problema es que no siempre es posible su construcción. Una solución es sustituir
+en la verosimilitud original el vector de parámetros de perturbación por una esti-
+mativa consistente; la función resultante se conoce como función de verosimilitud
+perfilada.
+    Formalmente, sea (X1 , . . . , Xn ) una muestra aleatoria de la variable X con
+                                                   n                       >     o
+distribución de probabilidad en la familia F = F (· | θ) : θ = θ>   1 , θ >
+                                                                          2    ∈ Θ  ,
+siendo θ1 el vector de parámetros de interés y θ 2 el vector de parámetros de
+                       > > >
+                  b= θ
+perturbación. Sea θ     b ,θb        el estimador de máxima verosimilitud del vector
+                           1    2
+
+θ completo, y θ  bi (θ j ) el estimador de máxima verosimilitud de θi cuando θj está
+fijo, para i, j = 1, 2. La función de verosimilitud perfilada es definida por
+                                                           
+                                                    b2 (θ1 )
+                                  Lp (θ1 ) = L θ1 , θ                           (54)
+
+
+                                         Revista Colombiana de Estadística 32 (2009) 99–121
+
+116                                Rafael Farias, Germán Moreno & Alexandre Patriota
+
+                                                                b2 (θ1 ) denota el
+donde L(θ 1 , θ2 ) denota la función de verosimilitud genuina y θ
+estimador de máxima verosimilitud de θ2 para θ1 fijo.
+   La expresión (54) sugiere un procedimiento de maximización en dos etapas.
+                                               b2 (θ1 ) que maximice L(θ1 , θ2 ) con
+La primera etapa consiste en calcular el valor θ
+respecto a θ2 , suponiendo θ 1 constante. La segunda etapa busca el valor θ1 que
+maximice Lp (θ1 ).
+   La inferencia aproximada sobre θ 1 se hace tratando Lp (θ 1 ) como una función
+de verosimilitud genuina basada en un modelo solamente con el parámetro θ 1 .
+Usar la función de verosimilitud perfilada es semejante a tratar el parámetro de
+perturbación como si fuese conocido. Tal procedimiento puede conducir a algu-
+nos problemas; por ejemplo, inconsistencia e ineficiencia de los estimadores de los
+parámetros de interés.
+   Veamos dos ejemplos.
+
+Ejemplo 12. Distribución normal. Suponga    que X1 , . . . , Xn es una muestra alea-
+toria de una distribución normal, N µ, σ 2 . Luego, su función de verosimilitud
+genuina es
+                                             (                        )
+                                −n/2          1 X
+                                                       n
+                     2           2                                  2
+             L µ, σ ; x = 2πσ            exp − 2            (xi − µ)             (55)
+                                                 2σ i=1
+
+                                 Σi (xi − µ)2
+   Dado µ, el EMV de σ 2 es                   . Y dada σ 2 , el EMV de µ es x. Por
+                                       n
+tanto, la función de verosimilitud perfilada de µ es
+                                                             −n/2
+                                           Σi (xi − µ)2
+                         Lp (µ; x) =                    2eπ                             (56)
+                                                 n
+
+y la función de verosimilitud perfilada de σ 2 es
+                                                 (               )
+                                   −n/2        Σ   (x  − x)2
+                                                     i   i
+                  Lp σ 2 ; x = 2πσ 2        exp −                                       (57)
+                                                        2σ 2
+
+    En este caso, considerando las funciones de verosimilitudes perfiladas; los EMV
+coinciden con los estimadores usuales cálculados a partir de la función de verosi-
+militud genuina.
+
+   La función de verosimilitud perfilada también se utiliza bastante en modelos
+con errores en las variables, donde el número de parámetros de perturbación crece
+con el tamaño de la muestra (parámetros incidentales). Presentamos un ejemplo
+de este modelo.
+
+Ejemplo 13. Modelo con errores en las variables. Considere (Y1 , X1 ), . . . , (Yn , Xn )
+una muestra aleatoria cuya relación entre Yi y Xi es dada por Yi = α + βxi + ei y
+Xi = xi +ui , siendo ei ∼ N (0, λ) y ui ∼ N (0, κ) variables aleatorias independientes
+para todo i = 1, . . . , n. El logaritmo de la función de verosimilitud (`) para este
+
+                                           Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                        117
+
+modelo es ilimitado, y es necesario hacer algunas suposiciones extras para limitarla.
+Suponiendo que la razón σ = λ/κ es conocida, el logaritmo de la función de
+verosimilitud se torna limitado y dado por
+
+                                                           n
+                                                           X
+                       `(θ1 , θ2 ) = log L(θ1 , θ 2 ) =          `i (θ1 , θ2 )           (58)
+                                                           i=1
+
+
+siendo
+
+                       1         1         (yi − α − βxi )2   (Xi − xi )2
+     `i (θ 1 , θ2 ) ∝ − log(σκ) − log(κ) −                  −                            (59)
+                       2         2               2σκ              2κ
+
+
+    Aquí, θ1 = (α, β, κ)> es el vector de parámetros de interés y θ 2 = (x1 , . . . , xn )>
+es el vector de parámetros incidentales (de perturbación). El estimador de máxima
+verosimilitud para xi está dado por
+
+
+                            b2 (θ1 ) = x    κβ(Yi − α) + σκXi
+                            θ          bi =                                              (60)
+                                                β 2 κ + σκ
+
+
+   Sustituyendo (60) en la log-verosimilitud genuina (58), tenemos
+
+                                            n
+                                            X                     
+                              `p (θ 1 ) =                  b2 (θ1 )
+                                                  `pi θ1 , θ                             (61)
+                                            i=1
+
+
+siendo
+
+                                                            2            2
+                                                           xi
+            b2 (θ 1 ) ∝ − 1 log(σκ) − 1 log(κ) − yi − α − βb
+  `pi θ 1 , θ                                                    −
+                                                                   Xi − xbi
+                                                                                         (62)
+                          2           2               2σκ             2κ
+
+
+    Los EMV para α, β y κ, cuando σ es conocida, se obtienen igualando a cero
+las derivadas de `p en relación con los parámetros de interés. Los estimadores son
+dados por
+
+                    α       b
+                    b = Y − βX
+                                            q                 2
+                                   2
+                            SY − σSX +                    2
+                                                  SY2 − σSX        − 4σSY2 X
+                     βb =
+                                        2SY X                                            (63)
+                                          2
+                        Xn   Yi − α   b i
+                                  b − βX
+                     b=
+                     κ                  
+                        i=1   2n βb2 + σ
+
+
+                                            Revista Colombiana de Estadística 32 (2009) 99–121
+
+118                                  Rafael Farias, Germán Moreno & Alexandre Patriota
+
+siendo,
+                                           n
+                                     1X
+                            Y =            Yi
+                                     n i=1
+                                           n
+                                     1X
+                            X=             Xi
+                                     n i=1
+                                     1 X         2
+                                           n
+                            2
+                           SX =            Xi − X
+                                     n i=1
+                                     1 X         2
+                                        n
+                           SY2 =           Yi − Y
+                                     n i=1
+                                     1 X              
+                                        n
+                         SY X =            Yi − Y Xi − X
+                                     n i=1
+
+    Patefield (1978) mostró que el EMV κ     b converge en probabilidad para κ/2.
+En este caso, el estimador consistente es dado por 2b   κ. Mak (1982) estudió las
+propiedades de los estimadores en presencia de parámetros incidentales. El autor
+demostró que el estimador del vector de parámetros de interés existe y converge
+para una distribución normal multivariada con media igual al vector de parámetros
+de interés, si se satisfacen las condiciones
+                    n                                                n
+              1X                                            1X              2
+          lı́m      xi = lı́m xn < ∞,                    lı́m     (xi − xn ) < ∞
+          n→∞ n         n→∞                             n→∞ n
+                i=1                                           i=1
+
+y
+                                               n
+                                               X
+                                           1
+                             lı́m                     |xi |2+δ = 0
+                            n→∞ n1+δ/2
+                                                i=1
+
+para todo δ > 0.
+   Mak (1982) también demostró que la matriz de covarianzas asintótica de los pa-
+rámetros de interés no es la inversa de la matriz de información de Fisher esperada
+y debe ser sustituida por la siguiente matriz
+                            
+                      Cov θ  b1 = 1 A(θ1 )−1 V (θ 1 )A(θ1 )−1
+                                    n
+siendo,                                                                      !
+                                          
+                          1          ∂`p                       1   ∂ 2 `p
+                 V (θ1 ) = Var                 y      A(θ 1 ) = E
+                          n          ∂θ1                       n  ∂θ1 ∂θt1
+
+   Para terminar, resaltamos que las principales ventajas de usar la función de
+verosimilitud perfilada cuando el número de parámetros de perturbación no crece
+con el tamaño de la muestra son:
+
+    • La función de verosimilitud perfilada siempre existe.
+
+                                           Revista Colombiana de Estadística 32 (2009) 99–121
+
+Reducción de modelos en la presencia de parámetros de perturbación                 119
+
+   • La función de verosimilitud perfilada no depende del parámetro de pertur-
+     bación.
+
+   • La matriz de información observada perfilada de θ1 se define de forma análo-
+     ga a la información observada de (θ1 , θ2 ).
+
+   • El estadístico de la razón de verosimilitudes tiene distribución asintótica
+     igual a la basada en la razón de verosimilitudes genuinas, esto es,
+                                                  
+                                       c               D
+                       Wp (θ1 ) = 2 Lp θ1 − Lp (θ 1 ) −→ χ2 (p1 )
+
+                   D
+     siendo que −→ significa convergencia en distribución y p1 la dimensión de
+     θ1 .
+
+Las demostraciones de estas propiedades están en Cordeiro (1992).
+    La principal desventaja es que la función de verosimilitud perfilada, general-
+mente, no presenta todas las propiedades de una función de verosimilitud genuina.
+Por ejemplo, la esperanza de la función escore perfilada generalmente es diferente
+de cero. Por tanto, los estimadores obtenidos vía función de verosimilitud perfilada
+pueden no ser consistentes. Por tanto, es necesario hacer ajustes en la verosimilitud
+perfilada para minimizar estos problemas. En la literatura, existen varias modifica-
+ciones para la función de verosimilitud perfilada propuestas por diversos autores;
+ver Barndorff-Nielsen (1983), Barndorff-Nielsen (1991), Cox & Reid (1987), Cox
+& Reid (1992) y McCullagh & Tibshirani (1990). Estas modificaciones consisten
+en la incorporación de un término en la verosimilitud perfilada anterior al proceso
+de estimación que tiene por efecto disminuir el sesgo de la función escore y de la
+información de Fisher esperada.
+
+
+5. Conclusiones
+    En este trabajo presentamos y discutimos algunos métodos de estimación en
+presencia de parámetros de perturbación. Como existen diversas metodologías en
+la literatura para tratar tales modelos, enfocamos nuestra atención en técnicas de
+reducción de modelos a través de estadísticos con propiedades óptimas o a través de
+funciones de verosimilitudes canónicas y perfiladas. Ilustramos y analizamos algu-
+nos conceptos sobre ausencia de información presente en la muestra con relación a
+los parámetros de perturbación en ejemplos simples y recientemente discutidos en
+la literatura. A los interesados, dejamos las referencias para que sean consultadas
+posteriormente.
+
+
+Agradecimentos
+    Durante el desarrollo de este trabajo los autores recibieron apoyo financiero
+del Conselho Nacional de Desenvolvimento Científico e Tecnológico (CNPq), de la
+
+                                     Revista Colombiana de Estadística 32 (2009) 99–121
+
+120                             Rafael Farias, Germán Moreno & Alexandre Patriota
+
+Fundação de Amparo à Pesquisa do Estado de São Paulo (FAPESP), Brasil, y de la
+Universidad Industrial de Santander, Colombia. Los autores también expresan sus
+agradecimientos al profesor Dr. Heleno Bolfarine (IME-USP) por las sugerencias
+metodológicas, a la profesora Dra. Silvia Ferrari (IME-USP) por la motivación
+para escribir este trabajo, al profesor Dr. Bernardo Mayorga (UIS) por la revisión
+de estilo y a los dos árbitros por las valiosas sugerencias dadas para mejorar el
+presente documento.
+Referencias
+Azzalini, A. (1985), ‘A Class of Distributions which Includes the Normal Ones’,Scandinavian Journal of Statistics 12, 171–178.
+Barndorff-Nielsen, O. (1983), ‘On a Formula for the Distribution of the Maximum Likelihood Estimator’, Biometrika 70, 343–365.
+Barndorff-Nielsen, O. (1991), Likelihood Theory, Chapman and Hall, London, England.
+Cordeiro, G. (1992), Introdução à Teoria de Verossimilhança, in ‘10 Simpósio Nacional de Probabilidade e Estatística’, Rio de Janeiro, Brazil.
+Cox, D. R. & Reid, N. (1987), ‘Parameter Orthogonality and Approximate Conditional Inference (with Discussion)’, Journal The Royal Statistical Society:Series B 49, 1–39.
+Cox, D. R. & Reid, N. (1992), ‘A Note on the Difference Between Profile and Modified Profile Likelihood’, Biometrika 79, 408–411.
+Durrans, S. R. (1992), ‘Distributions of Fractional Order Statistics in Hydrology’,Water Resources Research 28, 1649–1655.
+Fuller, W. A. (1987), Measurement Error Models, Wiley, New York, United States.
+Halmos, P. R. & Savage, L. J. (1949), ‘Application of the Radon–Nikodym Theorem to the Theory of Sufficient Statistics’, Annals of Mathematics Statistics 20, 225–241.
+Hinde, J. & Aitkin, M. (1987), ‘Canonical Likelihoods: A New Likelihood Treatment of Nuisance Parameters’, Biometrika 74, 45–58.
+Jones, M. C. (2004), ‘Families of Distributions Arising from Distributions of Order Statistics’, Test 13, 1–43.
+Jorgensen, B. (1993), ‘A Review of Conditional Inference: Is there a Universal Definition of Noinformation?’, Bulletin of International Statistical Institute 55,2, 323–340.
+Lehmann, E. L. & Casella, G. (1998), Theory of Point Estimation, Springer-Verlag,New York, United States.
+Lindsey, J. K. (1996), Parametric Statistical Inference, Clarendon Press, Oxford,England.
+Mak, T. K. (1982), ‘Estimation in the Presence of Incidental Parameters’, The Canadian Journal of Statistics, La Revue Canadienne de Statistique 10-2, 121–132.
+McCullagh, P. & Tibshirani, R. (1990), ‘A Simple Method for the Adjustment of Profile Likelihoods’, Journal The Royal Statistical Society: Series B 52, 325–344.
+Neyman, J. & Scott, E. L. (1948), ‘Consistent Estimates Based on Partially Consistent Observations’, Econometrica 16-1, 1–32.
+Pace, L. & Salvan, A. (1997), Principles of Statistical Inference, World Scientific,Singapore, Singapore.
+Patefield, W. M. (1978), ‘The Unreplicated Ultrastructural Relation: Large Sample Properties’, Biometrika 65, 535–540.

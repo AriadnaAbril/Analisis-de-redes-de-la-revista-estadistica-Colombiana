@@ -1,0 +1,587 @@
+Análisis de supervivencia de pacientes con diálisis peritoneal
+Universidad de Los Andes
+Resumen
+Se realiza un análisis de supervivencia de pacientes que acudı́an al Servicio de Diálisis Peritoneal del Hospital Clı́nico Universitario de Caracas, Venezuela, entre los años 1980 y 1997, utilizando la muerte como evento de interés. El análisis incluye: estimaciones de las funciones de supervivencia mediante el estimador de Kaplan Meier, obtención del mejor modelo semiparamétrico de riesgos proporcionales (modelo de Cox), verificación de los supuestos y análisis de residuos. El modelo de Cox incluye diabetes, edad y el ı́ndice de Quetellet como covariables.
+Palabras Claves: Análisis de supervivencia, estimador de Kaplan y Meier, modelo de riesgos proporcionales (modelo de Cox), diálisis peritoneal.
+Introducción
+Las aplicaciones del análisis de supervivencia en diálisis renal no son nuevas. Sin embargo, la mayorı́a de ellas se limitan a la estimación de funciones de supervivencia o de riesgo y al ajuste de modelos de regresión para encontrar predictores de mortalidad o razones de riesgo, sin la verificación de los supuestos de los modelos (Hutchinson, Thomas, Lemieux & Harvey 1984, Burton & Walls 1987, Maiorca, Vonesh, Cancarini, Cantaluppi, Manili, Brunori, Camerini, Séller & Strada 1988, Maiorca, Vonesh, Cavalli, De Vecchi, Giangrande, La Greca, Scarpione, Bragantini, Cancarini, Cantaluppi, Castelnovo, A., Poisetti & Viglino 1991, Held, Port, Turrenne, Gaylin, Hamburger & Wolfe 1994, Maggiore, Nigrelli, Cicarelli, Grimaldi, Rossi & Michelassi 1996, Iseki, Miyasato, Tokuyama, Nishime, Ueshara, Shiohira, Sunagawa, Yoshihara, Yoshi, Toma, Kowatari, Wake, Oura & Fukiyama 1997, Woods, Port, Orzoul, Buoncristiani, Wolfe & Held 1998).
+El enfoque basado en procesos de conteo ha ampliado las posibilidades de los modelos de supervivencia (Fleming & Harrington 1991, Andersen, Borgan, Gill & Keiding 1993). Therneau & Grambsch (2000) introducen una metodologı́a basada en residuos que permite verificar los supuestos de los modelos de regresión, incluida en el software comercial reciente. El objetivo de este trabajo es presentar un análisis de supervivencia clásico y verificar los supuestos de los modelos de regresión basados en las técnicas más nuevas disponibles (Borges 2002).
+2.     Datos
+    Los datos analizados corresponden a 246 pacientes en diálisis peritoneal (DPA)
+que acudı́an al Servicio del Hospital Clı́nico Universitario de Caracas entre 1980
+y 1997. Se hizo un seguimiento a los pacientes desde el comienzo de sus sesiones
+de diálisis hasta alcanzar la muerte como evento de interés, o hasta la terminación
+del estudio, por lo que algunas observaciones resultan censuradas. En el análisis
+inicial se incluyeron 100 covariables dicotómicas y 16 continuas.
+
+
+3.     Análisis estadı́stico
+    Se estimó la función de supervivencia mediante el estimador de Kaplan & Meier
+(1958). Se ajustaron varios modelos de Cox (1972) para obtener las covariables
+significativas, eliminando las variables no significativas mediante el procedimiento
+paso a paso hacia atrás. Se aplicó un análisis de residuos a los modelos definitivos
+para verificar los supuestos del modelo de Cox, según lo propuesto por Therneau
+& Grambsch (2000). Para los cálculos se utilizó el paquete S-PLUS.
+
+
+4.     Elementos de la teorı́a
+       de análisis de supervivencia
+   El análisis de supervivencia tiene como objeto de estudio el tiempo de se-
+guimiento hasta la ocurrencia de un evento de interés y cobra vital importancia
+cuando existen observaciones censuradas. Existen varios tipos de censura: por la
+
+Análisis de supervivencia de pacientes con diálisis peritoneal                   245
+
+derecha, por la izquierda y por intervalos. Para tener un panorama general de los
+distintos tipos de censura véase Andersen et al. (1993). En este caso, trataremos
+con la censura más común, la censura por la derecha: se presenta cuando hasta el
+último instante en que se ha seguido al individuo todavı́a no ha ocurrido el evento
+de interés.
+
+
+4.1.     Definiciones básicas
+4.1.1.    Función de supervivencia
+
+    La función de supervivencia se define como la probabilidad de que una persona
+sobreviva (no le ocurra el evento de interés) al menos hasta el tiempo t. Una
+definición más formal puede darse de la siguiente manera: sea T una variable
+aleatoria positiva (o no negativa) con función de distribución F (t) y función de
+densidad de probabilidad f (t). La función de supervivencia S (t) es:
+                              S (t) = 1 − F (t) = P [T > t]
+
+4.1.2.    Función de razón de riesgos (hazard rate)
+
+    La función de razón de riesgos o tasa instantánea de fallas λ (t) se define como
+el cociente entre la función de densidad y la función de supervivencia:
+                                                    f (t)
+                                          λ (t) =
+                                                    S (t)
+    Se interpreta como la probabilidad de que a un individuo le ocurra el evento
+de interés en la siguiente unidad de tiempo ∆t dado que ha sobrevivido hasta el
+tiempo t.
+    Dicha función proviene de la tasa media de fallas: dada la probabilidad con-
+dicional de fallas en el perı́odo (t; t + ∆t), dado que la persona sobrevive en el
+perı́odo (0; t),la tasa media de fallas (TMF) se define como:
+                                      F (t + ∆t) − F (t) 1
+                            TMF =
+                                             ∆t         S (t)
+   Tomando lı́mites para ∆t → 0,queda:
+                                                      F 0 (t)   f (t)
+                          λ (t) = lı́m TMF =                  =
+                                  ∆t→0                S (t)     S (t)
+   La función de riesgo acumulada Λ (t) se define como:
+                                      Zt
+                            Λ (t) =        λ (u)du = − log S (t)
+                                      0
+
+Los datos de supervivencia suelen presentarse en la forma (ti , δi ) donde ti es el
+tiempo de observación y, δi = 0 si la observación es censurada y δi = 1 cuando se
+observa la ocurrencia del evento de interés.
+
+246                                                                    Rafael Eduardo Borges P.
+
+
+4.2.    Estimador de Kaplan y Meier
+   El estimador de la función de supervivencia más utilizado es el de Kaplan &
+Meier (1958):
+                                     Y r (ti ) − d (ti )
+                         ŜKM (t) =
+                                             r (ti )
+                                         ti ≤t
+
+donde r (ti ) y d (ti ) son el número de individuos en riesgo y el número de muertes
+(o de ocurrencia del evento de interés en el momento ti ).
+    La varianza del estimador de Kaplan y Meier se obtiene a través de la fórmula
+de Greenwood (1926):
+
+                                2
+                                        X                      d (ti )
+                  V ŜKM (t) = ŜKM (t)
+                                                     r (ti ) [r (ti ) − d (ti )]
+                                             ti ≤t
+
+
+    El intervalo de confianza calculado por defecto por los programas estadı́sticos
+es el de identidad o de escala plana, dado, para un nivel de confianza del 90 %,
+por:
+                             2
+                                                        
+                           ŜKM  (t) ± 1.645 ee ŜKM (t)
+                  
+donde ee ŜKM (t) es el error estándar de estimación del estimador de Kaplan y
+Meier.
+
+
+4.3.    El modelo de regresión de Cox
+    El modelo de regresión de Cox (1972) es el más utilizado para datos de super-
+vivencia en el área médica. En este modelo el riesgo para el i-ésimo individuo se
+define mediante:
+                                                      0
+                             λ (t; Zi (t)) = λ0 (t) eβ Zi (t)
+donde Zi (t) es el vector de covariables para el i-ésimo individuo en el tiempo t. Se
+dice que es un modelo semiparamétrico debido a que incluye una parte paramétrica
+y otra no paramétrica:
+                                         0
+ i) La parte paramétrica es ri (t) = eβ Zi (t) , llamada puntaje de riesgo (risk score)
+    y β es el vector de parámetros de la regresión.
+
+ ii) La parte no paramétrica es λ0 (t), llamada función de riesgo base y es una
+     función arbitraria no especificada.
+
+    El modelo de regresión de Cox es también llamado modelo de riesgos propor-
+cionales debido a que el cociente entre el riesgo para dos sujetos con el mismo
+vector de covariables es constante sobre el tiempo, es decir:
+                                                 0                 0
+                      λ (t; Zi (t))   λ0 (t) eβ Zi (t)    eβ Zi (t)
+                                    =           0 Z (t) =
+                      λ (t; Zj (t))           β           eβ Zj (t)
+                                                            0
+                                      λ0 (t) e j
+
+Análisis de supervivencia de pacientes con diálisis peritoneal                    247
+
+  Si ha ocurrido una muerte en el tiempo t∗ , entonces la verosimilitud de que la
+muerte le ocurra al i-ésimo individuo y no a otro es:
+                                  λ0 (t∗ ) ri (t∗ )          ri (t∗ )
+                 Li (β) = P          ∗        ∗      ∗
+                                                        =P
+                                Yj (t ) λ0 (t ) rj (t )    Yj (t∗ ) rj (t∗ )
+                            j                              j
+
+                        Q
+   El producto L(β) = Li (β) se llama la verosimilitud
+                                                      parcial y fue introducida
+por Cox (1972). La maximización de log L(β) da una estimación para β sin
+necesidad de estimar el parámetro de ruido λ0 (t).
+
+
+4.4.     Contrastes de hipótesis para el modelo de Cox
+   Una vez que se ha ajustado un modelo de Cox, existen tres contrastes de
+hipótesis para verificar la significación del modelo, estos tests son asintóticamente
+equivalentes pero no siempre sucede lo mismo en la práctica.
+
+4.4.1.    Test de razón de verosimilitud
+
+    El primero de los contrastes es el denominado test de razón de verosimilitud y
+es el que presenta una mayor confiabilidad. Este test se define como:
+                             n                     o
+                           2 log L(β0 ) − log L(β̂)
+
+donde β0 son los valores iniciales de los coeficientes y β̂ es la solución luego de
+ajustar el modelo. Este es el test que presentan por defecto los paquetes compu-
+tacionales.
+
+4.4.2.    Test de Wald
+
+   El segundo de los contrastes es conocido como el test de Wald y es quizás el
+más natural debido a que proporciona un contraste por variables en vez de una
+medida de significación global. El estadı́stico de contraste se define mediante:
+                                          0
+                                   β̂ − β0 Σ̂β̂−1 β̂ − β0
+                                                          
+
+
+   donde Σ̂β̂ es la matriz de varianzas y covarianzas estimada.
+
+4.4.3.    Test de los puntajes (score test)
+
+   El tercer contraste es el conocido como test de los puntajes (score test), definido
+como U 0 IU , donde U es el vector de derivadas del log (L (β)) dado por:
+
+                                  n Z  ∞
+                                  X                         
+                        U (β) =            Zi (t) − Z̄ (β, t) dNi (t)
+                                   i=1 0
+
+248                                                                   Rafael Eduardo Borges P.
+
+
+      I es la matriz de información:
+                n Z∞ P
+                                                                            0
+                         j Yj (t) rj (t) Zi (t) − Z̄ (β, t) Zi (t) − Z̄ (β, t)
+               X
+       I (β) =                             P                                      dNi (t)
+               i=1                            j Yj (t) rj (t)
+                    0
+
+y Z̄(β, t) es la media de las covariables para aquellos individuos todavı́a en riesgo
+en el tiempo t:
+                                            P
+                                             j Yj (t) rj (t) Zi (t)
+                              Z̄ (β, t) =       P
+                                                 i Yi (t) ri (t)
+
+
+4.5.       Interpretación del modelo de Cox
+   La interpretación del modelo de Cox no se hace directamente a través de su
+coeficiente estimado sino de su exponencial, exp(β̂).
+
+4.5.1.      Interpretación para covariables dicotómicas
+
+   Para cada covariable dicotómica, exp(β̂) es un estimador de la razón de ries-
+gos (hazard ratio) y se interpreta como la cantidad de riesgo que se tiene con la
+presencia de la covariable en relación a la ausencia de la covariable. Los intervalos
+de confianza del 90 % para exp(β̂) se obtienen mediante:
+                                                     
+                               exp β̂ ± 1.645 ee(β̂)
+
+donde ee(β̂) es el error estándar de β̂.
+
+4.5.2.      Interpretación para covariables continuas
+
+    Para el caso de covariables continuas, exp(β̂) representa la razón de riesgos
+(hazard ratio) al incrementar en una unidad la covariable.
+    En el caso de las covariables continuas suele resultar más interesante estimar la
+razón de riesgos al incrementar la covariable es c unidades y esto se hace mediante
+exp(cβ̂), siendo su intervalo de confianza del 90 % de la forma:
+                                                        
+                              exp cβ̂ ± 1.645 |c| ee(β̂)
+
+      Para una explicación más detallada puede verse Hosmer & Lemeshow (1999).
+
+
+4.6.       Estudio de residuos en el análisis de supervivencia
+    Una de las ventajas que han surgido del enfoque del análisis de supervivencia
+es la posibilidad de efectuar análisis de residuos (Andersen et al. 1993, Fleming &
+Harrington 1991, Therneau & Grambsch 2000, Therneau, Grambsch & Fleming
+1990).
+    Los residuos se pueden utilizar para:
+
+Análisis de supervivencia de pacientes con diálisis peritoneal                                 249
+
+   1. descubrir la forma funcional correcta de un predictor continuo.
+   2. identificar los sujetos que están pobremente pronosticados por el modelo.
+   3. identificar los puntos o individuos de influencia.
+   4. verificar el supuesto de riesgo proporcional.
+
+Existen cuatro tipos de residuos de interés en el modelo de Cox: los de martingala,
+los de desvı́os (deviances), los de puntaje (score) y los de Schoenfeld. De ellos
+pueden derivarse otros dos: los dfbetas y los residuos escalados de Schoenfeld. A
+continuación explicaremos brevemente cada uno de ellos.
+
+4.6.1.    Residuos de martingala
+
+   Los residuos de martingala se definen como:
+                                                             Zt
+                                                                              0
+            M̂i (t) = Ni (t) − Êi (t) = Ni (t) −                 Yi (s) eβ Zi (s) dΛ̂0 (β, s)
+                                                             0
+
+
+donde Λ̂0 (β, s) es el estimador del riesgo base de Breslow (o de Tsiatis o de Nelson
+y Aalen) definido como:
+                                                         n
+                                                         P
+                                           Zt                dNi (s)
+                                                       i=1
+                            Λ̂0 (β, s) =           n
+                                                         Yi (s) eβ 0 Zi (s)
+                                                   P
+                                           0
+                                                   i=1
+
+y están basados en la martingala de un proceso de conteo para el i-ésimo individuo,
+Mi (t) = Ni (t) − Ei (t), definida mediante:
+
+                                            Zt
+                                                                  0
+                       Mi (t) = Ni (t) −           Yi (s) eβ Zi (s) λ0 (s)ds
+                                               0
+
+Los residuos de martingala son muy asimétricos y con una cola muy larga hacia
+la derecha, particularmente para datos de supervivencia para un solo evento. Se
+usan para estudiar la forma funcional de una covariable continua.
+
+4.6.2.    Residuos de desvı́os (deviances)
+
+    Los residuos de desvı́os se obtienen mediante una transformación de norma-
+lización de los de martingala y son similares en forma a los residuos de desvı́os
+(deviances) en la regresión de Poisson. Si todas las covariables son fijas en el tiem-
+po, los residuos de desvı́os toman la forma:
+                                    q                               
+                  di = signo(M̂i ) ∗ −M̂i − Ni log (Ni − M̂i )/Ni
+
+250                                                              Rafael Eduardo Borges P.
+
+
+      Una expansión de Taylor de un término muestra que
+
+                                              Ni − Êi
+                                       di ≈    p
+                                                 Êi
+que es formalmente equivalente a los residuos de Pearson de los modelos lineales
+generalizados. Los residuos de desvı́os se utilizan para la detección de valores
+atı́picos (outliers).
+
+4.6.3.     Residuos de puntajes (scores)
+
+      Los residuos de puntajes se definen como:
+
+                                   Uij = Uij (β̂, ∞)
+
+donde Uij (β, t) , j = 1, . . . , p son las componentes del vector fila de longitud p
+obtenido a través del proceso de puntaje para el i -ésimo individuo:
+                                     Z t
+                                                           
+                        Ui (β) =          Zi (t) − Z̄ (β, t) dNi (t)
+                                   0
+
+   Los residuos de puntajes se utilizan para verificar la influencia individual y
+para la estimación robusta de la varianza.
+
+4.6.4.     Residuos de Schoenfeld
+
+      Los residuos de Schoenfeld se definen como la matriz
+
+                            sij (β) = Zij (ti ) − Z̄j (β, ti )
+
+que tiene una fila por muerte y una columna por covariable, donde i y ti son los
+individuos y el tiempo de ocurrencia del evento respectivamente. Estos residuos
+son útiles para la verificación del supuesto de riesgo proporcional en el modelo de
+Cox.
+
+
+5.       Resultados
+5.1.      Estimador de Kaplan y Meier
+    Los valores obtenidos con el estimador de Kaplan y Meier con el intervalo, el
+error estándar y el intervalo de confianza del 90 % puede verse en la tabla 1.
+
+Análisis de supervivencia de pacientes con diálisis peritoneal   251
+
+                          Tabla 1: Modelos de Cox para DPA
+
+      La tabla 1 incluye la siguiente información:
+       tiempo          número de meses de seguimiento.
+       n.riesgo        número de individuos en riesgo antes del tiempo.
+       n.eventos       número de muertes entre en tiempo y el siguiente mes en
+                       donde ocurre una muerte.
+       sobrevida       probabilidad de que un individuo sobreviva por un número
+                       de meses mayor al tiempo.
+       err.est.        error estándar de la sobrevida.
+       LCI 90 %        lı́mite de confianza inferior del 90 % para la sobrevida.
+       LCS 90 %        lı́mite de confianza superior del 90 % para la sobrevida.
+    Puede verse que el 75 % de los pacientes en diálisis peritoneal sobrevive hasta
+los 30 meses en diálisis, el 50 % logra sobrevivir hasta 61 meses, el 25 % sobrevive
+hasta 110 meses y el 17.7 % de los pacientes sobrevive más de 110 meses. El tiempo
+se sobrevida medio se ubicó en 67.2 meses, con un error estándar de 4.46 meses.
+
+
+5.2.      Modelo de Cox
+   El mejor modelo de Cox ajustado para DPA y muerte como evento de interés se
+muestra en la tabla 2. Puede afirmarse que las variables edad, ı́ndice de Quetelet y
+diabetes son significativas al 10 %, debido a que los p-valores obtenidos son todos
+menores que 0.10.
+
+         Tabla 2: Modelo de Cox para DPA y muerte como evento de interés.
+
+    Este modelo resulta significativo por cualquiera de los tres criterios para un
+10 % de significación, debido que los p-valores son todos menores que 0.10. Para
+el test de razón de verosimilitud se obtuvo un p-valor de 0.000308, para el test de
+Wald fue de 0.000229 y para el test de puntajes fue de 0.000184.
+    La figura 1 muestra el estimador de Kaplan y Meier de la función de super-
+vivencia y el ajuste mediante el modelo de Cox. En esta figura puede observarse
+que el ajuste obtenido mediante el modelo de Cox se ubica sistemáticamente por
+encima de la estimación de Kaplan y Meier.
+
+
+5.3.      Interpretación de los coeficientes estimados
+   La interpretación de los coeficientes debe hacerse a través de la evaluación de la
+función exponencial evaluada sobre los coeficientes estimados para cada covariable
+y esta interpretación difiere para covariables continuas y discretas.
+
+Figura 1: Comparación del ajuste del modelo de Cox y el estimador de KM para
+DPA según meses.
+
+5.3.1.                   Interpretación para la edad
+
+    El exponencial de coeficiente estimado para la edad es 1.032. Ası́, por cada
+año que aumenta la edad del paciente, el riesgo de morir por causas asociadas a
+la diálisis peritoneal es de 1.032 veces la de edad menor.
+    Por ser una variable continua, la interpretación para la edad puede hacerse
+para un perı́odo de distinto tamaño, utilizando a exp(cβ̂) en vez de exp(β̂), donde
+c es el número de años contenidos en el perı́odo.
+    Por ejemplo, si tomamos perı́odos de 5 años de edad, se obtendrı́a un riesgo de
+1.171, lo que significa que al aumentar la edad del paciente en cinco años, el riesgo
+de morir por causas asociadas a la diálisis peritoneal es 1.171 veces la de la edad
+menor.
+    Análogamente, si tomamos perı́odos de 10 años de edad, se obtendrı́a un riesgo
+de 1.370, lo que significa que al aumentar la edad del paciente en diez años, el
+riesgo de morir por causas asociadas a la diálisis peritoneal es 1.370 veces la de la
+edad menor.
+
+5.3.2.                   Interpretación para el ı́ndice de Quetelet
+
+   La interpretación del ı́ndice de Quetelet es análoga a la de la edad, el expo-
+nencial del coeficiente estimado en este caso fue de 0.908, valor que se interpreta
+
+254                                                            Rafael Eduardo Borges P.
+
+
+de la siguiente manera: al aumentar el ı́ndice de Quetelet es una unidad, el riesgo
+es 0.908 veces en comparación con la unidad menor. Este resultado indica que el
+ı́ndice de Quetelet pareciera ser un factor de protección, en lugar de un factor de
+riesgo, es decir, que mientras mayor es el ı́ndice, menor es la mortalidad por causas
+asociadas a la diálisis peritoneal.
+
+5.3.3.   Interpretación para la diabetes
+
+   Para el caso de la diabetes, la interpretación es distinta: en este caso el ex-
+ponencial del coeficiente estimado es 1.732, que se interpreta ası́: la presencia de
+diabetes aumenta el riesgo de muerte por causas asociadas a diálisis peritoneal en
+1.732 veces, es decir, que un individuo con diabetes tiene 1.732 veces más riesgo de
+morir por causas asociadas a la diálisis peritoneal que un individuo que no tenga
+diabetes.
+
+
+5.4.     Análisis de residuos
+    En esta sección se presenta el análisis de residuos mediante dispositivos gráficos
+incluidos en la figura 2 donde:
+
+(a) Es el gráfico para el test de riesgos proporcionales para diabetes.
+
+(b) Es el gráfico para el test de riesgos proporcionales para edad.
+
+(c) Es el gráfico para el test de riesgos proporcionales para ı́ndice de Quetellet.
+
+(d) Es el gráfico de influencias para diabetes.
+
+(e) Es el gráfico de influencias para edad.
+
+(f) Es el gráfico de influencias para ı́ndice de Quetellet.
+
+(g) Es el gráfico de los devı́os (deviances) del modelo.
+
+(h) Es el gráfico para la verificación de la adecuacidad de la forma funcional de la
+    edad.
+
+(i) Es el gráfico para la verificación de la adecuacidad de la forma funcional del
+    ı́ndice de Quetellet.
+
+
+5.4.1.   Supuestos de riesgos proporcionales
+
+    La verificación de los supuestos de riesgos proporcionales puede verse mediante
+las partes (a), (b) y (c) de la figura 2. En estos gráficos no se observa una violación
+del supuesto en cada una de las covariables. Sin embargo, para el caso de la edad, se
+observa quizás un patrón cı́clico muy atenuado, lo que da indicios de la necesidad
+de ajustar un modelo de Cox con covariables dependientes del tiempo, pudiendo
+
+                                                        Figura 2: Verificación de los supuestos del modelo de Cox.
+
+
+
+
+en este caso utilizarse los modelos frágiles (frailty models), debido a la variación
+temporal de los residuos de Schoenfeld.
+    Los modelos frágiles son modelos de efectos aleatorios para datos de supervi-
+vencia introducidos por Vaupel, Manton & Stallard (1979) y han sido utilizados
+en los modelos de riesgos proporcionales con covariables dependientes del tiem-
+po. Esta no es la única aplicación de los modelos frágiles, una revisión exhaustiva
+puede verse en Hougaard (1995) o en Liang, Self, Bandeen-Roche & Zeger (1995).
+    La verificación del supuesto de riesgos proporcionales puede efectuarse a través
+de un contraste de hipótesis, donde la hipótesis nula esta asociada al cumplimiento
+del supuesto de riesgos proporcionales. Los resultados de este contraste indican
+que no se viola el supuesto de riesgos proporcionales para ninguna de las tres
+covariables. Los p-valores asociados a este contraste para diabetes, edad e ı́ndice
+de Quetellet son 0.776, 0.305 y 0.633, respectivamente, observándose que todos
+son mayores que 0.10, con lo que no se estarı́a rechazando la hipótesis de riesgos
+proporcionales para ninguna de las covariables.
+    Este contraste permite verificar la violación global del supuesto de riesgos pro-
+porcionales de todas las covariables. En este caso se obtiene un p-valor de 0.71, y
+por ser éste mayor que 0.10, no se rechazarı́a la hipótesis nula de cumplimiento
+conjunto del riesgo proporcional de las tres covariables.
+
+5.4.2.    Influencia de individuos en la estimación de los coeficientes
+
+    La contribución de los individuos en la estimación de los coeficientes puede
+verse a través de las partes (d), (e) y (f) de la figura 2. En estos gráficos se puede
+observar que para diabetes y edad, no existen individuos que estén influyendo en
+la estimación de sus respectivos coeficientes. Para el ı́ndice de Quetelet, probable-
+mente existe un individuo ubicado en la parte superior que está influyendo en la
+estimación de su coeficiente; se trata del individuo # 6.
+
+5.4.3.    Influencia de individuos en la estimación del modelo
+
+    En la parte (g) de la figura 2 no se observa ningún individuo que esté influyendo
+en la estimación del modelo, ya que el patrón es el de una nube de puntos.
+
+5.4.4.    Forma funcional de las covariables continuas
+
+     En las partes (h) e (i) de la figura 2 se observa que la forma funcional es correcta
+en el modelo que puede verse al tener las funciones suavizadas la apariencia de
+lı́neas rectas, tanto para la edad, como para el ı́ndice de Quetelet. Eso quiere decir
+que no hace falta efectuar transformaciones para estas covariables.
+
+
+6.       Conclusiones
+     El análisis de supervivencia clásico es adecuado para la estimación de funcio-
+nes de supervivencia y el ajuste de modelos de regresión para la obtención de
+covariables significativas, lo cual queda evidenciado en este trabajo.
+     La incorporación del enfoque de procesos de conteo al análisis de supervivencia
+ha permitido el desarrollo de nuevas herramientas. En este caso se ha considerado
+sólo el análisis de los residuos para la verificación de los supuestos del modelo de
+Cox. Los aportes de este enfoque al análisis de supervivencia son muchos.
+     Puede concluirse que para el caso de los pacientes que acudı́an al Servicio de
+diálisis peritoneal del Hospital Clı́nico Universitario de Caracas, Venezuela entre
+los años 1980 y 1997, las covariables significativas en el modelo de Cox fueron la
+diabetes, la edad y el ı́ndice de Quetellet. Estas covariables son las que estarı́an
+modificando el riesgo de muerte en los pacientes en diálisis peritoneal.
+     Se concluye además que el modelo de riesgos proporcionales presentado es
+adecuado ya que todos los supuestos se verifican.
+
+
+7.       Discusión
+   A pesar de que el análisis de supervivencia es una herramienta muy poderosa
+para modelar datos de evento-tiempo y la más adecuada para datos censurados, se
+encuentra poco vinculada a los programas de estudios en estadı́stica en nuestros
+
+Análisis de supervivencia de pacientes con diálisis peritoneal                   257
+
+paı́ses y no hay duda en que debe incluirse de manera formal en los programas de
+estudios de pregrado y postgrado.
+    Debemos resaltar que el campo de acción del análisis de supervivencia no
+está sólo vinculada con el área médica, sino con cualquier área en donde se quiera
+determinar las funciones del tiempo transcurrido desde un instante de comienzo
+del seguimiento de un conjunto de individuos hasta la ocurrencia de un evento de
+interés, y en caso de no observar el evento de interés se tienen las observaciones
+censuradas.
+    En este trabajo sólo se presentan la estimación de las funciones de supervi-
+vencia, la obtención de covariables predictoras de la función de supervivencia y
+la verificación de los supuestos del modelo de Cox. Un paso más adelante a lo
+alcanzado hasta este punto lo constituye la estimación de las razones de riesgo
+para cada una de las modalidades de las covariables dicotómicas. Otra opción pa-
+ra continuar con el presente trabajo es la obtención de modelos que contemplen
+variación temporal del supuesto de riesgo proporcional, pudiéndose utilizar en este
+caso la metodologı́a de los modelos frágiles.
+    El análisis presentado fue realizado utilizando en software estadı́stico S-PLUS
+pero éste puede llevarse a cabo mediante otras herramientas como R (R Develop-
+ment Core Team 2005).
+
+
+Agradecimientos Agradezco al Prof. Giampaolo Orlandoni, tutor, y al Dr. Pa-
+blo Amair, jurado de mi tesis de maestrı́a en Estadı́stica Aplicada de donde se
+tomó una parte como base para este artı́culo.
+Referencias
+Andersen, P., Borgan, O., Gill, R. & Keiding, N. (1993), Statistical Models Based on Counting Processes, Springer-Verlag, N.Y.
+Borges, R. (2002), Análisis de supervivencia aplicado a un caso de diálisis renal: diálisis peritoneal en el Hospital Clı́nico Universitario de Caracas y Hemodiálisis en el Hospital de Clı́nicas Caracas, 1980-2000, Master’s thesis, Instituto de Estadı́stica Aplicada y Computación, ULA, Mérida. (Disponible en http://tesis.saber.ula.ve/theses/available/etd-06202003-171618/).
+Burton, P. R. & Walls, J. (1987), ‘Selection-adjusted comparison of life-expectancy of patients on continuous ambulatory peritoneal dialysis, haemodialysis and renal transplantation’, The Lancet i, 1115–1119.
+Cox, D. (1972), ‘Regression models and life tables (with discussion).’, Journal of the Royal Statistical Society: Series B (34), 187–220.
+Fleming, T. R. & Harrington, D. P. (1991), Counting Processes and Survival Analysis, John Wiley & Sons, Inc., N.Y.
+Greenwood, M. (1926), ‘The natural duration of cancer’, Reports on Public Health and Medical Subjects (33), 1–26.
+Held, P. J., Port, F. K., Turrenne, M.Ñ., Gaylin, D. S., Hamburger, R. J. & Wolfe,R. A. (1994), ‘Continuous ambulatory peritoneal dialysis and hemodialysis: Comparison of patients with adjustment for comorbid conditions’, Kidney International (45), 1163–1169.
+Hosmer, D. W. & Lemeshow, S. (1999), Applied Survival Analysis: Regression Modeling of Time to Event Data, John Wiley & Sons, Inc., N.Y.
+Hougaard, P. (1995), ‘Frailty models for survival data’, Lifetime Data Analysis (1), 255–273.
+Hutchinson, T. A., Thomas, D. C., Lemieux, J. C. & Harvey, C. E. (1984), ‘Prognostically controlled comparison of dialysis and renal transplantation’, Kidney International (26), 44–51.
+Insightful Corporation, I. (2001), S-PLUS 6 for Windows Guide to Statistics, Volume 2, WA: Insightful Corporation, Inc., Seattle.
+Iseki, K., Miyasato, F., Tokuyama, K., Nishime, K., Ueshara, H., Shiohira, Y., Sunagawa, H., Yoshihara, K., Yoshi, S., Toma, S., Kowatari, T., Wake, T., Oura, T. & Fukiyama, K. (1997), ‘Low diastolic blood pressure, hipoalbuminemia, and risk of death in a cohort of hemodialysis patients’, Kidney International (51), 1212–1217.
+Kaplan, E. & Meier, P. (1958), ‘Nonparametric estimation from incomplete observations’, Journal of the American Statistical Association (53), 457–481.
+Liang, K., Self, S., Bandeen-Roche, K. & Zeger, Z. (1995), ‘Some recent developments for regression analysis of multivariate failure time data’, Lifetime Data Analysis (1), 403–415.
+Maggiore, Q., Nigrelli, S., Cicarelli, C., Grimaldi, C., Rossi, G. & Michelassi, C. (1996), ‘Nutritional and prognostic correlates of bioimpedance indexes in hemodialysis patients’, Kidney International (50), 2103–2108.
+Maiorca, R., Vonesh, E., Cancarini, G., Cantaluppi, A., Manili, L., Brunori, G., Camerini, C., Séller, P. & Strada, A. (1988), ‘A six-years comparison of patients and technique survivals in capd and hd’, Kidney International (34), 518–524.
+Maiorca, R., Vonesh, E., Cavalli, P., De Vecchi, A., Giangrande, A., La Greca, G., Scarpione, L., Bragantini, L., Cancarini, G., Cantaluppi, A., Castelnovo, C., A., C., Poisetti, P. & Viglino, G. (1991), ‘A multicenter selection-adjusted comparison of patients and technique survival on capd and hemodialysis’, Peritoneal Dialysis International (11), 118–127.
+R Development Core Team (2005), R: A Language and Environment for Statistical Computing, Vienna, Austria.
+Therneau, T. & Grambsch, P. (2000), Modeling Survival Data: Extending the Cox Model, Springer-Verlag, N.Y.
+Therneau, T., Grambsch, P. & Fleming, T. (1990), ‘Martingale-based residuals for survival models’, Biometrika (77), 147–160.
+Vaupel, J., Manton, K. & Stallard, E. (1979), ‘The impact of heterogeneity in individual frailty on the dynamics of mortality’, Demography (16), 439–454.
+Woods, J., Port, F., Orzoul, S., Buoncristiani, U., Y. E., Wolfe, R. & Held, P. (1998), ‘Clinical and biochemical correlates of starting daily hemodialysis’, Kidney International (55), 2467–2476.

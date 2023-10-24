@@ -1,0 +1,496 @@
+Una aplicación del método jerárquico de mezclas para la clasificación de los municipios venezolanos según variables socioeconómicas
+Instituto Venezolano de Investigaciones Científicas;Universidad de Los Andes
+Resumen
+En este trabajo se presenta una aplicación del método propuesto por Fraley & Raftery (2002) para la obtención de grupos de municipios de Venezuela a partir de un conjunto de variables socioeconómicas. Las variables consideradas miden aspectos del hogar de las familias que viven en los municipios,la ocupación de sus miembros, la educación, aspectos demográficos, entre otros. Como datos de entrada, se decidió tomar los primeros seis componentes principales de un análisis previo realizado a estos datos. Se obtuvieron nueve grupos diferenciados entre sí marcando, principalmente, diferencias en el estatus social, en el acceso a algunos servicios, y la calidad de vida en general.
+Palabras clave: factor de Bayes, análisis de conglomerados, algoritmo EM , modelos mezclados.
+Introducción
+El análisis de conglomerados (cluster analysis) es un conjunto de técnicas que
+permite la ubicación de unos objetos, ítems, individuos, etc., dentro de unos grupos
+denominados conglomerados, de forma tal que, en cada grupo, los objetos sean
+semejantes entre sí y, entre los diversos grupos, diferentes.
+    Principalmente se busca: la identificación de tales grupos, la confirmación de
+sus diferencias y la explicación de su formación, en cuanto a las variables medidas
+en ellos.
+    La manera en que se forman los conglomerados puede variar. Entre los métodos
+más populares están los jerárquicos, de partición, gráficos, y de conglomerados
+difusos (Díaz 2002).
+    Fraley (1998), Fraley & Raftery (2002) añaden un supuesto importante para la
+búsqueda de los conglomerados: la normalidad multivariante. Este supuesto, junto
+a la utilización de información previa de los individuos (forma presumible en la
+que pueden estar formados los conglomerados), ayuda a la definición de los grupos
+resultantes.
+    El modelo propuesto por Fraley y Raftery no es el único, ni el más reciente;
+existen en la literatura diversas propuestas, algunas de las cuales mencionaremos a
+continuación. Gallegos & Ritter (2005) presentan un método robusto que permite
+trabajar incorporando los valores atípicos (outliers), aunque con limitaciones res-
+pecto a las familias paramétricas considerada. Oh & Raftery (2007) plantean un
+método de clusters basados en modelos que admiten disimilaridades en el espacio
+euclídeo de distancias. Gnanadesikan et al. (2007) presentan un interesante trabajo
+donde se plantean algunas alternativas para la identificación de la estructura de los
+clusters. Bouveyron et al. (2007) proponen una generalización del método basado
+en mezclas o mixturas para datos de alta dimensión. Y en otro contexto, Leisch
+(2006) plantea una interesante discusión del análisis de conglomerados basado en
+los centroides.
+   Sin embargo, el método propuesto por Fraley & Raftery (2002) sigue siendo
+una excelente alternativa, debido a la disponibilidad de software y a la versatilidad
+en cuanto a las distribuciones admitidas, las cuales, según los mismos autores, no
+necesariamente tienen que ser gaussianas. Una revision actualizada de algunos
+programas disponibles se encuentra en el trabajo de Haughton et al. (2007).
+   Este trabajo se enmarcó básicamente bajo la metodología de estos últimos y no
+representa un avance metodológico del tema pero sí muestra nuevos hallazgos que
+ayudan a conocer el país. El objetivo fundamental es determinar territorios sociales
+(municipales) en Venezuela partiendo de una base de datos censal cuyas variables
+son principalmente socioecónomicas (véanse INE 2005a, INE 2005b, INE 2005c).
+   Las variables pueden dividirse en: equipamiento del hogar (porcentaje de fa-
+milias con nevera, proporción de familias con internet, etc.), acceso a servicios del
+hogar (porcentaje de familias sin servicio de electricidad, porcentaje de familias
+que no tiene servicio de aseo urbano, etc.), ocupación (porcentaje de familias que
+trabaja principalmente en el sector público, porcentaje de familias que trabaja
+principalmente en el sector informal, etc.), educación (alfabetismo, personas titu-
+
+                                    Revista Colombiana de Estadística 32 (2009) 231–245
+
+Método jerárquico de mezclas                                                        233
+
+ladas, etc.), aspectos demográficos (índice de masculinidad del municipio, tasa de
+natalidad, etc.), otros indicadores y ciertos activos.
+    La búsqueda de estos grupos no es nueva en la literatura. Por ejemplo, Bergon-
+zoli (2006) sugiere una forma de estratificar zonas geográficas (municipios, parro-
+quias, cantones, estados, etc.) con el método de la razón proporcional de brechas
+(RPB) que toma en cuenta la tasa de mortalidad, porcentaje de analfabetismo,
+vacuna antisarampión en niños menores de un año, y el porcentaje de riqueza; y
+lo ejemplifica con estados guatemaltecos.
+    De forma alternativa, da una serie de pasos para la estratificación a través
+de otras variables: el producto interno bruto (PIB), el porcentaje de personas
+pertenecientes a una etnia indígena y el porcentaje de ruralidad. Una vez conocidos
+estos estratos, y conocidos qué estados pertenecen a cuáles grupos, realiza varios
+análisis de varianzas para cerciorarse que son realmente distintos.
+    Lago et al. (2000), en su trabajo sobre la conformación de subregiones ar-
+gentinas, proponen la utilización de métodos estadísticos multivariados con una
+cantidad mayor de variables. A este efecto, dicen, utilizaron veintiséis variables, y,
+básicamente, siguieron dos pasos: a) realizaron un análisis de componentes princi-
+pales sobre la matriz de datos para resumir esta información y b) clasificaron los
+setentaiún departamentos en una cantidad reducida de estratos. Para este último
+punto, utilizaron el método de k-means con los puntajes obtenidos en a). Para
+verificar el resultado obtenido, realizaron una serie de análisis de varianzas.
+    López et al. (2002), en nuestro país, señalan los pasos para crear los estratos
+nacionales mediante, únicamente, el análisis de conglomerados. Es bueno advertir
+que López et al. (2002) no dan resultados sobre este asunto, sino que indican cómo
+realizarlo. El tipo de análisis de conglomerado que utilizan es de k-means.
+    Este trabajo se divide de la siguiente manera: la sección 2 expone el análisis de
+conglomerados desde la perspectiva de Fraley y Raftery, considerando sus etapas
+principales; la sección 3 muestra una aplicación de la técnica sobre unos datos de
+tipo socioeconómico, y en la sección 4 se presentan algunas conclusiones.
+
+
+2. Análisis de conglomerados según Fraley y Raftery
+   (2002)
+    Sea X una variable p-dimensional observada en el conjunto de datos y sea f (x)
+su función de densidad. Sean {xi ; i = 1, . . . , n} las observaciones de X correspon-
+dientes a una muestra aleatoria simple de la población objeto de estudio.
+    Fraley y Raftery suponen que la densidad f viene dada por la mezcla de la
+forma                                 m
+                                      X
+                            f (x) =        πk fk (x | θk )                         (1)
+                                      k=1
+                     Pm
+donde cada πk > 0 y k=1 πk = 1.
+   Por su parte, m es el número de componentes en la mezcla (número de grupos
+presentes en la población estudiada), {fk (x | θk ); k = 1, . . . , m} son los modelos
+
+                                     Revista Colombiana de Estadística 32 (2009) 231–245
+
+234                      Freddy Omar López Quintero & Rafael Eduardo Borges Peña
+
+distribucionales para cada uno y {πi ; k = 1, . . . , m} son los pesos dentro de la
+mezcla (tamaño del grupo k-ésimo).
+    Además, para Fraley y Raftery, el k-ésimo conglomerado se puede representar
+por un modelo gaussiano de la forma
+                                               1          T
+                                            e− 2 (xi −µk ) Σk (xi −µk )
+                                                              −1
+
+                     φk (xi | µk , Σk ) =            p                               (2)
+                                                       |2πΣk |
+cuyas medias y varianzas son, respectivamente: µk y Σk .
+   Cada matriz de covarianzas puede parametrizarse por su descomposición es-
+pectral en la forma
+                             Σk = λk Dk Ak DkT                           (3)
+donde Dk es la matriz ortogonal de vectores propios de Σk y sirve para determinar
+la orientación de los elipsoides de equidensidad de Σk ; Ak es una matriz diagonal
+en la que se verifica que |Ak | = 1 y determina la forma de la distribución; además,
+sus elementos son proporcionales a los valores propios de Σk , y λk es un escalar
+que especifica el volumen del correspondiente elipsoide, el cual es proporcional al
+escalar λdk |Ak |, donde d es la dimensión de los datos.
+    Las características (orientación, volumen, y forma) de las distribuciones son
+generalmente estimadas de los mismos datos, y puede permitirse variación entre
+los conglomerados, o ser forzados a tener las mismas medidas (véanse Murtagh &
+Raftery 1984, Bandfield & Raftery 1993, Celeux & Govaert 1995).
+   Utilizando esta (re)parametrización de cada uno de los modelos componentes,
+en términos de µk , λk , Dk y Ak , se pueden construir hasta 27 familias de modelos
+de mezclas que surgen de la combinación de las variantes del
+
+   • Volumen (λk ): I (λk = 1, ∀k); E (λk = λ, ∀k) o V (λk diferente para cada k),
+   • Forma (Ak ): I (Ak = Ip , ∀k); E (Ak = A, ∀k) o V (Ak diferente para cada
+     k), y
+   • Orientación (Dk ): I (Dk = Ip , ∀k); E (Dk = D, ∀k) o V (Dk diferente para
+     cada k).
+
+Así, el modelo EVI denota un modelo en el cual el volumen de todos los conglome-
+rados es igual (E, de equal, en inglés), la forma de los conglomerados puede variar
+(V, de varying) y la orientación es la identidad (I, de identity).
+    Una vez hallada la mejor representación (de las 27) para nuestro conjunto de
+datos, la metodología de Fraley & Raftery (2002) consiste en 3 etapas:
+
+
+2.1. Agrupamiento jerárquico
+   Entonces, en el enfoque de la verosimilitud de clasificación (Fraley 1998) los
+parámetros de θ y γ son escogidos tales que ellos maximicen
+                                               m
+                                               Y
+                              L(x; θ, γ) =           fγi (x; θ)                      (4)
+                                               i=1
+
+
+                                      Revista Colombiana de Estadística 32 (2009) 231–245
+
+Método jerárquico de mezclas                                                                             235
+
+    En su trabajo, Fraley (1998) y Fraley & Raftery (2002) se centran en el caso
+donde fk (x; θk ) es del tipo normal (gaussiana). Nótese que una vez maximizada
+la ecuación (4) se obtendrá una variable que nos dirá a qué grupo pertenece el
+individuo xi .
+   Cuando fk (x; | θk ) es una función normal multivariante, la función (4) toma la
+forma
+
+  L(x; µ1 , . . . , µm , Σ1 , . . . , µm , γ) =
+                                         m Y
+                                         Y                  π      − 21     1           T
+                                                                          e− (x −µ ) Σ (x −µ )
+                                                                                            −1
+                                                     (2π)− 2 |Σk |          2   i   k       k    i   k
+                                                                                                         (5)
+                                         k=1 i∈Ik
+
+
+donde I ∈ {i : γi = k} es el conjunto de índices correspondientes a las observaciones
+provenientes del k-ésimo grupo.
+
+
+2.2. Algoritmo EM
+    El algoritmo EM (Dempster et al. 1977) se utiliza en estadística para hallar
+el máximo de una función de verosimilitud en un modelo probabilístico, donde
+el modelo depende de unas variables no observadas. El algoritmo alterna entre
+la realización de un paso de expectación (E), el cual calcula una esperanza de la
+verosimilitud incluyendo la variable latente como si ella fuese observada, y un paso
+de maximización (M ), el cual calcula el máximo de la función de verosimilitud
+utilizando los valores de los parámetros hallados en el paso E. Los parámetros
+encontrados en el paso M se utilizan para comenzar otro paso E, y el proceso se
+repite hasta la convergencia.
+   En el algoritmo EM para modelos mezclados se considera “datos completos” a
+xi = (yi , zi ), donde zi = (zi1 , . . . , zim ) (m es el número de grupos) es la porción
+de datos no observados con
+                               (
+                                  1 si xi pertenece al grupo k
+                         zik =                                                        (6)
+                                  0 en otro caso
+
+   Ahora, se tiene que cada zi es independiente e idénticamente distribuido de
+acuerdo con una distribución multinomial de m categorías. Es decir
+
+        zi |π1 , . . . , πm , θ1 , . . . , θm , x1 , . . . , xn ∼ M ultinomial(1, αi1, . . . , αim )     (7)
+
+donde
+                                            πk fk (xi | θk )
+                                    αik = Pm                                                             (8)
+                                           k=1 πk fk (xi | θk )
+
+es la probabilidad a posteriori que el individuo i-ésimo pertenezca al grupo k-ésimo
+para k = 1, . . . , m, y tomándose como probabilidades a priori de cada grupo los
+pesos {πi ; kQ= 1, . . . , m}. La densidad de una observación yi dado zi está dada por
+              m
+f (xi |zi ) = k=1 fk (xi | θk )zik (Fraley & Raftery 2002).
+
+                                                  Revista Colombiana de Estadística 32 (2009) 231–245
+
+236                           Freddy Omar López Quintero & Rafael Eduardo Borges Peña
+
+   En efecto, como señala Peña (2004), en zi solo un componente zik es distinto de
+cero y ese componente definirá cuál es la función de densidad de las observaciones.
+Análogamente, la función de probabilidades de la variable zi será (Peña 2004)
+                                                       m
+                                                       Y
+                                          p(zi ) =           πkzik                                      (9)
+                                                       k=1
+
+
+   Por otro lado, la función de densidad conjunta es (Peña 2004)
+
+                                    f (xi , zi ) = f (xi | zi )p(zi )                                  (10)
+
+que, por (9) y (10), se puede escribir
+                                                 m
+                                                 Y
+                               f (xi , zi ) =         (πk fk (xi | θk ))zik                            (11)
+                                                k=1
+
+
+   Y así, la función de logverosimilitud conjunta es
+                    n
+                    X
+  LC (θ | x, z) =         log f (xi , zi ) =
+                    i=1
+                                          m
+                                        n X
+                                        X                              m
+                                                                     n X
+                                                                     X
+                                                    zik log πk +               zik log fk (xi | θk )   (12)
+                                        i=1 k=1                      i=1 k=1
+
+
+   El algoritmo comenzará con una estimación inicial de los parámetros, θb(0) .
+    En el paso E se calculará el valor esperado de las observaciones ausentes en
+la verosimilitud completa (12) condicionando los parámetros iniciales y os datos
+observados. Como la verosimilitud es lineal en zik , esto equivale a sustituir las
+variables ausentes por sus esperanzas. Entonces
+                                                         
+                                                                (0)
+                   E zik | x, θb(0) = p zik = 1 | xi , θb(0) = αik            (13)
+
+   Al sustituir estos valores en (12) se obtiene
+                                m
+                              n X
+                              X                                m
+                                                             n X
+                                                             X
+                                          (0)                           (0)
+            L∗C (θ | x) =               αik log πk +                   αik log fk (xi | θk )           (14)
+                              i=1 k=1                        i=1 k=1
+
+
+    En la etapa M se debe maximizar la función (14) respecto a los parámetros
+θ = (π1 , . . . , πm , θ1 , . . . , θm ).
+    Y la solución a este problema (en el caso que el modelo sea VVV) viene dada
+por                                            Pn
+                                                       αik xi
+                                           bk = Pi=1
+                                           µ        n
+                                                    i=1 αik
+                                          Pn
+                                   b k = i=1 αik (x
+                                   Σ             Pin
+                                                      −µ           bk )
+                                                        bk ) (xi − µ
+                                                        α
+                                                    i=1 ik
+
+
+                                                Revista Colombiana de Estadística 32 (2009) 231–245
+
+Método jerárquico de mezclas                                                       237
+
+y                                        Pn
+                                          i=1 αik
+                                  bk =
+                                  π
+                                              n
+para k = 1, . . . , m.
+                                                 bk y µ
+    En el resto de los casos la forma de estimar π    bk no varía; sin embargo,
+la forma de estimar Σ b k debe obtenerse por medio de procedimientos iterativos
+(Celeux & Govaert 1995).
+     La resolución de estas ecuaciones conduce a un nuevo vector de parámetros
+θb(1) , y el algoritmo debe iterar hasta obtener la convergencia.
+
+
+2.3. Selección del modelo
+     Para seleccionar un modelo se calcula el BIC (Schwarz 1978) para cada m =
+1, . . . , M y para cada una de las hipótesis hechas sobre las matrices Σk de los
+modelos componentes y se elige la combinación que maximice dicho criterio.
+
+
+2.4. Construcción de los grupos
+    Con la información de las secciones anteriores, se puede definir la siguiente
+estrategia:
+
+    • Determinar un número máximo de conglomerados (M ) a trabajar y un con-
+      junto de modelos mezclados a considerar.
+    • Aglomerar jerárquicamente los conglomerados para maximizar la verosimili-
+      tud de clasificación de cada modelo y obtener la clasificación hasta M grupos.
+    • Implementar el algoritmo EM para cada modelo y para cada número de
+      conglomerados 2, . . . , M , comenzando con la aglomeración jerárquica.
+
+    • Calcular el BIC para cada modelo y para cada cantidad de conglomerados.
+
+
+3. Aplicación práctica
+    La aplicación que se presenta es parte de la búsqueda de similitudes y patrones
+de la totalidad de los municipios de Venezuela (parroquias, en el caso del Distri-
+to Capital), en cuanto a una serie de variables socioeconómicas. El objetivo del
+estudio era encontrar grupos de municipios semejantes entre sí (véase López 2007).
+    La matriz de entrada es de tamaño (366 × 6: 366 municipios × 6 componentes),
+que se corresponde a los 6 componentes retenidos en un Análisis de Componentes
+Principales no Paramétrico (ACPnP) (Lebart et al. 1984) sobre un conjunto de
+datos de más de treinta variables. Se retuvo el número de componentes que tuvieran
+autovalor mayor que la unidad. Eso se ve cumplido con el autovalor sexto. Este
+autovalor explica aproximadamente el 3 % de la varianza total y hasta él se explica
+el 67 % de la variabilidad total.
+
+                                  Tabla 1: Autovalores.
+                                            ACPnP
+
+    Al primer componente le dan la misma contribución, más o menos, todas las
+variables, a excepción de unas pocas que, entre ellas, no aportan ni el 1 %. Este
+componente ubica del lado positivo algunas variables que de alguna u otra forma
+denotan una calidad de vida superior (porcentaje de familias que poseen carro,
+alfabetismo, IDH, camas por hospital, etc.) y del lado negativo están variables
+asociadas a problemas sociales: índice de masculinidad, porcentaje de familias sin
+acceso a aseo urbano, porcentaje de familias con casa propia, etc. Así, se bautizará
+este componente como ‘Factor Estatus Social’.
+    Para el segundo componente solo dos variables le contribuyen en más de un
+10 %: porcentaje de personas que asiste a una institución educativa y déficit fun-
+cional de viviendas de la entidad a la que pertenece el municipio. Este componente
+coloca del lado positivo variables de desarrollo humano en general y del lado nega-
+tivo la tasa de fecundidad, tasa de natalidad, etc. Se nombrará ‘Factor Expectativa
+de Vida’.
+    El tercer componente tiene influencia clara de porcentaje de personas con ca-
+sa propia (16.99 %), porcentaje de familias que viven en una vivienda nuclear
+(14.3 %), porcentaje de extranjeros en el municipio (10.11 %), tasa de actividad
+(12.7 %) y sector público (17.61 %). Entre todas suman 71.71 %. Este componente
+se denominará ‘Factor de Viviendas’.
+    Lo primero que se mostrará, con relación al análisis de Fraley y Raftery, será la
+tabla 2. Esta tabla muestra el BIC calculado para cada parametrización supuesta
+de los datos con cada número de conglomerado introducido. Se ha permitido que el
+programa actúe con grupos desde dos hasta nueve. En la tabla aparece en negrilla
+el valor BIC más alto.
+    Una vez entendida esta salida, se averigua qué conglomerado le corresponde
+a cada uno de los municipios. Para dar respuesta a esta pregunta nuevamente se
+siguieron los pasos dados por los autores (ver sección 2.4) y se utilizó el programa
+por ellos proporcionado (Fraley & Raftery 2006).
+   Al revisar la tabla 2 se observa que se establecen nueve conglomerados partien-
+do del supuesto que los datos siguen una distribución normal elipsoidal de igual
+volumen, igual forma e igual orientación (EEE).
+
+                                 Tabla 2: Criterio BIC.
+                                 Características de la distribución
+
+   La figura 1 muestra que el mejor modelo que representa los datos es aquel
+cuyas matrices de covarianza estimadas son del tipo EEE y se maximiza con nueve
+grupos.
+    Se puede observar, en la figura 2, cómo se agrupan los conglomerados para los
+componentes primero y segundo, ubicando en los extremos del componente primero
+los grupos 7, 1 y 6, 9. Para el componente segundo, es claro que el grupo 2 y el
+4 están ubicados hacia los valores más negativos y positivos, respectivamente. La
+figura 3 muestra un gráfico de dispersión matricial para todos los componentes. En
+esta figura destaca que los tres primeros componentes separan mejor los grupos.
+Se harán más comentarios al respecto en la sección 4.
+
+
+3.1. Identificación de valores atípicos
+    Si bien Fraley & Raftery (2002) sugieren un método para encontrar atípicos,
+en este trabajo se optó, por comodidad, por seguir otro procedimiento: Johnson &
+Wichern (1998) utilizan una serie de pasos para detectar valores atípicos multiva-
+riantes: además de realizar las inspecciones gráficas de rutina, proponen calcular
+la distancia cuadrada generalizada
+
+                     d2 = (xj − x)T S −1 (xj − x)      j = 1, . . . , n                 (15)
+
+y examinarla para valores grandes. Esos valores deben compararse con un valor
+crítico específico. El valor está dado por la distribución chi-cuadrado χ2p,0.005 , donde
+p es la dimensión de los datos.
+    La tabla 3 contiene los valores d2i que resultaron ser más grandes que el valor
+crítico establecido.
+    Es importante notar que los siete municipios que conforman el estado Ama-
+zonas y los cuatro que conforman el estado Delta Amacuro resultan ser atípicos.
+Existen varias maneras de explicar esto: en primer lugar, son estados desprovistos
+de muchas condiciones que otros ostentan. Los municipios del estado Amazonas
+y del estado Delta Amacuro son municipios sin grandes ciudades y sin vistosas
+infraestructuras y donde la mayor fuente de trabajo está de la mano del sector
+Figura 1: ACPnP. BIC. Criterio bayesiano. El BIC se maximiza para el modelo EEE y
+          para nueve grupos.
+
+  Figura 2: ACPnP. Centroides para los 9 grupos. Componente 1 y componente 2.
+
+público (61.15 % para Amazonas y 44.95 % para Delta Amacuro; la media total de
+toda Venezuela es 20.19 %). Además, son poblaciones mayoritariamente indígenas,
+cuestión que los diferencia claramente de las demás entidades.
+
+    Figura 3: Gráfico de dispersión matricial para los seis componentes retenidos.
+
+
+
+   En ningún caso se removió ningún municipio porque la búsqueda de los grupos
+era a nivel nacional y debían considerarse todos.
+
+
+4. Conclusiones
+   El análisis exploratorio previo puso de manifiesto la relación clara entre los
+bienes materiales (televisor, computadora, nevera, carro, ...). Esto es fácil de com-
+prender debido a que cuanto más ingresos tenga una persona, más gastará en tales
+objetos. Si está en capacidad de tener internet en su casa, un individuo, natural-
+mente, tendrá facilidad para mantener, al menos, una computadora. Además, los
+bienes medidos son de amplio acceso para la mayoría de las familias.
+    Se evidenció también una relación directa con las variables referentes a los ser-
+vicios del hogar (electricidad, tuberías de agua, excretas, ...). Cuando una familia
+no tiene acceso a un sistema de cañerías de calidad, una de las posibles causas es
+la ausencia de tuberías funcionales.
+    Los grupos más beneficiados en términos socioeconómicos son el noveno y sexto,
+los cuales están formados principalmente por los municipios de Caracas, Miranda,
+Carabobo, Nueva Esparta y Aragua. Barinas, Cojedes y Portuguesa son la cara
+contraria.
+                       Tabla 3: Municipios atípicos multivariantes.
+ 
+Nota: Teniendo en cuenta que son veintisiete variables, el valor crítico de la distribución χ2 es
+49.64492.
+    Los municipios de Trujillo, Cojedes, Amazonas, Guárico, Portuguesa y Delta
+Amacuro (que, en general, son del grupo segundo) tienen una esperanza de vida
+menor, altas tasas de natalidad y un mayor número de personas trabajando para
+el sector público.
+    Los grupos cuarto y quinto están en una posición media en cuanto a nivel socio-
+económico, pero, a diferencia del grupo segundo, muestran una mayor esperanza
+de vida, más camas por hospital (en promedio), más calidad de vida (reflejada en
+el IDH) y un mayor número de personas trabajando en el sector informal.
+    Por su parte, el grupo octavo, con altas condiciones de vida, está en el cuadrante
+cuarto porque presenta mayor número de viviendas nucleares que sus contrapartes
+del primer cuadrante. Esto quiere decir que son municipios donde las casas se
+utilizan como núcleos familiares. Esto tal vez sugiera que en otros municipios, con
+un mismo nivel socioeconómico que el grupo octavo (como el grupo tercero), las
+casas no se utilicen como viviendas familiares. La ubicación de los grupos, según
+los municipios, en un mapa de Venezuela se muestra en la figura 4.
+    Como conclusiones referidas al conjunto de datos se tiene que la distribución
+normal no se muestra en la mayoría de las variables involucradas. La distribución
+multinormal es difícilmente sostenida en el conjunto de datos total; no obstante,
+una vez formados los grupos, esta se sostiene en la mayoría de ellos. Esto, además
+de ser valiosísimo para la aplicación de la técnica central de este trabajo, el análisis
+de conglomerados de Fraley & Raftery (2002), supone la posibilidad de utilización
+de otras técnicas que requieren normalidad en cada grupo.
+                Figura 4: Relación geográfica de los 9 grupos encontrados.
+Agradecimientos
+Al profesor Segundo Quiroz por la ayuda prestada al comienzo de esta investigación y a los árbitros anónimos que contribuyeron a enriquecer y mejorar este trabajo.
+Referencias
+Bandfield, J. & Raftery, A. (1993), ‘Model-based Gaussian and Non-Gaussian Clustering’, Biometrics 49, 803–821.
+Bergonzoli, G. (2006), Sala situacional, IAESP. Instrumento para la vigilancia de salud pública.
+Bouveyron, C., Girard, S. & Schmid, C. (2007), ‘High-Dimensional Data Clustering’, Computational Statistics & Data Analysis 52(1), 502–519.
+Celeux, G. & Govaert, G. (1995), ‘Gaussian Parsimonious Clustering Models’,Pattern Recognition 28, 781–793.
+Díaz, L. (2002), Estadística multivariada: inferencia y métodos, 1 edn, McGraw Hill, Bogotá, Colombia.
+Dempster, A. P., Laird, N. M. & Rubin, D. B. (1977), ‘Maximum Likelihood Estimation from Incomplete Data Via the EM Algorithm’, Journal of the Royal Statistical Society. Series B (Methodological) 39, 1–38.
+Fraley, C. (1998), ‘Algorithms for Model-Based Gaussian Hierarchical Clustering’,SIAM Journal on Scientific Computing 20(1), 270–281.
+Fraley, C. & Raftery, A. E. (2002), ‘Model-Based Clustering, Discriminant Analysis, and Density Estimation’, Journal of the American Statistical Association 97.
+Fraley, C. & Raftery, A. E. (2006), ‘MCLUST: Model-based cluster analysis’. R port by Ron Wehrens. R package version 2.1-14.
+Gallegos, M. T. & Ritter, G. (2005), ‘A Robust Method for Cluster Analysis’, The Annals of Statistics 33, 347–380.
+Gnanadesikan, R., Kettenring, J. R. & Maloor, S. (2007), ‘Better Alternatives to Current Methods of Scaling and Weighting Data for Cluster Analysis’,Journal of Statistical Planning and Inference 137, 3483–3496.
+Haughton, D., Legrand, P. & Woolford, S. (2007), ‘Review of Three Latent Class Cluster Analysis Packages: Latent Gold, poLCA, and MCLUST’, The Amrican Statistician 63(1), 81–91.
+INE (2005a), Censo 2001 por municipios y parroquias. Tabulados prioritarios, C.D Instituto Nacional de Estadística.
+INE (2005b), ‘Instituto nacional de estadística’.*http://www.ine.gov.ve
+INE (2005c), Venezuela: estadísticas vitales, 2004, Instituto Nacional de Estadística.
+Johnson, R. & Wichern, D. (1998), Applied Multivariate Statistical Analysis, 4 edn, Prentice Hall.
+Lago, S., Mauro, M. & Álvarez, G. (2000), ‘Análisis exploratorio multivariado.La conformación de subregiones al interior de cuatro provincias argentinas según el impacto del desarrollo en las condiciones de vida’, Cinta de Moebio (9), 1–18.
+Lebart, L., Morineau, A. & Warwick, K. M. (1984), Multivariate Descriptive Statistical Analysis, John Wiley & Sons, New York, United States.
+Leisch, F. (2006), ‘A Toolbox for K-Centroids Cluster Analysis’, Computational Statistics and Data Analysis 51(2), 526–544.
+López, F. (2007), ‘Búsqueda de estratos socieconómicos a nivel nacional. Caracterización estadística de los municipios de Venezuela’. Tesis para optar al título de Licenciado en Estadística. Universidad de Los Andes. Mérida, Venezuela.
+López, N., Moreno, A., Medina, E., García, J., Rivera, E., Díaz, Y., Porcio, G.,Sánchez, O., Aguirre, J., Ponce, X., Arias, J., Vivas, J. & Bergonzoli, G.(2002), Identificación y representación de necesidades sociales. Módulo II,Ministerio de Salud, Dirección de Análisis Estratégico.
+Murtagh, F. & Raftery, A. (1984), ‘Fitting Straight Lines to Point Patterns’, Pattern Recognition 17, 479–483.
+Oh, M. S. & Raftery, A. (2007), ‘Model-Based Clustering With Dissimilarities:A Bayesian Approach’, Journal of Computational and Graphical Statistics 16(3), 559–585.
+Peña, D. (2004), Análisis de datos multivariantes, McGraw-Hill Interamericana.
+Schwarz, G. (1978), ‘Estimating the Dimension of a Model’, Annals of Statistics 6(2), 461–464.

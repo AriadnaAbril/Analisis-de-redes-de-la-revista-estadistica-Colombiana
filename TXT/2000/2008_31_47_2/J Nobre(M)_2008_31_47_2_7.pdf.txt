@@ -1,0 +1,319 @@
+Identificação de classes rítmicas de língua: modelagem de cadeias categorizadas da sonoridade usando árvores probabilísticas
+Universidade Federal do Ceará
+Resumo
+Recentemente, vários autores sugerem métodos para discriminar classes rítmicas de língua (Ramus et al. 1999, Duarte et al. 2001, Galves et al. 2002).Baseado no conceito de sonoridade, definido em Galves et al. (2002) e Cassandro et al. (2007), é proposto um modelo paramétrico para a família de processos estocásticos dos tempos de evolução da sonoridade para diferentes línguas, denotada por família de cadeias categorizadas ligadas. O objetivo do presente trabalho é modelar, para as diferentes línguas, as correspondentes cadeias categorizadas via cadeias de Markov de alcance variável (VLMC) e avaliar a conjectura de que estas resumem toda informação relevante dada pela sonoridade.
+Palavras chave: sonoridade, cadeias categorizadas ligadas, cadeias de Markov de alcance variável.
+Introdução e motivação
+    Desde meados do século passado, conjectura-se na literatura lingüística a exis-
+tência de três classes rítmicas: línguas acentuais, silábicas e moraicas. Dado que
+nenhuma evidência a favor desta conjectura foi encontrada até metade dos anos
+de 1990, boa parte da comunidade científica questionava sobre a fundamentação
+da mesma. Mehler et al. (1996), baseados no fato de que recém-nascidos conse-
+guiam discriminar grupos de frases de línguas de classes rítmicas conjecturadas
+distintas, forneceram evidências psico-lingüísticas da existência de classes rítmi-
+cas. Ramus et al. (1999) forneceram a primeira evidência favorável da existência
+das três classes conjecturadas.
+    A abordagem de Ramus et al. (1999) foi baseada em estatísticas descritivas
+do sinal acústico, proporção do tempo de duração em intervalos vocálicos (%V ) e
+desvio-padrão do tempo de duração nos intervalos consonantais (∆c). A escolha
+destas estatísticas baseiam-se em critérios lingüísticos. Foi analisado o sinal acús-
+tico de 20 sentenças produzidas por quatro falantes das seguintes línguas: inglês,
+polonês, holandês, catalão, espanhol, italiano, francês e japonês. Através de um
+gráfico de dispersão entre %V e ∆c, perceberam, além de uma forte associação
+negativa entre as duas estatísticas, que as oito línguas em questão podem ser agru-
+padas em três classes: (i) inglês, polonês e holandês; (ii) espanhol, italiano, francês
+e catalão e (iii) japonês, que são por sua vez as três classes rítmicas conjecturadas
+na literatura, representando respectivamente as línguas acentuais, silábicas e mo-
+raicas. Esta abordagem é totalmente descritiva e apresenta alguns inconvenientes,
+principalmente no que tange a sua implementação (Galves et al. 2002).
+    Duarte et al. (2001) propõem um modelo paramétrico para o tempo de dura-
+ção nos intervalos consonantais. Consideram que, para cada língua, estes tempos
+representam uma amostra aleatória de uma distribuição gama. A hipótese de inte-
+resse é que línguas pertencentes a uma mesma classe rítmica apresentam a mesma
+variância, a qual é diferente para línguas de outra classe rítmica. Considerando os
+dados utilizados em Ramus et al. (1999), e usando o teste da razão de verossimi-
+lhanças, obtiveram exatamente as mesmas classes. Galves et al. (2002) definiram
+um índice de regularidade do sinal de fala denotado por sonoridade. Tal índice
+é uma função do sinal acústico evoluindo dentro do intervalo [0, 1], de tal forma
+que assume valores próximos a 1 quando a região é regular (regiões sonoras), e
+valores próximos a 0 quando a região é irregular (regiões com muita obstrução).
+Os autores sugerem que, através de uma análise das trajetórias da sonoridade de
+cada língua, é possível discriminar as três classes rítmicas existentes.
+    Recentemente, Cassandro et al. (2007) propõem um modelo paramétrico para
+a família de processos estocásticos dos tempos de evolução da sonoridade para di-
+ferentes línguas, denotada por família de cadeias categorizadas ligadas. As cadeias
+são ditas ligadas pela suposição de existência de uma partição universal do domí-
+nio da sonoridade, de tal forma que a distribuição da sonoridade, condicionada em
+cada intervalo (definidos pela partição) independe da língua. Um procedimento
+para estimar os pontos de corte (definidores da partição) de forma consistente
+também é apresentado. A seguinte frase de Cuesta-Albertos et al. (2007): “. . . the
+most important linguistic question of the existence of rhytmic classe should be
+
+                                     Revista Colombiana de Estadística 31 (2008) 229–240
+
+Identificação de classes rítmicas de língua                                           231
+
+decided using only the properties of the symbolics chains” motivou o presente tra-
+balho, que tem por objetivo avaliar a conjectura de que as cadeias categorizadas
+resumem toda a informação relevante dada pela sonoridade e que estas podem ser
+utilizadas para discriminar as classes rítmicas de fala.
+   As cadeias categorizadas serão modeladas via cadeias de Markov de alcance
+variável. Os dados utilizados neste trabalho são descritos na Seção 2, enquanto
+que a metodologia é descrita na Seção 3. Na Seção 4 apresentam-se os resultados
+da análise, e na Seção 5 são discutidos os resultados obtidos.
+
+
+2. Conjunto de dados
+    Neste trabalho são utilizados os dados lingüísticos analisados em Ramus et al.
+(1999), que constituem 160 sentenças de 8 diferentes línguas: inglês, polonês,
+holandês, catalão, espanhol, italiano, francês e japonês. Para cada língua, foram
+utilizadas 20 sentenças, selecionadas de um total de 54 com objetivo de controlá-
+las com relação ao número de sílabas, produzidas por 4 mulheres. A justificativa
+para tal seleção é eliminar possíveis sentenças discrepantes com respeito à média do
+tempo de fala. Uma análise de tais seqüências, usando a sonoridade, é apresentada
+em Galves et al. (2002).
+
+
+3. Modelagem
+   Nas duas subseções a seguir, descrevemos a modelagem probabilística utilizada
+para modelar o conjunto de dados em questão.
+
+
+3.1. Cadeias de Markov de alcance variável
+   As cadeias de Markov representam uma boa alternativa para modelar estrutura
+de dependência, por exemplo, para aplicações em estudos com medidas repetidas
+(Ware et al. 1988, Reboussin 1990, Chao & Kosorok 1995, Lindsey 1999, Agresti
+2002). Porém, do ponto de vista estatístico, esses modelos não são muito atraentes,
+dado o número elevado de parâmetros a serem estimados em certas circunstâncias.
+Como ilustração, considere {Xn }n∈N uma cadeia de Markov de ordem k, definida
+em um alfabeto finito A. O número de parâmetros não redundantes1 a serem esti-
+mados é |A|k (|A| − 1) = O(|A|k+1 ); |A| representa a cardinalidade de A. Perceba
+que o número de parâmetros a serem estimados cresce exponencialmente em k; por
+conseguinte, para valores moderamente elevados de k, tem-se um número muito
+grande de parâmetros a serem estimados.
+    Uma classe de modelos mais parcimoniosa, Com relação ao número de parâme-
+tros a serem estimados, são as cadeias de Markov de alcance variável (VLMC, do
+inglês Variable Length Markov Chains), cuja gênese é devida a Rissanen (1983),
+  1 Linearmente independentes.
+
+
+
+
+                                       Revista Colombiana de Estadística 31 (2008) 229–240
+
+232                                                                    Juvêncio Nobre
+
+no contexto de teoria da informação, e foi recentemente discutida e popularizada
+por Bühlmann & Wyner (1999) dentro do ponto de vista estatístico.
+   Considere {Xn }n∈N uma cadeia de Markov estacionária definida em um alfa-
+                                                                               −k e
+beto finito A. Denotando, {w ∈ Ω | X−1 (w) = x−1 , . . . , X−k (w) = x−k } := x−1
+P(X0 = x0 | X−1 = x−1 , . . . , X−k = x−k ) = P(x0 | x−1
+                                                      −k ), ∀k ∈ N, a função
+                                             ∞
+                                             [
+                                c : A∞ −→         Aj
+                                            j=0
+
+                                  x0−∞ 7−→ x0−l
+
+em que l = l x−1                                               −k , ∀x0 ∈ A , é
+                                                               
+                −∞    := min k | P x0 | x−1 −∞    = P x0 | x−1
+denotada como função contexto da cadeia. A denominação contexto é devida a
+que apenas parte do passado é relevante para a variável X0 , e esta é uma função
+                  −∞ . A função l indica a quantidade
+da configuração x−1                                      de passados relevantes.
+Denotando w < ∞ o menor inteiro tal que c x−∞                    −∞ ∈ A , então
+                                               −1
+                                                  
+                                                    = l ≤ w, ∀x−1       ∞
+
+{Xn }n∈N é dita ser uma cadeia de Markov de alcance variável de ordem w. A
+forma mais conveniente de representar esta classe de modelos é através da sua
+árvore de contexto. Para uma cadeia de Markov de alcance variável {Xn }n∈N de
+ordem w com                c,−1sua árvore
+            função contexto               de contexto é definida por uma árvore
+com ramos s | s = c x−1−∞  , ∀x−∞ ∈  A∞
+                                         .
+   É interessante perceber que a função contexto pode ser obtida diretamente da
+árvore de contexto que nada mais é que o conjunto dos passados relevantes (seus
+ramos). A árvore do contexto pode ser caracterizada da seguinte forma:
+
+1. O primeiro nó é a raiz, enquanto que os nós das extremidades inferiores são
+   chamados terminais.
+
+2. Os galhos representam os passados relevantes (do mais próximo ao mais lon-
+   gínquo).
+
+3. Cada nó tem no máximo |A| arestas.
+
+4. O contexto é representado pelos galhos que ligam o primeiro e último nó.
+
+   Uma cadeia {Xn }n∈N (VLMC) é completamente determinada por sua árvore
+de contextos. Para maiores detalhes sobre cadeias de Markov de alcance variável e
+sua representação através de árvores de contexto, veja Bühlmann & Wyner (1999)
+e Ferrari & Wyner (2003), por exemplo.
+    O processo de estimação, baseado em uma amostra observada, da matriz de
+transição de uma cadeia de Markov de alcance variável de ordem w é feito via
+algoritmo do contexto proposto por Rissanen (1983). Para detalhes e comentários
+sob a consistência do método, veja por exemplo Rissanen (1983), Bühlmann &
+Wyner (1999) e Bühlmann (2000). Para discussão a respeito de seleção de modelos,
+veja Bühlmann (2000); Mäechler & Bühlmann (2004) apresentam um tutorial
+sobre o pacote VLMC desenvolvido em linguagem R (R Development Core Team
+2007) para ajustes destes tipos de modelos.
+
+                                    Revista Colombiana de Estadística 31 (2008) 229–240
+
+Identificação de classes rítmicas de língua                                             233
+
+3.2. Cadeias categorizadas ligadas
+    A noção de cadeias categorizadas ligadas teve sua gênese no trabalho de Cas-
+sandro et al. (2007), que a propõem como um modelo paramétrico para a família
+de processos estocásticos dos tempos de evolução da sonoridade para as diferentes
+línguas. Tal família é descrita sucintamente a seguir.
+ Para   cada língua l ∈ L = {1, . . . , 8} considera-se um processo estocástico
+  Stl t∈N l ∈ L assumindo valores no intervalo [0, 1] representando os tempos
+     
+
+de evolução da sonoridade para a l-ésima língua. Assume-se que os processos su-
+pracitados são estacionários e ergódicos. Tais processos são ligados sob a suposição
+de existência de um número inteiro N e de uma seqüência crescente de pontos de
+corte
+                       0 = c0 < c1 < · · · < cN < cN +1 = 1
+e N + 1 medidas de probabilidade πj (j = 0, . . . , N ) com respectivo suporte Ij =
+(cj , cj+1 ], tal que ∀t ∈ N e ∀l ∈ L
+
+                             P[Stl ∈ B | Stl ∈ Ij ] = πj (B)                            (1)
+
+com B representando um boreliano do intervalo [0, 1].
+     Por hipótese, os pontos de corte cj e as medidas de probabilidade πj , j =
+0, . . . , N são universais, isto é, independem de l. Os intervalos Ij constituem
+regiões com diferentes níveis de sonoridade. A cadeia categorizada {Xtl }t∈N , que
+assume valores no alfabeto finito A = {0, . . . , N }, é definida por
+                                  N
+                                  X
+                          Xtl =         j1(Stl ∈ Ij ),   ∀t ∈ N
+                                  j=0
+
+
+    Sob as suposições a respeito de Stl t∈N , as cadeias categorizadas Xtl t∈N
+                                                                       
+também são estacionárias e ergódicas. No presente trabalho, a categorização foi
+feita utilizando os quatro pontos de cortes universais estimados de forma consis-
+tente em Cassandro et al. (2007), c1 = 0.19, c2 = 0.46, c3 = 0.67 e c4 = 0.93,
+através do método bootstrap.
+
+
+4. Análise estatística
+    Para cada sentença, 20 em cada língua, foi obtida a sonoridade e, posterior-
+mente, a cadeia categorizada associada. As cadeias categorizadas foram modeladas
+via cadeias de Markov de alcance variável; desta forma, obteve-se uma árvore de
+contexto estimada para cada cadeia categorizada (sentença).
+   Para efeito de ajuste, foi utilizado o pacote VLMC (Mäechler 2006), desenvol-
+vido em linguagem R. Foi utilizada a correção de Bonferroni, obtendo assim uma
+aproximação para o ponto de corte usado no algoritmo do contexto que depende
+do tamanho da seqüência, conforme é sugerido em Bühlmann (2000). Na figura 1
+mostram-se as árvores de contextos estimadas mais freqüentes, as referentes ca-
+deias, que serão doravante denominadas por cadeia 1, 2 e 3, respectivamente. As
+
+                                         Revista Colombiana de Estadística 31 (2008) 229–240
+
+234                                                                                                                    Juvêncio Nobre
+
+demais cadeias estimadas que foram observadas apresentam uma freqüência muito
+baixa; no máximo em duas sentenças para cada língua. Desta forma, para efeito
+de análise, foram consideradas apenas estas três cadeias supracitadas. Na tabela 1,
+mostram-se o percentual das sentenças (%) para cada língua, no qual observa-se
+a referida árvore de contexto estimada.
+
+                                  Figura 1: Cadeias estimadas mais freqüentes.
+
+
+
+
+                      Tabela 1: Proporção de cadeias estimadas para cada língua.
+    Para cada língua, foi considerada a matriz de probabilidades de transição es-
+timada da seqüencia que apresentava o menor BIC (Bayesian Information Cri-
+terion) para cada uma das duas (ou três, para o holandês e inglês) cadeias (as
+probabilidades de transição estimadas são mostradas no Apêndice A.). Para as
+línguas ditas como silábicas, com exceção do catalão, na maior parte das senten-
+ças, a cadeia 1 traduz melhor o comportamento da sentença, precedida de uma
+porcentagem um pouco menor do número de sentenças no qual a cadeia 2 foi a
+que melhor modelou seu comportamento. Para as línguas ditas acentuais, com
+exceção do polonês, não existe nenhuma dominação das três cadeias. A propor-
+ção de sentenças que apresentaram a cadeia 1 como a “cadeia verdadeira” é igual
+a proporção de sentenças que apresentaram a cadeia 2 como a “verdadeira”. Com
+relação ao japonês, existe uma ligeira “dominação” A favor da cadeia 2; no entanto,
+esta pode não se confirmar caso se analise um número maior de sentenças. Com
+relação ao polonês e ao catalão, essas duas línguas não se comportam de forma
+similar às demais línguas pertencentes as suas respectivas classes rítmicas. O po-
+lonês apresentou comportamento similar ao japonês, porém menor variabilidade
+no que tange as árvores estimadas.
+
+    Desta forma, considerando apenas as línguas holandês, inglês, francês, italiano,
+japonês e espanhol, e os aspectos acima mencionados, há evidências favoráveis a
+existência de três clusters: o primeiro, formado pelas línguas holandês e inglês,
+caracteriza as línguas acentuais; o segundo, formado pelas línguas francês, ita-
+liano e espanhol, caracteriza as línguas silábicas; e o terceiro, formado apenas
+pelo japonês. Tal resultado é análogo ao resultado obtido em Cuesta-Albertos
+et al. (2007) usando a sonoridade, em que tanto o polonês como o catalão não
+foram discriminados, sendo o mesmo compatível com a conjectura lingüística de
+existência de três classes rítmicas.
+
+5. Resultados e discussão
+   Pelos resultados mostrados na seção anterior, pode concluir-se que as cadeias
+categorizadas resumem toda a informação relevante dada pela sonoridade; con-
+seqüentemente, podem ser utilizadas para discriminar as classes rítmicas de fala.
+    Um tópico interessante a ser pesquisado seria avaliar o ajuste de modelos do
+tipo mistura de cadeias de Markov de alcance variável, em que se poderia con-
+siderar, para as classes de línguas moraicas e silábicas, que cada sentença seria
+modelada por uma mistura das cadeias 1 e 2; o parâmetro de mistura possivel-
+mente seja diferente para as duas classes, enquanto que para as línguas acentuais,
+cada sentença seria modelada por uma mistura das cadeias 1, 2 e 3.
+
+Agradecimentos
+    Este trabalho foi desenvolvido e apresentado durante a disciplina MAE 5741
+-Inferência em Processos Estocásticos, ministrada pelo professor Antônio Galves
+no IME-USP em 2005. O autor gostaria de agradecer ao professor Antônio Galves
+e a Anne Cros e aos dois árbitros que concederam imprescindíveis sugestões para
+o melhoramento deste trabalho.
+Apêndice A.
+   A seguir, apresentamos as matrizes de transição estimadas das sentenças que
+apresentaram menor BIC, para as cadeias mais freqüentes, para as oito línguas.
+         Tabela 2: Matriz de transição estimada da cadeia 1 para o japonês.
+         Tabela 3: Matriz de transição estimada da cadeia 2 para o japonês.
+         Tabela 4: Matriz de transição estimada da cadeia 1 para o polonês.
+      Tabela 5: Matriz de transição estimada da cadeia 2 para o polonês.
+      Tabela 6: Matriz de transição estimada da cadeia 1 para o holandês.
+      Tabela 7: Matriz de transição estimada da cadeia 2 para o holandês.
+      Tabela 8: Matriz de transição estimada da cadeia 3 para o holandês.
+       Tabela 9: Matriz de transição estimada da cadeia 1 para o inglês.
+         Tabela 10: Matriz de transição estimada da cadeia 2 para o inglês.
+         Tabela 11: Matriz de transição estimada da cadeia 3 para o inglês.
+        Tabela 12: Matriz de transição estimada da cadeia 1 para o espanhol.
+        Tabela 13: Matriz de transição estimada da cadeia 2 para o espanhol.
+         Tabela 14: Matriz de transição estimada da cadeia 1 para o francês.
+      Tabela 15: Matriz de transição estimada da cadeia 2 para o francês.
+      Tabela 16: Matriz de transição estimada da cadeia 1 para o italiano.
+      Tabela 17: Matriz de transição estimada da cadeia 2 para o italiano.
+      Tabela 18: Matriz de transição estimada da cadeia 1 para o catalão.
+Referências
+Agresti, A. (2002), Categorical Data Analysis, John Wiley & Sons, New York,United States.
+Bühlmann, P. (2000), ‘Model Selection for Variable Length Markov Chains and Tuning the Context Algorithm’, Ann. Inst. Statist. Math. 25, 287–315.
+Bühlmann, P. & Wyner, A. J. (1999), ‘Variable Length Markov Chains’, Annals of Statistics 27, 480–513.
+Cassandro, M., Collet, P., Duarte, D., Galves, A. & Garcia, J. (2007), ‘A stochastic Model for the Speech Sonority: Tied Quantized Chains and Cross-Linguistic Estimation of the Cut-Points’, Math. & Sci. hum. 180, 43–55. Mathematical Social Sciences, 45 année.
+Chao, W. H. & Kosorok, M. R. (1995), Asymptotic Properties of Markov Regression Models for Longitudinal Categorical Data in Continuous Time, Biostatistic technical report, Department of Statistic, University of Wisconsin.
+Cuesta-Albertos, J., Fraiman, R., Galves, A. & Garcia, J. (2007), ‘Identifying Rhythmic Classes of Languages Using their Sonority: A Kolmogorov-Smirnov Approach’, Journal of Applied Statistics 34, 749–761.
+Duarte, D., Galves, A., Lopes, N. & Maronna, R. (2001), Robust Test for Equality of Variances the Statistical Analysis of Acoustic Correlates of Speech Rhythm, in ‘Parameter setting and language change’, Workshop on rhythmic patterns,University of Bielefeld.*http://www.physik.uni-bielefeld.de/complexity/duarte.pdf
+Ferrari, F. & Wyner, A. (2003), ‘Estimation of General Stationary Processe by Variable Length Markov Chains’, Scandinavian Journal of Statistics 30, 459–480.
+Galves, A., Garcia, J., Duarte, D. & Galves, C. (2002), Sonority as a Basis for Rhythmic Class Discrimination, in ‘Speech Prosody’.*www.lpl.uinv-aix.fr/sp2002/pdf/galves-et-al.pdf
+Lindsey, J. K. (1999), Models for Repeated Measurements, second edn, Oxford Statistical series, New York, United States.
+Mäechler, M. (2006), VLMC: VLMC–Variable Length Markov Chains. R package version 1.3-10.
+Mäechler, M. & Bühlmann, P. (2004), ‘Variable Length Markov Chains: Methodology, Computing and Software’, Journal of Computational & Graphical Statistics 13, 435–455.
+Mehler, J., Dupoux, E., Nazzi, T. & Dehaene-Lambertz, G. (1996), Coping with Linguistic Diversity: The Infant’s Viewpoint, in J. L. Morgan & K. Demuth,eds, ‘Signal to syntax: bootstraping from speech to grammar in early acquisition’.
+R Development Core Team (2007), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0.*http://www.R-project.org
+Ramus, F., Nespor, M. & Mehler, J. (1999), ‘Correlates of Linguistic Rhythm in the Speech Signal’, Cognition 73, 265–292.
+Reboussin, D. V. (1990), Discovering Markov Structure in Group Sequential Methods for Longitudinal Studies, Biostatistic technical report 61, Department of Statistic, University of Wisconsin.
+Rissanen, J. (1983), ‘A Universal Data Compression System’, IEEE Trans. Inform.Theory 29, 656–664.
+Ware, J., Lipsitz, S. & Speizer, F. (1988), ‘Issues in the Analysis of Repeated Categorical Outcomes’, Statistics in Medicine 7, 95–107.

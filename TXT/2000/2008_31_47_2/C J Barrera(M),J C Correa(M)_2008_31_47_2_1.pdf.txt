@@ -1,0 +1,372 @@
+Distribución predictiva bayesiana para modelos de pruebas de vida vía MCMC
+Instituto Tecnológico Metropolitano Institución Universitaria (ITM);Universidad Nacional de Colombia
+Resumen
+En el estudio de la confiabilidad es muy frecuente el desconocimiento de parámetros poblacionales; por tanto, es necesario recoger información muestral relevante para la estimación de estos a través de distribuciones de probabilidad, conocidas como distribución a priori. Los métodos bayesia- nos permiten incorporar opiniones subjetivas acerca de incertidumbres con respecto al parámetro o vector de parámetros de interés. La incertidumbre acerca del verdadero valor de un parámetro de interés θ en la población es modelada por la función de densidad a priori π(θ), (θ ∈ Θ). Para obtener las distribuciones predictivas bayesianas, se implementará la metodología MCMC, la cual exige calibración, diseño, implementación y validación de algoritmos apropiados.
+Palabras clave: a priori, distribución predictiva, fiabilidad, MCMC.
+Introducción
+Los rápidos avances tecnológicos, los grandes desarrollos de productos sofisticados, la intensa competición global y las cada vez mayores expectativas de los clientes han puesto más presión en el procedimiento de manufactura de productos de alta calidad. Los intervalos predictivos permiten predecir la duración y el costo de garantía de un producto; además, permite hacer un seguimiento del producto en campo para proporcionar información de las posibles causas de falla y los métodos para mejorar la confiabilidad del producto. En los estudios de confiabilidad es muy frecuente el desconocimiento de parámetros poblacionales; por tanto es necesario recopilar información muestral relevante para los parámetros (Meeker & Escobar 1998).
+La estadística bayesiana permite la incorporación de información no muestral
+sobre características desconocidas del fenómeno en estudio. Hewett (1968), Kalb-
+fleisch (1971), Dunsmore (1974) y Christensen & Huffman (1985), entre otros, han
+realizado trabajos en el área de distribuciones predictivas.
+    La utilización de distribuciones conjugadas es una limitante para expresar el
+conocimiento a priori acerca de un parámetro desconocido; sin embargo, cuando
+se utilizan distribuciones a priori no conjugadas, el problema es computacional, ya
+que usualmente se llegan a expresiones muy complejas y sin solución cerrada de la
+distribución a posteriori. Por esta razón, las soluciones vía simulación son las más
+aceptadas para la solución de este tipo de problemas (Hill 2002).
+   En el presente artículo se construye la distribución predictiva bayesiana para
+datos de sobrevida a partir de distribuciones a priori no conjugadas, no informati-
+vas. Se emplea la Markov chain Monte Carlo Methods (metodología Monte Carlo
+por cadenas de Markov –MCMC–) para obtener los parámetros de las distribucio-
+nes a posteriori, la cual exige calibración, diseño, implementación y validación de
+algoritmos apropiados.
+    En la primera parte de este artículo, se presenta el desarrollo teórico de la meto-
+dología MCMC. Posteriormente, se realiza una aplicación para datos de sobrevida
+de computadores donde se implementará la anterior metodología. Se utilizarán
+distribuciones a priori no conjugadas y se obtendrán las respectivas distribucio-
+nes predictivas bayesianas para el modelo Weibull en presencia de observaciones
+censuradas. En la tercera sección, se verifica la convergencia de los algoritmos uti-
+lizados por el proceso MCMC y, en la última sección, se presentan las conclusiones
+respectivas.
+
+
+2. Metodología
+    El problema que se estudiará puede tipificarse así: sea X una variable aleatoria
+que representa el tiempo de vida de un producto con fdp (función de densidad
+de probabilidad) p(x | θ) (x ∈ X; θ ∈ Θ), donde θ es un parámetro o vector
+de parámetros que caracteriza la distribución. Sea X1 , X2 , . . . , Xn una muestra
+aleatoria de esta distribución. Sea además Y1 , Y2 , . . . , YN una segunda muestra
+
+                                     Revista Colombiana de Estadística 31 (2008) 145–155
+
+Distribución predictiva bayesiana para modelos de pruebas de vida vía MCMC           147
+
+aleatoria de observaciones futuras independientes de una distribución con función
+de densidad de probabilidad p(y | θ) (y ∈ Y; θ ∈ Θ). Se desea hacer predicciones
+acerca de alguna función de Y1 , Y2 , . . . , YN . Se asume que las dos distribuciones
+contienen el mismo parámetro θ (Dunsmore 1974).
+    El conocimiento previo acerca de los parámetros de una distribución de interés
+se expresa en una distribución de probabilidad, la cual se conoce como distribución
+a priori. La determinación de la distribución a priori es un problema fundamental
+en la estadística bayesiana. En muchos casos, es necesario utilizar procesos de
+elicitación para obtener estas distribuciones.
+   La distribución a posteriori se calcula mediante el teorema de Bayes como:
+                          π(θ | Datos) ∝ π(θ) L(θ | Datos)
+
+   Si Y es una muestra aleatoria de observaciones futuras de determinado proceso,
+con fdp p(y | θ), entonces la distribución predictiva de Y es:
+                          Z
+                                                                        
+         p(y | Datos) =       p(y | θ)π(θ | Datos) dθ = Eθ|Datos p(y | θ)
+                            Θ
+
+con θ ∈ Θ (Hill 2002).
+    Cuando no es factible el cálculo directo de la distribución a posteriori, se utiliza
+la metodología MCMC.
+    Cuando las distribuciones a posteriori son de alta dimensión o cuando no tie-
+nen una forma distribucional conocida, las soluciones analíticas o numéricas co-
+munes no pueden obtenerse. Una solución es generar muestras para los paráme-
+tros de interés considerando un procedimiento MCMC, donde se simula una cade-
+na de Markov con distribución estacionaria dada por la distribución a posteriori
+π(θ | Datos) (Hill 2002).
+    Los métodos MCMC son algoritmos iterativos que se utilizan cuando no es
+factible el muestreo directo de una distribución de interés π(θ | Datos).
+    Una cadena de Markov es generada muestreando
+                                  θ(t+1) ∼ π(θ | θ(t) )
+donde π es llamado el kernel de transición de la cadena de Markov. En una cadena
+de Markov, la muestra θ(t+1) depende solo de θ(t) y no de θ(0) , θ(1) , . . . , θ(t−1)
+(Kao 1997).
+    El muestreador de Gibbs es un kernel de transición creado por una serie de
+distribuciones condicionales completas, es decir, un esquema de actualización mar-
+koviana basada en todas las probabilidades condicionales declaradas.
+    Si la distribución límite de interés es π(θ), donde θ es un vector de dimen-
+sión k de parámetros a estimar, entonces el objetivo es producir una cadena de
+Markov que, a través de ciclos, garantice que las declaraciones condicionales se
+muevan alrededor de esta distribución. Sea Θ el conjunto de todas las distribu-
+ciones condicionales para θ, las cuales se definen como: π(Θ) = π(θi | θ−i ), para
+i = 1, 2, . . . , k, donde la notación θ−i indica una forma paramétrica específica de
+Θ sin el coeficiente θi (Casella & George 1992).
+
+                                      Revista Colombiana de Estadística 31 (2008) 145–155
+
+148                                         Carlos Javier Barrera & Juan Carlos Correa
+
+3. Estimación de la distribución predictiva vía
+   MCMC
+    Para obtener la distribución predictiva bayesiana vía MCMC, se utilizó el mues-
+treador de Gibbs, con el cual generamos muestras de la distribución a posteriori de
+los parámetros. En el caso estudiado, donde se asume que las observaciones mues-
+trales se distribuyen Weibull, la distribución a posteriori presenta dos parámetros
+de interés (α y β). Así, se hacen m iteraciones del muestreador de Gibbs para
+obtener m pares de valores de los parámetros (αi , βi ). Para una secuencia de valo-
+res que se hallen en el rango de posibles resultados para las observaciones futuras
+y, se remplazaron los pares (αi , βi ) en p(y | αi , βi ), i = 1, 2, . . . , m, formando m
+funciones. La fdp predictiva bayesiana se obtuvo calculando el promedio ergódico
+de las anteriores m funciones de distribución, es decir, calculando
+                                       m
+                                   1 X
+                                         p(y | αi , βi )
+                                   m i=1
+
+que es una mezcla de m densidades.
+   Este promedio es una densidad, ya que es una combinación lineal convexa de
+densidades:
+  X
+      ai pi , con ai > 0, y
+                  X              Z X               X Z            X
+                      ai = 1 =⇒         ai pi dy =  ai   pi dy =     ai = 1
+                                        Y                        Y
+
+donde ai es una constante. En general, la fdp predictiva se obtiene así:
+                                                      m
+                                                 1 X
+               p(y | x) = Eθ|X p(y | θ1i , θ2i ) ≈       p(y | θ1i , θ2i )
+                                                   m i=1
+
+donde X es el vector de datos y θ el vector de parámetros.
+    Usualmente las distribuciones predictivas resultan de forma cerrada o se resuel-
+ve la integral por medio de métodos numéricos. En este problema, la distribución
+predictiva resulta de alta densidad; por tanto, se obtiene a través de un promedio
+de densidades, el cual no aparece en la literatura y es muy simple de hallar compu-
+tacionalmente (Hill 2002, Hewett 1968, Kalbfleisch 1971, Dunsmore 1974, Chris-
+tensen & Huffman 1985, Komaki 2001, entre otros).
+
+
+4. Aplicación
+    Para llevar a cabo esta aplicación, se utilizaron los datos proporcionados por la
+sección de bienes y suministros, y la oficina de soporte técnico de la Universidad
+Nacional de Colombia, sede Medellín, donde se tomaron 72 observaciones, de las
+cuales 55 fueron censura. Estas observaciones registran los tiempos para la prime-
+ra falla física de los computadores de escritorio del bloque 21 en la sede. No se
+
+consideraron fallas debido al usuario; por ejemplo, si el computador presenta una
+falla debido a que el usuario ha borrado un archivo del sistema, entonces esa falla
+no se registra en nuestra base de datos. Todos los computadores en estudio son
+Pentium IV de 1.5 GHZ, Dell Optiplex, modelo GX240, comprados en la misma
+fecha (febrero 4 de 2002). Estos equipos, desde el mes de compra, han estado dia-
+riamente en funcionamiento, realizando actividades comunes en salas de cómputo
+del bloque 21. Los datos son los presentados en la tabla 1.
+
+       Tabla 1: Tiempos (en meses) para la primera falla de 72 computadores.
+
+    Las observaciones censuradas (66+ ) indican que en el momento de obtener los
+datos para realizar el presente estudio, es decir, a los 66 meses de haber adquirido
+los computadores, estos equipos no habían presentado la primera falla física.
+    El objetivo de esta aplicación es modelar el tiempo desde que se compra un
+computador específico hasta que presente la primera falla, empleando la meto-
+dología MCMC para obtener los parámetros de la distribución a posteriori. Los
+procedimientos utilizados para generar las gráficas de las distribuciones a posterio-
+ri y predictiva, y el chequeo de convergencia de las a posteriori, fueron realizados
+con el programa R (R Development Core Team 2007).
+
+
+4.1. Estimación de las distribuciones a priori y a posteriori
+   Las distribuciones a priori y a posteriori se estimaron asumiendo que las obser-
+vaciones muestrales siguen una distribución Weibull en presencia de observaciones
+censuradas.
+
+4.1.1. Distribución Weibull cuando hay censura
+
+   Suponga que la distribución de las observaciones experimentales es una Weibull;
+por tanto,
+                        α α−1 −xα /β
+        p(x | α, β) =     x  e       ,              0 ≤ x < ∞,         α > 0,        β>0
+                        β
+
+    La estimación de la distribución a priori de Jeffreys lleva a cálculos complejos
+de los parámetros de la distribución a posteriori, la cual viene dada por la expresión
+
+  π(α, β | Datos) ∝
+             2 α                              1/2 n                  n
+             α x ln(x)2 (xα − β) + β(2xα − β)      α −(P ni=1 xαi )/β Y α−1
+         E                                            e                   xi
+                           α2 β 4                  βn                 i=1
+
+
+
+                                            Revista Colombiana de Estadística 31 (2008) 145–155
+
+150                                         Carlos Javier Barrera & Juan Carlos Correa
+
+    La complejidad de esta distribución implica problemas computacionales en el
+cálculo de los parámetros a partir de las distribuciones condicionales. Se utilizará
+la distribución a priori no informativa de Laplace, donde
+
+                                       π(α, β) = 1
+
+   La verosimilitud, cuando se consideran los datos censurados, viene dada por
+                                                          17
+                                     α17 −(P 72  xα ) /β
+                                                         Y
+                    L(α, β | Datos) = 17 e   i=1  i          xα−1
+                                                              i
+                                     β                   i=1
+
+
+   Entonces, la distribución a posteriori para α y β está dada por
+                                                             17
+                                         α17 −(P 72
+                                                 i=1 xi )/β
+                                                      α     Y
+                    π(α, β | Datos) ∝         e                 xα−1
+                                                                 i
+                                         β 17               i=1
+
+Posteriormente, se construye la respectiva fdp predictiva bayesiana.
+
+
+4.2. Cálculo de los parámetros de las distribuciones
+     a posteriori por medio de la metodología MCMC
+   La distribución a posteriori, cuando hay censura, viene dada por
+                                                         17
+                                     α17 −(P 72  xα )/β
+                                                        Y
+                    π(α, β | Datos) ∝ 17 e   i=1  i         xα−1
+                                                             i
+                                     β                  i=1
+
+
+    Se usó el muestreador de Gibbs para generar muestras a partir de las siguientes
+distribuciones condicionales de α y β.
+    La distribución condicional de α, dados β y los datos, es
+                                                                 17
+                    π(α | β, Datos) ∝ α17 e−(              )/β
+                                                P 72   α         Y
+                                                  i=1 xi               xα−1
+                                                                        i
+                                                                 i=1
+
+
+   La condicional de β, dados α y los datos, es
+                                              1 −(P 72
+                                                    i=1 xi )/β
+                                                         α
+                        π(β | α, Datos) ∝      17
+                                                  e
+                                             β
+
+   La figura 1 muestra la distribución a posteriori estimada para α y β.
+   Ahora, como
+                                                       m
+                                   α α−1 −(yα )/β     1 X α αi −1 −yαi /βi
+         p(y | x) = Eθ|Datos         y  e           ≈         y  e
+                                   β                  m i=1 β
+
+donde θ = (α, β).
+                                                        α
+           Figura 1: Estimación de la distribución a posteriori para α y β.
+
+                 Figura 2: fdp predictiva bayesiana, cuando hay censura.
+
+   Entonces puede aproximarse la predictiva por este promedio ergódico.
+
+                                                         Revista Colombiana de Estadística 31 (2008) 145–155
+
+152                                        Carlos Javier Barrera & Juan Carlos Correa
+
+   La figura 2 muestra la fdp predictiva bayesiana.
+    Si se quiere construir el intervalo de probabilidad al 95 %, que es equivalente
+al intervalo de confianza en la estadística clásica, para el tiempo promedio de
+ocurrencia de la primera falla física de un computador de escritorio, entre los 72
+equipos en estudio, este sería 1.85 meses.
+
+
+4.3. Chequeo de convergencia
+   Para verificar la convergencia de los algoritmos, se utilizó el test KPSS
+(Kwiatkowski-Phillips-Schmidt-Shin) que viene incorporado en la función
+kpss.test del paquete tseries del lenguaje R (R Development Core Team 2007).
+Este test tiene el siguiente juego de hipótesis:
+      H0 = La cadena de Markov ha alcanzado la distribución estacionaria
+                                     vs.
+      H1 = La cadena de Markov no ha alcanzado la distribución estacionaria
+
+    En la prueba se utiliza el estadístico LM desarrollado por Kwiatkowski et al.
+(1992).
+    Para el chequeo de convergencia de la cadena de Markov generada de la distri-
+bución condicional de α, cuando hay censura y cuando se considera que los datos
+se distribuyen Weibull, la condicional para el parámetro α es:
+                                           n
+                                                      e −(            )/β
+                                           Y             Pn       α
+                    π(α | β, Datos) ∝ αn         xα−1
+                                                  i
+                                                             i=1 xi
+
+                                           i=1
+
+    Ahora, generando 5000 muestras a partir de esta distribución y quemando las
+primeras 1000, se tiene, que el nivel KPSS es 0.1035, el parámetro de truncamiento
+es 6 y el valor p es 0.1. Por tanto, no se rechaza la hipótesis nula de que la cadena
+de Markov haya alcanzado la distribución estacionaria; sin embargo, se realizan
+diagnósticos gráficos y se verifica la correlación existente entre los valores generados
+para α con distintos rezagos.
+    Las autocorrelaciones para α con diferentes rezagos se muestran en la tabla 2.
+
+              Tabla 2: Autocorrelaciones de los α con diferentes rezagos.
+                                 Autocorrelación de α con
+
+    En la tabla 2 se observa que no existe una fuerte asociación entre los valores
+de los parámetros generados con diferentes rezagos.
+    La figura 3 muestra, respectivamente, los promedios móviles y la densidad para
+la cadena de valores generados de la distribución condicional de α.
+   Con base en la figura 3, los resultados de la prueba KPSS y las autocorrelaciones
+con los diferentes rezagos, puede afirmarse que la distribución para el parámetro
+α es estacionaria.
+                                                  α
+          Figura 3: Promedios móviles y densidad para α, respectivamente.
+
+    Para el chequeo de convergencia de la cadena de Markov generada de la distri-
+bución condicional de β, cuando hay censura y cuando se considera que los datos
+se distribuyen Weibull, la distribución condicional para el parámetro β es
+
+                                                                   1 −(P ni=1 xαi )/β
+                                         π(β | α, Datos) ∝           e
+                                                                  βn
+
+   A partir de esta distribución, se genera igual número de muestras que en los
+casos anteriores y se queman las primeras 1000 observaciones.
+  Las autocorrelaciones para los valores generados de β con diferentes rezagos se
+muestran en la tabla 3.
+
+                      Tabla 3: Autocorrelaciones de los β con diferentes rezagos.
+
+   En la tabla 3, se observa que no hay una fuerte asociación de los parámetros
+generados por la cadena de Markov con distintos rezagos.
+    El estadístico KPSS es 0.0805, el parámetro de truncamiento es 6 y el valor p
+es 0.1. Por tanto, hay evidencia de que ya se ha alcanzado la distribución límite
+para β.
+
+   De igual manera que en el caso anterior, de los promedios móviles y la densidad
+de β, se obtuvieron las gráficas, las cuales se muestran en la figura 4.
+
+          Figura 4: Promedios móviles y densidad para β, respectivamente.
+    Los gráficos y las pruebas teóricas permiten afirmar que la distribución para β
+es estacionaria, es decir, está muestreándose de la distribución límite para β.
+
+
+5. Conclusiones
+   Es posible hallar la distribución predictiva bayesiana a partir de a prioris no
+conjugadas.
+    Se ha propuesto una metodología basada en el algoritmo MCMC, que permi-
+te calcular la distribución predictiva en situaciones en que esta distribución no
+puede hallarse en forma analítica y no sea fácilmente tratable con los métodos de
+simulación tradicionales. Estos casos pueden presentarse cuando se trabaja con
+distribuciones no conjugadas o con problemas de alta densidad. Esta metodología
+tiene la ventaja de ser implementable con facilidad, pero hay que tener cuida-
+do con los problemas de convergencia, en los cuales hay que recurrir a diversos
+diagnósticos (Kwiatkowski et al. 1992).
+    En este caso, se utiliza la prueba KPSS para estacionariedad, la cual no aparece
+en la literatura utilizada con este propósito.
+Referencias
+Casella, G. & George (1992), ‘Explaining the Gibbs Sampler’, The American Statistician 46(3), 167–174.
+Christensen, R. & Huffman, M. (1985), ‘Bayesian Point Estimation Using the Predictive Distribution’, The American Statistician 39(4), 319–321.
+Dunsmore, I. (1974), ‘The Bayesian Predictive Distribution in Life Testing Models’, Technometrics 16(3), 455–460.
+Hewett, J. (1968), ‘A Note on Prediction Intervals Based on Tartial Observations in Certain Life Test Experiments’, Technometrics 10, 850–853.
+Hill, G. (2002), Bayesian Methods, Chapman and Hall.
+Kalbfleisch, J. D. (1971), Likelihood Methods of Prediction, in V. P. Godambe & D. A. Sprott, eds, ‘Foundations of Statistical Inference’, pp. 378–392.
+Kao, E. (1997), An Introduction to Stochastic Processes, Duxbury Press.
+Komaki, F. (2001), ‘A Shrinkage Predictive Distribution for Multivariate Normal Observables’, Biometrika 88(3), 859–864.
+Kwiatkowski, D., Phillips, P. & Schmidt, P. (1992), ‘Testing the Null Hypothesis of Stationarity Against the Alternative of a Unit Root’, Journal of Econometrics 54, 159–178.
+Meeker, W. & Escobar, L. (1998), Statistical Methods For Reliability Data, Wiley Interscience.
+R Development Core Team (2007), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0.*http://www.R-project.org

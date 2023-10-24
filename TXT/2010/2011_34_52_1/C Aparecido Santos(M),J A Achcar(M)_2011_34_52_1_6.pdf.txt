@@ -1,0 +1,1192 @@
+A Bayesian Analysis in the Presence of Covariates for Multivariate Survival Data: An example of Application. Análisis bayesiano en presencia de covariables para datos de sobrevivencia multivariados: un ejemplo de aplicación
+Centro de Ciências Exatas, UEM - Universidade Estadual de Maringá, Maringá-PR, Brasil. Universidade de São Paulo, Ribeirão Preto-SP, Brasil
+Abstract
+In this paper, we introduce a Bayesian analysis for survival multivariate data in the presence of a covariate vector and censored observations. Different “frailties” or latent variables are considered to capture the correlation among the survival times for the same individual. We assume Weibull or generalized Gamma distributions considering right censored lifetime data. We develop the Bayesian analysis using Markov Chain Monte Carlo (MCMC) methods.
+Key words: Bayesian methods, Bivariate distribution, MCMC methods, Survival distribution, Weibull distribution.
+Resumen
+En este artículo, se introduce un análisis bayesiano para datos multivariados de sobrevivencia en presencia de un vector de covariables y observaciones censuradas. Diferentes “fragilidades” o variables latentes son consideradas para capturar la correlación entre los tiempos de sobrevivencia para un mismo individuo. Asumimos distribuciones Weibull o Gamma generalizadas considerando datos de tiempo de vida a derecha. Desarrollamos el análisis bayesiano usando métodos Markov Chain Monte Carlo (MCMC).
+Palabras clave: distribución bivariada, distribución de sobrevivencia, distribución Weibull, métodos bayesianos, métodos MCMC.
+ 
+1. Introduction
+    Different parametric regression models are introduced in the literature to ana-
+lyse lifetime data in the presence of censored data (see for example, Lawless 1982).
+A popular semi-parametric regression model to analyse survival data was intro-
+duced by Cox (1972) assuming proportional hazards (see also, Cox & Oakes 1984).
+In these models, the survival times are independent, that is, the individuals are
+not related to each other.
+   In many practical situations, especially in medical studies, to have dependent
+survival times is common, when the individuals are related to each other (same
+family, repeated measurements in the same individual or two or more measure-
+menst in the same patient).
+    As an example, we could consider a survival data set introduced by McGilchrist
+& Aisbett (1991) related to kidney infection where the recurrence of infection
+of 38 kidney patients, using portable dialysis machines, is recorded. Infections
+may occur at the location of insertion of the catheter. The time recorded, called
+infection time, is either the survival time (in days) of the patient until an infection
+occurred and the catheter had to be removed, or the censored time, where the
+catheter was removed by others reasons. The catheter is reinserted after some
+time and the second infection time is again observed or censored (data set in
+Table 1).
+    Different survival multivariate models are introduced in the literature to ana-
+lyse dependent lifetime data in the presence of a covariate vector and censored
+observations.
+    To capture the correlation among two or more survival times, we could consider
+the introduction of “frailties” or latent variables (see for example, Clayton & Cuz-
+ick (1985), Oakes (1986, 1989) and Shih & Louis (1992)), assuming proportional
+hazard models.
+    Clayton (1991) uses a Levy process (Kalbfleisch 1978) as a nonparametric Baye-
+sian model for the baseline hazard, applied to continuous data, that is, data with
+no ties.
+    In this paper, we assume parametric regression models for dependent survival
+data in the presence of censored observations considering the special Weibull dis-
+tribution, a popular lifetime model and the Generalized Gamma distribution, a
+supermodel that generalizes some common models used for lifetime data as the
+Weibull, the Gamma, and the log-normal distributions.
+   Different “frailties” are assumed to model the dependent structure of the data,
+under the Bayesian paradigm.
+   For a Bayesian analysis of the proposed models, we use MCMC (Markov Chain
+Monte Carlo) methods to obtain posterior summaries of interest (see for example,
+Gelfand & Smith (1990) and Chib & Greenberg (1995)).
+    The paper is organized as follows: in Section 2, we introduce a Weibull regres-
+sion model for multivariate survival data; in Section 3, we introduce a Bayesian
+analysis; in Section 4, we consider the use of a generalized Gamma distribution for
+
+                                     Revista Colombiana de Estadística 34 (2011) 111–131
+
+Multivariate Survival Data                                                              113
+
+multivariate survival data; in Section 5 we present an analysis for the recurrence
+times introduced in Table 1.
+
+            Table 1: Recurrence times of infections in 38 kidney patients.
+               Patient   First Second       Censoring     Censoring      Sex
+                         time        time    first time  second time
+               1             8         16         1            1          1
+               2           23          13         1            0          2
+               3           22          28         1            1          1
+               4          447         318         1            1          2
+               5           30          12         1            1          1
+               6           24         245         1            1          2
+               7             7          9         1            1          1
+               8          511          30         1            1          2
+               9           53         196         1            1          2
+               10          15         154         1            1          1
+               11            7        333         1            1          2
+               12         141           8         1            0          2
+               13          96          38         1            1          2
+               14         149          70         0            0          2
+               15         536          25         1            0          2
+               16          17           4         1            0          1
+               17         185         117         1            1          2
+               18         292         114         1            1          2
+               19          22         159         0            0          2
+               20          15         108         1            0          2
+               21         152         562         1            1          1
+               22         402          24         1            0          2
+               23          13          66         1            1          2
+               24          39          46         1            0          2
+               25          12          40         1            1          1
+               26         113         201         0            1          2
+               27         132         156         1            1          2
+               28          34          30         1            1          2
+               29            2         25         1            1          1
+               30         130          26         1            1          2
+               31          27          58         1            1          2
+               32            5         43         0            1          2
+               33         152          30         1            1          2
+               34         190           5         1            0          2
+               35         119           8         1            1          2
+               36          54          16         0            0          2
+               37            6         78         0            1          2
+               38          63           8         1            0          1
+               (Censoring (0); infection ocurrence (1); male (1); female (2))
+
+
+
+
+2. A Weibull Regression Model for Multivariate
+   Survival Data
+    Let Tji be a random variable denoting the survival time of the ith individual
+(i = 1, 2, . . . , n) in the j th repeated measurement for the same individual (j =
+1, 2, . . . , k) with a Weibull (1951) distribution with density,
+                                                    ν −1                ν
+                  f (tji | νj , λj (i)) = νj λj (i)tjij    exp{−λj (i)tjij }            (1)
+
+where tji > 0; νj > 0 is the shape parameter and λj (i) is the scale parameter.
+
+                                         Revista Colombiana de Estadística 34 (2011) 111–131
+
+114                                                 Carlos Aparecido Santos & Jorge Alberto Achcar
+
+   To capture the correlation among the repeated measures T1i , T2i , . . . , Tki for
+the same individual, we introduce a “frailty” or latent variable Wi , i = 1, 2, . . . , n
+with a normal distribution, that is,
+                                                     iid    2
+                                                Wi ∼ N (0, σw )                                    (2)
+                                                                                      ′
+   In the presence of a covariate vector xi = (xi1 , xi2 , . . . , xip ) and the latent
+variable Wi , we assume the regression model in (1), given by
+
+                                       λj (i) = exp{wi + β′j xi }                                  (3)
+
+where β j = (βj1 , βj2 , . . . , βjp ) is the vector of regression parameters, j = 1, 2, . . . , k.
+    The hazard function is given by
+                                                           ν −1
+                            hj (tji | xi , wi ) = νj tjij         exp{wi + β′j xi }                (4)
+
+    The survival function for a given tji is
+                                                                   ν       ′
+                               S(tji | xi , wi ) = exp{−tjij ewi +βj xi }                          (5)
+
+for i = 1, 2, . . . , n and j = 1, 2, . . . , k.
+    Let us denote the model defined by (1)-(5) as “model 1”.
+   From (4), we observe that we can have constant, decreasing or increasing ha-
+zards, assuming, respectively, νj = 1, νj < 1 or νj > 1.
+    The conditional mean and variance for Tji given xi and wi , are given, respec-
+tively, by
+                                             Γ(1 + 1/νj )
+                     E(Tji | xi , wi ) =    n                o
+                                         exp ν1j wi + β′j xi
+
+    and
+                                                                                   
+                                                1                        2      2   1
+      Var(Tji | xi , wi ) =           n                       o    Γ 1+      −Γ 1+
+                                exp       2
+                                               wi + β ′j xi              νj         νj
+                                          νj
+
+
+for i = 1, 2, . . . , n; j = 1, 2, . . . , k.
+   The unconditional mean for Tji is obtained from the result, E(Tji | xi ) =
+E[E(Tji | xi , wi )], that is,
+
+                                                    Γ(1 + 1/νj ) n −Wi /νj o
+                             E(Tji | xi ) =              β′ x  E e
+                                                              i
+                                                    exp νjj
+
+                                    2
+    Observe that, since Wi ∼ N (0, σw ), we have
+                                              a                    2
+                            g(Wi ) = e−Wi /νj ∼ N g(0); [g ′ (0)]2 σw
+
+                                                    Revista Colombiana de Estadística 34 (2011) 111–131
+
+Multivariate Survival Data                                                                       115
+
+(“delta method”), that is,                                     "       #
+                                            −Wi /νj a        σ2
+                                        e              ∼ N 1; w2
+                                                             νj
+
+    Thus, the unconditional mean for Tji given xi is,
+
+                                                           Γ(1 + 1/νj )
+                                      E(Tji | xi ) =            β′ x                           (6)
+                                                                     i
+                                                           exp νj j
+
+for i = 1, 2, . . . , n; j = 1, 2, . . . , k.
+     The unconditional variance for Tji is obtained from Var(Tji | xi ) = Var{E(Tji |
+xi , wi )} + E{Var(Tji | xi , wi )}, that is,
+
+                                    Γ2 (1 + 1/νj )
+                Var(Tji | xi ) =          2β ′ x  Var(e−Wi /νj )
+                                                 i
+                                     exp νjj
+                                                                  
+                                      Γ(1 + 2/νj ) − Γ2 (1 + 1/νj )
+                                  +                 2β′ x          E(e−2Wi /νj )
+                                                       j i
+                                              exp     νj
+
+                                                                        h       i
+                                                                     a     4σ2
+   Also using the “delta method”, we observe that g(Wi ) = e−2Wi /νj ∼ N 1; ν 2w ,
+                                                                             j
+that is,
+                         2 2
+                        σw Γ (1 + 1/νj )
+   Var(Tji | xi ) =             2β′ x 
+                         2         j i
+                        νj exp    νj
+                                                         1      
+                                            +           2β′ x  Γ(1 + 2/νj ) − Γ2 (1 + 1/νj )   (7)
+                                                          j    i
+                                                 exp      νj
+
+
+     Observe that not considering the presence of the “frailty” Wi , the variance for
+Tji , given, xi is
+
+                                                  Γ(1 + 2/νj ) − Γ2 (1 + 1/νj )
+                          Var(Tji | xi ) =                     2β′ x                           (8)
+                                                                  j i
+                                                         exp     νj
+
+
+    From (7) and (8), we observe that the extra-Weibull variability in the presence
+of the “frailty” Wi with normal distribution (2) is given by
+                                          2 2
+                                         σw Γ (1 + 1/νj )
+                                                 2β′ x 
+                                          2          j i
+                                         νj exp     νj
+
+for j = 1, 2, . . . , k; i = 1, 2, . . . , n.
+    A different model could be considered replacing (3) by
+                                                                   ′
+                                                λj (i) = wi eβ xi                                (9)
+
+                                                  Revista Colombiana de Estadística 34 (2011) 111–131
+
+116                                              Carlos Aparecido Santos & Jorge Alberto Achcar
+
+with
+                                           iid
+                                      Wi ∼ Gamma(φ−1 , φ−1 )                                   (10)
+    From (9), observe that E(Wi ) = 1 and Var(Wi ) = 0.
+    Let us assume the model defined by (1) and (9) as “model 2”.
+   From “model 2”, the conditional mean and variance for Tji given xi and wi ,
+are given, respectively, by,
+                                                          Γ(1 + 1/νj )
+                                  E(Tji | xi , wi ) =     1/νj β′j xi /νj
+                                                                                               (11)
+                                                         wi    e
+and
+                                                  Γ(1 + 2/νj ) − Γ2 (1 + 1/νj )
+                        Var(Tji | xi , wi ) =              2/νj 2β′j xi /νj
+                                                         wi    e
+for i = 1, 2, . . . , n; j = 1, 2, . . . , k.
+   Following the same arguments used in the determination of the unconditional
+mean and variance for Tji assuming “model 1”, and observing that the “frailty” Wi
+has a Gamma (φ−1 , φ−1 ) distribution, the unconditional mean for Tji assuming
+“model 2” is (see section 6) given by
+                                         Γ(1 + 1/νj )(φ−1 )1/νj Γ(φ−1 − νj−1 )
+                      E(Tji | xi ) =
+                                                   exp{β′j xi /νj }Γ(φ−1 )
+
+for φ−1 > νj−1 , i = 1, 2, . . . , n; j = 1, 2, . . . , k.
+    The unconditional variance for Tji (see Section 7) is given by,
+                                                (
+                              (φ−1 )2/νj          Γ(1 + 2/νj )Γ(φ−1 − 2/νj )
+          Var(Tji | xi ) =                    ×
+                           exp(2β ′j xi /νj )              Γ(φ−1 )
+                                                        2 )
+                             Γ(1 + 1/νj )Γ(φ−1 − 1/νj )
+                         −
+                                        Γ(φ−1 )
+
+for i = 1, 2, . . . , n; j = 1, 2, . . . , k.
+    Generalization of “model 1” and “model 2” could be considered assuming that
+the covariate vector xi also affect the shape parameter νj , that is, assuming the
+regression model νj (i) = exp{α′j xi }, where αj = (αj1 , αj2 , . . . , αjp ) is another
+vector of regression parameters, j = 1, 2, . . . , k. Let us denote these models as
+“model 3” and “model 4”, respectively.
+
+
+3. A Bayesian Analysis
+   Assuming lifetime in the presence of censored observations and a covariate
+vector x = (x1 , x2 , . . . , xp )′ , let us define an indicator variable for censoring or not
+censoring observations, by
+                                  
+                                       1      for observed lifetime
+                         δji =                                                            (12)
+                                       0      for censored observation
+
+                                                 Revista Colombiana de Estadística 34 (2011) 111–131
+
+Multivariate Survival Data                                                                                 117
+
+     Assuming “model 1” defined by (1), (2) and (3), the likelihood function is given
+by
+                                         k
+                                       n Y
+                                       Y                                  δ                    1−δji
+             f (t | x, β, ν, w) =                   [f (tji | xi , wi )] ji [S(tji | xi , wi )]
+                                       i=1 j=1
+
+where S(tji | xi , wi ) is the survival function defined by (5), β = (β1 , β2 , . . . , βk ),
+β j = (βj1 , βj2 , . . . , βjp ), j = 1, 2, . . . , k; ν = (ν1 , ν2 , . . . , νk ), w = (w1 , w2 , . . . , wn ),
+xi = (xi1 , xi2 , . . . , xip ), i = 1, 2, . . . , n.
+    That is,
+                              k
+                            n Y
+                            Y           δ    δ (νj −1)                                  ν         ′
+   f (t | x, β, ν, w) =               νj ji tjiji           exp δji [wi + β′j xi ] exp{−tjij ewi +βj xi }
+                            i=1 j=1
+                                                                                                            (13)
+
+     Assuming “model 2”, the likelihood function is (from (12) and (9)) given by
+                                     k
+                                   n Y
+                                   Y            δ       δ (νj −1)     δ       ′            ν       ′
+         f (t | x, β, ν, w) =                 νj ji tjiji           wi ji eδji β xi exp{−tjij wi eβ xi }
+                                   i=1 j=1
+
+   For a hierarchical Bayesian analysis of “model 1”, we assume in the first stage,
+the following prior distributions for the parameters:
+                                            νj ∼ Gamma(aj , bj )                                           (14)
+                                               βjl ∼ N(0; c2jl )
+where j = 1, 2, . . . , k; l = 1, 2, . . . , p; aj , bj , cjl are known hyperparameters and
+Gamma(a, b) denotes a gamma distribution with mean a/b and variance a/b2 .
+    In the second stage of the hierarchical Bayesian analysis, we assume a gamma
+                            2
+prior distribution for σw     , that is,
+                                             2
+                                            σw ∼ Gamma(d, e)                                               (15)
+where d and e are known hyperparameters.
+   We further assume independence among the parameters.
+   Combining (2), (13), (14) and (15), we get the joint posterior distribution for
+              2
+w, ν, β and σw  , given by
+                              (n                                           !
+                                Y            2
+                                                )  Y  k Y p            2   
+                                            w                          β jl
+     π(ν, β, w, σw2
+                    | x, t) ∝       exp − i2                   exp − 2
+                                i=1
+                                           2σw      
+                                                       j=1 l=1
+                                                                      2cj 
+                                                                     
+                                                     Yk
+                                2 d−1           2        a −1
+                            × (σw )    exp(−eσw  )       νj j e−bj νj 
+                                                     j=1
+                                                                               (16)
+                                        k
+                                      n Y
+                                      Y             δ    δ (νj −1)
+                                  ×             νj ji tjiji           exp{δji (wi + β′j xi )}
+                                      i=1 j=1
+                                                    ν         ′
+                                  × exp{−tjij ewi +βj xi }
+
+
+                                                    Revista Colombiana de Estadística 34 (2011) 111–131
+
+118                                              Carlos Aparecido Santos & Jorge Alberto Achcar
+
+   To get the posterior summaries of interest, we simulate samples of the joint
+posterior distribution (16) using MCMC methods as the popular Gibbs sampling
+algorithm (see for example, Gelfand & Smith 1990) or the Metropolis-Hastings
+algorithm (see for example, Chib & Greenberg 1995).
+    A great simplification in the simulation of the samples for the joint posterior
+distribution is given by the WinBugs software (Spiegelhalter, Thomas, Best &
+Lunn 2003), which requires only the specification of the joint distribution for the
+data and the prior distributions for the parameters.
+    Assuming “model 2”, we consider the same priors (14) for νj and βjl , and an
+uniform prior distribution for φ, that is,
+                                                φ ∼ U(0, f )                                           (17)
+where U (a, b) denotes an uniform distribution in the interval (a, b) and f is a
+known hyperparameter.
+   The joint posterior distribution for w, ν, β and φ is given by
+                         (n                    )
+                          Y φ−1 −1
+                                       −φ−1 wi
+  π(β, β, w, φ | x, t) ∝      wi     e           φf −1 e−gφ
+                              i=1                   !  k              
+                              Yk Yp              2
+                                                 βjl   Y               
+                                                             a −1
+                          ×                 exp − 2         νj j e−bj νj
+                              
+                                j=1 l=1
+                                                 2cj  j=1              
+                                k
+                              n Y
+                              Y            δ    δ (νj −1)     δ                            ν       ′
+                          ×              νj ji tjiji        wi ji exp{δji β′j xi } exp{−tjij wi eβj xi }
+                              i=1 j=1
+
+
+
+4. Use of a Generalized Gamma Distribution for
+   Multivariate Survival Data
+    In this section, we assume that the lifetime Tji has a generalized gamma dis-
+tribution with density
+                                          θj                   θ ν −1   
+          f (tji | νj , µj (i), θj ) =          [µj (i)]θj νj tjij j exp −[µj (i)tji ]θj               (18)
+                                         Γ(νj )
+where tji > 0, i = 1, 2, . . . , n; j = 1, 2, . . . , k; θj > 0; νj > 0 and µj (i) > 0.
+    The generalized gamma distribution is a fairly flexible family of distributions
+that includes as special cases the exponential (θj = νj = 1), Weibull (νj = 1)
+and gamma (θj = 1) distributions. The log-normal distribution also arises as a
+limiting form of (18), that is, the generalized gamma model includes as special
+cases all of the most commonly used lifetime distributions. This makes it useful
+for discriminating among these other models.
+   The survival function for a given value of Tji is given by
+                                                                    Z ∞
+                                                θj            θj νj                            θj
+  S(tji | νj , µj (i), θj ) = P (Tji > tji ) =        [µj (i)]           z θj νj −1 e−[µj (i)z] dz
+                                               Γ(νj )                tji
+
+
+                                                 Revista Colombiana de Estadística 34 (2011) 111–131
+
+Multivariate Survival Data                                                                119
+
+   To capture the correlation among the repeated measures T1i , T2i , . . . , Tki for
+the same individual, we introduce “frailties” Wi , i = 1, 2, . . . , n. In the presence of
+a covariate vector xi = (xi1 , xi2 , . . . , xip )′ , we assume the regression models
+
+                                 µj (i) = exp{wi + β′j xi }
+
+where Wi has a normal distribution (2) i = 1, 2, . . . , n; j = 1, 2, . . . , k, denoted as
+“model 5”, or,
+                                                     ′
+                                      µj (i) = wi eβj xi
+where Wi has a gamma distribution (10) denoted as “model 6”.
+   Assuming “model 5”, we consider the following prior distributions in a first
+stage of a hierarchical Bayesian analysis:
+
+                                   νj ∼ Gamma(aj , bj );                                 (19)
+
+                                   θj ∼ Gamma(cj , dj );
+                                      βjl ∼ N(0, e2jl );
+where j = 1, 2, . . . , k; l = 1, 2, . . . , p; aj , bj , cj , dj and ejl are known hyperpara-
+meters. In a second stage of the hierarchical Bayesian analysis, let us assume a
+                            2
+gamma prior (15) for σw       .
+    Assuming “model 6”, we consider the same priors (19) for νj , θj and βjl , and a
+gamma prior (17) for φ.
+    To develop a Bayesian analysis for the generalized gamma distribution of mul-
+tivariate survival data in the presence of covariates and censored observations, we
+need informative prior distributions to get convergence for the Gibbs sampling al-
+gorithm. Observe that using the generalized gamma distribution usually we have
+great difficulties to get classical inferences of interest (see for example, Stacy &
+Mihram (1965), Parr & Webster (1965) and Hager & Bain (1970)).
+   Samples of the joint posterior distribution for the parameters of “model 3” or
+“model 4” are obtained using MCMC methods.
+
+
+5. Model Selection
+    Different model selection methods could be used to choose the most adequate
+model to analyse multivariate survival data in the presence of covariates and cen-
+sored observartions. As a special situation, we could use the generalized gamma
+distribution (see Section 4). In this way, if credible intervals for the parameters νj ,
+j = 1, 2, . . . , k include the value one, this is an indication that the use of Weibull
+distribution in the presence of “frailties” gives good fit for the survival data.
+   We also could consider the Deviance Information Criterion (DIC), which is
+a criterion specifically useful for selection models under the Bayesian approach
+where samples of the posterior distribution for the parameters of the model are
+obtained using MCMC methods.
+
+                                        Revista Colombiana de Estadística 34 (2011) 111–131
+
+120                                            Carlos Aparecido Santos & Jorge Alberto Achcar
+
+   The deviance is defined by
+
+                                      D(θ) = −2 log L(θ) + c
+
+where θ is a vector of unknown parameters of the model, L(θ) is the likelihood
+function of the model and c is a constant that does not need to be known when
+the comparison between models is made.
+   The DIC criterion defined by Spiegelhalter, Best, Carlin & Van der Linde
+(2002) is given by,
+                              DIC = D(θ) b + 2nD
+
+where D(θ) b is the deviance evaluated at the posterior mean θb = E(θ | data) and
+nD is the effective number of parameters of the model given by nD = D − D(θ),  b
+where D = E(D(θ) | data) is the posterior deviance measuring the quality of the
+data fit for the model. Smaller values of DIC indicates better models. Note that
+these values could be negative.
+
+
+6. Some Results About Gamma Distribution
+   Let Wi be a random variable with a Gamma(a, b) distribution, with density
+                                                       ba a−1 −bwi
+                                 f (wi | a, b) =          w  e                              (20)
+                                                      Γ(a) i
+where wi > 0, a > 0, b > 0, i = 1, 2, . . . , n.
+   From (20) we observe that
+                           Z ∞
+                                                 Γ(a)
+                                wia−1 e−bwi dwi = a                                         (21)
+                             0                    b
+
+   Also observe that
+             Z ∞         a                      Z ∞
+       −k           −k b    a−1 −bwi        ba       (a−k)−1 −bwi
+   E(wi ) =       wi       wi e      dwi =          wi      e     dwi
+               0      Γ(a)                 Γ(a)  0
+
+   From (21), we have:
+                                                      bk Γ(a − k)
+                                      E(wi−k ) =
+                                                          Γ(a)
+for a > k.
+    Assuming a = b = φ−1 , we have:
+
+i) With k = 1/νj ,
+
+                                                           −1
+
+                                   −1/νj    (φ−1 )νj         Γ(φ−1 − νj−1 )
+                                E(wi     )=                                                 (22)
+                                                            Γ(φ−1 )
+      for i = 1, 2, . . . , n; j = 1, 2, . . . , k;
+
+                                              Revista Colombiana de Estadística 34 (2011) 111–131
+
+Multivariate Survival Data                                                                         121
+
+ii) With k = 2/νj ,
+                                      −2/νj        (φ−1 )2/νj Γ(φ−1 − 2/νj )
+                                 E(wi         )=                                                  (23)
+                                                            Γ(φ−1 )
+       for i = 1, 2, . . . , n; j = 1, 2, . . . , k.
+
+     From (10), we have:
+                                                           Γ(1 + 1/νj )        −1/νj
+           E(Tji | xi ) = E[E(Tji | xi , wi )] =                           E(Wi      )
+                                                          exp{β′j xi /νj }
+
+     Thus, from (22), we find the unconditional mean for Tji , given by
+
+                                     Γ(1 + 1/νj )(φ−1 )1/νj Γ(φ−1 − 1/νj )
+                  E(Tji | xi ) =                                                                  (24)
+                                            Γ(φ−1 ) exp{β′j xi /νj }
+
+   From (10) and (11) and using the result Var(Tji | xi ) = E{Var(Tji | xi , wi )} +
+Var{E(Tji | xi , wi )}, we have:
+
+
+                                     [Γ(1 + 2/νj ) − Γ2 (1 + 1/νj )]     −2/νj
+               Var(Tji | xi ) =                                      E(Wi      )+                 (25)
+                                             exp{2β′j xi }
+                                      Γ2 (1 + 1/νj )         −1/νj
+                                 +                     Var(Wi      )                              (26)
+                                     exp{2β′j xi /νj }
+
+                                −1/νj                  −2/νj           −1/νj
+   Observe that Var(Wi                  ) = E(Wi               ) − [E(Wi       )]2 , that is, from (22)
+and (23),
+
+
+                 −1/νj        (φ−1 )2/νj Γ(φ−1 − 2/νj ) (φ−1 )2/νj Γ2 (φ−1 − 1/νj )
+        Var(Wi           )=                            −
+                                       Γ(φ−1 )                   Γ2 (φ−1 )
+
+     That is, from (23) and (24), we find the unconditional variance for Tji given
+by
+                        (φ−1 )2/νj
+ Var(Tji | xi ) =                      ×
+                     exp(2β′j xi /νj )
+                     (                                                          2 )
+                       Γ(1 + 2/νj )Γ(φ−1 − 2/νj )     Γ(1 + 1/νj )Γ(φ−1 − 1/νj )
+                   ×                              −
+                                  Γ(φ−1 )                      Γ(φ−1 )
+
+
+7. Analysis of the Recurrence Times of Infections
+   for Kidney Patients
+   To analyse the recurrence times of infections (see Table 1), let us assume a
+Weibull regression model (“model 1”) in the presence of a “frailty” Wi with a
+normal distribution (2).
+
+                                               Revista Colombiana de Estadística 34 (2011) 111–131
+
+122                                           Carlos Aparecido Santos & Jorge Alberto Achcar
+
+   In this case, we have only a covariate xi (sex; xi = 1 for male; xi = 0 for
+female) and k = 2 recurrence times.
+    From (3), we have the regression model
+
+                                  λj (i) = exp{β1j + β2j xi + wi }
+
+i = 1, 2, . . . , 38; j = 1, 2.
+   For a Bayesian analysis of “model 1”, let us assume the prior distributions (14)
+and (15) with a1 = b1 = a2 = b2 = 1; c11 = c21 = c12 = c22 = 10 and d = e = 0.1.
+    Using the WinBugs software (Spiegelhalter et al. 2003), we discarded the first
+5000 simulated Gibbs samples (“burn-in-sample”) to eliminate the effect of the
+initial values for the parameters of the model. Choosing every 20th simulated Gibbs
+sample, we obtained a final sample of size 2000 to get the posterior summaries of
+interest (see Table 2). Convergence of the Gibbs sampling algorithm was monitored
+using existing methods as time series plots for the simulated samples and Gelman
+& Rubin (1992) indexes. This simulation procedure also was employed for the
+other models considered in this section.
+   In Table 2, we also have the Monte Carlo estimate for the posterior mean of the
+median survival time in each recurrence time. Observe that the median survival
+time not including the covariate xi is given by Medj = [(log 2)e−β1j ]1/νj , j = 1, 2.
+
+                          Table 2: Posterior summaries (“model 1”).
+                     Parameter       Mean        S.D.     95% Credible Interval
+                        β21         1.9820      0.5694       (0.8885; 3.1550)
+                        β22         0.7594      0.5570      (−0.3279; 1.8510)
+                        β11         −5.5490     0.8571     (−7.3400; −3.9880)
+                        β12         −5.6110     0.8805     (−7.4620; −3.9940)
+                       med 1        120.40      31.780       (69.350; 194.50)
+                       med 2        106.60      29.520       (62.720; 173.10)
+                         ν1         1.0880      0.1610       (0.8012; 1.4270)
+                         ν2         1.1310      0.1742       (0.8113; 1.5100)
+                       1/σw 2       3.1350      3.1060       (0.7188; 11.270)
+
+
+   In Figure 1, we have the time series plots for the simulated Gibbs samples
+under “model 1”. From these plots, we observe convergence of the algorithm in all
+cases.
+   Assuming “model 2”, that is, defined by the Weibull density (1) where λj (i) is
+given by (9), we have
+                         λj (i) = wi exp{β1j + β2j xi }
+i = 1, 2, . . . , 38; j = 1, 2. Let us assume the prior distributions (14) and (17) with
+a1 = b1 = a2 = b2 = 1; c11 = c21 = c12 = c22 = 10 and f = 5.
+   Following the same simulation steps considered in the generation of samples for
+the joint posterior distribution of the parameters of “model 1”, we have, in Table 3,
+the posterior summaries of interest assuming the final Gibbs sample of size 2000.
+    In Figure 2, we have plots for the simulated Gibbs samples under “model 2”.
+
+                                              Revista Colombiana de Estadística 34 (2011) 111–131
+
+Multivariate Survival Data                                                                                                                   123
+
+
+
+
+                                                                                                        −3
+         4
+
+
+
+
+                                                                                                        −4
+                                                         2
+         3
+
+
+
+
+                                                                                                        −5
+                                                         1
+ β(21)
+
+
+
+
+                                                β(22)
+
+
+
+
+                                                                                               β(11)
+
+                                                                                                        −6
+         2
+
+
+
+
+                                                                                                        −7
+                                                         0
+         1
+
+
+
+
+                                                                                                        −8
+                                                         −1
+
+
+
+
+                                                                                                        −9
+               0   500    1000    1500   2000                  0    500   1000   1500   2000                  0   500   1000   1500   2000
+
+
+
+
+                                                         300
+         −3
+
+
+
+
+                                                                                                        250
+         −4
+
+
+
+
+                                                         250
+
+
+
+
+                                                                                                        200
+         −5
+
+
+
+
+                                                         200
+                                                med(1)
+
+
+
+
+                                                                                               med(2)
+ β(12)
+
+         −6
+
+
+
+
+                                                                                                        150
+                                                         150
+         −7
+
+
+
+
+                                                                                                        100
+                                                         100
+         −8
+
+
+
+
+                                                                                                        50
+         −9
+
+
+
+
+                                                         50
+
+
+               0   500    1000    1500   2000                  0    500   1000   1500   2000                  0   500   1000   1500   2000
+         1.8
+
+
+
+
+                                                                                                        30
+                                                         1.8
+         1.6
+
+
+
+
+                                                                                                        25
+                                                         1.6
+         1.4
+
+
+
+
+                                                                                                        20
+                                                         1.4
+ ν(1)
+
+
+
+
+                                                ν(2)
+
+
+
+
+                                                                                                1σ
+         1.2
+
+
+
+
+                                                                                                        15
+                                                         1.2
+         1.0
+
+
+
+
+                                                                                                        10
+                                                         1.0
+         0.8
+
+
+
+
+                                                         0.8
+
+
+
+
+                                                                                                        5
+         0.6
+
+
+
+
+                                                         0.6
+
+
+
+
+               0   500    1000    1500   2000                  0    500   1000   1500   2000
+                                                                                                        0     0   500   1000   1500   2000
+
+
+
+
+                                 Figure 1: Simulated Gibbs samples (“model 1”).
+
+
+                                    Table 3: Posterior summaries (“model 2”).
+                         Parameter               Mean                 S.D.         95% Credible Interval
+                            β21                 2.2370               0.6192           (1.0770; 3.5080)
+                            β22                 1.0180               0.6234          (−0.1979; 2.2800)
+                            β11                 −5.6340              0.8506         (−7.3790; −4.1350)
+                            β12                 −5.6690              0.8794         (−7.5240; −4.0420)
+                           med 1                98.590               26.260           (54.860; 157.90)
+                           med 2                87.340               23.140           (50.320; 141.90)
+                             ν1                 1.1560               0.1719           (0.8508; 1.5130)
+                             ν2                 1.1950               0.1863           (0.8604; 1.5900)
+                            1/φ                 2.4670               2.6360           (0.7685; 7.7670)
+
+
+    From the results of Tables 2 and 3, we observe similar results considering “model
+1” and “model 2”. We observe that in both models, we have a significative effect
+of sex for the first recurrence time, since zero is not included in the 95% credible
+interval for β21 ; in the same way, we observe that sex does not have a significative
+effect in the second recurrence time, since zero is included in the 95% credible
+interval for β22 .
+
+                                                                   Revista Colombiana de Estadística 34 (2011) 111–131
+
+124                                                               Carlos Aparecido Santos & Jorge Alberto Achcar
+
+
+
+
+                                                        3
+         4
+
+
+
+
+                                                                                                       −4
+                                                                                                       −5
+                                                        2
+         3
+ β(21)
+
+
+
+
+                                               β(22)
+
+
+
+
+                                                                                              β(11)
+
+                                                                                                       −6
+                                                        1
+         2
+
+
+
+
+                                                                                                       −7
+                                                        0
+
+
+
+
+                                                                                                       −8
+         1
+
+
+
+
+                                                        −1
+
+
+
+
+                                                                                                       −9
+               0   500   1000    1500   2000                  0    500   1000   1500   2000                  0   500   1000   1500   2000
+
+
+
+
+                                                        250
+         −3
+
+
+
+
+                                                                                                       200
+         −4
+
+
+
+
+                                                        200
+
+
+
+
+                                                                                                       150
+         −5
+
+
+
+
+                                               med(1)
+
+
+
+
+                                                                                              med(2)
+ β(12)
+
+
+
+
+                                                        150
+         −6
+
+
+
+
+                                                                                                       100
+                                                        100
+         −7
+         −8
+
+
+
+
+                                                                                                       50
+                                                        50
+         −9
+
+
+
+
+               0   500   1000    1500   2000                  0    500   1000   1500   2000                  0   500   1000   1500   2000
+
+
+
+
+                                                                                                       100
+                                                        1.8
+         1.8
+
+
+
+
+                                                                                                       80
+                                                        1.6
+         1.6
+
+
+
+
+                                                        1.4
+         1.4
+
+
+
+
+                                                                                                       60
+ ν(1)
+
+
+
+
+                                               ν(2)
+
+
+
+
+                                                                                              1φ
+                                                        1.2
+         1.2
+
+
+
+
+                                                                                                       40
+                                                        1.0
+         1.0
+
+
+
+
+                                                                                                       20
+                                                        0.8
+         0.8
+
+
+
+
+               0   500   1000    1500   2000                  0    500   1000   1500   2000
+                                                                                                       0     0   500   1000   1500   2000
+
+
+
+
+                                Figure 2: Simulated Gibbs samples (“model 2”).
+
+
+    A Monte Carlo estimate for DIC (see Section 5), based on the 2000 simulated
+Gibbs samples considering “model 1”, is given by DIC = 667.07. Considering
+“model 2”, we have DIC = 662.86. That is, since we have a small decreasing in
+the value of DIC assuming “model 2”, we could conclude that “model 2” is better
+fitted by the recurrence times of infection for kidney patients. To point out that
+other discrimination methods also could be used to decide by the best model is
+important.
+   A further modification could be assumed for “model 1” and “model 2”, intro-
+ducing the effect of covariate sex (xi ) in the shape parameter νj , j = 1, 2.
+   In this way, we assume for “model 1” and “model 2” the regression model for
+the shape parameter given by
+                                                 νj (i) = exp{α1j + α2j xi }
+i = 1, 2, . . . , 38; j = 1, 2.
+   Let us denote these models as “model 3” and “model 4”.
+    For “model 3” and “model 4”, we assume informative normal prior distributions
+for β1j and β2j considering means close to the obtained posterior means for β1j
+and β2j assuming “model 1” and “model 2”, respectively. We also assume normal
+priors for α1j and α2j , j = 1, 2, considering small variances.
+
+                                                                  Revista Colombiana de Estadística 34 (2011) 111–131
+
+Multivariate Survival Data                                                            125
+
+   In Table 4, we have the posterior summaries obtained from 2000 simulated
+Gibbs samples for the joint posterior distributions of interest.
+
+              Table 4: Posterior summaries (“model 3” and “model 4”).
+        Model         Parameter        Mean        S.D.     95% Credible Interval
+      “model 3”          β21          2.0050      0.2932       (1.4410; 2.5880)
+     DIC = 660.87        β22          1.9470      0.3007       (1.3610; 2.5370)
+                         β11          −5.9650     0.2970     (−6.5460; −5.3840)
+                         β12          −6.0650     0.2937     (−6.6580; −5.4970)
+                         α21          0.0603      0.1186      (−0.1818; 0.2850)
+                         α22          −0.1855     0.1180      (−0.4252; 0.0356)
+                         α11          0.1395      0.0662       (0.0064; 0.2670)
+                         α12          0.1899      0.0697       (0.0452; 0.3159)
+                            2
+                        1/σw          1.7700      0.8131       (0.6983; 3.8310)
+      “model 4”          β21          2.0170      0.3044       (1.4210; 2.5960)
+     DIC = 658.06        β22          1.9510      0.3013       (1.3610; 2.5440)
+                         β11          −5.9410     0.2938     (−6.5280; −5.3700)
+                         β12          −6.0510     0.2921     (−6.6460; −5.4680)
+                         α21          0.1142      0.1242      (−0.1362; 0.3476)
+                         α22          −0.1263     0.1281      (−0.3848; 0.1203)
+                         α11          0.1772      0.0696       (0.0430; 0.3143)
+                         α12          0.2267      0.0691       (0.0838; 0.3593)
+                         1/φ          2.1050      1.9220       (0.7696; 5.5800)
+
+
+   In Figures 3 and 4, we have plots for the simulated Gibbs samples considering
+“model 3” and “model 4”, respectively.
+    From the results in Table 4, we observe that “model 3” and “model 4” give simi-
+lar inferences. We observe that the covariate xi (sex) does not have a significative
+effect on the shape parameter of the Weibull distribution for the recurrences times,
+since zero is included in the 95% credible intervals for α21 and α22 assuming both
+models. We also observe that “model 4” gives a smaller value for DIC (658.06)
+when compared to models 1, 2 and 3.
+    Another way, to check if the Weibull regression model is well fitted by the data,
+is to assume a generalized gamma distribution.
+  Considering “model 5” with a generalized gamma density (18) with regression
+model,
+                             µj (i) = exp{β1j + β2j xi + wi }
+
+where the “frailty” Wi has a normal distribution (2), let us assume the priors (19)
+and (15) for the parameters of the model with hyperparameter values a1 = a2 =
+b1 = b2 = c1 = c2 = d1 = d2 = 1 and normal distributions for β11 , β12 , β21 and
+β22 with variance equals to one.
+
+                                 Figure 3: Simulated Gibbs samples (“model 3”).
+
+
+
+  Assuming “model 6”, with a generalized gamma density (18), and a regression
+model,
+                        µj (i) = wi exp{β1j + β2j xi }
+where the “frailty” Wi has a gamma distribution (10), let us assume the same
+prior distributions considered for “model 5”, in the first stage of the hierarchical
+Bayesian analysis and a Gamma(1, 1) prior for the parameter φ.
+    In Table 5, we have the posterior summaries of interest considering “model 5”
+and “model 6”.
+    From the results of Table 5, we observe that assuming “model 5” or “model
+6”, the 95% credible intervals for ν1 and ν2 include the value one, that is, an
+indicator that the Weibull models in the presence of “frailties” give good fit for the
+multivariate survival data introduced in table 1.
+
+
+8. Discussion and Concluding Remarks
+   Longitudinal survival data is common in many studies as in medicine or in
+engineering. Usually, we have repeated measures for the same patient or unit. In
+these studies, the presence of covariates and censoring data is common . The use of
+
+                                 Figure 4: Simulated Gibbs samples (“model 4”).
+
+
+
+Bayesian hierarchical models with “frailties” or latent variables assuming different
+structures is a powerful way to get the inferences of interest.
+    Observe that considering independent survival times assuming Weibull distri-
+bution (1) and regression model (3) to analyse the survival data introduced in Table
+1, we have the value of DIC given by 678.82 considering non-informative priors for
+the parameters of the model and the same Gibbs algorithm steps assumed for the
+other proposed models. That is, since DIC is larger assuming independent Weibull
+models, we have a great indication of the presence of a correlation structure for
+the survival data of Table 1.
+  In Table 6, we have the posterior summaries assuming independent Weibull
+models.
+    Since we have only a covariate xi (sex; xi = 1 for male and xi = 0 for female),
+we can compare the obtained means and variances assuming independent Weibull
+distributions and “model 1” in the presence of a “frailty”. Observe that for “model
+1” we use the approximate formulas (6) and (7) for the unconditional means and
+variances for the survival times (see Table 7). In Table 7, we also have the sample
+means and sample variances for each combination sex versus response assuming
+only the uncensored data.
+
+                   Figure 5: Simulated Gibbs samples independent Weibull model.
+
+
+
+    From the results of Table 7, we observe that the variances of the survival times
+have a great influence of the presence of the “frailty”. Also to point out that these
+differences could be affected by the sample sizes for each class sex x response is
+important.
+
+
+
+Acknowledgments
+  The authors would like to thank the editor and referees for their helpful com-
+ments.
+
+                                                                                                                                               
+                             Recibido: julio de 2009 — Aceptado: enero de 2011
+
+
+
+References
+Chib, S. & Greenberg, E. (1995), ‘Understanding the Metropolis-Hastings algorithm’, The American Statistician (49), 327–335.
+Clayton, D. (1991), ‘A Monte Carlo Method for Bayesian inference in frailty models’, Biometrics (47), 467–485.
+Clayton, D. & Cuzick, J. (1985), ‘Multivariate generalizations of the proportionalhazards model’, Journal of the Royal Statistical Society A(148), 82–117.
+Cox, D. R. (1972), ‘Regression models and life tables’, Journal of the Royal Sta-tistical Society B(34), 187–220.
+Cox, D. R. & Oakes, D. (1984), Analysis of Survival Data, Chapman & Hall, London.
+Gelfand, A. E. & Smith, A. F. M. (1990), ‘Sampling based approaches to calculating marginal densities’, Journal of the American Statistical Association (85), 398–409.
+Gelman, A. & Rubin, D. B. (1992), ‘Inference from iterative simulation using multiple sequences (with discussion)’, Statistical Science 7(4), 457–472.
+Hager, H. W. & Bain, L. J. (1970), ‘Inferential procedures for the generalized gamma distribution’, Journal of the American Statistical Association (65), 1601–1609.
+Kalbfleisch, J. D. (1978), ‘Nonparametric Bayesian analysis of survival time data’, Journal of the Royal Statistical Society B(40), 214–221.
+Lawless, J. F. (1982), Statistical Models and Methods for Lifetime Data, John Wiley, New York.
+McGilchrist, C. A. & Aisbett, C. W. (1991), ‘Regression with frailty in survival analysis’, Biometrics (47), 461–466.
+Oakes, D. (1986), ‘Semiparametric inference in a model for association in bivariate survival data’, Biometrika 73, 353–361.
+Oakes, D. (1989), ‘Bivariate survival models induced by frailties’, Journal of the American Statistical Association 84, 487–493.
+Parr, V. B. & Webster, J. T. (1965), ‘A method for discriminating between failure density functions used in reliability predictions’, Technometrics (7), 1–10.
+Shih, J. A. & Louis, T. A. (1992), Models and analysis for multivariate failure time data, Technical report, Division of Biostatistics, University of Minnesota.
+Spiegelhalter, D. J., Best, N. G., Carlin, B. P. & Van der Linde, A. (2002), ‘Bayesian measures of model complexity and fit (with discussion)’, Journal of the Royal Statistical Society B(64), 583–639.
+Spiegelhalter, D. J., Thomas, A., Best, N. G. & Lunn, D. (2003), WinBugs version  1.4 user manual, Institute of Public Health and Department of Epidemiology & Public Health, London. *http://www.mrc-bsu.com.ac.uk/bugs
+Stacy, E. W. & Mihram, G. A. (1965), ‘Parameter estimation for a generalized gamma distribution’, Technometrics (7), 349–358.
+Weibull, W. (1951), ‘A statistical distribution function of wide applicability’, Journal of Applied Mechanics 18(3), 292–297.

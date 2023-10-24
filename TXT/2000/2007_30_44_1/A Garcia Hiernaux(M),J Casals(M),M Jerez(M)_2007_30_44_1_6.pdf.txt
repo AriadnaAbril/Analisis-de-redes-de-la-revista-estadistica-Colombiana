@@ -1,0 +1,666 @@
+Detección de raíces unitarias y cointegración mediante métodos de subespacios
+Universidad Carlos III de Madrid;Universidad Complutense de Madrid
+Resumen
+Proponemos un nuevo procedimiento para detectar raíces unitarias basado en métodos de subespacios. Su planteamiento comporta tres aspectos fundamentales. Primero, la misma metodología se puede aplicar a series individuales o a vectores de series temporales. Segundo, utiliza una familia flexible de criterios de información, cuyas funciones de pérdida se pueden adaptar a las propiedades estadísticas de los datos. Finalmente, no requiere especificar un proceso estocástico para las series analizadas. Se demuestra la consistencia del método y los ejercicios de simulación revelan buenas propiedades en muestras finitas. Además, su aplicación práctica se ilustra mediante el análisis de varias series reales.
+Palabras clave: modelos estado espacio, análisis de series temporales, criterios de información, función de pérdida.
+Introducción
+Este trabajo desarrolla un procedimiento para detectar raíces unitarias en series temporales, que tiene su origen en los métodos aplicados habitualmente a sistemas físicos. En ingeniería aeronáutica y de telecomunicaciones existe una importante tradición de análisis de este tipo de series, utilizando instrumentos que no se han extendido completamente a otros campos. Estas técnicas se conocen como de identificación de sistemas. El trabajo pionero de Ho & Kalman (1966) sentó las bases de la estrategia de modelización en esta área que se centra en obtener, a partir de los datos, un modelo en forma de espacio de los estados. Este problema se aborda generalmente con un enfoque geométrico-algebraico, aunque también cabe destacar aproximaciones estadísticas como las de Akaike (1976) o Larimore (1990).
+    En el campo de la ingeniería, desde los años noventa, la identificación de sis-
+temas ha estado dominada por los métodos de subespacios; véase Favoreel et al.
+(2000) para una perspectiva general. Muchos de estos métodos parten de la idea
+de que, si se observaran los estados de un sistema, las matrices que lo caracteri-
+zan podrían estimarse eficientemente por mínimos cuadrados ordinarios. Puesto
+que en general no ocurre así, el problema de identificación se reduce a aproximar
+los estados a partir de los datos observables, sin tener información a priori de la
+estructura del sistema.
+   En comparación con las técnicas convencionales de análisis estadístico de series
+temporales, estos métodos tienen tres ventajas fundamentales:
+
+     1. Permiten identificar un modelo lineal general a partir de los datos, sin infor-
+        mación a priori sobre la estructura del proceso.
+
+     2. El tratamiento de los casos univariante y multivariante es conceptualmente
+        el mismo.
+
+     3. Se trata de métodos computacionalmente eficientes, apoyados en técnicas
+        numéricas robustas del álgebra lineal. Además no son iterativos y, por tanto,
+        carecen de problemas de convergencia.
+
+   La aplicación de estos métodos a series temporales que no proceden de siste-
+mas físicos presenta importantes desafíos. Por ejemplo, las series temporales en
+ingeniería suelen ser estacionarias y típicamente carecen de componentes estacio-
+nales, por lo que los métodos de subespacios disponibles carecen de instrumentos
+adecuados para acomodar estas características de los datos que son muy comunes,
+por ejemplo, en series temporales económicas.
+    En este trabajo se aborda una de estas cuestiones: la detección de raíces unita-
+rias. Para ello, partimos del algoritmo CCA (Canonical Correlation Analysis) de
+Larimore (1983). Este método resulta especialmente conveniente ya que, debido
+a su elección de matrices de ponderación, el algoritmo calcula eficientemente los
+coeficientes de correlación canónica (CCC) entre los subespacios de información
+pasada y futura (Bauer & Ljung 2002). Esta propiedad, además de facilitar la
+
+                                        Revista Colombiana de Estadística 30 (2007) 77–96
+
+Raíces unitarias y cointegración                                                    79
+
+interpretación estadística del procedimiento, constituye el fundamento del méto-
+do que proponemos. La idea básica es que los CCC correspondientes a raíces
+unitarias convergen a sus verdaderos valores a velocidad exponencial, mientras
+que los demás CCC exhiben una convergencia sustancialmente más lenta. Esta
+propiedad, conocida como “superconsistencia”, permite distinguir ambos tipos de
+correlaciones.
+    La superconsistencia de los CCC fue inicialmente aprovechada por Poskitt
+(2000) para el análisis de raíces unitarias y relaciones de cointegración. Poste-
+riormente, Bauer & Wagner (2002), en adelante BW, refinan este planteamiento
+ligándolo con los métodos de subespacios. Concretamente, estos autores proponen
+dos procedimientos para estimar el rango de cointegración basados en la detección
+de las raíces unitarias de un proceso: el denominado eigenvalue test sequence, que
+presenta en muestras cortas una fuerte dependencia de la correcta estimación del
+orden del sistema en un paso previo, y el llamado combined test sequence cuyo
+comportamiento, aunque más satisfactorio, está fuertemente vinculado a una hi-
+pótesis nula inicial. De hecho BW sugieren en las conclusiones de su trabajo que
+debería refinarse el criterio que determina esta hipótesis inicial. Efectivamente:
+
+   1. El criterio de información que estos autores proponen para obtener la con-
+      dición inicial no tiene en cuenta la dimensión del subespacio de información
+      pasada que se ha considerado para calcular las matrices que definen el pro-
+      blema de regresión. Nuestros resultados indican que la consideración de este
+      coeficiente mejora la capacidad discriminante del criterio.
+
+   2. Estos autores describen la forma matemática de la función de penalización
+      de su criterio de información como “un tanto heurística”. Basándonos en los
+      trabajos de Hurvich et al. (1990) o Bengtsson & Cavanaugh (2006) propo-
+      nemos un ajuste de esta función mediante métodos de simulación.
+
+  En consecuencia, el objetivo de nuestro trabajo es obtener un criterio de infor-
+mación:
+
+1. cuyo uso conduzca a una estimación consistente del número de raíces unitarias,
+
+2. que presente resultados aceptables en tamaño y potencia en muestras cortas, y
+
+3. que pueda utilizarse como hipótesis nula para el uso del método combined test
+   sequence o como estimador preliminar del número de raíces unitarias en el
+   análisis masivo de procesos univariantes o multivariantes.
+
+    La estructura del artículo es la siguiente. La sección 2 introduce los métodos de
+subespacios y los liga con el cálculo de los CCC que se usarán posteriormente. En
+la sección 3 se presenta la metodología propuesta y se analizan sus propiedades en
+muestras finitas mediante técnicas de simulación. La sección 4 ilustra la aplicación
+práctica del método mediante el análisis de varias series reales. Finalmente, la
+sección 5 resume las principales conclusiones.
+
+                                      Revista Colombiana de Estadística 30 (2007) 77–96
+
+80                               Alfredo García-Hiernaux, José Casals & Miguel Jerez
+
+2.    Introducción a los métodos de subespacios
+
+    Consideramos un sistema lineal de coeficientes fijos, cuya dinámica puede des-
+cribirse mediante el siguiente modelo en espacio de los estados en forma de inno-
+vaciones:
+
+                                 xt+1 = Φxt + Eψt                                  (1)
+                                   zt = Hxt + ψt                                   (2)
+
+donde xt ∈ Rn es el vector de estado, zt ∈ Rm es el vector de outputs observables
+y ψt ∈ Rm es una secuencia de perturbaciones iidN (0, Q), donde la matriz Q
+es semidefinida positiva. Φ ∈ Rn×n , E ∈ Rn×m y H ∈ Rm×n son las matrices
+paramétricas del sistema en el que se omite, sin pérdida de generalidad, un vector
+de variables exógenas. Esta formulación tiene la ventaja de que numerosos modelos
+de series temporales, incluyendo estructuras VAR y VARMA, pueden representarse
+directamente en esta forma (Aoki 1990, Terceiro 1990). Además, cualquier modelo
+en una forma de espacio de los estados más general, por ejemplo, con una matriz
+que multiplica el vector de perturbaciones en la ecuación de observación o con
+distintas fuentes de error (una en cada ecuación), puede, bajo condiciones no muy
+restrictivas, transformarse en una forma de innovaciones equivalente (véase Casals
+et al. 1999).
+    Los métodos de subespacios parten de una representación matricial de las ecua-
+ciones de estado (1) y de observación (2). Así, (1) puede desarrollarse recurrente-
+mente como
+                                           t−1
+                                           X
+                            xt = Φt x0 +         Φi Eψt−i−1                        (3)
+                                           i=0
+
+
+y sustituyendo a su vez (3) en la ecuación de observación (2) se obtiene
+
+                                           t−1
+                                           X
+                       zt = HΦt x0 + H           Φi Eψt−i−1 + ψt                   (4)
+                                           i=0
+
+
+que es una representación del vector de variables endógenas, zt , que depende ex-
+clusivamente del vector de estado inicial, x0 , y de la historia presente y pasada de
+las innovaciones, ψt . La ecuación (4) puede escribirse en forma matricial como
+
+                                Zk = Oi Xk + Vi Ψk                                 (5)
+
+donde los datos se organizan en Zk , conocida como matriz Output Block Hankel
+(Van Overschee & De Moor 1994). Además, el subíndice k es la dimensión del
+subespacio de información o espacio de filas de Zk . Los elementos de la ecuación
+(5) se estructuran de la siguiente forma:
+
+                                      Revista Colombiana de Estadística 30 (2007) 77–96
+
+Raíces unitarias y cointegración                                                         81
+
+   1. Matrices Output e Input Block Hankel :
+                                                                                 
+                                        z0              z1     ...       zT −2i
+                                     z1                z2     ...     zT −2i+1 
+                                                                               
+                                        ..              ..    ..          ..   
+                                    
+                                         .               .       .         .   
+                                                                                
+                               
+                 Zp       Z0:i−1     zi−1              zi     ...     zT −i−1 
+                     =            =                                                    (6)
+                                                                                
+                Zf       Zi:2i−1     zi               zi+1    ...       zT −i 
+                                                                                
+                                                                               
+                                     zi+1             zi+2    ...     zT −i+1 
+                                          ..             ..                 ..
+                                                                               
+                                                              ..               
+                                          .              .       .          .  
+                                      z2i−1            z2i     ...      zT −1
+      donde z0 es un vector de m variables en el instante 0 y k = p, f . La matriz
+      Ψk tiene la misma estructura que Zk , pero agrupando las secuencias de las
+      perturbaciones ψt . Los bloques de información, pasada y futura, de la matriz
+      Output Block Hankel se corresponden con las dos particiones de la matriz
+      (6). La elección de la dimensión de los subespacios de información pasada
+      y futura, p y f respectivamente, se estudia, entre otros, en Viberg (1995),
+      Chui (1997) o Bauer (1998), siendo habitual tomar p = f = i. En los
+      algoritmos utilizados en este trabajo (véase García-Hiernaux 2005) se define
+      i = max(4, ht ), siendo ht el entero más cercano al logaritmo del tamaño
+      muestral, que se basa en una regla heurística fundamentada en la experiencia.
+      Casals (1997) discute con mayor profundidad los posibles valores de i.
+   2. Matriz de observabilidad:
+                                                 
+                                              H
+                                            HΦ 
+                                                 
+                                                2 
+                                             HΦ    ∈ Rim×n
+                                           
+                                      Oi = 
+                                                                                       (7)
+                                            .. 
+                                                  
+                                            . 
+                                              HΦi−1
+
+   3. Secuencia de estados:
+                            Xt = (xt     xt+1   xt+2   ···    xt+T −2i )
+      para t = 0, 1, . . . , T − 1.
+      A partir de esta definición, las secuencias de estados pasados y futuros, que
+      se inician en t = 0 y t = i respectivamente, pueden expresarse como Xp = X0
+      y Xf = Xi .
+   4. Matriz Toeplitz triangular inferior por bloques:
+                                                                        
+                        Im          0           0      ...            0
+                    HE
+                                  Im           0      ...            0 
+                      HΦE         HE           I       . ..           0  ∈ Rim×im
+                                                                        
+              Vi = 
+                                               m                                       (8)
+                         ..         ..           ..    ..             .. 
+                          .          .            .       .            . 
+                                                                        
+                   
+                        HΦi−2 E       HΦi−3 E    HΦi−4 E      . . . Im
+
+
+                                           Revista Colombiana de Estadística 30 (2007) 77–96
+
+82                               Alfredo García-Hiernaux, José Casals & Miguel Jerez
+
+    Debido a la linealidad del sistema, la secuencia de estados futuros puede escri-
+birse como Xf = AZp , donde A es una matriz de rango n. Por tanto, seleccionando
+adecuadamente los subíndices temporales en (5) y sustituyendo se obtiene:
+
+                                Zf = Oi AZp + Vi Ψf                                 (9)
+
+    Los algoritmos de subespacios resuelven los modelos de regresión con restricción
+de rango dados en (9), estimando las matrices Oi , A y Vi , para después recuperar
+las matrices paramétricas del sistema formado por (1) y (2). Para ello, usan la
+descomposición en valores singulares (SVD) (Eckart & Young 1936) de W1 Zf W2 ,
+                                                                                  1
+donde W1 y W2 son dos matrices de ponderación. Cuando W1 = (Zf Zf0 )− 2 y
+W2 = Zp0 (Zp Zp0 )−1 Zp , los valores singulares (VS) resultantes de la SVD coinciden
+con los CCC entre el subespacio de información futura, Zf , y el de información
+pasada, Zp .
+
+
+3.    Detección de raíces unitarias
+   El criterio planteado por BW, en lugar de usar los CCC entre zt y zt−1 como
+sugiere Poskitt (2000), utiliza los CCC entre los bloques de información pasada
+Zp y de información futura Zf . Estos autores evalúan una transformación de los j
+primeros VS calculados, σ̂j , comparándola con una función de penalización C(T )
+que depende del tamaño muestral:
+
+                            1 − σ̂j2 − C(T ) < 0,   ∀j ≤ i                         (10)
+
+El VS que cumple esta desigualdad puede considerarse igual a la unidad, corres-
+pondiendo a una raíz unitaria del sistema. La función C(T ) representa una cota
+superior de forma que, si 1 − σ̂j2 se sitúa por debajo, entonces el criterio devolverá
+al menos j raíces unitarias, ya que los VS cumplen σ̂1 ≥ σ̂2 ≥ · · · ≥ σ̂i ≥ 0. Cabe
+destacar que el análisis de correlaciones canónicas no puede detectar directamente
+series I(2), pues en estos σ1 = 1 pero σ2 < 1. No obstante, esto no causa un
+problema en la práctica, puesto que al diferenciar la serie y analizar los CCC de la
+variable transformada se obtendrá la segunda raíz igual a la unidad. Aún con esto,
+este trabajo se centra únicamente en procesos formados por series I(0) o I(1). La
+función de pérdida que especifican BW para la ecuación (10) es
+
+                                            (log T )2
+                                  C(T ) =                                          (11)
+                                               T
+que supone, en la práctica, un decaimiento de la penalización a medida que la
+muestra crece.
+    Este criterio plantea dos problemas fundamentales: a) su uso genera estima-
+ciones consistentes del número de raíces unitarias pero el rendimiento en muestras
+cortas no es muy satisfactorio, y b) no depende de la dimensión del subespacio de
+información pasada, i. La primera cuestión es muy relevante, ya que multitud de
+series económicas, por ejemplo distintas series anuales de contabilidad nacional,
+
+                                       Revista Colombiana de Estadística 30 (2007) 77–96
+
+Raíces unitarias y cointegración                                                         83
+
+no disponen de una muestra suficientemente larga. La segunda cuestión omite
+que cambios en la dimensión del subespacio de información pasada pueden pro-
+ducir variaciones importantes en los valores calculados de los CCC. Básicamente,
+cuanto mayor es la dimensión de los subespacios de información, más elevados son
+los CCC, al igual que un coeficiente de determinación crece cuando aumenta la
+cantidad de variables explicativas.
+    Para resolver estas limitaciones, planteamos un criterio de decisión que: a) está
+basado tanto en la idea de BW como en un estudio de simulación y b) es aplicable
+a sistemas con múltiples raíces unitarias. La idea clave es obtener una penalización
+que refleje el límite entre los σ̂j que se consideren iguales a la unidad y los inferiores,
+a partir de la propiedad de convergencia a tasas diferentes a su verdadero valor.
+Para ello, se definen dos condiciones que debe cumplir esta función.
+
+Condición 3.1: Debe depender del número de observaciones T , de la dimensión
+    del subespacio de información pasada i y del número de raíces unitarias que
+                     ¯
+    se desea evaluar d.
+Condición 3.2: Debe cumplir limT →∞ Gl (T, i, d)¯ = 0, donde Gl representa las
+    posibles funciones de pérdida, para asegurar la consistencia del criterio (ver
+    proposición 1 más adelante).
+
+   La forma más general de la familia de criterios propuestos puede formularse
+como:
+                                                ¯ ≤0
+                           f (σ̂j ) − Gl (T, i, d)                        (12)
+donde f (σ̂j ) es una transformación que mide la distancia entre el j-ésimo VS y la
+unidad. Esta distancia debe converger a cero para VS correspondientes a raíces
+unitarias; así, en este trabajo se usan las expresiones 1 − σ̂j2 y 1 − σ̂j , aunque
+existen multitud de f (σ̂j ) válidas.
+Proposición 1. Bajo estas condiciones y siendo d el número de series I(1) que
+forman un proceso, entonces se cumple que:
+
+               lim P [f (σ̂k,T ) − Gl (T, i, k) ≤ ] = 1,    ∀ ≥ 0 y ∀k ≤ d
+              T →∞
+
+y por tanto el uso del criterio formulado conduce a estimaciones consistentes del
+                                                p
+número de raíces unitarias del proceso, i.e. dˆ → d (dˆ converge en probabilidad a
+d).
+
+Demostración. Por simplicidad, se obvia el subíndice temporal en los VS defi-
+                                    p                          p
+niendo σ̂j,T = σ̂j . Dado que σ̂j → σj , se tiene que σ̂k → 1, ∀k ≤ d, como además
+f (·) es continua y por tanto se cumplen las condiciones del teorema de Slutsky,
+                                                p
+aplicando este teorema se obtiene f (σ̂k ) → f (1) = 0. Consecuentemente, cuando
+
+3.1.      Procesos univariantes
+                                                       ¯ que, además de estimar
+    Para dar una forma funcional concreta a Gl (T, i, d)
+consistentemente d,ˆ también genere buenos resultados, en términos de tamaño y
+potencia, en muestras cortas, partimos del trabajo de Bengtsson & Cavanaugh
+(2006), quienes proponen funciones de penalización estimadas vía Monte Carlo
+para mejorar el rendimiento del criterio AIC cuando se dispone de pocos datos.
+Con un objetivo similar, estudiamos la distribución empírica de los σ̂1 correspon-
+dientes a raíces no unitarias. El modo de estimar las funciones de penalización es
+el siguiente:
+
+     1. Se escoge un CCC generador de las simulaciones, σ̄. Este debe ser inferior a
+        la unidad, aunque lo suficientemente cercano para reflejar adecuadamente el
+        límite del comportamiento de los CCC que no corresponden a raíces unitarias
+        (por ejemplo, σ̄ = 0.975).
+     2. Se realizan 1000 replicaciones de distintos modelos caracterizados por σ̄,
+        desde T = 20, 21, . . . , 500, obteniéndose para cada instante temporal y cada
+        repetición una secuencia de CCC: σ̂1 ≥ σ̂2 ≥ · · · ≥ σ̂i ≥ 0.
+     3. Se aplica f (·) a las 1000 series que representan la evolución temporal de σ̂1 ,
+        consiguiendo una distribución empírica de f (σ̂1 ) para cada T .
+     4. Se selecciona un determinado percentil τ que resume la información de esta
+        distribución empírica en una sola serie que denominamos y1,t .
+                                                                           ¯ que se
+     5. Por último, se especifica y estima un modelo en función de T, i y d,
+        ajuste correctamente a y1,t y que cumpla las condiciones (3.1) y (3.2).
+
+Es importante destacar que los modelos con los que se simulan los procesos no son
+relevantes aquí, puesto que muchos modelos distintos implican un mismo σ1 . Lo
+realmente importante es el valor asignado a σ̄. La principal desventaja de esta
+metodología es que estos valores son elegidos de una forma un tanto heurística.
+La tabla 1 muestra algunos de ellos para el caso univariante.
+    En este caso, donde se evalúa si d > 0, se sugiere la siguiente forma funcional
+para la penalización:
+                            Gl (T, i, 0) = α̂1,0 T β̂1,0 iβ̂2,0                (15)
+ya que: a) la ecuación (15) cumple las condiciones (3.1) y (3.2) para las ternas
+(α̂1,0 , β̂1,0 , β̂2,0 ) y b) las estimaciones de los modelos del tipo log y1,t = α1,0 +
+β1,0 log T + β2,0 log i + εt , donde εt corresponde a un término de error e i hace
+
+Figura 1: Valores singulares (VS) simulados y funciones de penalización (a). y1,t co-
+          rresponde al primer VS de un proceso estacionario, wt corresponde al primer
+          VS de un proceso no estacionario. G4 (T, i, 0) es una función de penalización
+          propuesta para evaluar si d > 0 y C(T ) es la función de penalización utiliza-
+          da por Bauer y Wagner (2002). y1,t y wt reflejan sensiblemente la diferencia
+          entre las tasas de convergencia de los VS a sus valores asintóticos.
+
+
+
+referencia a la dimensión del subespacio de información, devuelven un coeficiente
+de determinación muy aceptable, superior al 90%.
+    La ecuación (15) supone una penalización distinta para cada terna de pará-
+metros estimados (α̂1,0 , β̂1,0 , β̂2,0 ), que varían dependiendo del valor del CCC ge-
+nerador de las simulaciones (σ̄) y del percentil elegido (τ ), indispensables para
+definir la variable y1,t . Por ello, se realizan múltiples simulaciones alterando estos
+dos valores. La tabla 1 muestra las ternas de parámetros estimados para (15),
+para diferentes funciones f (·) y valores de τ y σ̄. Además, incluye la función de
+penalización propuesta por BW. Como cabía esperar, los resultados indican que
+diferencias en los valores que definen la distribución empírica conducen a distintas
+funciones de penalización. Estas se denotan por Gl , con l = 1, 2, . . . , 6.
+    Si y1,t representa suficientemente bien la frontera entre los CCC iguales y los
+inferiores a la unidad, entonces la función de pérdida G4 (que se ajusta correcta-
+mente a y1,t ) es válida para evaluar si d > 0. Como se obtienen distintas funciones
+de penalización Gl (T, i, 0) consistentes, se discrimina en función de sus propiedades
+en muestras finitas. Para ello, se define tamaño y potencia del criterio, respectiva-
+mente, como la probabilidad de rechazar un número concreto de raíces unitarias,
+cuando existen y la probabilidad de rechazarlo cuando no existen. De este modo,
+se eligen las funciones de penalización que cumplen alguna de las dos condiciones
+siguientes:
+
+          Tabla 1: Funciones de penalización estimadas para contrastar d > 
+
+Condición 3.3: Presentar el mínimo tamaño.
+Condición 3.4: Minimizar el tamaño, sujeto a una potencia mínima para un
+    número de observaciones específico.
+
+    Para el caso univariante, en el que se trata de decidir si d > 0, exigimos que
+la potencia mínima en la segunda condición sea igual al 50% para T = 50. Para
+seleccionar los criterios definitivos se usa, como una aproximación al tamaño del
+criterio en un punto, la probabilidad de rechazar la existencia de una raíz unitaria
+en un paseo aleatorio, ∇zt = at . Asimismo, se aproxima la función potencia en un
+punto como la probabilidad de que dˆ = d en un modelo estacionario autorregresivo
+persistente del tipo (1 − 0.9B)zt = at . En ambos casos at ∼ iidN (0, 1). Los
+resultados de las 1000 repeticiones del ejercicio de simulación se presentan en las
+tablas 2 y 3.
+
+     Tabla 2: Tamaño de los criterios para d > 0, a partir del proceso φ(B)zt = at .
+     Tabla 3: Potencia de los criterios para d > 0, a partir del proceso φ(B)zt = at .
+    Las tablas 2 y 3 confirman las propiedades en muestras finitas de todos los
+criterios presentados. Como puede verse, varios criterios baten al test ADF en
+
+potencia y tamaño. A la vista de los resultados, se elige como función de pena-
+lización que cumple la condición (3.3) a G5 , que pasa a denominarse Ga (T, i, 0).
+Además, se selecciona la función de pérdida G2 , en adelante Gb (T, i, 0), que cumple
+la condición (3.4).
+
+
+
+3.2.    Procesos multivariantes
+
+    La principal ventaja de la metodología propuesta se encuentra en el tratamiento
+de modelos multivariantes. En primer lugar, tan solo unos pocos autores como
+Phillips & Durlauf (1986), Abuaf & Jorion (1990), Flôres et al. (1999) o BW
+tratan la identificación de raíces unitarias en vectores de series. En segundo lugar,
+este paso abre las puertas al análisis de cointegración.
+    Como se ha visto, las funciones de penalización estimadas no solo dependen
+del tamaño muestral y de la dimensión del subespacio de información pasada, sino
+también del mínimo número de raíces unitarias que se desee evaluar. Esto implica
+que cada σ̂j candidato a ser igual a la unidad, debe compararse con una función de
+penalización diferente. El criterio desarrollado para procesos univariantes estima
+si la serie analizada es estacionaria o si, por el contrario, d > 0. En este apartado
+se desarrollan los criterios para decidir secuencialmente si d > 1, d > 2, d > 3 y
+d > 4. Para estimar las funciones de penalización se actúa como en el apartado
+anterior, pero añadiendo una nueva serie no estacionaria en cada caso.
+    La figura 2 compara las distribuciones empíricas y1,t y y2,t correspondientes a
+los pares (τ = 90, σ̄ = 1.0) y (τ = 90, σ̄ = 0.95), de un sistema bivariante. Obsér-
+vese que el primer VS, que corresponde a una raíz unitaria del proceso bivariante,
+se mantiene muy por debajo de Gb (T, i, 0), penalización utilizada en el criterio con
+mayor potencia de los elegidos para evaluar si d > 0. En efecto, si comparamos un
+proceso multivariante cualquiera (At ) con d raíces unitarias, con un mismo sistema
+(Bt ) que incorpora, además, una serie no estacionaria (el proceso Bt tendría d + 1
+raíces iguales a la unidad), entonces σ̂j (Bt ) ≥ σ̂j (At ) para j = 1, . . . , d + 1. Por
+tanto, aprovechando la ordenación de los VS, es posible usar secuencialmente los
+criterios expuestos, para decidir cuántos de ellos son iguales a la unidad.
+   La tabla 4 presenta distintas ternas de parámetros estimados para funciones de
+pérdida del tipo Gl (T, i, 1) = α̂1,1 T β̂1,1 iβ̂2,1 . Puede observarse en la figura 2 que
+el modelo especificado para representar las distribuciones empíricas que se usan
+para contrastar d > 0 también se ajusta correctamente a las que se utilizan para
+decidir si d > 1, salvo, quizá, en las primeras observaciones.
+
+              Tabla 4: Funciones de penalización estimadas para d > 1.
+
+Figura 2: Valores singulares (VS) simulados y funciones de penalización (b). y1,t corres-
+          ponde al primer VS de un sistema bivariante no estacionario (cuyos procesos
+          univariantes son I(1) e I(0)). y2,t corresponde al segundo VS del mismo
+          sistema, G4 (T, i, 1) es una de las funciones de penalización propuestas para
+          evaluar si d > 1 y Gb (T, i, 0) es la función de penalización usada para evaluar
+          si d > 0.
+
+
+
+    Para discriminar entre las posibles funciones de penalización propuestas, se
+utilizan las condiciones (3.3) y (3.4), establecidas anteriormente. Los resultados
+de las simulaciones realizadas para evaluar el tamaño y la potencia de los criterios
+formulados para d > 1 se exponen en las tablas 5 y 6. En ellos se refleja el
+tamaño y la potencia del criterio definidos anteriormente, utilizando la función de
+penalización Gb (T, i, 0) para decidir si d > 0.
+
+     Tabla 5: Tamaño de los criterios para d > 1, a partir del proceso Φ(B)zt = at .
+
+     Tabla 6: Potencia de los criterios para d > 1, a partir del proceso Φ(B)zt = at .
+
+    Para el análisis de procesos bivariantes, se escogen las funciones de penalización
+G4 y G1 de la tabla 4. Estas se denominan, de aquí en adelante, Ga (T, i, 1) y
+Gb (T, i, 1), respectivamente. La primera minimiza el tamaño y la segunda lo hace
+
+dada un potencia mínima del 45% para T = 50. Se decide disminuir la potencia
+mínima exigida con respecto de d > 0, al advertir que las propiedades en muestras
+finitas de los criterios se degradan ligeramente cuando aumenta d.
+    El método para obtener las funciones de pérdida para procesos trivariantes,
+tetravariantes y pentavariantes es análogo al expuesto hasta ahora. Sin embargo,
+el modelo especificado para representarlas adecuadamente es distinto. De hecho,
+para mejorar el ajuste a las distribuciones empíricas decidimos modelizar dos sub-
+muestras, proponiendo una ecuación específica para cada una de ellas. Los modelos
+ajustados son los siguientes:
+
+      T < Td̄∗             yd̄+1,t = α2,d̄ + δ1,d̄ T + δ2,d̄ T 2 + δ3,d̄ T 3 + δ4,d̄ i + ε0d̄,t
+      T ≥ Td̄∗         log yd̄+1,t = α1,d̄ + β1,d̄ log T + β2,d̄ log i + ε00d̄,t                   (16)
+
+donde Td̄∗ se refiere a la primera realización de la segunda submuestra y d¯ = 2, 3, 4.
+    Las estimaciones de las dos funciones de penalización que cumplen las condi-
+ciones (3.3) y (3.4) y los parámetros estimados de los modelos propuestos en (16),
+se ofrecen en la tabla 7. De nuevo, se rebaja la potencia mínima exigida para
+T = 50, que hace referencia a la condición (3.4): 40% para d > 2, 3, 4. Obsérvese
+en esta tabla cómo aumentar la dimensión del subespacio de información pasada
+i afecta positivamente a σ̂j y, por tanto, negativamente a f (σ̂j ) ∀j.
+    Los procesos generadores y las simulaciones realizadas para valorar el tamaño
+y la potencia de los criterios que usan las funciones de penalización de la tabla
+7 se presentan en las tablas 8 y 9. Los resultados revelan un deterioro en las
+propiedades de los criterios cuando aumenta el número de raíces unitarias. En
+este punto se escoge no estimar funciones de pérdida para decidir si d > 5, por
+varias razones: a) hay pocos modelos para más de cinco series temporales, b) el
+uso de estos criterios para procesos con una dimensión mayor pero con un número,
+a priori, no superior a cinco raíces unitarias es también válido y c) el deterioro
+que muestran los criterios con el aumento de d cuando aumenta la dimensión del
+sistema no motiva la búsqueda de funciones de penalización para procesos con un
+mayor número de raíces iguales a la unidad, aunque esto es perfectamente factible.
+   En suma, la función de penalización que se propone tiene la forma siguiente:
+
+donde l = a, si se está interesado únicamente en minimizar el tamaño del criterio
+o l = b, si, además, se exige una potencia mínima. Los valores de todos los
+parámetros para d¯ = 0, 1, . . . , 4 se encuentran en las tablas 1, 4 y 7.
+                                                                          Tabla 7: Funciones de penalización propuestas para d > 2, d > 3 y d > 4.
+
+Raíces unitarias y cointegración                                                        91
+
+Tabla 8: Tamaño de los criterios para d > 2, d > 3 y d > 4 a partir de los procesos
+
+Tabla 9: Potencia de los criterios para d > 2, d > 3 y d > 4, a partir del proceso
+
+4.     Ejercicios con datos reales
+    En esta sección se muestran los resultados obtenidos con dos conjuntos de series
+típicas en la literatura econométrica. Estos han sido escogidos porque en el primer
+caso el consenso es que no existe cointegración, mientras que en el segundo caso
+los estudios realizados evidencian que sí la hay.
+
+
+4.1.    Series de precios de la harina
+    El vector de series analizadas Yt representa los índices mensuales de precios de
+la harina en las ciudades de Buffalo, Minneapolis y Kansas City entre los meses de
+agosto de 1972 y noviembre de 1980. Fueron presentadas por Tiao & Tsay (1989)
+para ilustrar su metodología de especificación y más tarde analizadas por Grubb
+(1992), Lütkepohl & Poskitt (1996) o Casals (1997).
+   En primer lugar, se analiza el orden de integración de cada una de las series por
+separado con las dos funciones de penalización obtenidas: Ga (T, i, d) y Gb (T, i, d).
+Los resultados de la tabla 10 señalan la existencia de al menos una raíz unitaria
+en cada una de las series. Además, cuando las series se diferencian una vez, el VS
+más grande, correspondiente a la serie de precios de Minneapolis, resulta igual a
+0.257, muy inferior a la unidad. Esto hace que el criterio descarte para cualquiera
+de las series un grado de integración de orden 2. Por tanto, la conclusión es que
+cada una de las series presenta una, y solo una, raíz unitaria. Este es el resultado
+más común de la literatura (Grubb 1992, Lütkepohl & Poskitt 1996, Casals 1997).
+    Una vez decidido que cada serie es I(1), es posible estudiar la existencia de
+cointegración determinando el orden de integración del vector de las tres series.
+Los resultados de este análisis se presentan en la tabla 11. Se observa que el criterio
+         Figura 3: Logaritmo de los Precios de la harina en las diferentes ciudades.
+
+
+          Tabla 10: Estudio del orden de integración de los precios de la harina.
+     σ̂j se corresponde al j-ésimo valor singular. Ga (T, i, d) y Gb (T, i, d) son las funciones de
+     pérdida propuestas. dˆGa y dˆGb es el número de raíces unitarias encontrado al analizar
+     los j primeros valores singulares.
+
+propuesto encuentra tres raíces unitarias en el sistema, independientemente de la
+función de pérdida especificada. Es decir, el proceso tiene tres tendencias, cada
+una perteneciente a una de las series que conforman el sistema, descartando la
+existencia de cointegración. Otros autores, como Tiao & Tsay (1989), con los
+llamados modelos de componentes escalares, o Lütkepohl & Poskitt (1996), con
+un análisis tradicional, también han rechazado la hipótesis de cointegración.
+
+
+4.2.       Series de tipos de interés de EEUU
+    En este caso se analiza el orden de integración de diversas series de tipos de
+interés de la economía de Estados Unidos entre agosto de 1985 y enero de 2003.
+Martín Manjón & Treadway (1997) estudian la relación existente entre estas series,
+encontrando que los tipos con un vencimiento inferior o igual a dos años presentan
+              Tabla 11: Estudio del orden de integración del proceso Yt .
+
+    σ̂j se corresponde al j-ésimo valor singular. Ga (T, i, d) y Gb (T, i, d) son las funciones
+    de pérdida propuestas. dˆGa y dˆGb es el número de raíces unitarias encontrado al ana-
+    lizar los j primeros valores singulares.
+
+
+
+una tendencia común a largo plazo con el tipo objetivo de la Reserva Federal (Fed).
+En este trabajo se analizan el tipo objetivo de la Fed, conjuntamente con el tipo
+de interés efectivo y los tipos a tres y seis meses del mercado secundario, proceso
+denotado por Zt . El análisis de cada serie por separado concluye que todas ellas
+
+Figura 4: Tipos de interés a corto plazo. T Ot es el tipo objetivo, T Et es el tipo efectivo
+          y T 3mt y T 6mt son los tipos a 3 y 6 meses, respectivamente. La muestra
+          analizada se extiende desde agosto de 1985 hasta enero de 2003.
+
+
+son I(1), independientemente de la función de pérdida usada. Al diferenciar las
+series, ninguna de ellas genera un VS suficientemente elevado como para que el
+criterio encuentre una segunda raíz unitaria.
+    La tabla 12 resume los resultados del estudio del vector de series. En este caso,
+el criterio revela la existencia de una única raíz unitaria. Por tanto, la tendencia
+que presenta cada serie es común. De este modo, se revela la existencia de tres
+relaciones de cointegración, una por cada raíz unitaria que desaparece en el análisis
+conjunto de los datos. Este es el mismo resultado que obtienen Martín Manjón &
+Treadway (1997) con un análisis de cointegración (en modelos bivariantes) basado
+en contrastes de no invertibilidad sobre la posible combinación lineal estacionaria
+diferenciada.
+
+                                                     Revista Colombiana de Estadística 30 (2007) 77–96
+
+94                                       Alfredo García-Hiernaux, José Casals & Miguel Jerez
+
+                 Tabla 12: Estudio del orden de integración del proceso Zt .
+     j      σ̂j     f (σ̂j ) − Ga (T, i, j − 1) f (σ̂j ) − Gb (T, i, j − 1) dˆGa         dˆGb
+     1    0.9952      0.0048 − 0.0970 < 0         0.0095 − 0.1070 < 0         1            1
+     2    0.8797      0.2261 − 0.2205 > 0         0.2261 − 0.1797 > 0         1            1
+     3    0.7324      0.4636 − 0.2648 > 0         0.4636 − 0.1991 > 0         1            1
+     4    0.4028      0.8377 − 0.2642 > 0         0.8377 − 0.1968 > 0         1            1
+     σ̂j se corresponde al j-ésimo valor singular. Ga (T, i, d) y Gb (T, i, d) son las funciones de
+     pérdida propuestas. dˆGa y dˆGb es el número de raíces unitarias encontrado al analizar los
+     j primeros valores singulares.
+
+
+
+5.       Conclusiones
+
+   En este trabajo se propone una metodología de detección de raíces unitarias
+basada en métodos de subespacios y en el análisis de correlaciones canónicas.
+El método se basa en dos nuevos criterios de información que permiten estimar
+consistentemente el número de raíces unitarias, tanto en el marco univariante como
+en el multivariante.
+    Las funciones de penalización subyacentes a los criterios propuestos se ajustan
+mediante técnicas de simulación. Esta idea sugiere de forma natural la posibilidad
+de adaptar el criterio de información a muestras con propiedades estadísticas es-
+peciales. Por ejemplo, se sabe que los rendimientos financieros observados en alta
+frecuencia suelen presentar distribuciones con colas más gruesas que las de una
+normal y, ocasionalmente, una asimetría apreciable. En este contexto, nuestra
+metodología permite plantearse el diseño de un criterio optimizado para este tipo
+de muestras.
+    El trabajo incluye ejercicios de simulación que analizan las propiedades de estos
+criterios en muestras finitas. Este análisis indica que los procedimientos propues-
+tos tienen una capacidad apreciable para estimar el número de raíces unitarias y
+el rango de cointegración en distintas situaciones. Además, a diferencia de otros
+procedimientos, como ocurre en el método de Johansen (1991), la metodología pre-
+sentada no precisa ajustar un modelo a los datos, con la consiguiente disminución
+de riesgo de error.
+Agradecimientos
+Los autores agradecen la financiación mediante un proyecto del Ministerio de Educación y Ciencia Español (ref. SEJ2005-07388).
+Referencias
+Abuaf, N. & Jorion, P. (1990), ‘Purchasing Power Parity in the Long Run’, The Journal of Finance 45, 157–174.
+Akaike, H. (1976), Canonical Correlation Analysis of Time Series and the Use of an Information Criterion, Academic Press.
+Aoki, M. (1990), State Space Modelling of Time Series, Springer Verlag, New York.
+Bauer, D. (1998), Some Asymptotic Theory for the Estimation of Linear Systems Using Maximum Likelihood Methods or Subspace Algorithms, Ph. D. Tesis, TU Wien.
+Bauer, D. & Ljung, L. (2002), ‘Some Facts About the Choice of the Weighting Matrices in Larimore Type of Subspace Algorithms’, Automatica 38, 763–773.
+Bauer, D. & Wagner, M. (2002), ‘Estimating Cointegrated Systems Using Subspace Algorithms’, Journal of Econometrics 111, 47–84.
+Bengtsson, T. & Cavanaugh, J. (2006), ‘An Improved Akaike Information Criterion for State-Space Model Selection’, Computational Statistics and Data Analysis 50(10), 2635–2654.
+Casals, J. (1997), Métodos de subespacios en econometría, Tesis doctoral, Universidad Complutense de Madrid.
+Casals, J., Sotoca, S. & Jerez, M. (1999), ‘A Fast Stable Method to Compute the Likelihood of Time Invariant State Space Models’, Economics Letters 65(3), 329–337.
+Chui, N. L. C. (1997), Subspace Methods and Informative Experiments for System Identification, Ph. D. Tesis, Pembroke College Cambridge.
+Dickey, D. A. & Fuller, W. A. (1979), ‘Distribution of the Estimators for Autoregressive Time Series with Unit Root’, Journal of the American Statistical Association 74, 427–431.
+Eckart, C. & Young, G. (1936), ‘The Approximation of One Matrix by Another of Lower Rank’, Psychometrika 1, 211–218.
+Favoreel, W., De Moor, B. & Van Overschee, P. (2000), ‘Subspace State Space System Identification for Industrial Processes’, Journal of Process Control 10, 149–155.
+Flôres, R. G., Jorion, P., Preumont, P. Y. & Szafarz, A. (1999), ‘Multivariate Unit Roots Test of PPP Hypothesis’, Journal of Empirical Finance 6, 335–353.
+García-Hiernaux, A. (2005), Identificación de modelos para series temporales mediante métodos de subespacios, Tesis doctoral, Universidad Complutense de Madrid.
+Grubb, H. (1992), ‘A Multivariate Time Series Analysis of Some Flour Price Data’, Applied Statistics 41, 95–107.
+Ho, B. & Kalman, R. (1966), ‘Effective Construction of Linear State-Variable Models from Input-Output Functions’, Regelungstechnik 14, 545–548.
+Hurvich, C., Shumway, R. & Tsai, C. (1990), ‘Improved Estimators of Kullback Leibler in Information for Autoregressive Model Selection in Small Samples’, Biometrika 77, 709–719.
+Johansen, S. (1991), ‘Estimation and Hypothesis Testing of Cointegration Vectors in Gaussian Vector Autoregressive Models’, Econometrica 59, 1551–1580.
+Larimore, W. E. (1983), System Identification, Reduced-Order Filtering and Modeling Via Canonical Variate Analysis, in ‘Proceedings of the American Control Conference, ACC’, San Francisco, pp. 445–451.
+Larimore, W. E. (1990), Canonical Variate Analysis in Identification, Filtering and Adaptive Control, in ‘Proceedings of the 29th Conference on Decision and Control,’, Hawaii, pp. 596–604.
+Lütkepohl, H. & Poskitt, D. S. (1996), ‘Specification of Echelon Form VARMA Models’, Journal of Business and Economic Statistics 14(1), 69–79.
+Martín Manjón, R. & Treadway, A. (1997), ‘The Fed Controls Only One of the Two Interest Rates in the U.S. Economy’, Documento de Trabajo del ICAE (9716).
+Phillips, P. B. C. & Durlauf, N. S. (1986), ‘Multiple Time Series Regression with Integrated Process’, Review of Economic Studies 53, 473–495.
+Poskitt, D. S. (2000), ‘Strongly Consistent Determination of Cointegrating Rank Via Canonical Correlations’, Journal of Business and Economic Statistics 18, 77–90.
+Terceiro, J. (1990), Estimation of Dynamics Econometric Models with Errors in Variables, Springer-Verlag, Berlin.
+Tiao, G. C. & Tsay, R. S. (1989), ‘Model Specification in Multivariate Time Series’, Journal of the Royal Statistical Society, B Series 51(2), 157–213.
+Van Overschee, P. & De Moor, B. (1994), ‘N4SID: Subspace Algorithms for the Identification of Combined Deterministic-Stochastic Systems’, Automatica 30(1), 75–93.
+Viberg, M. (1995), ‘Subspace-Based Methods for the Identification of the Linear Time-Invariant Systems’, Automatica 31(12), 1835–1852.

@@ -1,0 +1,1047 @@
+Implementación, uso e interpretación del Fan Chart
+Banco de la República;Universidad Nacional de Colombia
+Resumen
+El Fan Chart representa la función de probabilidades de los valores futuros de una variable, condicional a la información conocida en el presente. En contraste con la tradicional senda de pronósticos puntuales y sus bandas confidenciales simétricas, el Fan Chart tiene dos ventajas: primero, describe completamente la densidad marginal de pronóstico en cada uno de los perı́odos del horizonte. Y segundo, su formulación permite que la densidad marginal de pronóstico sea asimétrica. Cuando esta densidad no es simétrica, la probabilidad (o riesgo) de que el valor futuro de la variable asuma valores por encima de la senda central de pronóstico es diferente a la de que asuma valores por debajo de dicha senda. Esta caracterı́stica lo hace muy deseable para representar los riesgos de que se cumplan metas sobre el valor futuro de la variable en cuestión. En el caso del Informe de Inflación, el Fan Chart cumple con dos objetivos: primero, comunicar al público las previsiones de la autoridad monetaria sobre la evolución futura de la inflación con base en el “mejor conocimiento” actual de la economı́a, propósito relacionado con la transparencia del esquema de inflación objetivo y con la credibilidad de las polı́ticas para alcanzar dichas metas. Y segundo, organizar la forma como la autoridad monetaria aborda el problema de pronosticar la inflación, lo cual tiene que ver con el desarrollo del Informe sobre Inflación y su distribución temática. En esta nota se describe en detalle la implementación actual del Fan Chart que utiliza el Banco de la República para su Informe sobre Inflación; se presenta un ejemplo que ilustra su adecuada utilización; se describe la manera como éste se debe interpretar y se describe el uso de un programa que facilita su aplicación Con esto, se persigue explicitar el uso e interpretación del Fan Chart.
+Palabras clave: Fan Chart, distribución de pronóstico, gráficas estadísticas, esquema de inflación objetivo, informe sobre inflación.
+Introducción
+El Fan Chart representa la función de probabilidades de los valores futuros de una variable, condicional a la información conocida en el presente. En contraste con la tradicional senda de pronósticos puntuales y sus bandas confidenciales simétricas, el Fan Chart presenta dos ventajas: primero, describe completamente la densidad marginal de pronóstico en cada uno de los perı́odos del horizonte. Y segundo, su formulación permite que la densidad marginal de pronóstico sea asimétrica. Cuando esta densidad no es simétrica, la probabilidad (o riesgo) de que el valor futuro de la variable asuma valores por encima de la senda central de pronóstico es diferente a la de que asuma valores por debajo de dicha senda. Esta caracterı́stica lo hace muy deseable para representar los riesgos de que se cumplan metas sobre el valor futuro de la variable en cuestión.
+El término Fan Chart lo popularizó del Banco de Inglaterra, que lo viene publicando desde 1977 en su Informe de Inflación (véase Britton et al. 1998). En el caso del Informe de Inflación de un banco que sigue el esquema de inflación objetivo, el Fan Chart cumple con dos propósitos: comunicar al público las previsiones de la autoridad monetaria sobre la evolución futura de la inflación con base en su “mejor conocimiento” de la economı́a, propósito relacionado con la transparencia del esquema de inflación objetivo y la credibilidad de las polı́ticas para alcanzarlas y organizar la manera como la autoridad monetaria produce el pronóstico de la inflación, lo cual tiene que ver con el desarrollo del citado informe y su distribución temática.
+     A partir de la enmienda constitucional de 1991 en Colombia, se requiere que
+el Banco de la República (BR) fije metas anuales no crecientes sobre la inflación
+futura. Para cumplir con este mandato constitucional, el BR ha venido realizando
+un esfuerzo importante para entender los mecanismos a través de los cuales (a) se
+producen las innovaciones a la inflación, (b) la polı́tica monetaria afecta a todas
+las variables de la economı́a, en particular a la inflación, y (c) se propagan las
+diferentes innovaciones a todas las variables de la economı́a, en particular hacia
+la inflación. Este conocimiento se plasma en el “modelo central” para el análisis
+y pronóstico de la autoridad monetaria. La versión actual se conoce como Modelo
+de Mecanismos de Transmisión (MMT) (véase Gómez & Julio 2001, 2005).
+     De acuerdo con la mecánica del esquema de inflación objetivo, la Junta Direc-
+tiva del Banco de la República (JDBR) fija una meta no creciente para la inflación
+futura y emite señales monetarias que minimizan la distancia entre el pronósti-
+co de la inflación y la meta establecida. Estas señales monetarias se especifican
+como incrementos/reducciones de la tasa de interés de intervención, de acuerdo
+con expectativas de incremento/reducción (respectivamente) de la inflación en el
+mediano plazo. Como resultado, se espera que la inflación asuma una senda que
+la lleve hacia su meta. Esta descripción pone en claro la relevancia del pronóstico
+de inflación y del modelo de mecanismos de transmisión, del cual se obtienen los
+pronósticos.
+     Dado que en un esquema de inflación objetivo los costos de reducir la inflación
+se disminuyen (o pueden incluso desaparecer) cuando la autoridad monetaria es
+creı́ble, la credibilidad se convierte en el activo más importante de la autoridad
+monetaria. En un esquema de inflación objetivo la credibilidad de la autoridad
+monetaria tiene que ver con su reputación y la transparencia del esquema.
+     En este sentido, la función del Informe de Inflación es la de garantizar la trans-
+parencia del esquema de inflación objetivo. Esto se logra al informar a la opi-
+nión pública sobre la manera como la autoridad monetaria entiende la coyuntura
+económica actual, al hacer explı́citos los supuestos y riesgos asociados a los even-
+tos futuros que pueden afectar a la inflación durante el horizonte de pronóstico,
+y mostrar la coherencia entre la coyuntura actual, los supuestos, los riesgos, el
+pronóstico de la inflación y las polı́ticas emitidas para cumplir las metas.
+     El Fan Chart de la inflación resume varios de los elementos anteriores al des-
+cribir en un único gráfico la distribución marginal de la inflación futura en cada
+perı́odo del horizonte de pronóstico. En efecto, la senda modal corresponde al
+pronóstico de la inflación condicional a la senda más probable de los factores
+y variables que afectan a la inflación a lo largo del horizonte de pronóstico. La
+asimetrı́a de la distribución es un resultado de los riesgos de que las variables o
+factores asuman valores por encima (o por debajo) de su senda modal. Y la varian-
+za de la distribución responde a la incertidumbre histórica efectiva del ejercicio de
+pronóstico, la incertidumbre sobre los factores y de un conjunto de multiplicadores
+que reflejan cambios esperados de la incertidumbre con respecto a la incertidum-
+
+
+                                      Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+112                                                                   Juan Manuel Julio
+
+
+bre histórica. La transparencia se logra entonces al hacer explı́citos los factores o
+variables mencionados, sus sendas modales y riesgos en conjunción con su efecto
+sobre la distribución de la inflación, es decir, el Fan Chart.
+    La producción del Fan Chart de la tasa de inflación se desarrolla a partir de
+los siguientes pasos: (1) se determinan los factores y variables que podrı́an afectar
+el comportamiento de la inflación en el horizonte de pronóstico; (2) se determina o
+supone la senda modal (más probable) para los valores futuros de dichas variables
+y factores; (3) se introducen estas sendas modales y pronósticos de corto plazo
+en el modelo central de pronóstico, el MMT, para producir la senda modal de la
+distribución de la inflación futura; (4) se determina el riesgo de que las variables
+o factores mencionados asuman valores más grandes o más pequeños que los de
+la senda modal y se determina su incertidumbre histórica; (5) se fijan multipli-
+cadores de la incertidumbre futura sobre los factores o variables y la inflación,
+los cuales resumen el “criterio de los expertos” sobre cambios coyunturales en la
+incertidumbre con respecto a la incertidumbre histórica y (6) se transforman los
+riesgos e incertidumbre de la distribución de los factores o variables a riesgos e
+incertidumbre en la distribución de la inflación futura a partir de la función de
+impulso respuesta. Como resultado se obtiene una densidad marginal asimétrica
+de la inflación futura en cada perı́odo del horizonte de pronóstico, la cual refleja
+la senda modal, la incertidumbre y los riesgos de las variables y factores que la
+afectan a lo largo del horizonte pronóstico.
+    Si bien es cierto que cualquier modelo probabilı́stico de la inflación es capaz de
+producir un Fan Chart a partir de cálculos elementales, la metodologı́a propuesta
+por Britton et al. (1998) tiene un sinnúmero de ventajas que claramente opacan
+sus desventajas.
+    La única desventaja de la metodologı́a propuesta por Britton et al. (1998) es que
+el modelo probabilı́stico a partir del que se obtiene la distribución del pronóstico no
+es explı́cito. La densidad de pronóstico se construye a partir de resultados que se
+obtienen por separado. Sin embargo, aun esta desventaja se traduce en una ventaja
+si se tiene en cuenta que el diseño de un modelo probabilı́stico explı́cito del tamaño
+del MMT, que sea económicamente consistente, capaz de producir distribuciones de
+pronóstico asimétricas con base en distribuciones asimétricas para las innovaciones,
+factores o variables condicionadas y que además permita introducir información
+no muestral para el pronóstico, es un trabajo que aún está en su infancia en
+gran medida por la restricción de que sea económicamente sensato (véase Cogley
+et al. 2003, Vega 2004).
+    En esta nota se describe en detalle la implementación actual del Fan Chart
+que utiliza el Banco de la República para su Informe sobre Inflación; se presenta
+un ejemplo que ilustra su utilización; se describe la manera como éste se debe in-
+terpretar y se describe el uso de un programa que facilita su aplicación. Con esto,
+se persigue desmitificar la implementación del Fan Chart y de paso clarificar su
+interpretación. El escrito se divide en cuatro secciones, aparte de esta corta intro-
+ducción. En la segunda se discute la interpretación del Fan Chart. En la tercera
+se describen los cálculos y supuestos que soportan la implementación actual, los
+cuales se utilizan en el programa, y se describe la implementación computacional.
+
+
+                                      Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+Implementación, uso e interpretación del Fan Chart                                             113
+
+
+En la cuarta se describen varios puntos que merecen atención particular. En la
+quinta se hace una breve discusión. A lo largo de las diferentes secciones se des-
+cribe e interpreta un ejemplo.
+
+
+2.      Interpretación
+     La figura 1 muestra un ejemplo de Fan Chart calculado con información históri-
+ca hasta el cuarto trimestre de 2005. La lı́nea sólida hasta esta fecha es la inflación
+total observada y desde el primer trimestre de 2006 es la senda que con mayor
+probabilidad puede asumir la inflación. Es decir, es el pronóstico que maximiza la
+función de probabilidades marginal de pronóstico en cada perı́odo del horizonte.
+Este pronóstico se obtiene asignando la senda modal a las variables o factores que
+afectan el nivel de la inflación a lo largo del horizonte de pronóstico3 . A partir
+de 2006T1 se abre un abanico con distintas tonalidades de color, las cuales repre-
+sentan las franjas de probabilidad desde 5 % hasta 95 % a intervalos de 5 %. El
+abanico se calcula, por defecto, para nueve perı́odos t = 1, 2, . . . , 9, a partir del
+último dato observado, como se muestra en la figura 1.
+
+
+
+
+        Figura 1: Fan Chart de la inflación con información total hasta 2005T4
+
+
+   Para entender más claramente la figura 1, nos referimos a la tabla 1 que
+contiene las estadísticas descriptivas de las distribuciones de pronóstico para los
+   3 El horizonte de pronóstico fijado por el BR para su Informe sobre Inflación es de 9 trimestres,
+
+el cual responde a los ejercicios realizados por Gómez & Julio (2001) donde se muestra que la
+polı́tica monetaria toma en promedio dos años para lograr su efecto sobre la inflación.
+
+
+                                            Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+114                                                                           Juan Manuel Julio
+
+
+t = 1, 2, . . . , 9 perı́odos iniciales del horizonte. Las tres primeras columnas mues-
+tran las sendas que definen las medidas de tendencia central; la moda o valor que
+maximiza la densidad marginal de pronóstico en cada perı́odo del horizonte, la me-
+diana o valor que divide la densidad en dos partes iguales y la media o pronóstico
+esperado. La cuarta columna contiene la meta de inflación fijada por la JDBR. La
+quinta muestra la senda de las varianzas de dicha distribución, y la sexta contiene
+un indicador del sesgo o tercer momento de la distribución marginal.
+   Son insumos para el cómputo del Fan Chart:
+
+      • la senda modal (µπt para t = 1, 2, . . . , 9),
+                               πt para t = 1, 2, . . . , 9) y
+      • la meta de inflación (e
+      • la varianza del error de pronóstico de la inflación (σt2π para t = 1, 2, . . . , 9).
+
+      Son resultados del ejercicio:
+
+      • la media (E0 (πt ) para t = 1, 2, . . . , 9),
+      • mediana (M0e (πt ) para t = 1, 2, . . . , 9) y
+      • sesgo (S0 (πt ) para t = 1, 2, . . . , 9)
+
+               Tabla 1: estadísticas descriptivas de la densidad de pronóstico
+
+              t     Fecha    Moda      Mediana      Media   Meta   Varianza     Sesgo
+              1    2006T1    4.13       4.21        4.04    4.88     0.10        -0.09
+              2    2006T2    4.18       4.33        3.99    4.75     0.20        -0.19
+              3    2006T3    3.91       4.14        3.63    4.63     0.30        -0.28
+              4    2006T4    4.01       4.31        3.63    4.50     0.40        -0.38
+              5    2007T1    4.91       5.29        4.44    4.37     0.50        -0.47
+              6    2007T2    4.68       4.99        4.29    4.25     0.56        -0.39
+              7    2007T3    4.61       4.86        4.30    4.12     0.61        -0.31
+              8    2007T4    4.47       4.65        4.24    4.00     0.67        -0.23
+              9    2008T1    4.44       4.56        4.29    3.87     0.72        -0.15
+
+
+    La senda modal, µπt para t = 1, 2, . . . , 9, es un insumo para el cálculo del Fan
+Chart, y corresponde al pronóstico más probable, en el sentido que maximiza la
+densidad marginal del pronóstico de la inflación en cada perı́odo de tiempo del
+horizonte. Esta senda es el pronóstico del modelo MMT con base en la senda
+modal de las variables o factores que afectan el nivel de la inflación a lo largo del
+horizonte de pronóstico.
+    Un análisis detallado de la tabla muestra que nuestro indicador del sesgo se
+incrementa hasta el primer trimestre de 2007 y luego decrece hasta 0.15 en el primer
+trimestre de 2008. Sin embargo, este resultado no tiene un efecto importante sobre
+la probabilidad de cumplimiento de la meta para el final de 2006, 4.5 %, ya que
+el pronóstico modal para este perı́odo es de 4.01. Este resultado implica que con
+una probabilidad mayor al 0.5 se cumple en exceso la meta de 2006. Sin embargo,
+el sesgo sı́ tiene un efecto importante sobre el cumplimiento de la meta para 2007,
+
+                                            Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+Implementación, uso e interpretación del Fan Chart                                              115
+
+
+4.0 %, ya que el pronóstico modal para esta fecha es de 4.47 %. Este resultado
+implica que en el presente se están gestando presiones inflacionarias de mediano
+plazo. Como el pronóstico mediano para finales de 2007 es de 4.65 %, podemos
+concluir que la probabilidad de que se cumpla la meta en exceso (es decir que la
+inflación observada esté por debajo de la meta) es mucho menos que el 50 %.
+    Dado que la polı́tica monetaria tiene un rezago en afectar la tasa de inflación,
+este resultado sugiere un incremento en la tasa de interés de intervención del BR.
+    Un punto que se debe tener en cuenta al interpretar la senda modal es que en
+su cálculo se supone que se está realizando una polı́tica monetaria activa que lleva
+el pronóstico de inflación a su meta en el mediano plazo. Al comparar la senda
+modal con la senda de metas, lo único que se observa son movimientos que reflejan
+condiciones de corto plazo. Desafortunadamente esta senda no es fácilmente inter-
+pretable ya que en el Informe sobre Inflación no se presenta la senda de tasas de
+interés que llevan a la inflación proyectada hacia su meta. Sin embargo, es un in-
+dicador de la dirección que deberı́a seguir la polı́tica monetaria. Si la senda modal
+de la inflación está consistentemente por encima de la meta, se podrı́a necesitar
+un ajuste de corto plazo a las tasas de interés hacia arriba. Dicho de otra forma,
+aunque la senda de tasas de interés no se publica, es claro que nuestros resultados
+implican un incremento de la tasa de interés en el corto plazo para contrarrestar
+las presiones inflacionarias de mediano plazo.
+    La senda de varianzas es un insumo para el cálculo del Fan Chart y tiene
+tres componentes. El primer componente es la estimación histórica (no basada en
+modelos) de la desviación estándar del error de pronóstico a horizontes de 4 y 9
+trimestres, σ        b9π . El segundo componente son los multiplicadores, ω4π y ω9π , que
+               b4π y σ
+ajustan la incertidumbre histórica de pronóstico por información “experta” sobre
+incrementos o reducciones de ésta con respecto a la incertidumbre histórica. La
+varianza reportada en las filas 4 y 9 de la columna 5 corresponde a la desviaciones
+estándar ajustadas σ4π = w4π σ    b4π y σ9π = w9π σ
+                                                   b9π . El tercer componente son los factores
+de distribución de la incertidumbre a lo largo del horizonte, δt , t = 1, 2, . . . , 9 y
+cumplen con la restricción de que Σ4t=1 δt = 1 y Σ9t=5 δt = 1, de tal forma que
+σ1π = δ1 σ4π , σ2π = (δ1 +δ2 )σ4π , σ3π = (δ1 +δ2 +δ3 )σ4π , σ5π = δ5 σ9π , σ6π = (δ5 +δ6 )σ9π , . . .,
+y σ8π = (δ5 + · · · + δ8 )σ9π .
+    El sesgo es un resultado del cálculo del Fan Chart. En la figura 1 se puede
+observar que el sesgo es negativo para todos los perı́odos de tiempo. Es importante
+tener en cuenta que nuestro indicador de sesgo es la diferencia entre la media y
+la moda. Dado que la mediana siempre se encuentra entre la moda y la media y
+la mediana es el valor que divide la densidad en dos partes iguales, es claro que
+el balance de riesgos, medido como P [πt ≤ M0e (πt )], es inferior a 0.5 para todo el
+horizonte de pronóstico.
+    La tabla 2 contiene en las primeras siete columnas las probabilidades de que
+la inflación asuma valores en diferentes intervalos disjuntos y en la columna final
+el balance de riesgos, P [πt ≤ M0e (πt )]. En esta tabla se observa que cuanto más
+largo es el horizonte, mayor es la incertidumbre en pronóstico, lo cual hace que
+las probabilidades estén menos concentradas. Se observa adicionalmente que a lo
+largo del horizonte el balance de riesgos está por debajo de 0.5 (es más probable
+
+
+                                            Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+116                                                                            Juan Manuel Julio
+
+
+         Tabla 2: Distribución de probabilidades del pronóstico de la inflación, %
+
+                                                                                         Balance
+  t     Fecha    < 3%     3-3.5 %   3.5-4 %     4-4.5 %   4.5-5 %   5-5.5 %   > 5.5 %
+                                                                                        de riesgos
+  1    2006T1      0.00     0.00      2.44        93.47     4.09      0.00       0.00        28.09
+  2    2006T2      0.00     0.00      6.62        63.87    27.00      2.46       0.05        28.09
+  3    2006T3      0.00     2.02     34.89        40.68    17.98      3.97       0.46        28.09
+  4    2006T4      0.02     2.59     24.74        34.64    23.42     10.61       3.98        28.09
+  5    2007T1      0.00     0.01      0.46         7.40    25.53     27.50      39.10        28.09
+  6    2007T2      0.00     0.20      3.51        17.91    28.71     24.11      25.56        31.91
+  7    2007T3      0.04     0.84      6.89        21.74    28.17     22.13      20.19        35.82
+  8    2007T4      0.36     3.02     12.68        25.38    26.34     18.50      13.71        39.76
+  9    2008T1      1.10     5.17     15.25        25.29    24.89     16.83      11.47        43.57
+
+
+
+que la inflación sea superior al valor de la senda modal), lo cual genera un efecto
+dramático en el sesgo del Fan Chart.
+     El balance de riesgos de la distribución de pronóstico de la inflación se explica
+por cuatro insumos de la distribución del factor i-ésimo que afecta a la inflación,
+i = 1, 2, . . . , n1 . Primero, los balances de riesgo a horizontes de 4 y 9 trimestres, los
+cuales denotamos pi4 y pi9 para el i-ésimo factor. Segundo, las desviaciones estándar
+históricas (no de modelos) de los factores a los mismos horizontes, σ            b9i para el
+                                                                            b4i y σ
+i-ésimo factor. Tercero, multiplicadores de la incertidumbre a los mismos horizon-
+tes, ω4i y ω9i , para el factor i-ésimo, los cuales ajustan la incertidumbre histórica por
+información a priori sobre incrementos o reducciones de ésta. Cuarto, la respuesta
+contemporánea y luego de cuatro trimestres de la inflación a una innovación de
+una unidad en el factor i-ésimo, φi0 y φi4 para i = 1, 2, . . . , n1 .
+     El procedimiento para el cálculo del balance de riesgos de la inflación a partir
+de los insumos anteriores es sencillo. Si denotamos f (xij ) a la distribución del factor
+i-ésimo en el trimestre j-ésimo de horizonte de pronóstico, φij a la respuesta de la
+inflación a una innovación de una unidad del factor i-ésimo luego de j trimestres
+de dicha innovación, el siguiente esquema describe a grandes rasgos el proceso:
+
+      • A partir de las desviaciones estándar históricas y los multiplicadores de la in-
+        certidumbre, se determina para cada factor la desviación estándar definitiva
+                              b4i y σ9i = ω9i σ
+        del factor, σ4i = ω4i σ               b9i para i = 1, 2, . . . , n1 .
+
+      • Se mapea la dupla (σ4i , pi4 ) al sesgo de la distribución del factor i-ésimo a los
+        horizontes de cuatro y nueve trimestres, S4i y S9i para i = 1, 2, . . . , n1 .
+
+      • Con los coeficientes de respuesta de la inflación, φij , a innovaciones en los
+        factores, se mapea dinámicamente el sesgo de cada factor a la inflación y
+        éstos se suman para dar la respuesta del sesgo de la inflación al sesgo de los
+        factores, el cual denotamos Stπ para t = 4 y 9 trimestres.
+
+      • De acuerdo con las ponderaciones de distribución de la incertidumbre δt para
+        t = 1, 2, . . . , 9, se calculan los sesgos para la inflación en cada perı́odo del
+        horizonte de pronóstico, Stπ para t = 1, 2, . . . , 9.
+
+                                              Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+Implementación, uso e interpretación del Fan Chart                                                     117
+
+
+     • Para cada perı́odo de tiempo se determina la densidad marginal de la infla-
+       ción en cada perı́odo del horizonte de pronóstico a partir de los parámetros
+       (µπt , Stπ , σtπ ).
+
+    La tabla 3 muestra los insumos necesarios para los pasos descritos anterior-
+mente. Se destaca que los expertos esperan que la incertidumbre sobre el com-
+portamiento de la inflación de alimentos y de la devaluación a un horizonte de
+cuatro trimestres sea inferior (50 % y 70 %, respectivamente) a su incertidumbre
+histórica. Se observa además que el balance de riesgos sobre los factores cambia
+considerablemente. Para el caso del consumo, la inversión, la inflación de alimen-
+tos, inflación de regulados y depreciación, se espera que éstos asuman valores por
+debajo de la senda modal con probabilidades inferiores al 0.5, lo cual indica un
+sesgo hacia arriba en su distribución.
+
+             Tabla 3: Insumos sobre los factores para el cálculo del Fan Chart
+
+                                           f (xi4 )                  f (xi9 )                  φij
+                                         b4i ω4i
+                                   σ4i = σ            pi4          b4i ω4i
+                                                             σ4i = σ            pi4
+             FACTORES               b4i
+                                    σ        ω4i              b4i
+                                                              σ        ω4i              φi0           φi4
+     Consumo privado                2.00    1.00      0.40    2.40    1.00      0.50    0.16          0.19
+     Inversión                    16.06    1.00      0.45   19.28    1.00      0.50    0.04          0.05
+     Consumo público               4.09    1.00      0.50    4.91    1.00      0.50    0.04          0.04
+     Exportaciones                  4.36    1.00      0.55    5.23    1.00      0.50    0.04          0.04
+     Importaciones                  9.49    1.00      0.50   11.39    1.00      0.50   -0.03         -0.04
+     Inflación de alimentos        6.20    1.00      0.50    7.45    1.00      0.50    0.11          0.04
+     Expectativas de inflación     0.36    1.00      0.45    0.43    1.00      0.50    0.19          0.15
+     Inflación de transables       0.69    0.50      0.50    0.82    1.00      0.50    0.35          0.31
+     Inflación de no transables    0.44    1.00      0.50    0.53    1.00      0.50    0.42          0.23
+     Inflación de regulados        2.19    1.00      0.40    2.63    1.00      0.50    0.06          0.02
+     Depreciación                  7.57    0.70      0.45    9.09    1.00      0.50    0.01          0.00
+
+
+    Al observar los valores de la función de impulso respuesta (positivos en todos los
+casos), se podrı́a concluir que los riesgos de que estas variables asuman valores por
+encima de la senda modal podrı́an explicar el sesgo hacia arriba de la distribución
+de la inflación.
+    En la siguiente sección se muestra en detalle la econometrı́a detrás del cálculo
+del Fan Chart.
+
+3.       Entender el Fan Chart
+    En esta sección se describen la racionalidad econométrica y el cómputo del Fan
+Chart; se demuestra la razón por la cual éste surge de un proceso formal pero
+sencillo. El Fan Chart se construye bajo el supuesto de que tanto la distribución
+condicional de los factores que afectan a la inflación como la distribución condi-
+cional de ésta son normales de dos piezas. En la primera subsección describimos
+la densidad normal de dos piezas y enumeramos sus propiedades. En la segunda
+demostramos que ésta se puede caracterizar alternativamente por las tres tripletas
+
+                                             Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+118                                                                  Juan Manuel Julio
+
+
+mencionadas en la introducción. En la tercera subsección describimos el mapeo de
+las tripletas que determinan la densidad de los factores a la tripleta que determina
+la densidad del pronóstico de la inflación.
+
+
+3.1.      La distribución normal de dos piezas
+    Se dice que una variable aleatoria tiene una densidad normal de dos piezas si
+su función de densidad de probabilidades tiene la forma:
+                                 (     
+                                  C exp − 2σ1 2 (x − µ)2 , para x ≤ µ
+           fX (x; µ, σ1 , σ2 ) =            1
+                                                                             (1)
+                                  C exp − 2σ1 2 (x − µ)2 , para x > µ
+                                            2
+
+
+
+      donde:
+
+      • −∞ < µ < ∞ es la moda o valor más probable de la distribución,
+
+      • σ1 > 0 y σ2 > 0 son dos parámetros indicadores de la incertidumbre, y
+             q
+      • C = π2 (σ1 + σ2 )−1 es un valor que garantiza que (1) sea una función de
+        probabilidades.
+        De esta ecuación es claro que la distribución normal es un caso particular
+        cuando σ1 = σ2 , y que la densidad queda completamente especificada si se
+        conoce el valor de la tripleta (µ, σ1 , σ2 ).
+
+    La figura 2 muestra tres de estas densidades para (µ, σ1 , σ2 ) = (0, 1, 1),
+(µ, σ1 , σ2 ) = (0, 1, 0.5) y (µ, σ1 , σ2 ) = (0, 1, 1.5).
+    Se puede observar que cuando σ1 > σ2 la densidad se sesga a la izquierda y
+entonces el balance de riesgos, P [X ≤ µ], es mayor que 0.5.
+    Cuando σ2 > σ1 ocurre lo contrario, pero cuando σ1 = σ2 la densidad se reduce
+a una normal y se dice que el riesgo está balanceado.
+    La ecuación (1) permite determinar la probabilidad de cualquier evento a partir
+de:
+                        Z L2
+  P [L1 ≤ X ≤ L2 ] =         fX (x) dx
+                         L1
+                 h                      i
+           2σ1        L2 −µ        L1 −µ
+         
+          σ1 +σ2  Φ     σ1    −  Φ    σ1    , si L1 < L2 ≤ µ
+         
+                 h                         i
+                       L2 −µ
+                                         
+       = σ12σ +σ2 Φ
+               2
+                         σ2    − Φ L1σ−µ     , si µ ≤ L1 < L2                        (2)
+         
+                 h
+                                        2
+         
+                                               σ −σ i
+          2       σ 2 Φ  L2 −µ
+                                  − σ 1 Φ L1 −µ
+                                                 + 1 2 2 , si L1 ≤ µ < L2
+           σ1 +σ2           σ2              σ1
+
+
+donde Φ(x) es la distribución normal estándar acumulada, y por lo tanto el balance
+de riesgos toma el valor
+                                                  σ1
+                              p = P [X ≤ µ] =                                    (3)
+                                               σ1 + σ2
+
+                                     Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+Implementación, uso e interpretación del Fan Chart                                  119
+
+
+
+
+    Figura 2: Densidad normal de dos piezas con diferentes conjuntos de parámetros
+
+
+
+
+    Adicionalmente, la media y la varianza de la distribución están dadas por:
+                                         r
+                                             2
+                            e = E[X] =
+                            µ                  (σ2 − σ1 ) + µ                         (4)
+                                             π
+y                                      
+                       2              2
+                      σ = V [X] = 1 −     (σ2 − σ1 )2 + σ1 σ2                         (5)
+                                      π
+y el sesgo o coeficiente de “asimetrı́a” toma el valor
+                             r                                       
+                       3
+                               2              4               2
+            E (X − µ  e) =        (σ2 − σ1 )     − 1 (σ2 − σ1 ) + σ1 σ2               (6)
+                               π               π
+
+el cual es proporcional a
+                                           r
+                                               2
+                               e−µ=
+                             ξ=µ                 (σ2 − σ1 )                           (7)
+                                               π
+
+   Por otra parte, para un valor 0 < α < 1, el percentil α-ésimo de la distribución
+normal de dos piezas es el valor k tal que P [X ≤ k] = α. De la ecuación (2)
+sabemos que
+                         2σ               
+                         σ1 +σ
+                              1
+                                2
+                                  Φ k−µ σ1 ,   para k ≤ µ
+            P [X ≤ k] =           h                     i
+                         2         σ   Φ k−µ
+                                                + σ1 −σ2
+                                                          , para k > µ
+                          σ1 +σ2      2    σ2        2
+
+
+
+                                      Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+120                                                                      Juan Manuel Julio
+
+
+de donde obtenemos
+                            
+                      1 +σ2 )
+           σ1 Φ−1 a(σ2σ        + µ, para α ≤ p = P [x ≤ µ]
+                         1
+      k=                                                                             (8)
+           σ Φ−1 (σ1 +σ2 )a − σ1 −σ2 + µ, para α > p = P [x ≤ µ]
+              2       2σ2         2σ2
+
+
+
+3.2.    Equivalencia entre conjuntos de parámetros
+    En la sección anterior vimos que la densidad queda completamente especificada
+si se conoce la tripleta (µ,  σ1 , σ2 ). En esta sección probamos
+                                                                   que esta tripleta
+                                                       p
+es equivalente a conocer µ, p = P [X ≤ µ] , σ = V (X) , lo cual a su vez es
+equivalente a conocer la tripleta (µ, ξ, σ), donde ξ es una aproximación al sesgo de
+la densidad de la ecuación (7).
+                           p conocidos, las ecuaciones (3) y (5) determinan el valor
+    En efecto, si σ1 y σ2 son
+de p = P [X ≤ µ] y σ = V (X). Ahora, si p y σ son conocidos, estas ecuaciones
+definen un sistema en las incógnitas σ1 y σ2 de la forma
+                                σ1
+                           p=                                                          (9)
+                             σ1 + σ2
+                                  2
+                         σ2 = 1 −     (σ2 − σ1 )2 + σ1 σ2
+                                   π
+que resolvemos para obtener los valores de σ1 y σ2 como
+                                              √
+                        σ2                  p πσ 2
+                σ1 = p      =p                                                        (10)
+                       1−p       3πp2 − 3πp + π − 8p2 + 8p − 2
+                                       √
+                               (1 − p) πσ 2
+                σ2 = p
+                        3πp2 − 3πp + π − 8p2 + 8p − 2
+
+    Para encontrar la equivalencia con la tercera tripleta, podemos escribir la den-
+sidad (1) como
+                                   n        1 h              h       i          io
+                                                       2        x−µ           2
+         fX (x; µ, σ, γ) = C exp       −        (x − µ)  + γ   |x−µ|   (x − µ)        (11)
+                                           2σ 2
+la cual depende de la tripleta (µ, γ, σ), de donde es claro que
+                                s                        s
+                                     σ2                       σ2
+                         σ1 =           ;         σ2 =                                (12)
+                                    1−γ                      1+γ
+
+lo que soluciona el problema de determinar σ1 y σ2 cuando σ y γ son conocidas.
+    De otra parte, de la primera ecuación de (10) combinada con (12) encontramos
+que γ se expresa como
+                                          1 − 2p
+                                 γ=                                           (13)
+                                     1 − 2p + 2p2
+
+                                       Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+Implementación, uso e interpretación del Fan Chart                                      121
+
+
+el cual depende solamente del balance de riesgos. Sin embargo, a partir de esta
+última ecuación podemos determinar la aproximación al sesgo de la ecuación (7)
+como                                          s           s        !
+                         r                r
+                           2                2     σ2          σ2
+             ξ=µ  e−µ=       (σ2 − σ1 ) =               −                     (14)
+                           π                π    1+γ         1−γ
+
+la cual depende de σ y γ.
+    Ahora, si conocemos ξ y σ 2 , tenemos que
+                                         r             r         2
+                             π 2               1             1
+                         β=      ξ =              −
+                            2σ 2              1+γ           1−γ
+
+de donde                                           p
+                                β(1 − γ 2 ) = 2 − 2 1 − γ 2
+es decir,
+                                       βy 2 = 2 − 2y
+podemos resolver primero esta ecuación para y y luego para γ, de donde hallamos
+la solución,         r
+                              √         2
+                      
+                       1−        1+2β−1
+                                             , si ξ > 0
+                                     β
+                  γ=      r                                                (15)
+                                  √          2
+                      
+                      − 1 −         1+2β−1
+                                                , si ξ < 0
+                                       β
+
+la cual depende de ξ y σ.
+    Las demás ecuaciones necesarias para completar la equivalencia se obtienen
+directamente de las anteriores.
+
+
+3.3.     Transformación de la densidad de los factores a la
+         densidad de la inflación
+    Suponga que queremos realizar el Fan Chart de la inflación anual a un horizonte
+de h = 9 trimestres. Es decir, queremos hallar la densidad condicional de πt para
+t = 1, 2, 3, . . . , 9, donde el trimestre actual es t = 0.
+    Suponga que identificamos un total de n = n1 + n2 factores que afectan a la
+inflación, los cuales denotamos como Xti para i = 1, 2, 3, . . . , n y t = 1, 2, 3, . . . , h.
+Suponemos que los primeros n1 factores se caracterizan porque su balance de
+riesgos en algún perı́odo de tiempo del horizonte no es 0.5, es decir, pit 6= 0.5 para
+algún t = 1, 2, 3, . . . , h y para i = 1, 2, 3, . . . , n1 . Suponemos adicionalmente que el
+valor más probable del factor i-ésimo en el perı́odo t está dado por µit y su varianza
+en el perı́odo t es σt2i . Con esto completamos el valor de la tripleta (µit , pit , σ i ) que
+determina la densidad condicional de cada Xti en cada perı́odo de tiempo en el
+horizonte, f (xit ).
+    Finalmente, supongamos que los valores de los factores Xti para
+t = . . . , −3, −2, −1, 0 se conocen sin incertidumbre.
+
+                                         Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+122                                                                                     Juan Manuel Julio
+
+
+
+                                              Tabla 4: Notación
+
+                              Notación                       Significado
+                       h=9                     Horizonte de pronóstico
+                                               Factor o variable que afecta a πt
+                       Xti
+                                               i = 1, 2, 3, . . . , n = n1 + n2
+                       µit                     Valor más probable factor i perı́odo t
+                       pit = P [Xti ≤ µit ]    Balance de riesgos factor i perı́odo t
+                       σti                     Desv. estándar factor i perı́odo t
+                       n2                      Número de Xti tales que pit = 0.5
+                       πt                      Inflación en el perı́odo t
+                       µπ
+                        t                      Valor más probable inflación en t
+                       pπ
+                        t                      Balance de riesgos inflación en t
+                       σt2π                    Varianza inflación en t
+                       φij                     Respuesta πt+j a impulso Xti
+                       ξti                     Aprox. sesgo factor i tiempo t
+                       ξtπ                     Aprox. sesgo π tiempo t
+                       γti                     Indicador sesgo factor i tiempo t
+                       γtπ                     Indicador sesgo π tiempo t
+
+
+      Nuestro trabajo consiste en transformar la secuencia de tripletas
+                       9                                                                                   9
+    (µit , pit , σt2i ) t=1 para i = 1, 2, 3, . . . , n1 , en una secuencia de tripletas (µπt , pπt , σt2π ) t=1
+      Este proceso se realiza de la siguiente manera.
+
+
+3.3.1.       La senda central µπ
+                               t
+
+    La senda central de la inflación es la secuencia µπ1 , µπ2 , µπ3 , . . ., µπ9 de valo-
+res más probables de la inflación en el horizonte de pronóstico. Es decir, es la
+senda más probable de pronóstico condicional al “mejor conocimiento” del funcio-
+namiento de la economı́a, su estado actual y su desempeño futuro más probable.
+Esta senda se obtiene al unir las modas de las densidades de pronóstico condicional
+o incondicional a las sendas modales de los diferentes factores.
+    El “mejor conocimiento” sobre el funcionamiento de la economı́a es un conjun-
+to de ideas o de funciones de impulso respuesta que representan el efecto dinámico
+de las diferentes innovaciones sobre las variables macroeconómicas clave. Por exce-
+lencia, estas ideas o funciones de impulso respuesta se derivan del llamado Modelo
+de Mecanismos de Transmisión (MMT), el cual es una caracterización de los he-
+chos empı́ricos estilizados de la economı́a en un marco estructural macroeconómico
+(Gómez & Julio 2001, 2005, Gómez et al. 2002, Hamman et al. 2004).
+    El estado actual de la economı́a se obtiene de los valores observados de las
+variables y factores, sean o no observables, hasta el perı́odo t = 0 de nuestra
+notación. Es decir, Xti para i = 1, 2, 3, . . . , n y t = . . . , −3, −2, −1, 0. Si hay algún
+factor no observable, éste se estima a partir de la información histórica o del
+criterio de expertos. Los factores son en general las variables que componen los
+
+                                                 Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+Implementación, uso e interpretación del Fan Chart                                         123
+
+
+diferentes modelos, y si hay alguno no contemplado en por lo menos un modelo,
+serı́a necesario el desarrollo de un modelo satélite que incluya dicho factor hasta
+que este se pueda incluir en el modelo central, MMT. Sin embargo, si esto no
+es posible, siempre se puede considerar el criterio de expertos 4 para suponer los
+valores o parámetros necesarios.
+     El desempeño futuro más probable de la economı́a se compone de las sendas,
+supuestas, previstas o pronosticadas, más probables en el sentido de la moda,
+de los factores Xti . Es decir, el conjunto de valores µit para i = 1, 2, 3, . . . , n y
+t = 1, 2, 3, . . . , 9.
+     Los valores de la senda central de la inflación se obtienen como la moda de la
+distribución de la inflación, condicional a que los factores asuman sus valores más
+probables, Xti = µut y a los valores de las variables contenidos en el conjunto de
+información ̥0 que contiene toda la información de la economı́a hasta el perı́odo
+actual, t = 0. Es decir,
+
+   µpt = Moda[πt | ̥0 , Xti = µut        para i = 1, 2, . . . , n   y t = 1, 2, . . . , h]   (16)
+
+o también como la moda de la densidad conjunta condicional al conjunto de infor-
+mación hasta el trimestre actual ̥0 :
+
+                                    µpt = Moda[πt | ̥0 ]                                     (17)
+
+    El BR cuenta con un conjunto extenso de modelos a partir de los cuales se
+puede obtener la densidad de pronóstico condicional o incondicional a las sendas
+modales de los factores, o condicional a algunos pero incondicional a otros facto-
+res. Cada uno de estos modelos enfatiza diferentes aspectos de la economı́a, y el
+desempeño de sus pronósticos cambia en la medida que estos factores sean más o
+menos relevantes en el perı́odo particular. Entre el conjunto de los pronósticos se
+selecciona el pronóstico de corto plazo más adecuado de acuerdo con su comporta-
+miento histórico, y éste se introduce como restricción en el pronóstico del modelo
+central, MMT.
+    En conclusión, la senda más probable de la inflación es la unión de las modas
+de las densidades de la inflación en el horizonte de pronóstico, condicionales a que
+todos los n factores asuman su valor “más probable” o modal.
+    Para la realización de esta transformación de las modas de los factores a la
+moda de la inflación, realizamos tres supuestos:
+
+    • La distribución de los factores es normal en dos piezas.
+    • La densidad condicional de la inflación es normal en dos piezas.
+    • El modelo MMT representa la relación entre la senda más probable de la
+      inflación con las sendas más probables de los n factores y con las innovaciones.
+   4 El criterio de expertos es una metodologı́a estadı́stica muy convencional en ciencias puras y
+
+de la salud, la cual ha sido de gran utilidad en casos de gran incertidumbre. En principio esta
+es una metodologı́a Bayesiana y el criterio experto se incluye en las densidades a priori de los
+parámetros sobre los cuales pesa la incertidumbre.
+
+
+                                          Revista Colombiana de Estadı́stica 29 (2006) 109–131
+
+124                                                                                    Juan Manuel Julio
+
+
+3.3.2.    El balance de riesgos
+
+    En la sección anterior se describió la forma como se obtiene la senda más
+probable de la inflación futura a partir de la distribución condicional a las sendas
+más probables de los n factores. En esta describimos la manera como el balance
+de riesgos e incertidumbre de los factores se traduce en el balance de riesgos de la
+inflación.
+    El proceso consiste en determinar para cada perı́odo de tiempo el sesgo apro-
+ximado (14) para cada uno de los n1 factores que tienen un balance de riesgos
+distinto a un medio en algún perı́odo de tiempo. A través de una función de res-
+puesta de la inflación anual a impulsos de una unidad en cada uno de los factores,
+se traduce el sesgo de cada factor en un sesgo de la inflación explicado por el factor
+particular. Al sumar los sesgos de la inflación explicados por los n1 factores, se
+genera el sesgo de la densidad de la inflación explicado por todos los factores para
+cada perı́odo de tiempo del horizonte.
+    No se tienen en cuenta los factores con balance de riesgos igual a un medio
+en todos los perı́odos de tiempo porque éstos tienen densidades simétricas que
+generan respuestas nulas sobre el sesgo de la inflación.
+    Más precisamente, sea
+
+                   eit − µit
+             ξti = µ              para t = 1, 2, 3, . . . , 9        y i = 1, 2, 3, . . . , n1          (18)
+
+la aproximación del sesgo correspondiente a cada uno de los n1 factores para los 9
+trimestres de la ecuación 14, y sea φis para i = 1, 2, 3, . . . , n1 y s = 0, 1, 2, . . . , 8 la
+respuesta de la inflación anual πt a un impulso de una unidad del factor i-ésimo s
+perı́odos antes.
+     Bajo el supuesto que el sesgo de la inflación ξtπ se explica de manera exclusiva,
+lineal y dinámicamente por los sesgos de los diferentes factores, ξti . Se puede generar
+fácilmente la respuesta del sesgo de la inflación a los sesgos de cada factor, de
+acuerdo con la tabla 5, como la respuesta acumulada en el sentido convencional
+de la función de impulso respuesta de un modelo dinámico multivariado.
+
+       Tabla 5: Cálculo del sesgo de la inflación a partir del sesgo de los factores
+
+    Las funciones de impulso respuesta son un insumo del Fan Chart y provienen
+en general del modelo central, MMT, pero para algunos casos muy particulares
+pueden provenir de modelos satélite diseñados especı́ficamente para este propósito.
+    En resumen, para el cálculo de la respuesta del sesgo aproximado πt , ξtπ , a los
+sesgos aproximados de los factores, ξti , se necesitan como insumos los siguientes
+valores:
+
+   • La respuesta φis de la inflación anual a un impulso de una unidad en el
+     factor i-ésimo para cada horizonte s = 0, 1, 2, . . . , 8 y para cada factor
+     i = 1, 2, 3 . . . , n1 .
+
+   • El balance de riesgos pit para cada factor en cada perı́odo de tiempo del
+     horizonte.
+
+   • La incertidumbre σti de cada factor para cada perı́odo de tiempo del hori-
+     zonte.
+
+    A partir del segundo y el tercer insumos se calcula en cada perı́odo de tiempo
+el sesgo aproximado del factor i-ésimo, ξti , de acuerdo con las ecuaciones (13) y
+(14). Al combinar este resultado con el primer insumo se halla ξtπ , como lo describe
+la tabla 5.
+    En adición a los tres supuestos anteriores, para el cálculo de la senda de ses-
+gos aproximados de la inflación futura con base en los sesgos aproximados de los
+factores, supusimos que:
+
+   • El sesgo aproximado de la distribución futura de la inflación se explica ex-
+     clusivamente por el sesgo aproximado de los factores y no por otras carac-
+     terı́sticas de su distribución.
+
+   • El sesgo aproximado de la distribución futura de la inflación es una función
+     lineal de los sesgos aproximados de los diferentes factores cuyas ponderacio-
+     nes son los coeficientes de la función de impulso respuesta.
+
+   • El sesgo aproximado de la distribución futura de la inflación en un perı́odo
+     de tiempo particular del horizonte es la suma de los sesgos aproximados de
+     la inflación explicados por cada factor.
+
+
+3.3.3.   La incertidumbre σtπ2
+
+    La varianza de la inflación para un perı́odo particular del horizonte de pronósti-
+co, σtπ2 , se estima con base en los errores de pronóstico históricos del Informe
+de Inflación. Esta incertidumbre se corrige con multiplicadores que reflejan cam-
+bios esperados de la incertidumbre de la inflación con respecto a la incertidumbre
+histórica.
+
+3.3.4.    El Fan Chart
+
+     Una vez se han obtenido las tripletas (µπt , ξtπ , σtπ2 ) que contienen las sendas de
+los valores más probables de la inflación, µπt , el sesgo aproximado, ξtπ , y la incerti-
+dumbre, σtπ , se puede determinar el valor de la tripleta equivalente (µπt , σ1t     π    π
+                                                                                       , σ2t ).
+     A partir de ésta tripleta podemos obtener los percentiles α1 , α2 , . . . , αm ésimos
+de la densidad de la inflación en cada perı́odo de tiempo, los cuales denotaremos
+  π                                                                                π
+klt , y que se definen de acuerdo con la ecuación (8) como el valor klt             tal que
+          π
+P [πt ≤ klt ] = αl para l = 1, 2, . . . , m.
+                           π 9
+     Al unir las sendas klt     t=1
+                                      para cada l = 1, 2, 3, . . . , m, se obtiene el gráfico
+del Fan Chart.
+
+
+
+
+4.       Uso del Fan Chart
+    En la sección anterior se explicaron los supuestos y se derivaron las fórmulas
+para el cómputo del Fan Chart. En esta se presentan algunas consideraciones
+prácticas para su uso, las cuales se relacionan con la implementación computacional
+del software que se desarrolló con este propósito.
+
+
+
+4.1.     El multiplicador de la incertidumbre
+
+    Uno de los resultados del ejercicio que lleva a producir el Fan Chart es la
+determinación subjetiva del grado de incertidumbre en el horizonte de pronóstico
+relativa a la incertidumbre histórica. Esto aplica para las distribuciones de los
+factores como para el cálculo de la inflación.
+    En cualquier ejercicio de pronóstico es tentador pensar que el grado actual
+de incertidumbre sobre el pronóstico es superior a su incertidumbre histórica. Sin
+embargo, esto no necesariamente es verdad en todos los casos. Por ejemplo, si se
+identifica que un factor importante en la determinación de la inflación futura es
+un posible incremento de los impuestos sobre los combustibles, en el presente se
+tiene un mayor grado de incertidumbre sobre el valor del impuesto y su efecto
+sobre la inflación futura. Sin embargo, una vez haya sucedido este incremento, la
+incertidumbre sobre el valor del incremento se reduce a cero y la incertidumbre
+con respecto al efecto sobre la inflación disminuye.
+    De igual manera, el multiplicador sirve para ajustar la incertidumbre de una in-
+flación que tiene tendencia decreciente, consistente con una incertidumbre también
+decreciente.
+    Es importante anotar que el multiplicador de la incertidumbre es una medida
+relativa a la incertidumbre histórica, y que este multiplicador es “subjetivo” pero
+derivado del criterio de “expertos”.
+
+4.2.     Información anual en vez de trimestral
+     Realizar supuestos, pronósticos o escenarios de los valores modales, balances de
+riesgo e incertidumbre para cada uno de los factores en cada trimestre del horizonte
+de pronóstico puede ser un trabajo difı́cil e innecesario, sobre todo si se incluyen
+factores que aún no han sido considerados en los modelos.
+     La implementación actual del Fan Chart se basa en que se realizan supuestos
+o escenarios solo para el cuarto y el noveno trimestres del horizonte de pronóstico
+referidos como “final del primer año” y “final del segundo año”. Es decir, en lugar
+de suponer valores (pit , σti ) y (pπt , σtπ ) para los 9 perı́odos de tiempo del horizonte,
+se necesitan solamente los valores al final del primero y el segundo años, (pi4 , σ4i ),
+(pπ4 , σ4π ), (pi9 , σ9i ) y (pπ9 , σ9π ).
+     Sin embargo, este procedimiento implica la existencia de una regla a través de
+la cual se llenen los valores para los perı́odos intermedios. En la implementación
+actual suponemos que la distribución de los valores al final de cada año es uniforme
+a lo largo de los trimestres, y que la transición del primer al segundo año se
+interpola linealmente.
+     Las ponderaciones de cada trimestre se conocen como “Ponderadores Intra
+Año” y sus valores son 0.25 para los cuatro trimestres del primer año y 0.20 para
+los cinco del “segundo año”.
+
+
+4.3.     Insumos
+   La tabla 6 contiene una lista de los insumos necesarios para la construcción del
+Fan Chart. Los pasos necesarios se describen a continuación y la obtención de los
+insumos en la siguiente subsección.
+
+
+4.3.1.   Pasos en la construcción del Fan Chart
+
+   1. Multiplique las desviaciones estándar históricas de cada variable por sus
+      multiplicadores de incertidumbre para hallar la medida de incertidumbre
+      futura.
+
+   2. Convierta la incertidumbre y el balance de riesgos de los factores en la aproxi-
+      mación al riesgo correspondiente para cada factor en cada perı́odo de tiempo,
+      t = 4 y 9.
+
+   3. Con la ayuda de la función de impulso respuesta transforme el sesgo apro-
+      ximado de cada factor en el sesgo aproximado de la inflación explicado por
+      cada factor.
+
+   4. En cada perı́odo de tiempo, t = 4 y 9, sume los sesgos aproximados explicados
+      por cada uno de los factores en un sesgo total aproximado de la inflación.
+
+   5. Con ayuda de las ponderaciones intra año genere la incertidumbre y aproxi-
+      mación total al sesgo de la inflación para los perı́odos t = 1, 2, 3, . . . , 9.
+
+                       Tabla 6: Insumos para la construcción del Fan Chart
+
+            Sı́mbolo                           Nombre                                     Perı́odos
+      πt                  Inflación observada                                      t = −20, −19, . . . , 0
+      µπt                 Senda más probable inflación                            t = 1, 2, 3, . . . , 9
+      et
+      π                   Meta de inflación                                        t = 1, 2, 3, . . . , 9
+                          Desv. estándar histórica
+      σ4π y σ9π                                                                     t=4y9
+                          Pronóstico inflación
+                          Multiplicador incertidumbre
+      w4π y w9π                                                                     t=4y9
+                          Pronóstico inflación
+                          Desv. estándar histórica
+      σ4i y σ9i                                       i = 1, 2, . . . , n1          t=4y9
+                          del factor i-ésimo
+                          Multiplicador incertidumbre
+      w4i y w9i                                              i = 1, 2, . . . , n1   t=4y9
+                          del factor i-ésimo
+                          Balance de riesgos
+      pi4 y pi9                                 i = 1, 2, . . . , n1                t=4y9
+                          del factor i-ésimo
+                          Resp. de πt a impulso
+      φi0 y φi4                                            i = 1, 2, . . . , n1     t=0y4
+                          1 unidad del factor i-ésimo
+      δt                  Ponderaciones intra año                                  t = 1, 2, 3, . . . , 9
+      Lj                  Rangos presentación tabla                                j = 1, 2, 3, . . . , 6
+      αj = 0.05 × j       Probabilidades para el dibujo del Fan Chart               j = 1, 2, 3, . . . , 18
+
+
+
+  6. Para cada perı́odo de tiempo convierta la incertidumbre y aproximación al
+                        π     π
+     sesgo anterior en σ1t y σ2t .
+
+  7. Complete la tripleta (µπt , σ1t
+                                  π     π
+                                     , σ2t ) para cada perı́odo de tiempo.
+
+  8. Determine los percentiles para las probabilidades determinadas y el resultado
+     es el Fan Chart.
+
+
+4.3.2.       Determinación de los insumos
+
+    Como se explicó anteriormente, la senda más probable de la inflación, µπt , se
+obtiene a partir de los pronósticos de los diferentes modelos, basados en los su-
+puestos, escenarios o pronósticos más probables, µπt de los n factores considerados.
+Las metas de inflación son determinadas por la JDBR y la inflación observada es
+conocida de antemano. La desviación estándar histórica de la inflación se obtiene
+como el RMSE5 del pronóstico de inflación reportado en los informes de inflación
+pasados.
+    Los n factores Xti que se incluyen en el cómputo de la senda más probable de
+la inflación son el resultado del informe de inflación.
+    En general estos factores son variables que entran como variables exógenas en
+los modelos de pronóstico, o son variables endógenas en modelos conjuntos como
+el MMT. Sin embargo, éstos no son los únicos tipos de factores que se pueden
+incluir. Estos factores se clasifican en choques a:
+  5 RMSE es Root Mean Square Error, una medida de incertidumbre muestral.
+
+    (a) las innovaciones de alguna variable importante del MMT, como innovacio-
+nes al consumo, productividad, etc.;
+    (b) los procesos que determinan alguna variable exógena, como la tasa de in-
+terés externa,
+    (c) parámetros clave que reflejan un cambio del mecanismo de transmisión,
+como los cambios en el pass-trough o en la pendiente de la curva de Phillips debido
+a la pérdida de credibilidad de las polı́ticas para alcanzar la meta de inflación.
+    La senda más probable de los factores, µit , proviene de los pronósticos, supuestos
+o escenarios que se discuten en el Informe sobre Inflación. Estas sendas alimentan
+los diferentes modelos de pronóstico de la inflación, de los cuales se obtiene µπt .
+    Luego de establecer la senda central, se estudia el balance de riesgos de cada
+uno de los factores con base en el conocimiento actual de la economı́a. El valor
+del balance de riesgos para cada factor es “subjetivo” y se expresa en un conjunto
+de valores pit = P [Xti ≤ µit ]. Estos factores se clasifican en n1 que tienen balance
+de riesgos diferente a 0.5 en algún perı́odo de tiempo y los demás que tienen un
+balance simétrico de riesgos en todos los perı́odos.
+    Para los n1 factores con balance de riesgos asimétrico se necesita la desviación
+estándar histórica, la cual se calcula como la varianza residual estimada si el factor
+es una innovación a una ecuación, o la desviación estándar histórica estimada de
+la variable exógena que recibe la innovación, o la desviación estándar estimada de
+un modelo en el que el parámetro en cuestión cambie en el tiempo. En cualquier
+otro caso se puede utilizar el criterio de expertos.
+    Las funciones de impulso respuesta correspondientes se obtienen del MMT o
+de algún modelo diseñado para el fin especı́fico. Sin embargo, hay que tener en
+cuenta que éstos son la respuesta de la inflación total a una innovación de una
+unidad en el factor particular.
+    La figura 3 describe los pasos para la construcción del Fan Chart y muestra la
+manera como su implementación se relaciona con un esquema para pensar en la
+evolución futura de la inflación.
+
+
+
+5.     Discusión
+    El Fan Chart es una herramienta muy útil para los bancos centrales que siguen
+el esquema de inflación objetivo. Sus usos primordiales son: primero, comunicar al
+público la visión actual del banco acerca de la evolución de la inflación, condicional
+a su mejor conocimiento del funcionamiento de la economı́a, el estado actual de
+esta y su desempeño futuro. Y segundo, sirve como un esquema para pensar en
+la evolución futura de la inflación. Si bien podemos obtener un Fan Chart de
+cualquier modelo de pronóstico, la implementación que usa actualmente el Banco
+de la República cumple con la condición de ser formal pero sencilla. La sencillez se
+deriva de la necesidad de los miembros de la JDBR de replicar sus propios ejercicios
+a partir de la información entregada por el staff, es decir, sin la complicación de
+un modelo particular.
+ Figura 3: El Fan Chart como un esquema para producir el pronóstico de la inflación
+
+
+    Nuestra implementación del Fan Chart es similar a la del Informe de Inflación
+del Banco de Inglaterra, el cual se basa en los supuestos que describimos anterior-
+mente. Si bien esta metodologı́a para la implementación del Fan Chart es cada vez
+más aceptada por los bancos que siguen el esquema de inflación objetivo, ha sido
+blanco de crı́ticas por la sencillez de sus supuestos.
+    En particular, se han cuestionado dos supuestos: primero, que la distribución
+condicional de la inflación sea normal en dos piezas dado que la condicional de los
+factores es también de este tipo. Y segundo, que el efecto del sesgo aproximado
+de los factores sobre el sesgo aproximado de la inflación sea aditivo. El primer
+supuesto es muy fácil de sostener ya que la densidad normal en dos piezas es una
+buena aproximación para una familia extensa de funciones de densidad asimétricas
+y unimodales. El segundo supuesto es más difı́cil de sostener por su naturaleza
+restrictiva. Una restricción a una posible solución a esta crı́tica es que el modelo
+formal debe ser económicamente consistente y tener un tamaño considerable como
+el MMT. Sin embargo, varios autores, como Cogley et al. (2003) y Vega (2003),
+han realizado algunas comparaciones que podrı́an servir como punto de partida
+para una formalización más estricta.
+
+
+
+Agradecimientos
+   El autor agradece los valiosos comentarios del doctor Norberto Rodrı́guez a
+una versión preliminar de este trabajo y los de dos árbitros anónimos de la Revista Colombiana de Estadı́stica, que ayudaron a clarificar la versión actual. Los posibles
+errores, omisiones y las opiniones son, sin embargo, responsabilidad exclusiva del
+autor y no comprometen al Banco de la República ni a la Universidad Nacional
+de Colombia.
+Referencias
+Britton, E., Fisher, P. & Whitley, J. (1998), The Inflation Report Projections: Understanding the Fan Chart, in ‘Bank of England Quarterly Bulletin’. Febrero de 1998.
+Cogley, T., Morozov, S. & Sargent, T. (2003), Bayesian Fan Charts for UK Inflation: Forecasting and Sources of Uncertainty in an Evolving Monetary System, CFS-Bundesbank Conference on Expectations, Learning and Monetary Policy, Eltville, Alemania. Agosto de 2003.
+Gómez, J. & Julio, J. (2001), ‘Transmission Mechanisms and Inflation Targeting: The Case of Colombia’s Disinflation’, Borradores Semanales de Economı́a (168). Banco de la República, Bogotá, Colombia.
+Gómez, J. & Julio, J. (2005), How Monetary Policy Works, Central Banks Governor’s Symposium Series, Routledge, chapter 6: Transmission Mechanisms and Inflation Targeting: The Case of Colombia’s Disinflation, pp. 139–168.
+Gómez, J., Uribe, J. & Vargas, H. (2002), ‘The Implementation of Inflation Targeting in Colombia’, Borradores Semanales de Economı́a (202). Banco de la República, Bogotá, Colombia.
+Hamman, F., Julio, J., Restrepo, P. & Riascos, A. (2004), ‘Inflation Targeting in a Small Open Economy: The Colombian Case’, Borradores Semanales de Economı́a (308). Banco de la República, Bogotá, Colombia.
+Vega, M. (2003), ‘Reportando la distribución de la proyección de inflación’, Revista de Estudios Económicos . Banco Central de la Reserva del Perú. Noviembre de 2003.
+Vega, M. (2004), Policy Maker’s Priors and Inflation Density Forecasts, in ‘Working Paper, Banco Central de la Reserva del Perú’.

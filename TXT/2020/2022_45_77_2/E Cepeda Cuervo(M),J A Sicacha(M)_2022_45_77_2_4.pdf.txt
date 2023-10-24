@@ -1,0 +1,1284 @@
+Spatial Econometric Models: A Bayesian Approach. Modelos econométricos espaciales: una aproximación bayesiana
+Universidad Nacional de Colombia, University or Institution, City, Country
+Abstract
+In this paper we propose Bayesian methods to t econometric regression models, including those where the variability is assumed to follow a regression structure. We formulate the main functions of the statistical R-package BSPADATA, developed according to the proposed methods to obtain posteriori parameter inferences. After that, we include results of simulated studies to illustrate the use of this package and the performance of the proposed methods. Finally, we provide studies to illustrate the applications of the models and compare our results with that obtained by maximum likelihood.
+Key words : Bayesian methods; CAR models; Spatial econometric models; SAR models.
+Resumen
+En este artículo proponemos métodos bayesianos para ajustar modelos de regresión econométrica, incluidos aquellos en los que la variabilidad sigue una estructura de regresión. Formulamos las principales funciones del Rpackage estadístico BSPADATA, desarrollado según los métodos propuestos para obtener inferencias de parámetros a posteriori. Luego, incluimos resultados de estudios de simulación para ilustrar el uso de este paquete y el desempeño de los métodos propuestos. Finalmente, proporcionamos estudios para ilustrar las aplicaciones de los modelos y comparamos nuestros resultados con los obtenidos por máxima verosimilitud.
+Palabras clave: Modelos econométricos espaciales; Modelos SAR; Modelos CAR; Métodos bayesianos.
+
+Introduction
+
+
+      Spatial econometrics is a branch of the economics whose origin dates back to the
+Annual Meeting of the Dutch Association of Statistics 1974 (Anselin, 2001), and
+that since its creation has been a support investigations in economics and ecology.
+Usual models in the spatial econometrics are the spatial autoregressive models
+and the spatial error models considered in this paper (Anselin, 1988). Despite the
+popularity of the maximum likelihood methods to t spatial econometric models,
+these lead to specication problems when the sample is very small, when there
+are atypical data or when there is heterogeneity of variance across space.                The
+application of maximum likelihood methods to t spatial economic models can be
+found in Anselin (1988) and LeSage (1997).
+
+      Although the possibility applying Bayesian methods to t econometric models
+was considered in Hepple (1979), Anselin (1980) and Anselin (1982), it was only
+in 1997 that James Lesage proposed Bayesian estimation of spatial autoregressive
+models using MCMC algorithms (LeSage, 1997).                     He proposed a Bayesian
+method to t homoscedastic and heteroscedastic autoregressive models. For the
+homoscedastic autoregressive models, he assumed diuse prior distribution for
+(β, σ 2 , ρ).   Thus, the conditional distributions of β and σ
+                                                                     2
+                                                                         are the multivariate
+normal distribution and the Chi-square distribution, respectively. In this model,
+the conditional distribution of       ρ is unknown, so he applied custom generation
+via rejection sampling methods.         For the heteroscedastic spatial autoregressive
+                                                                   2
+models he assumed that the variance-covariance matrix is given by σ  V, where
+                          ′
+V = diag(νi ), where the νi s are assumed to be n independent parameters to be
+sampled using a Chi-square distribution.
+
+      In this paper we propose Bayesian methods to t spatial econometric models
+dened assuming multivariate normal prior distribution for β , inverse-gamma prior
+distribution for σ and uniform distributions for the spatial association parameters
+ρ and λ, all independent. But given that the posterior parameter distribution is
+unknown, samples of it are obtained from the posterior conditional distributions
+of parameter blocks, visited in sequence until convergence. Thus, samples of β and
+σ −2 are proposed from a multivariate normal distribution and an inverse gamma
+distribution, respectively, and accepted with probability 1. Samples of the spatial
+association parameters ρ and λ, are proposed from a kernel transition function
+given by a truncated normal distribution,             applying the Metropolis Hastings
+algorithm. If a uniform distribution is assumed as the kernel transition function,
+Bayesian methods perform poorly.
+
+      In the spatial heteroscedastic econometric models, samples of the posterior
+mean regression parameter distributions,          β , and the association parameters, ρ
+and λ, are obtained as in the homoscedastic regression models, but samples of
+the variance regression parameters are obtained by using the MCMC algorithm,
+as proposed in Cepeda-Cuervo (2001) and Cepeda-Cuervo & Gamerman (2005),
+where samples of the posterior variance regression distribution are proposed from
+a normal transition kernel dened by the combination of working observational
+model and a normal prior distribution.
+
+
+
+                     Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                               343
+
+
+
+   To t Bayesian homoscedastic and heteroscedastic regression models,                        we
+developed the     BSPADATA R-package, which is available to users at https:
+//cran.r-project.org/web/packages/BSPADATA/. To evaluate the performance
+of the proposed Bayesian method and of the BSPADATA R-package, we developed
+simulated and applied analyses, and we compared our result with that obtained
+by applying maximum likelihood methods. We used the BSPADATA R-package
+to t the econometric models to two known datasets: level of crime in 49 districts
+of Columbus, Ohio, and rate of occurrence of Leukemia in New York. In the rst
+one, the level of crime is explained by the average price of housing in each district
+and by the average income of its inhabitants (Anselin, 1988; LeSage & Pace, 2009).
+In a second application, the rate of occurrence of Leukemia in New York is the
+variable of interest, and is associated with factors such as the potential exposure
+and the proportion of cases per spatial unit (Waller, 1996).
+
+   After this introduction, the rest of the paper is organized into four sections
+and an appendix.         Section 1 includes the Bayesian homoscedastic econometric
+regression models' denition, the full posterior conditional distributions and the
+respective Bayesian algorithm formulation.              Section 2 includes the Bayesian
+heteroscedastic    econometric      regression    models'    denition,   the    full   posterior
+conditional distributions and the respective Bayesian algorithm formulation.
+Section   3   presents   results   of   three   simulation   studies   related   to     SAR   and
+SARAR/SAC homoscedastic and heteroscedastic models. Section 4 reports results
+of two application studies.        Finally, the appendix contains some homoscedastic
+and heteroscedastic functions of the BSPADATA R-package and some theoretical
+developments of the proposed Bayesian methods.
+
+
+
+
+1. Bayesian Homoscedastic Econometric Regression
+
+    Models
+
+   Let Ai , i = 1, 2, 3, . . . , n, be a partition of a region S. This partition induces
+a neighborhood structure       {N i : i = 1, . . . , n}, where Ni denotes the set of
+all subregions that are neighbors of subregion         i. The most common neighbor
+denitions are given by the physical rst-order contiguity or by the distance
+between regions; however, being neighbors does not necessarily connote geographic
+proximity. If two subregions Aj and Ak , are in the neighborhood of region Ai , it
+does not mean that the interdependence between Aj and Ai , and between Ak and
+Ai are the same. This interdependence between Ai and Aj , j ̸= i, isP   characterized
+by nonnegative real numbers wij , j ∈ {1, 2, . . . , n} − {i} such that  j̸=i wij = 1.
+Thus, spatial interdependence of a spatial variable of interest can be written as
+a symmetric weight matrix W , with zeros in the main diagonal and non-negative
+entries outside the diagonal. Thus, assuming two spatial weight matrices W1 and
+W2 , the Bayesian econometric regression model is dened as follow: let Y be an
+n-dimensional vector of a spatial variable of interest; X an N × K a design matrix;
+W1 and W2 be N × N symmetric spatial weight matrices; (β t , ρ, λ)t a vector
+of regression parameters, where β is a K -dimensional parameter vector and ρ and
+λ are related to the spatial association of Y and ε, respectively. The general
+
+
+                   Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+344                                      Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+homoscedastic econometric model (SARAR/SAC) is given by:
+
+
+                                    Y = Xβ + ρW1 Y + ε                                           (1)
+
+                                    ε = λW2 ε + ν,                                               (2)
+
+                                                                                          2
+where ν ∼ N (0, Ω), with 0 an n-dimensional vector of zeros and Ω = σ                         IN ×N .
+For a Bayesian model specication, we assume the following independent prior
+distribution for the regression parameter:   β ∼ N (b, B), σ 2 ∼ Inv-Gamma(ζ, ϑ),
+ρ ∼ U (1/ω1max , 1) and λ ∼ U (1/ω2max , 1), where ω1max and ω2max are the largest
+negative eigenvalues of the symmetric spatial weight matrices W1 and W2 ,
+respectively (Anselin, 1988).
+
+      The spatial autoregressive models (SAR) are dened from the homoscedastic
+regression models dened by (1) and (2), by setting λ = 0. If ρ = 0, the spatial
+error models (SEM) are dened.
+
+
+
+1.1. Full Posterior Conditional Distributions
+      Assuming the general homoscedastic econometric model dened by equations
+(1) and (2), the likelihood function is given by:
+
+                                                                                   
+                                                            1               1 t
+           L(β, ρ, λ, σ 2 ) ∝ |I − ρW1 ||I − λW2 |(σ 2n )− 2 exp       −        ν ν   ,          (3)
+                                                                           2σ 2
+
+where    ν = (I − λW2 )[(I − ρW1 )y − Xβ].             Thus, with the prior parameter
+distributions dened above, the posterior parameter distribution, obtained by
+applying Bayes' theorem, is given by:
+
+                                                                     
+                                           1
+π(β, σ 2 , ρ, λ) ∝ |σ 2 |−n/2 |A||D| exp − 2 (Ay − Xβ)t Dt D(Ay − Xβ) ×
+                                          2σ
+                                             ϑ                       
+                           1         t −1       ζ     2 −ϑ−1          2
+                 exp − (β − b) B (β − b)            (σ )     exp − ζ/σ P (ρ)P (λ),
+                           2                   Γ(ϑ)
+                                                                                                 (4)
+
+
+where A = I − ρW1 , D = I − λW2 and, P (ρ) and P (λ) denote the prior of ρ
+and λ, respectively (Cepeda-Cuervo, 2001; Cepeda-Cuervo & Gamerman, 2000).
+Thus, the full posterior conditional distributions of:
+
+
+
+  1.    β , π(β|σ 2 , ρ, λ), is a normal distribution N (b∗ , B∗ ), where
+        b∗ = B∗ (σ −2 Xt Dt DAy + B−1 b) and B∗ = (σ −2 Xt Dt DX + B−1 )−1 .
+
+  2.    σ 2 is given by:
+                                                               
+                                                          n k
+                           π(σ 2 |β, ρ, λ) ∼ Inv-Gamma ζ + , + ϑ ,                               (5)
+                                                          2 2
+                                t    t
+        where k = (Ay − Xβ) D D(Ay − Xβ).
+
+
+
+                    Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                                       345
+
+
+
+   3.   ρ is given by:
+                                                                        2 
+                                       2                         c      d
+                           π(ρ|β, σ , λ) ∝ |A| × exp           −     ρ−        P (ρ),                 (6)
+                                                                 2      c
+                       −2 t
+        where c = σ            y W1t Dt DW1 y and d = σ −2 yt W1t Dt D(y − Xβ).
+
+   4.   λ is given by:
+                                                                          2 
+                                                                 c′    d′
+                                                                   
+                           π(λ|β, σ 2 , ρ) ∝ |D| × exp       −       λ− ′      P (λ),                 (7)
+                                                                 2     c
+                ′
+        where c     = σ −2 (Ay − Xβ)t W2t W2 (Ay − Xβ) and
+
+                                     d′ = σ −2 (Ay − Xβ)t W2t (Ay − Xβ).
+
+                                                                        2
+Note that the full conditional distributions of β and σ                     are known, while the full
+conditional distributions of ρ and λ are analytically intractable.                       Therefore, to
+propose a Bayesian algorithm to obtain samples of the posterior distribution, we
+develop in Section 1.2 normal transition kernels to propose samples of the posterior
+conditional distributions of ρ and λ.
+
+
+
+1.2. Bayesian Algorithm
+   In order to obtain samples of the posterior distribution                          π(β, σ 2 , ρ, λ), we
+                                                                    2
+propose an iterative process where samples of β , σ , ρ and λ are obtained from
+their full conditional posterior distributions. Thus, samples β are obtained from
+                                                       2
+the posterior conditional distribution π(β|σ  , ρ, λ) and samples of σ 2 are obtained
+                                                   2
+from their posterior conditional distribution π(σ |β, ρ, λ), which are a normal and
+a gamma distributions, respectively.
+
+   To obtain samples of the full posterior conditional distribution of ρ and λ,
+taking into account that these are analytically intractable, we propose truncated
+                                                                                                  ∗   ∗
+normal kernel transition functions given by the normal distributions N (c , d ),
+restricted to the interval (1/ω1max , 1), to obtain samples of ρ, and the normal
+                      ′∗
+distribution N (c  , d′∗ ), restricted to the interval (1/ω2max , 1), to obtain samples
+                                                         ∗  ∗ ′∗         ′∗
+of λ. In these kernel transition function denitions c , d ,c      and d    are given by:
+
+
+                    yt W1t Dt D(y−Xβ)                                                2
+            c∗ =     yt W1t Dt DW1 y
+                                                                    d∗ = yt Wt Dσt DW1 y
+                                                                                 1
+
+
+               (Ay−Xβ)t Wt (Ay−Xβ)                                                   2
+        c′∗ = (Ay−Xβ)t Wt W
+                          2                                    d′∗ = (Ay−Xβ)t Wσt W2 (Ay−Xβ) ,
+                            2 (Ay−Xβ)
+                                 2                                                   2
+
+
+
+
+   where A and D are dened as in Section 1.1. Thus, samples of the posterior
+                           2
+distribution π(β, σ            , ρ, λ) can be obtained, given that samples of the full posterior
+conditional distributions of ρ and λ can be obtained by applying the Metropolis
+Hastings algorithm.
+
+
+
+                      Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+346                                  Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+2. Bayesian Spatial Heteroscedastic Econometric
+
+      Models
+
+    Let Y be an n-dimensional vector of a spatial variable of interest. If Y , X, β ,
+ρ, λ, W1 , W2 , ε and ν are dened as in homoscedastic econometric models, the
+Bayesian spatial heteroscedastic econometric model is dened by:
+
+
+                                  y = Xβ + ρW1 y + ε                                     (8)
+
+                                  ε = λW2 ε + ν,                                         (9)
+
+
+where ν   ∼ N (0, Ω) with Ω a diagonal matrix, with diagonal entries given by
+diag(g(Ωii )) = Zγ . In the variance regression structure, Z is an N × p design
+matrix of dispersion regression structure, γ is a p-dimensional vector variance
+regression parameter and g is an appropriate real function. For the Bayesian
+model specication, we assume the following independent prior distribution for
+the parameter models:     β ∼ N (b, B), γ ∼ N (g, G), ρ ∼ U (1/ω1max , 1) and
+λ ∼ U (1/ω2max , 1), where ω1max and ω2max are dened as in Section 1.
+
+
+2.1. Full Posterior Conditional Distributions
+      Assuming the model dened by equations (8) and (9), the likelihood function
+is given by:
+
+                                                                     -
+                                                     1      1
+            L(β, γ, ρ, λ) ∝ |I − ρW1 ||I − λW2 ||Σ|− 2 exp − ν ′ Σ−1 ν ,                (10)
+                                                            2
+
+where ν = (I−λW2 )[(I−ρW1 )y −Xβ]. Thus, with the prior distribution dened
+above, the posterior parameter distribution, obtained by applying Bayes' theorem,
+is given by:
+                                                                 
+                                     1
+ π(β, γ, ρ, λ) ∝ |Σ|−1/2 |A||D| exp − (Ay − Xβ)t Dt Σ−1 D(Ay − Xβ) ×
+                                     2
+                                                                          (11)
+                      1                           1
+                                t −1
+               exp − (β − b) B (β − b) exp − (γ − g)t G−1 (γ − g) P (ρ)P (λ),
+                      2                           2
+ where A and D is dened as in Section 1.1.           Thus, from 11, the full posterior
+conditional distribution of:
+
+
+  1.    β , π(β|γ, ρ, λ), is a normal distribution N (b∗ , B∗ ), where
+        b∗ = B∗ (Xt Dt Σ−1 DAy + B−1 b) and B∗ = (Xt Dt Σ−1 DX + B−1 )−1
+        (Cepeda-Cuervo, 2001; Cepeda-Cuervo & Gamerman, 2005).
+
+
+  2.    γ is given by:
+                                                                     
+                                         1
+           π(γ|β, γ, λ) ∝|Σ|−1/2 exp    − (Ay − Xβ)t Dt Σ−1 D(Ay − Xβ) ×
+                                         2
+                                                            
+                                          1
+                                   exp − (γ − g)t G−1 (γ − g) .
+                                          2
+
+                   Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                                          347
+
+
+
+  3.   ρ is given by:
+                                                                       2 
+                                                                 c     d
+                            π(ρ|λ, γ, β) ∝ |A| exp             −    ρ−        P (ρ),
+                                                                 2     c
+                                       −1
+                       t
+       where c = y W1 D Σ
+                            t      t
+                                            DW1 y and d = (y − Xβ)t Dt Σ−1 DW1 y.
+  4.   λ is given by:
+                                                                          2 
+                                                                c′     d′
+                                                                  
+                           π(λ|ρ, γ, β) ∝ |D| exp             −      λ− ′      P (λ),
+                                                                2      c
+
+                                        t    t   −1
+       where c = (Ay − Xβ) W2 Σ                       W2 (Ay − Xβ) and
+
+                                    d = (Ay − Xβ)t W2t Σ−1 (Ay − Xβ).
+
+   The full conditional distribution of                  β is known, while the full conditional
+distribution of γ , ρ and λ are analytically intractable. Thus, in order to propose a
+Bayesian algorithm to obtain samples of the posterior parameter distribution, we
+develop in Section 2.2 normal transition kernels to propose samples of the posterior
+conditional distributions of γ , ρ and λ.
+
+
+
+2.2. Proposed Bayesian Algorithm
+                                                                                                t             t
+   To obtain samples of the posterior parameter distribution of θ = (β , γ, ρ, λ) ,
+we propose an interactive process, where samples of β are obtained from their
+posterior conditional distribution                π(β|γ, ρ, λ), obtained in Section 2.1, while
+samples of γ , ρ and λ are obtained by applying the Metropolis-Hastings algorithm,
+proposing samples from the following kernel transition functions.
+
+
+  1. To obtain samples of the full posterior conditional distribution of                             γ , we
+       build a kernel transition function applying the method proposed in Cepeda-
+       Cuervo (2001), and Cepeda-Cuervo & Gamerman (2005) as follows. Given
+       that the random variables    ti = (yi − µi )2 ∼ σi2 χ21 , i = 1, 2, . . . , n, have
+                                                   2                      4
+       mean and variance given by E(ti ) = σi and V (ti ) = 2σi , assuming
+       a dierentiable dispersion link function g(.), that takes into account the
+       positivity of the variance, the working variables ỹi 's are obtained by rst-
+                                                           2
+       order Taylor approximation of g around E(ti ) = σi . That is,
+
+
+                           g(ti ) ≃ g[E(ti )] + g ′ [E(ti )][ti − E(ti )] = ỹi ,                       (12)
+
+
+       where  g ′ denotes the rst-order derivative of g . For these variables,
+       E(ỹ) = g(E(ti )) and V ar(ỹ) = g ′ [E(ti )]2 V ar(ti ). When g is the logarithmic
+       function, the working observation variables are given by:
+
+
+                        (yi − ρ   (c) W y − λ(c) W y + λ(c) ρ(c) W W y − xt β (c) + λ(c) W xt β (c) )2
+                t (c)                  1i i       2i i             2i 1i i i              2i i
+         ỹi = zi γ   +                                                                                − 1,
+                                                         exp(zt γ (c) )
+                                                               i
+
+
+
+
+                      Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+348                                       Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+        for which     E(y˜i ) = z ti γ (c) and V ar(y˜i ) = 2.       Thus, the kernel transition
+        function to propose samples of the variance regression parameters γ is given
+        by the posterior distribution obtained by the combination of a normal prior
+                                                                                              t   (c)
+        distribution and the working observational models given by ỹ ∼ N (z i γ                        , 2):
+
+                                       qγ (γ (c) , γ (n) ) = N (g∗ , G∗ ),
+                  ∗
+        where g       = G∗ (G−1 g + 0.5Zt Ỹ) and G∗ = (G−1 + 0.5Zt Z)−1 .
+   2. To obtain samples of the full posterior conditional distribution of                         ρ, we
+                                                                                     ∗   ∗
+        propose a normal transition kernel transition function N (c , d ), where:
+
+                        yt Wt Dt Σ−1 (y−Xβ)
+                c∗ = yt W1t Dt Σ−1 DW1 y                           d∗ = yt Wt Dt Σ1−1 DW1 y
+                             1                                               1
+
+
+
+        with D = I − λW2 , truncated by the interval (1/ω1max , 1), where ω1max is
+        the largest negative eigenvalue of the neighbor matrix W1 (Anselin, 1988).
+
+   3. To propose samples of the posterior conditional distribution of λ, we propose
+        a sample transition kernel given by a normal transition kernel                       N (c∗ , d∗ ),
+        where
+
+                  (Ay−Xβ)t Wt Σ−1 (Ay−Xβ)
+          c∗ = (Ay−Xβ)t Wt Σ2−1 W2 (Ay−Xβ)                  d∗ = (Ay−Xβ)t Wt Σ1−1 W2 (Ay−Xβ)
+                                 2                                               2
+
+
+
+        with  A = I − ρW1 . This normal distribution is truncated in the
+        range (1/ω2max , 1), where ω2max is the larger negative eigenvalue of the
+        neighborhood matrix, W2 (Anselin, 1988). It is implemented in the function
+        hetero_general of the library BSPADATA of R, (?).
+
+      To obtain samples of           ρ and λ we also propose uniform kernel transition
+functions in the intervals (1/ω1max , 1) and (1/ω2max , 1), respectively.
+
+
+
+
+3. Simulated Studies
+
+      To illustrate the performance of the Bayesian methods proposed to t spatial
+econometric models, the results of two simulation studies are presented. In what
+follows, we use a binary neighbor matrix of the Columbus data (?), standardized
+by rows, where if two spatial units i and j have a common border, the (i, j)-input
+of the binary neighbor matrix is 1 and, if spatial units i and j have no a common
+border, the (i, j)-input of the binary neighbor matrix is 0.
+
+
+
+3.1. A rst Simulation Study
+      In a rst study, we assume that the variable of interest follows a normal spatial
+homoscedastic distribution model given by:
+
+
+                      Y = Xβ + ρWY + ε, where ε ∼ N (0, σ 2 I),                                     (13)
+
+
+
+                       Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                                          349
+
+
+
+as in equations (1) and (2), but with                    λ = 0.          Thus, to generate a dataset
+for the analysis, assuming two explanatory variables, samples of size      n = 100
+were generated from X1     ∼ U (0, 400) and X2 ∼ U (10, 23), respectively. In all
+simulations, it is assumed that X0 = I100 . With these samples and assuming β =
+(18, 0.478, −1.3), the mean vector value was obtained from µ = (I − ρW)−1 Xβ ,
+where W is the neighborhood matrix dened in ? and 0 < ρ < 1, in order to
+                                         2
+assume spatial dependence. Assuming σ = 45, the variance-covariance matrix of
+Y was obtained from V (Y) = σ [(I − ρW)(I − ρW)]−1 . Hence, a sample of Y was
+                                2
+
+obtained from a multivariate normal distribution N (µ, V (Y)). In this way, three
+datasets were obtained, one for each of the three values of ρ = 0.12, 0.52 and 0.90.
+
+         To complete the Bayesian model specications, we assume independent normal
+distributions     βk ∼ N (0, 105 ), k = 1, 2, 3, for the regression parameters, and
+    2
+σ        ∼ G(a, b), with a = b = 0.0001 for the variance parameters. With this
+model specication, the posterior parameter estimates, obtained by applying the
+proposed Bayesian method and maximum likelihood methods are given in Table
+1. The acceptance rate in the proposed Bayesian method is 79%.
+
+
+                  Table 1: Homoscedastic SAR models: Parameter estimates
+    ρ real     Método      Valor      β0       β1        β2        ρ          σ2       BIC         DIC
+                            θ̂     20, 595   0, 490   −1, 429   0, 081     54, 229    258, 551   894, 800
+                Bay
+                           s.d.     6, 233   0, 008   0, 276    0, 033     11, 997
+        0.12
+                            θ̂     21, 658   0, 489   −1, 460   0, 076     47, 957    258, 175
+                ML
+                           s.d.     8, 386   0, 008    0, 261   0, 035      9, 689
+                            θ̂     20, 388   0, 483   −1, 321   0, 510     44, 225    251, 708   874, 179
+                Bay
+                           s.d.     5, 523   0, 008   0, 231    0, 020      9, 625
+    0, 52
+                            θ̂     21, 596   0, 482   −1, 340   0, 506     38, 971    251, 284
+                ML
+                           s.d.     5, 613   0, 008    0, 219   0, 022      7, 878
+                            θ̂     19, 617   0, 493   −1, 332   0, 895     97, 175    302, 857   1027, 753
+                Bay
+                           s.d.    13, 237   0, 013   0, 374    0, 012     21, 272
+    0, 90
+                            θ̂     27, 708   0, 493   −1, 393   0, 888     86, 669    302, 293
+                ML
+                           s.d.    17, 383   0, 012    0, 368   0, 016    17, 60345
+
+
+         Table 1 shows that the Bayesian and maximum likelihood parameter estimates
+are close to the true values, all of with small standard deviations, except for
+                      2
+estimates of σ            when ρ = 0.90, in which there is a high spatial association of the
+variable of interest.
+
+
+
+3.2. A Second Simulated Study
+         In a second study, we assume that the variable of interest follows a spatial
+structure given by:
+
+
+                Y = Xβ + ε, where ε = λW2 ε + ν and ν ∼ N (0, σ 2 I).                                  (14)
+
+                                                                                                         t
+Thus, assuming two explanatory variables X1 and X2 , as in Section 3.1, β    =
+                                   2
+(18, 0.026, −0.4) and σ = 45, the mean is given by µ = Xβ and the variance
+                    2                −1
+given by V (Y) = σ [(I−λW)(I−λW)]       , where W is the weighted neighborhood
+matrix dened in ? and λ is a real number 0 < λ < 1. Thus, three samples of Y
+
+
+
+                          Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+350                                      Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+were obtained from a multivariate normal distribution N (µ, V (Y)). One for each
+of the values of λ = 0.25, 0.55 and 0.85, as in Section 3.1.
+
+      To complete the Bayesian model specications, we assume independent normal
+distributionsβk ∼ N (0, 105 ), k = 1, 2, 3, for the regression parameters, and
+ 2
+σ ∼ G(a, b), with a = b = 0.0001. The posterior parameter estimates, obtained
+by applying the proposed Bayesian method and maximum likelihood methods are
+given in Table 2. All are close to the true values. This shows the good performance
+of the Bayesian estimation method.                In this simulation, the acceptance rates of
+samples of λ are lower when λ = 0.55 and when λ = 0.85, since they are smaller
+than 30%. When λ = 0.25, the acceptance is bigger than 60%. The BIC and DIC
+vales are smaller for λ = 0.25.
+
+            Table 2: SAR Homoscedastic model: posterior parameter estimates.
+     λ      Método    Valor      β0        β1        β2         λ        σ2      BIC         DIC
+                        θ̂     23, 130   0, 018    −0, 768   0, 383   43, 240   249, 349    869, 568
+              Bay
+                       s.d.    5, 047    0, 008    0, 274    0, 245    9, 601
+ 0, 25
+                        θ̂     23, 989   0, 017    −0, 800   0, 214   38, 668   248, 084
+              ML
+                       s.d.    4, 787    0, 008    0, 265    0, 188    7, 848
+                        θ̂     15, 858   0, 031    −0, 438   0, 843   44, 082   260, 609    909, 672
+              Bay
+                       s.d.    6, 941    0, 007    0, 235    0, 132    9, 607
+ 0, 55
+                        θ̂     16, 838   0, 033    −0, 447   0, 520   41, 691   254, 807
+              ML
+                       s.d.    4, 454    0, 007    0, 232    0, 142    8, 638
+                        θ̂     13, 313   0, 026    −0, 426   0, 902   48, 816   269, 141    931, 869
+              Bay
+                       s.d.    9, 546    0, 008    0, 270    0, 078   10, 630
+ 0, 75
+                        θ̂     14, 918   0, 025    −0, 465   0, 713   45, 971   263, 806
+              ML
+                       s.d.    5, 807    0, 008    0, 269    0, 100    9, 687
+
+
+
+
+3.3. A Third Simulation Study
+      In this section, we present results of two simulations, one assuming the
+SAR heteroscedastic model and other assuming the SARAR/SAC heteroscedastic
+model.
+
+
+     1.   SAR heteroscedastic model . In this case, we assume that the variable
+          of interest follows a spatial structure given by:
+
+
+                              Y = Xβ + ρW2 Y + ε, ε ∼ N (0, Ω)                                   (15)
+
+
+          where   Ω = diag(Ωii ) and log(Ωii ) = γ0 + γ1 z1i + γ2 z2i .            To generate a
+          dataset for the analysis, a sample of size n = 100 was generated from each
+          of the following uniform distributions: X1 ∼ U (0, 400), X2 ∼ U (10, 23) and
+          X3 ∼ U (0, 10). Thus, assuming that X = (X0 , X1 , X2 ), where X0 = I100 ,
+          a 100-dimensional unit vector, the mean vector value was obtained from
+          µ = (I100 − ρW)−1 Xβ , where W is the neighborhood matrix dened in
+          ?, β = (−35, 0.35, −1.7)t , and ρ is a real number (0 < ρ < 1).                  To obtain
+          the variance of the variable of interest we assume that variance explanatory
+          variables are given by Z       = (Z0 , Z1 , Z2 ), where Z0 = X0 , Z1 = X1 and
+
+
+                      Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                            351
+
+
+
+       Z2 = X3 . Thus, assuming that Ω is a diagonal covariance matrix, such that
+       log(Ωii ) = −8 + 0.026x1 − 0.4x3 , the variance-covariance matrix of Y was
+                                         −1
+       obtained from V (Y) = (I − ρW)       Ω(I − ρW)−1 . Finally, with the mean
+       and the variance of Y thus obtained, three samples of the variable of interest
+       Y were obtained, one for each of values of ρ: 0.12, 0.52, 0.90.
+       Assuming independent normal distributions              β ∼ N (0, I105 ) and γ ∼
+                 5
+       N (0, I10 ), for the regression parameters, the SAR heteroscedastic model 15
+       was tted to each of the three simulated datasets. The posterior parameter
+       estimates and standard deviations are reported in Table 3.
+
+               Table 3: Heteroscedastic SAR models: Parameter estimates
+  ρ   θ̂/s.d.    β0         β1     β2      γ0        γ1     γ2       ρ     BIC       DIC
+         θ̂   −34, 975    0, 350 −1, 700 −9, 201   0, 026 −0, 226 0, 120 −155, 610 −369, 127
+0, 12
+        s.d.   0, 020     0, 002 0, 001  0, 616    0, 002 0, 073 0, 000
+         θ̂   −35, 021    0, 350 −1, 696 −5, 786   0, 016 −0, 094 0, 516 −73, 282 −90, 000
+0, 52
+        s.d.   0, 069     0, 003 0, 005  0, 597    0, 000 0, 106 0, 001
+         θ̂   −34, 806    0, 350 −1, 710 −4, 541   0, 012 0, 031 0, 749 −16, 782    49, 117
+0, 75
+        s.d.   0, 175     0, 000 0, 010  0, 680    0, 002 0, 094 0, 001
+
+
+       For all values of ρ, the mean regression parameter estimates are close to the
+       true values and all have small standard deviations. The estimates of variance
+       regression parameters, γi , i = 0, 1, 2, change with values of ρ: the dierences
+       between true and estimated parameters increase with ρ.               In all cases, the
+       estimates of ρ are close to the true values with smalls standard deviations.
+
+  2.   General (SARAR/SAC) heteroscedastic model.                        In this section we
+       consider the model where the autoregressive eect is included in the error
+       term. That is, we assume that:
+
+
+                                      Y = Xβ + ρW1 Y + ε,
+
+       where ε    = λWε + ν and ν ∼ N (0, Ω).              In this model, the explanatory
+       variables and the parameter vector are dened as in 15. The mean vector
+                                                   −1
+       value is obtained from µ = (I − ρW)              Xβ , where W1 is the neighborhood
+       matrix dened in ?, β = (−35, 0.35, −1.7), and ρ is a real number (0 < ρ <
+       1). The variance-covariance matrix of Y is given by:
+
+               V ar(Y) = (I − ρW)−1 (I − λW2 )−1 Ω(I − ρW)−1 (I − λW2 )−1 ,
+
+       where    Ω is a diagonal matrix, with log(Ωii ) = −8 + 0.026x1 − 0.4x3 .
+       With the mean and the variance thus obtained,                 three samples of the
+       variable of interest  Y were obtained, one for each of the vector values
+       (ρ, λ)=(0.12, 0.48), (0.45, 0.65) and (0.70, 0.20), from a multivariate normal
+       distribution N (µ, V ar(Y)). The parameter estimates obtained by applying
+       maximum likelihood and Bayesian methods are given in Table 4.
+
+       As in the SAR heteroscedastic models, for all values of ρ and λ, the mean
+       regression parameter estimates are close to the true values and all have small
+       standard deviations.      The estimates of variance regression parameters, γi ,
+
+
+
+                     Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+352                                                      Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+        Table 4: General (SARAR/SAC) heterocedastic models: parameter estimates
+ ρ        λ      θ̂/s.d.          β0        β1        β2        γ1        γ2        γ3        ρ        λ       BIC        DIC
+
+                    θ̂         −34, 736   0, 349   −1, 712   −7, 252    0, 023   −0, 301   0, 120   0, 392   −92, 669   −187, 788
+0, 12    0, 48
+                  s.d.          0, 095    0, 000    0, 004    0, 602    0, 002    0, 070   0, 001   0, 030
+                   θ̂          −33, 517   0, 349   −1, 706   −0, 813   −0, 001   −0, 176   0, 445   0, 953    2, 616    102, 289
+0, 45    0, 65
+                  s.d.          9, 400    0, 000    0, 016    0, 819    0, 002    0, 092   0, 005   0, 057
+                   θ̂          −35, 382   0, 350   −1, 675   −2, 629    0, 004   −0, 373   0, 699   0, 231   −86, 014   −166, 748
+0, 70    0, 20
+                  s.d.          0, 115    0, 000    0, 005    0, 594    0, 002    0, 083   0, 001   0, 090
+
+
+
+         i = 0, 1, 2, change with values of ρ. Dierences between true and estimated
+         parameters are smaller for ρ      = 0.12 and the dierences between γi − γ̂i ,
+         i = 1, 2, . . . , n increase when ρ increases. The estimates of ρ and λ, are
+         close to the true values and all have small standard deviation, except when
+         ρ = 0.45 and λ = 0.65.
+
+
+4. Applications
+
+
+4.1. Columbus Crime Data
+      In order to compare the results obtained by applying the proposed Bayesian
+method with that obtained by applying maximum likelihood, the Columbus crime
+data presented in Anselin (1988) were analyzed.                                    These data are related to the
+crime level in 49 districts of Columbus (Ohio), associated with income measures
+and housing values.                      In this analysis, it is assumed that the variable of interest
+is CRIM E , denoting residential burglaries and car thefts for every 1000 homes,
+and that the explanatory variables are HOU SE , average value of the residence in
+USS 1000, and IN C , average household income in USS 1000. The neighborhoods
+matrix, available in the dataset                          columbus, is given by the standardized binary
+contiguity by rows.
+
+      In the analysis of this dataset, the following homoscedastic models were tted:
+SAR model (16), SEM model (17) and the general (SARAR/SAC) homoscedastic
+                                                   2
+model (18), where ε ∼ N (0, σ                          ) and νi ∼ N (0, σ 2 ).
+
+
+      CRIM E               =      β0 + β1 HOU SE + β2 IN C + ρW1 CRIM E + ε                                                 (16)
+      CRIM E               =      β0 + β1 HOU SE + β2 IN C + ε ε = λW2 ε + ν                                                (17)
+      CRIM E               =      β0 + β1 HOU SE + β2 IN C + ρW1 CRIM E + ε ε = λW2 ε + ν (18)
+
+ All cases assumed the following prior distributions:β ∼ N (0I3 , 104 I3×3 ),
+                   4                 2
+ρ ∼ N (0, 10 ) and σ ∼ GammaInv(0.01, 0.01), where I3×3 is the 3 × 3 identity
+matrix.
+
+      For SAR, SEM and General homoscedastic regression models, the parameter
+estimates and respective standard deviation,                                     obtained by applying Bayesian
+methods (B) and obtained by applying maximum likelihood (ML) are given in
+Table 5. The acceptance rates are: 62.88% for ρ in the SAR models, 40.73% for λ
+in the SARAR/SAC models and, 73.77% for ρ, 71.11% for λ in the SARAR/SAC
+model.
+
+
+
+                                Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                                    353
+
+
+Table 5: SAR, SEM and General (SARAR/SAC) homoscedastic regression models:
+              Parameter estimates
+                              SAR homoscedastic regression models
+         Meth.      β0        β1       β2          σ2           ρ        λ        BIC         DIC
+
+ θ̂      B        47.441    −0.308    −1.079    120.672       0.441     −−       300.203    1010.982
+ s.d.              7.087     0.099    0.343      26.660       0.125     −−        327.51      −−
+ θ̂      ML       54.201    −0.305    −1.254    107.460       0.315     −−         −−         −−
+ s.d.              7.295     0.094    0.317      10.366       0.134     −−         −−         −−
+                              SEM homoscedastic regression models
+
+ θ̂      B        60.484    −0.336    −0.936    123.714        −−       0.685    306.146    1043.28
+ s.d.              8.068     0.099    0.392      27.440                 0.220      −−         −−
+ θ̂      ML       59.893    −0.302    −0.941     98.575        −−       0.562    304.262      −−
+ s.d.              5.366     0.090    0.331     19.8737                 0.134      −−         −−
+                     General (SARAR/SAC) homoscedastic regression models
+
+ θ̂      B        28, 676   −0, 125   −0, 963   93, 504       0, 726   −1, 408   321, 595   1069, 836
+ s.d.              6, 640    0, 076    0, 232   20, 753       0, 087    0, 335     −−         −−
+ θ̂      ML       47, 784   −0, 282   −1, 026   95, 604       0, 091    0, 167   342, 849
+ s.d.              9, 903    0, 090    0, 326   19, 475       0, 197    0, 297     −−         −−
+
+
+      In general, the parameter estimates of the models obtained by applying
+Bayesian methods and maximum likelihood methods agree (Table 5).                                 The
+maximum likelihood estimates presented in the table are those reported by (Neath
+& Cavanaugh, 2012).           Although estimates related to the SAR model 16 show
+                                                          2
+dierences between parameter estimates of σ                   and λ, the BIC values associated
+with the posterior parameter estimates are smaller than the BIC value associated
+with estimates obtained by applying maximum likelihood.                           For the General
+homoscedastic model 18, the ML and Bayesian parameter estimates of β are very
+similar, despite the dierences of standard errors. In this model, although the ML
+                                                2
+and Bayesian parameter estimates of σ               and λ also present larger dierences, in
+both parameter estimates and standard errors the BIC indicates that the best t
+is obtained when the Bayesian method is applied. The best model (that with the
+lowest DIC and BIC values) is the homoscedastic SAR model.
+
+
+
+4.2. Leukemia in New York Data
+      In this section we analyze the New York dataset presented in Waller & Gotway
+(2004), associated with the risk factors of leukemia in New York between 1978 and
+1982. This dataset is related to the following variables:
+
+
+       Z : Proportion of patients with leukemia in the population at risk. This ratio
+        was transformed in Waller & Gotway (2004) for use in models where normal
+        errors are assumed.
+
+
+       P CT AGE65P : Percentage of people in each space unit 65 years of age.
+
+       P CT OW N HOM E : Percentage of people in each space unit with their own
+        home.
+
+
+
+                     Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+354                                             Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+       P EXP OSU RE :                 Potential     exposure       to    risk    factors    dened     as   the
+        inverse distance between each spatial unit and the nearest site where
+        trichloroethylene is found.
+
+
+      Given that this dataset has been used in various epidemiological studies for
+dierent purposes (Waller, 1996; Gangnon & Clayton, 1998; Waller & Gotway,
+2004), we only try to understand the Bayesian method proposed and the use of
+the BSP ADAT A r-package, not to understand the behavior of leukemia rates.
+Thus, we t the model presented in Waller & Gotway (2004) given by:
+
+
+
+           Z = β0 + β1 P CT AGE65P + β2 P CT OW N HOM E + ρW1 Z + ε
+            ε = λW2 ε + ν,
+where ν is a normal error term of mean 0 and diagonal variance matrix Ω, which
+have diagonal values given by Ωii              = exp(γ0 + γ1 P EXP OSU REi ), i = 1, . . . n.
+In this case we assume W1                   = W2 , where W1 is a matrix obtained from the
+listw_NY object of the dataset NY_data of R (?).                                  It is a matrix of binary
+contiguity, standardized by rows, where if a pair of spatial units,                               i and j , are
+neighbors, then the input [i, j] of the matrix is dierent from 0, guaranteeing that
+the sum of each row of the matrix is 1. The vector pair β and γ have normal prior
+distributions, N (0.10000I).
+
+      For SAR, SEM, and General (SARAR/SAC) heteroscedastic regression models,
+the parameter estimates and respective standard deviations, obtained by applying
+the proposed Bayesian methods, are given in Table 6. The acceptance rates are:
+50.92 % for λ and 60.65 % for ρ in the SAR model, 50.90 % for λ and 41.15 % for
+ρ in the SEM model and; 50.22 % for λ , 0.06 % for ρ and 22.31 % for λ in the
+general (SARAR/SAC) heteroscedastic model.
+
+                       Table 6: Leukemia application: Parameter estimates.
+                                 SAR heteroscedastic regression models
+ Method            β0         β1         β2        γ0         γ1            ρ       λ         BIC        DIC
+
+ θ̂             −0, 397     3, 622    −0, 418   −0, 594    −0, 164       0, 298    −−        64, 903   1059, 569
+ s.d.            0, 143     0, 617     0, 171    0, 164     0, 078       0, 099               −−         −−
+                                 SEM heterocedastic regression models
+
+ θ̂             −0, 458     3, 887    −0, 464   −0, 570    −0, 175       0, 372    −−        69, 909   1087, 139
+ s.d.            0, 163     0, 634     0, 200    0, 163     0.077        0, 128               −−         −−
+                          General (SARAR/SAC) heteroscedaastic models
+
+ θ̂             −0.345      2.493     −0.071    −1.044     −0.176        −1.816    0.996    209, 042   1527, 007
+ s.d.           4.872       0.525      0.197    0.162       0.077        0.134     0.005
+
+      The results show agreement between parameter estimates of the SARAR/SEC
+and SAR models, but the BIC (DIC) value of the SAR model are the smallest.
+However, the parameter estimates of β and γ do not agree with the parameter
+estimates of the homoscedastic general model, which have a bigger BIC (DIC)
+value and smaller acceptance rates.
+
+      As   in    the      rst    aplication    of   the   Columbus        crime     data,     from    the   BIC
+(DIC) values we conclude that the homoscedastic and heteroscedastic general
+
+
+
+                           Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                          355
+
+
+
+(SARAR/SAC) models do not t are not t the respective datasets well, possible
+due to misidentication of problems, taking into acount that in these aplications
+we assume that W1 = W2 .
+
+
+
+
+5. Conclusions
+
+
+   In this paper we propose Bayesian methods for econometric regression models,
+including those where the variability is assumed to follow a regression structure.
+We also introduce the BSPADATA R-package, which can be used to t Bayesian
+econometric regression models by applying the Bayesian method proposed by
+Cepeda-Cuervo (2001) and Cepeda-Cuervo & Gamerman (2005), and summarize
+the results of the posterior inferences obtained in studies of simulations and
+applications.   In these simulations, we consider spatial homoscedastic regression
+models with ρ = 0.12, 0.52, 0.90 and λ = 0 and with ρ = 0 and λ = 0.25, 0.52, 0.90,
+and SEM heteroscedastic regression models with ρ             = 0.12, 0.52, 0.75.   In all of
+them, the posterior inferences show good performance of the proposed Bayesian
+methods: all the parameter estimates are close to the true parameter values and
+the respective standard deviations are small. However, researches and students can
+develop new simulations using the BSPADATA R-package to verify the performance
+of the Bayesian methods proposed here, assuming dierent values of the variance in
+the homoscedastic econometric models and diferent variancee regression structures
+in heteroscedastic models.     Finally, we provide results of the applications of the
+models and compare our results with that obtained by maximum likelihood.
+
+   In the Bayesian method proposed to t spatial econometric models, the normal
+transition kernel shows good performance for β , γ or σ , and ρ in tting of spatial
+econometric models. However, if the kernel transition function is a Gaussian one,
+the results are better than if the kernel is a uniform distribution, so the review of
+the simulations allows us to identify at least a possibility of extending this Bayesian
+method, proposing a new kernel transition function for λ.
+
+
+
+
+Appendix A.
+
+
+   The BSPADATA R-package is the computational implementation of the spatial
+econometric models proposed in sections 1 and 2, under an innovative Bayesian
+approach. This package is composed of six functions. Three of them (hom_sar,
+hom_sem      and      hom_general )   t   the   Bayesian    homoscedastic     econometric
+regression models presented in section 1,             and the other three (hetero_sar,
+hetero_sem      and    textithetero_general)     to   t   the   Bayesian   heteroscedastic
+econometric regression models presented in Section 3.
+
+   These functions enable obtaining posterior parameter estimates as their
+standard errors. Users can also retrieve the Markov chains associated with each
+parameter and their graphical representation. Besides this, they can obtain the
+Bayesian information criteria (BIC), the deviance information criterion (DIC) and
+
+
+
+                   Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+356                                    Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+the acceptance rates for those parameters, whose sampling involves a Metropolis-
+Hastings step.
+
+
+
+Appendix A.1. Homoscedastic Models
+      The BSPADATA R-package functions hom_sar, hom_sem and hom_general
+can be used to t the Bayesian homoscedastic SAR, SEM and General spatial
+econometric models, respectively. The syntaxes of these functions are:
+
+
+       hom_sar
+
+        hom_sar(y,X,W,nsim,burn,step,b_pri,B_pri,r_pri,lambda_pri,
+        beta_0,sigma2_0,rho_0,kernel,plot,chains)
+
+       hom_sem
+
+        hom_sem(y,X,W,nsim,burn,step,b_pri,B_pri,r_pri,lambda_pri,
+        beta_0,sigma2_0,lambda_0,kernel,plot,chains)
+
+       hom_general
+
+        hom_general(y,X,W1,W2,nsim,burn,step,b_pri,B_pri,r_pri,
+        lambda_pri,beta_0,sigma2_0,rho_0,lambda_0,kernel,mateq,
+        plot,chains)
+
+      For these functions,    y, X ,W1 and W2 represent the response variable, the
+explanatory variables and the spatial contiguity matrices, respectively.   W1 and
+W2 are assumed equal by default in the hom_general function. On the other hand,
+nsim, burn and step are the number of simulations, the burn-in period of the chain
+and a parameter that indicates how often a sample does not have to be discarded.
+b_pri, B_pri, r_pri and lambda_pri are the parameters for the prior distributions
+of β and σ . Finally, beta_0,sigma2_0 , rho_0 and lambda_0 are the initial values
+            2
+
+of each chain. For ρ and λ, the transition kernel is chosen through kernel. It can
+be either normal or uniform . The mateq parameter in the hom_general function
+indicates whether or not W1=W2 is assumed. The plot parameter is a logical input
+that indicates whether or not the chains of each parameter are to be shown, and
+the logical parameter chains indicate if the Markov chains are to be saved and
+returned.
+
+
+
+Appendix A.2. Heteroscedastic Models
+      The hetero_sar, hetero_sem        and hetero_general functions can be used to t
+the SAR, SEM and General heteroscedastic models. The syntax of these functions
+is:
+
+
+       hetero_sar
+
+
+                     Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                        357
+
+
+
+     hetero_sar(y,X,Z,W,nsim,burn,step,b_pri,B_pri,g_pri,G_pri,
+     beta_0,gamma_0,rho_0,kernel,plot)
+
+    hetero_sem
+
+     hetero_sem(y,X,Z,W,nsim,burn,step,b_pri,B_pri,g_pri,G_pri,
+     beta_0,gamma_0,lambda_0,kernel,plot)
+
+    hetero_general
+
+     hetero_general(y,X,Z,W1,W2,nsim,burn,step,b_pri,B_pri,g_pri,
+     G_pri,beta_0,gamma_0,rho_0,lambda_0,kernel,mateq,plot)
+
+For these three models,    y,X, Z,W1 and W2 represent the response variable, the
+explanatory variables of the mean model,           the explanatory variables of the
+dispersion model and the spatial contiguity matrices, respectively.            W1 and W2
+are equal by default in the hetero_general function. On the other hand, nsim,
+burn and step are the number of simulations, the burn-in period of the chain
+and how often a sample does not have to be discarded. b_pri, B_pri, g_pri and
+G_pri are the parameters of the prior distributions of β and γ . Finally, beta_0,
+gamma_0, rho_0 and lambda_0 are the initial values for the Markov chains. The
+parameter kernel stands for the distribution of the transition kernels of ρ y λ. It
+can be either normal(default) or uniform. For the hetero_general function, the
+mateq parameter indicates whether or not W1=W2 is assumed. The plot parameter
+is a logical input that indicates if the chains of each parameter are to be shown
+and the logical parameter chains indicate if the Markov chains are to be saved
+and returned.
+
+   Table 7 sumarize the six BSPADATA R-package functions.
+
+
+                       Table 7: BSPADATA R-package functions
+         Function       Description
+         hom_sar        Bayesian t of the Bayesian homoscedastic Spatial Autorre-
+                        gresive (SAR) Model with normal error term
+         hom_sem        Bayesian t of the Bayesian homoscedastic Spatial Error
+                        Model (SEM) with normal error term
+       hom_general      Bayesian t of the Bayesian homoscedastic general model with
+                        normal error term
+        hetero_sar      Bayesian t of the Bayesian heteroscedastic Spatial Autorre-
+                        gresive (SAR) Model with normal error term
+        hetero_sem      Bayesian t of the Bayesian heteroscedastic Spatial Error
+                        Model (SEM) with normal error term
+      hetero_general    Bayesian t of the Bayesian heteroscedastic general model
+                        with normal error term
+
+
+
+
+                 Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+358                                               Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+Appendix B. Proofs
+
+
+Appendix B.1. General Homoscedastic Regression Models
+      From the posterior distribution 4, the conditional posterior distributions of ρ
+and λ are given by:
+
+
+  1. Posterior conditional distribution of ρ:
+
+                                                                                         
+                                                               1
+             π(ρ|β, σ 2 , λ) ∝ |A| exp                −            (Ay − Xβ)t t
+                                                                             D  D(Ay − Xβ)  P(ρ)
+                                                              2σ 2
+
+        where where A and D are dened as in Section 1.1. Thus,
+
+                                                                                           
+                2                           1  t t t             t t t         t t t     
+        π(ρ|β, σ , λ) ∝ |I − ρW1 | exp           y−A D  DAy  −  y  A  D DXβ − β  X  D DAy    P(ρ)
+                                           2σ 2
+                                                                                             
+                                            1  2 t t t                          ′ ′      
+                        ∝ |I − ρW1 | exp −       ρ y W1 D DW1 y − 2ρ (y − Xβ) D DW1 y           P(ρ)
+                                           2σ 2
+                                                     2 
+                                            c        d
+                        ∝ |I − ρW1 | exp −        ρ−       P(ρ)
+                                           2σ 2      c
+
+                             t   t   t                                       t   t
+         where c = y W1 D DW1 y y d = (y − Xβ) D DW1 y.
+
+
+  2. Posterior conditional distribution of λ
+
+                                                                                         
+                                                               1
+           π(λ|β, σ 2 , ρ) ∝ |D| × exp                    −        (Ay − Xβ)t t
+                                                                             D  D(Ay − Xβ)  P(λ),
+                                                              2σ 2
+
+        Thus,
+
+                                                                                       
+                2                               1       t          t   2 t            
+        π(λ|β, σ , ρ) ∝ |I−λW2 | exp          − 2 (Ay−Xβ) (I−λW2 −λW2 +λ W2 W2 )(Ay−Xβ) P(λ)
+                                               2σ
+
+
+         Dening e = Ay − Xβ , it can be written as:
+
+                                                                                                     
+                                                                   1  2 t t
+          π(λ|β, σ 2 , ρ) ∝ |I − λW2 | exp                                                  t        
+                                                              −        λ (e W2 W 2 e) − 2λ(e  W 2 e)    P(λ).
+                                                                  2σ 2
+
+                    t    t                            t
+         If c = e W2 W2 e and d = e W2 e, then:
+
+
+                                                    c′            d′    b2   d2
+                                                                              -
+            π(λ|β, σ 2 , ρ) ∝ |I − ρW2 | exp             λ 2
+                                                             − 2λ  −  +    −      P(λ)
+                                                   2σ 2            c′   c2   c2
+                                                                  2 
+                                                    c′         d′
+                                                       
+                                 ∝ |I − λW2 | exp − 2 λ − ′            P(λ)
+                                                   2σ          c
+                                         ′    ′                                              ′
+        where c = (Ay − Xβ) W2 W2 (Ay − Xβ) y d = (Ay − Xβ) W2 (Ay − Xβ).
+
+
+
+
+                        Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+Spatial Econometric Models: A Bayesian Approach                                                           359
+
+
+
+Appendix B.2. General Heteroscedastic Regression Models
+   From the posterior conditional distribution 11,                               the posterior conditional
+distributions of γ , ρ and λ are given by:
+
+
+  1. Posterior conditional distribution of γ :
+
+                                                                                 
+                           −1/2            1       t t −1             1     t −1
+     π(γ|β, ρ, λ) ∝ |Σ|            exp    − (Ay−Xβ) D Σ D(Ay−Xβ) exp − (γ−g) G (γ−g) .
+                                           2                          2
+
+      This posteriori conditional distribution does not have a known functional
+     form. Thus we propose a Bayesian method based on working variables, in
+     order to obtain samples of the posterior distribution of γ , based on Cepeda-
+     Cuervo (2001) and Cepeda-Cuervo & Gamerman (2005).
+
+
+  2. Posterior conditional distribution of ρ:
+
+                                                                                     
+                                                         1
+      π(ρ|β, γ, λ) ∝ |I − ρW1 | exp                     − (Ay − Xβ)t Dt Σ−1 D(Ay − Xβ) P(ρ).
+                                                         2
+
+     Thus,
+
+              2
+      π(ρ|β, σ , λ)
+                                                                               
+                         1  t t t −1         t t t −1           t t t −1     
+       ∝ |I − ρW1 | exp     y A D Σ DAy − y A D Σ DXβ − β X D Σ DAy P(ρ)
+                               −
+                         2
+                      
+                         1 t            t −1               t          t t −1
+      ∝ |I − ρW1 | exp −    y (I − ρW1 )D Σ D(I − ρW1 )y − y (I − ρW1 ) D Σ DXβ
+                         2
+                                  
+          t t t −1               
+      − β X D Σ D(I − ρW1 )y P(ρ)
+                           
+                     1     t  t t −1      t t −1        2 t t  t −1
+       ∝ |I − ρW1 | exp        −
+                        − ρy W1 D Σ Dy − ρy D Σ DW1 y + ρ y W1 D Σ DW1 y
+                     2
+                                        
+          t t  t −1        t t t −1    
+      + ρy W1 D Σ DXβ + ρβ X D Σ DW1 y P(ρ)
+                                                                       
+                          1  2 t t t −1                  t t −1     
+       ∝ |I − ρW1 | exp        −
+                             ρ y W1 D Σ DW1 y − 2ρ (y − Xβ) D Σ DW1 y    P(ρ)
+                          2
+                                 2 
+                          c      d
+       ∝ |I − ρW1 | exp −     ρ−       P(ρ)
+                          2      c
+
+                                         −1
+                       t
+      where c = y W1 D Σ
+                               t    t
+                                              DW1 y y d = (y − Xβ)t Dt Σ−1 DW1 y.
+
+  3. Posterior conditional distribution of λ.
+
+
+
+                                                                                 
+                                                         1         t t −1
+     π(λ|β, γ, ρ) ∝ |I − λW2 | exp                      − (Ay − Xβ) D Σ D(Ay − Xβ) P(λ).
+                                                         2
+
+     Thus,
+
+                                                
+                                                        1          t
+         π(λ|β, γ, ρ) ∝ |I − λW2 | exp              −     (Ay − Xβ)
+                                                        2
+                                                                                                         (19)
+                               −1          −1               t   −1      2   t   −1                
+                       × (Σ         − λΣ        W2 − λW2 Σ           + λ W2 Σ        W2 )(Ay − Xβ) P(λ)
+
+
+
+
+                      Revista Colombiana de Estadística - Theorical Statistics 45 (2022) 341-361
+
+360                                              Edilberto Cepeda-Cuervo & Jorge Armando Sicacha
+
+      Dening e = Ay − Xβ , we get:
+                                                                                          
+                                                     1  2 t t −1
+                                                        λ (e W2 Σ W2 e) − 2λ(et Σ−1 W2 e) P(λ)
+                                                                                         
+       π(λ|β, γ, ρ) ∝ |I − λW2 | exp
+                                                     2
+                          −1
+                t
+      If c = e W2 Σ
+                     t
+                          W2 e and d = et Σ−1 W2 e, then:
+
+                                             c′ 2         d′  b′2  d′2
+                                                                     -
+            π(λ|β, γ, ρ) ∝ |I − λW2 | exp −       λ − 2λ ′ + ′2 − ′2 P(λ)
+                                              2           c   c    c
+                                               ′        ′ 2
+                                                        
+                                             c       d
+                         ∝ |I − λW2 | exp −        λ− ′      P(λ),
+                                              2       c
+                                    t        t    −1
+      where c = (Ay − Xβ) W2 Σ                    W2 (Ay − Xβ)
+                                t       −1
+      and d = (Ay − Xβ) Σ                    W2 (Ay − Xβ).
+
+With these results for the heteroscedastic general model, the formulas of the
+heteroscedastic and SAR models can be obtained.
+
+              
+                Received: December 2020  Accepted: January 2022
+References
+Anselin, L. (1980), `Estimation methods for spatial autoregressive structures', Regional Science Dissertation and Monograph 8.
+Anselin, L. (1982), `A note on small sample properties of estimators in a rst-order spatial autoregressive model', Environment and Planning A 14.
+Anselin, L. (1988), Spatial Econometrics: Methods and Models, Kluwer Academic, Boston.
+Anselin, L. (2001), `Spatial econometrics', A companion to theoretical econometrics pp. 310-330.
+Cepeda-Cuervo, E. (2001), `Modelagem da Variabilidade em Modelos Lineales Generalizados',        (Unpublished PhD thesis. Univerisidade Federal de Rio de Janeiro,Brazil) .
+Cepeda-Cuervo, E. & Gamerman, D. (2000), `Bayesian modeling of variance heterogeneity in normal regression models', Brazilian Journal of Probability and Statistics pp. 207-221.
+Cepeda-Cuervo, E. & Gamerman, D. (2005), `Bayesian methodology for modeling parameters in the two parameters exponential family', Revista Estadística 57, 93-105.
+Gangnon, R. & Clayton, M. (1998), Bayesian Spatial Disease Clustering: An Application, Technical report, Department of Biostatistics, University of Wisconsin, Madison.
+Hepple, L. W. (1979), Bayesian analysis of the linear model with spatial dependence, in `Exploratory and explanatory statistical analysis of spatial data', Springer, pp. 179-199.
+LeSage, J. (1997), `Bayesian Estimation of Spatial Autoregressive Models', Journal of Composite Materials 16(4), 928-940.
+LeSage, J. & Pace, R. K. (2009), Introduction to Spatial Econometrics, Chapman & Hall/CRC, Boca Raton.
+Neath, A. A. & Cavanaugh, J. E. (2012), `The bayesian information criterion: background, derivation, and applications', Wiley Interdisciplinary Reviews: Computational Statistics 4.
+Waller, L. (1996), `Statistical power and design of focused clustering studies', Statistics in Medicine (15), 765-782.
+Waller, L. A. & Gotway, C. A. (2004), Applied Spatial Statistics for Public Health Data, Wiley series in probability and statistics, 1 edn, John Wiley & Sons.

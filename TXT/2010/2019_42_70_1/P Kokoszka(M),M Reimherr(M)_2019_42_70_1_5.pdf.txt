@@ -1,0 +1,1175 @@
+Some Recent Developments in Inference for Geostatistical Functional Data. Algunos desarrollos recientes en inferencia para datos funcionales geoestadsticos
+Colorado State University, Fort Collins, USA. Penn State University, State College, USA
+Abstract
+We review recent developments related to inference for functions defined at spatial locations. We also consider time series of functions defined at irregularly distributed spatial points or on a grid. We focus on kriging, estimation of the functional mean and principal components, and significance testing, giving special attention to testing spatio–temporal separability in the context of functional data. We also highlight some ideas related to extreme value theory for spatially indexed functional time series.
+Key words: Functional data; Spatial statistics.
+Resumen
+Revisamos desarrollos recientes relacionados con la inferencia de funciones definidas en locaciones espaciales. Tambin consideramos series de tiempo funcionales definidas en puntos espaciales irregularmente distribuidos en una cuadrcula. Nos centramos en el kriging, la estimacin de la media funcional y de los componentes principales, y en la prueba de significancia, dando especial atencin a pruebas de separabilidad de espacio-tiempo en el contexto de datos funcionales. Tambin destacamos algunas ideas relaciones con la teora de valores extremos para series de tiempo funcionales indexadas en el espacio.
+Palabras clave: datos funcionales; estadstica espacial.
+
+
+1. Introduction
+    The objective of this paper is to review some recent developments in inference
+for geostatistical functional data. We thus consider data which are a collection
+of curves at spatial locations {sk }. Each t 7→ X(sk ; t) is a curve. For example,
+the {sk } can be locations of meteorological stations, and X(sk , t) can be some
+measurement, for example temperature or wind speed at time t. A sample of
+geostatistical spatial data has the form
+
+                      {X(sk , t), sk ∈ S, t ∈ T , k = 1, 2, . . . , N } .
+
+The spatial domain S is typically a subset of the two–dimensional plane or sphere.
+The points sk at which observations are available are generally scattered over S in
+some irregular manner. In some applications, e.g. satellite pictures, these points
+form a grid, but the methodology we discuss in this paper has been motivated by
+and generally applies to irregularly spaced locations sk . Some more general data
+structures consisting of time series of functions observed at spatial locations will
+also be considered.
+    Just as in the case of scalar geostatistical data, the model for functional geosta-
+tistical data is the random field {X(s), s ∈ S}, with the diﬀerence that now each
+X(s) is a random function. We assume that each X(s) is an element of the Hilbert
+space L2 = L2 (T ), with the interval T = [0, 1] chosen merely for convenience. We
+assume that each X(s) is square integrable, i.e.
+                                        ∫
+                                    2
+                          E ∥X(s)∥ = EX 2 (s; t)dt < ∞.
+
+If we assume that S is the whole Euclidean space, we can define strict stationarity
+by the condition
+                                                    d
+      {X(s1 + h), X(s2 + h), . . . , X(sm + h)} = {X(s1 ), X(s2 ), . . . , X(sm )} .    (1)
+                                      2
+If this is the case, then E ∥X(s)∥ does not depend on s. Square integrability and
+strict stationarity imply that the mean function
+
+                                      µ(t) = EX(s; t)
+
+and the covariances
+
+                          C(h; t, u) = Cov(X(s; t), X(s + h; u))
+
+exist and do not depend on s. When working with functional geostatistical data,
+it is important to keep in mind that the function h 7→ C(h; t, u) is nonnegative
+definite only if t = u. In that case, C(·; t) := C(·; t, t) is the spatial covariance
+function of the scalar field {X(s; t)}. It is often assumed that the covariances
+are isotropic, i.e. C(h; t, u) = C(h; t, u) depends only on h = ∥h∥. Unless stated
+otherwise, in the remainder of this paper, we assume that the field {X(s)} is square
+integrable, strictly stationary, and isotropic.
+
+                                          Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data                103
+
+    We also consider a more complex data structure; at spatial locations we observe
+time series of functions. The data have the form Xn (s; t), where n is year, s is
+a spatial location, and t is time within a year. For example Xn (s; t) can be the
+curve of daily temperatures, the unit of t is day, in year n, and at location s.
+Other examples are: total daily precipitation, wind strength, wind direction, solar
+radiation. Many of these daily time series are either maxima, minima or averages
+of data obtained in higher temporal resolutions. Historical records can be treated
+as geostatistical data, as meteorological stations are not uniformly distributed.
+However, computer weather prediction models produce complete records at dense
+grids that extend many decades into the future.
+    The paper is organized as follows. In Section 2, we review the subject of
+kriging in the context of functional data. Kriging is a fundamental tool in the
+field of spatial statistics, and so is a suitable starting point. We then turn, in
+Section 3, to the subject of estimation of the the mean function and the functional
+principal components from a sample of spatially distributed curves. Most methods
+of Sections 2 and 3 are implemented in the R package geofd. Examples of code are
+given in Chapter 9 of Kokoszka & Reimherr (2017). Section 4 is devoted to several
+significance tests in the context of spatial functional data. Testing of separability is
+presented in a separate section, Section 5, due to its importance in many inferential
+procedures for spatio–temporal data. We conclude with fairly recent research on
+extreme events defined in terms of spatially indexed functional time series. This
+work, whose many aspects are still under development, is outlined in Section 6.
+    It is not our objective to present a complete review of the subject, but rather to
+explain those recent developments which have attracted our interest. We strive not
+to merely provide references, but to explain the central points in detail that will
+allow the reader to gain suﬃcient understanding to decide if a specific development
+is relevant to her work or not.
+    We assume that the reader is familiar with the fundamental concepts of spatial
+statistics, explained, e.g., in initial chapters of Wackernagel (2003), Schabenberger
+& Gotway (2005) or Sherman (2011). Chapter 3 of Gelfand, Diggle, Fuentes &
+Guttorp (2010) also provides a suﬃcient introduction. Some familiarity with the
+fundamental concepts of functional data analysis would also be helpful; Chapters
+1 and 3 of Kokoszka & Reimherr (2017) provide enough background.
+
+
+2. Kriging
+    We observe functions X(sk ) at spatial locations s1 , s2 , . . . , sN . Suppose s is
+a diﬀerent location, and we want to predict the function X(s) using the func-
+tions X(s1 ), X(s2 ), . . . , X(sN ). In the functional setting, the available data can
+be represented as a matrix of scalars
+
+                    [X(sk ; tj ), k = 1, 2, . . . , N, j = 1, 2, . . . , J] ,
+
+assuming all functions are observed at the same points tj . In some situations, the
+points tj may depend on the location sk , so the scalar data points are X(sk , tkj ).
+
+                                          Revista Colombiana de Estadstica 42 (2019) 101–122
+
+104                                                             Piotr Kokoszka & Matthew Reimherr
+
+                                                   b
+There are many approaches to computing a predictor X(s) of the unobserved curve
+X(s). We start with a method which is the most direct extension of the approach
+used for scalar data.
+   Taking a functional point of view, we treat each curve X(sk ) as an indivisible
+data object. We want to determine the weights wk for the predictor of the form
+
+                                                     ∑
+                                                     N
+                                    b
+                                    X(s) =µ+               wk (X(sk ) − µ).                             (2)
+                                                     k=1
+
+
+Since the X(sk ) are now functions, we calculate the weights by minimizing the
+expected L2 distance between X(s)   b  and X(s). We thus want to find weights
+w1 , w2 , . . . , wN which minimize
+                                     2
+                                        ∫ (               )2
+                         b
+                     E X(s)  − X(s) = E     b t) − X(s; t) dt.
+                                            X(s;
+
+Observe that
+                                                                  2
+               2               ∑
+                               N
+ b
+ X(s) − X(s)       = µ+              wk (X(sk ) − µ) − X(s)
+                               k=1
+                       ⟨N                                                                                ⟩
+                        ∑                                             ∑
+                                                                      N
+                   =           wk (X(sk ) − µ) − (X(s) − µ),                wℓ (X(sℓ ) − µ) − (X(s) − µ)
+                        k=1                                           ℓ=1
+
+                       ∑
+                       N
+                   =           wk wℓ ⟨X(sk ) − µ, X(sℓ ) − µ⟩
+                       k,ℓ=1
+
+                          ∑
+                          N
+                   −2           wk ⟨X(sk ) − µ, X(s) − µ⟩ + ⟨X(s) − µ, X(s) − µ⟩ .
+                          k=1
+
+
+Define the functional spatial covariances as
+
+                               C(s, s′ ) = E [⟨X(s) − µ, X(s′ ) − µ⟩] .                                 (3)
+
+Notice that for any two spatial points, C(s, s′ ) is a real number, as opposed to an
+operator. Using this notation, we see that
+
+                                2       ∑
+                                        N                               ∑
+                                                                        N
+        b
+      E X(s) − X(s)                 =           wk wℓ C(sk , sℓ ) − 2         wk C(sk , s) + C(s, s).
+                                        k,ℓ=1                           k=1
+
+
+Finding the kriging weights is thus based on the same equations as for scalar data,
+but using the functional covariances (3). Therefore, the weights wk are found by
+solving the system of equations
+
+                        ∑
+                        N
+                               C(sk , sℓ )wℓ = C(sk , s),         k = 1, 2, . . . N.                    (4)
+                        ℓ=1
+
+
+                                                   Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data              105
+
+    To implement this approach in practice, we must estimate the covariances
+C(sk , sℓ ) and C(sk , s). We now explain how this can be done. Using the assump-
+tions of stationarity and isotropy, we see that
+                              ∫
+                C(s, s′ ) = E (X(s; t) − µ(t)) (X(s′ ; t) − µ(t)) dt
+                            ∫
+                          = C(∥s − s′ ∥ ; t)dt,
+
+where
+                  C(h; t) = Cov(X(s + h; t), X(s; t)),            h = ∥h∥ ,
+
+is the spatial covariance function of the scalar field {X(·; t)} obtained by fixing t.
+For each t, the covariance function h 7→ C(h; t) can be estimated by any method
+that is applicable to covariance estimation for scalar spatial data; this is typically
+done by estimating the semivariogram.
+    The kriging predictor is often expressed∑  in a slightly diﬀerent way. We want to
+                                                 N
+find a predictor X ⋆ (s) of the form X ⋆ (s) = k=1 λk X(sk ), subject to the condition
+∑N                                                              ∑N
+   k=1 λk = 1. By contrast, equations (4) do not imply that       k=1 wk = 1. In many
+applications, the weights wj are very close to the weights λj , and the predicted
+          b
+function X(s)   and X ⋆ (s) are also very close.
+    In addition to these simple methods, (Delicado, Giraldo, Comas & Mateu 2010)
+give references to several other methods of kriging functional data. Another rela-
+tively simple kriging method they discuss, which gives predictions as good as more
+complex methods can be summarized as follows. The predictor has the form
+
+                                          ∑
+                                          N
+                             b t) =
+                             X(s;              wk (t)X(sk ; t),
+                                         k=1
+
+                                           ∑N
+where the unknown functions wk (·) satisfy   k=1 wk (t) = 1, for each t. The
+observed functions X(sk ) and the unknown weight functions wk (·) are expanded
+using some basis system:
+
+                             ∑
+                             M                               ∑
+                                                             M
+               X(sk ; t) =         ckm Bm (t),    wk (t) =         bkm Bm (t).
+                             m=1                             m=1
+
+
+In particular, one can use the estimated FPC’s v̂m as the Bm . The coeﬃcient
+matrix B = [bkm , 1 ≤ k ≤ N, 1 ≤ m ≤ M ] is also found by minimizing E∥X(s)b    −
+      2
+X(s)∥ . This approach is similar to the method of co–kriging used for multivariate
+data, e.g. Wackernagel (2003).
+   We have assumed so far that EX(s; t) = µ(t) does not depend on the location
+s. Caballero, Giraldo & Mateu (2013) and Menafoglio, Secchi & Rosa (2013)
+show how to perform kriging under a more flexible assumption that EX(s; t) =
+∑L
+  ℓ=1 βℓ (t)fℓ (s).
+
+
+                                        Revista Colombiana de Estadstica 42 (2019) 101–122
+
+106                                                             Piotr Kokoszka & Matthew Reimherr
+
+
+3. Estimation of the mean function and of the FPC’s
+
+      To estimate the mean function, we use the weighted average
+
+                                                ∑
+                                                N
+                                      µ̂(t) =         wk X(sk ; t),                           (5)
+                                                k=1
+
+
+and the problem becomes how to compute the optimal weights wk . As in Section 2,
+in (5) we treat the curves X(sk ) as indivisible statistical objects, and so we apply
+one weight to the whole curve. One could consider weights wk (t), defined as
+functions, but the simple approach we describe in this section is easy to implement,
+and produces estimates which significantly improve on the simple average. Figure 1
+illustrates the diﬀerence between the simple average (wk = 1/N ) and the weighted
+average we are about to derive, using annual temperature curves in Canada. There
+are plenty of locations in the southern part of Canada, especially in the densely
+populated South–East of the country, and very few in the North. If we postulate
+the model X(sk ; t) = µ(t) + ε(sk ; t), then µ should represent the typical annual
+temperature profile for the whole country. The simple average will mostly reflect
+temperature curves in the region where there are many stations, i.e. mostly in
+the South. To obtain a more informative kriged mean function, stations far in the
+North must receive larger weights. Some stations in the south will receive even
+slightly negative weights.
+            20
+            10
+            0
+            −10
+            −20
+            −30
+
+
+
+
+                      0             100                200                300
+
+                                                    Day
+Figure 1: Gray lines: annual temperature curves at 35 locations in Canada (averaged
+          over several decades). Dashed line: simple average of these curves. Continu-
+          ous black line: mean function estimated by functional kriging.
+
+
+      We define the optimal weights as those that minimize
+
+                      ∑
+                      N                     2       ∫ {∑
+                                                       N
+                                                                                  }2
+                  E         wk X(sk ) − µ       =               wk X(sk ; t) − µ(t)    dt,    (6)
+                      k=1                                 k=1
+
+
+                                                Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data                  107
+                         ∑n
+subject to the condition k=1 wk = 1 which ensures that E µ̂ = µ. The method
+of Lagrange multipliers leads to the following system of N + 1 linear equations:
+
+              ∑
+              N                 ∑
+                                N
+                    wk = 1,           wk C(sk , sn ) − r = 0, n = 1, 2, . . . N,          (7)
+              k=1               k=1
+
+in which w1 , w2 , . . . , wN , r are N +1 unknowns. The functional covariances C(sk , sn )
+can be estimated as explained in Section 2.
+    A fundamental tool of functional data analysis is the Karhunen–Loéve
+                                                                      ∑∞             ex-
+pansion. Every function X in L2 can be represented as X(t) =             j=1 ξ j v j (t),
+where the vj are orthonormal functions known as the functional principal compo-
+                                                                             (p)
+∑p (FPC’s). The main feature of this expansion is that the function X (t) =
+nents
+   j=1 ξj vj (t) is a very good approximation of the function X(·) even for small p;
+in many applications p = 3 is suﬃcient. A small number of scores ξ1 , ξ2 , . . . , ξp
+thus encodes an infinitely dimensional function. Details are explained in Chapter
+11 of Kokoszka & Reimherr (2017). The functions vj are the eigenfunctions of the
+covariance function c(t, s) = Cov(X(t), X(s)). Therefore, if the spatially indexed
+functions X(s) have the same distribution, then each of them admits the expansion
+                                                      ∞
+                                                      ∑
+                              X(s; t) = µ(t) +              ξi (s)vi (t).                 (8)
+                                                      i=1
+
+
+    We now explain how to estimate the vj in (8) under the assumptions of station-
+arity and isotropy stated in Section 1. We also assume that µ(t) = 0; in practice we
+would subtract the estimated mean function. We describe one of the two methods
+proposed by Gromenko, Kokoszka, Zhu & Sojka (2012). Both methods have very
+similar finite sample performance, and have significantly smaller MSE’s compared
+to the standard method which does not take spatial dependence into account.
+   It is assumed that the vj admit the expansion
+
+                                              ∑
+                                              K
+                                  vj (t) =          x(j)
+                                                     α Bα (t),                            (9)
+                                              α=1
+
+where the Bα are elements of an orthonormal basis, for example Fourier basis
+(splines will not work because they are not orthogonal). The expansion (9) is
+already an estimation step. We would take K so large that∑each observed function
+                                                           K
+X(sk ) is well approximated by the sum X (K) (sk ; t) =    α=1 bα (sk )Bα (t). The
+exact expansion is
+                                ∞
+                                ∑
+                    X(s; t) =         bα (s)Bα (t),     bα (s) = ⟨X(s), Bα ⟩ .
+                                α=1
+
+The bα (sk ) form an observable field.
+    The vj are determined (up to a sign) by the conditions C(vj ) = λj vj and
+∥vj ∥ = 1, where C(·) = E[⟨X(s), ·⟩ X(s)] is the covariance operator. Using the
+orthonormality of the Bj , we obtain
+
+
+                                            Revista Colombiana de Estadstica 42 (2019) 101–122
+
+108                                                                Piotr Kokoszka & Matthew Reimherr
+                                       [⟨ ∞                            ⟩ ∞                  ]
+                                         ∑                              ∑
+                      C(Bj ) = E                   bα (s)Bα , Bj                bi (s)Bi           (10)
+                                             α=1                          i=1
+                                       [         ∞
+                                                                   ]
+                                                 ∑
+                               = E bj (s)               bi (s)Bi
+                                                  i=1
+                                     ∞
+                                     ∑
+                               =           E[bi (s)bj (s)]Bi .
+                                     i=1
+
+Thus, to estimate C, we must estimate the means E[bi (s)bj (s)].
+   Fix i and j, and define the scalar field z by z(s) = bi (s)bj (s). We can postulate a
+parametric model for the covariance structure of the field z(·), and use an empirical
+variogram to estimate µz = Ez(s) as a weighted average of the z(sk ). Denote the
+resulting estimate by r̂ij . The empirical version of (10) is then
+
+                                                        ∑
+                                                        K
+                                           b j) =
+                                           C(B                r̂ij Bi .                            (11)
+                                                        i=1
+
+
+Relation (11) defines the estimator Cb which acts on the span of Bj , 1 ≤ j ≤ K.
+                                       ∑
+Its eigenfunctions are of the form x = 1≤α≤K xα Bα . Observe that
+                                                               (                        )
+                               ∑            ∑                 ∑ ∑
+                    b
+                    C(x) =             xα        r̂iα Bi =                    r̂iα xα       Bi .
+                                 α           i                 i          α
+                          ∑
+      other hand, λx = i λxi Bi . Since the Bi form an orthonormal basis, we
+On the∑
+obtain α r̂iα xα = λxi . Setting
+
+                    x = [x1 , x2 , . . . , xK ]T ,       b = [r̂ij , 1 ≤ i, j ≤ K],
+                                                         R
+
+we can write the above as a matrix equation
+                                                 b = λx.
+                                                 Rx                                                (12)
+
+Denote the solutions to (12) by
+                                 (j)       (j)          (j)
+                     x̂(j) = [x̂1 , x̂2 , . . . , x̂k ]T , λ̂j ,              1 ≤ j ≤ K.           (13)
+                    ∑K      (j) (i)
+The x̂(j) satisfy     α=1 x̂α x̂α = δij . Therefore the v̂j defined by
+
+                                                     ∑
+                                                     K
+                                             v̂j =         x̂(j)
+                                                             α Bα                                  (14)
+                                                     α=1
+
+are also orthonormal (because the Bj are orthonormal). The v̂j given by (14) are
+the estimators of the FPC’s, and the λ̂j in (13) of the corresponding eigenvalues.
+
+    A natural question to ask is what happens if one applies standard software
+to the observed curves X(sk ), 1 ≤ k ≤ K, in order to estimate the FPC’s, vj ,
+
+                                                 Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data            109
+
+in (8). The usual method, implemented in the function pca of the fda package
+(and in many other packages) is to use the the eigenfunctions of the sample co-
+variance operator. It is suitable for a sample of iid curves or for curves forming a
+regularly spaced functional time series, but not for geostatistical functional data.
+We illustrate with an example. A comprehensive theory and more examples were
+developed by Hörmann & Kokoszka (2013). This material is also presented in
+Chapter 18 of Horváth & Kokoszka (2012).
+    For mean zero functions, the sample covariance operator C   b is defined by
+
+                                            ∑
+                                            N
+                            bN (x) = N −1
+                            C                     ⟨Xk , x⟩ Xk .
+                                            k=1
+
+
+The usual estimated FPC’s are defined by C  bN (v̂j ) = λ̂j v̂j . Consider a functional
+random field
+                            ∞
+                            ∑
+                  X(s; t) =   ξj (s)ej (t), s ∈ Rd , t ∈ [0, 1],                   (15)
+                               j=1
+
+where {ej , j ≥ 1} is a complete orthonormal system and the ξj (s) are  ∑∞mean zero
+random variables with E[ξj (s)ξj (s + h)] = λj ρj (h), h = ∥h∥, where j=1 λj < ∞
+and each ρj (·) is a positive correlation function.
+                                          ∑∞        Recall that C(·) = E[⟨X(s), ·⟩ X(s)].
+Direct verification shows that C(x) = j=1 λj ⟨ej , x⟩ ej , so the λj are the eigenval-
+ues of C, and the ej the corresponding eigenfunctions, i.e. vj = ej . Now consider
+a sequence sn → 0. Because of the positive dependence, X(sn ) is close to X(0), so
+CbN , as an arithmetic average, is close to the random operator X ⋆ = ⟨X(0), ·⟩ X(0).
+Observe that X ⋆ (X(0)) = ∥X(0)∥2 X(0). Thus X(0) is an eigenfunction of X ⋆ .
+Since it is random, it cannot be close to any of the vj , even asymptotically.
+    The above is only an intuitive illustration of the point that if the spatial loca-
+tions at which functions are observed have dense clusters, or if the the dependence
+is strong, then the eigenfunctions of C bN do not consistently estimate the FPC’s
+vj in (8).
+
+
+4. Independence, Trend and Change Point Tests
+    In this section, we discuss several significance tests for geostatistical functional
+data. These tests are analogs of simpler tests for iid curves. The spacial depen-
+dence between the curves requires more complex forms of the test statistics. In
+addition, these statistics typically require complex numerical procedures to com-
+pute them. We therefore merely describe what has been done, and provide suitable
+references.
+
+     We begin with a test of independence of two functional random fields. It was
+proposed by Gromenko et al. (2012), and is described in detail in Chapter 17
+of Horváth & Kokoszka (2012). The data are observed at N spatial locations:
+s1 , s2 , . . . , sN . At location sk , we observe two curves: X(sk ) and Y (sk ). We
+assume that the sample {X(sk )} is a realization of a random field {X(s), s ∈ S},
+
+                                      Revista Colombiana de Estadstica 42 (2019) 101–122
+
+110                                                  Piotr Kokoszka & Matthew Reimherr
+
+
+and the sample {Y (sk )} is a realization of a random field {Y (s), s ∈ S}. We want
+to test the null hypothesis:
+
+ H0 : for each s ∈ S, the random functions X(s) and Y (s) are independent
+
+against the alternative that H0 does not hold. The test statistic detects departures
+from H0 that manifest themselves in the lack of the correlation between the projec-
+tions ⟨x, X(s)⟩ and ⟨y, Y (s)⟩, for any x, y ∈ L2 . In practice, the lack of correlation
+can be tested only for x and y from suﬃciently large finite dimensional subspaces,
+those spanned by the first p FPC’s of X(s), and the first q FPC’s of Y (s). The idea
+of the test, thus requires that the pairs (X(s), Y (s)) have the same distribution for
+every s ∈ S. The construction of the test assumes that both fields, {X(s), s ∈ S}
+and {Y (s), s ∈ S} are stationary. The test statistic SbN is constructed from the
+inner products ⟨X(sk ), v̂j ⟩ , 1 ≤ j ≤ p and ⟨Y (sk ), ûj ⟩ , 1 ≤ j ≤ q, where the v̂j
+are estimated FPC’s of the X–sample and the ûj of the Y –sample. The v̂j and
+the ûj be computed as described in Section 3. Under H0 , the test statistic SbN
+converges, as N → ∞, to a chi–square distribution with pq degrees of freedom.
+Once the v̂j and the ûj are computed, the tests statistic can be computed without
+diﬃculty using package fda. Since the critical values are those of the chi-square
+distribution, the test is easy to apply.
+   The problem of testing the equality of two mean functions, each defined for
+functions observed over a diﬀerent spatial region, is considered in Gromenko &
+Kokoszka (2012).
+    Our next test is motivated by an interesting and extensively studied problem
+of space physics. The account presented here is based on Gromenko & Kokoszka
+(2013) and Gromenko, Kokoszka & Sojka (2017). We first describe the space
+physics problem, and then explain the idea of the test.
+             16
+
+
+
+
+                                                                                  300
+             14
+
+
+
+
+                                                                                  250
+                                                                                        SRF, W/ m2 /Hz
+             12
+
+
+
+
+                                                                                  200
+ foF2, MHz
+
+             10
+
+
+
+
+                                                                                  150
+             8
+
+
+
+
+                                                                                  100
+             6
+
+
+
+
+                                                                                  50
+             4
+
+
+
+
+                                                                                  0
+
+
+
+
+                  1960   1970      1980       1990        2000      2010
+Figure 2: Gray lines represent ionosonde measurements obtained at observatories lo-
+          cated in mid-latitude northern hemisphere, with the scale on the left-hand
+          side. The black line represents the observed solar radio flux with the scale on
+          the right-hand side.
+
+
+                                       Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data                       111
+
+    Increased concentration of greenhouse gases in the upper atmosphere is as-
+sociated with global warming in the lower troposphere (the atmosphere roughly
+below 10 km). Roble & Dickinson (1989) suggested that the increasing amounts
+of these radiatively active gases, mostly CO2 and CH4 , would lead to a global
+cooling in the ionosphere (atmosphere roughly 300 km above the Earth’s surface).
+Rishbeth (1990) pointed out that this would result in a thermal contraction of the
+ionosphere. The height of the ionosphere can be approximately computed using
+data from a radar–type instrument called the ionosonde. Relevant measurements
+have been made for many decades by globally distributed ionosondes. In principle,
+these observations could be used to quantitatively test the hypothesis of Roble &
+Dickinson (1989). The diﬃculty in testing the contraction hypothesis comes from
+several sources. The height of the ionosphere depends on magnetic coordinates,
+the season, long term changes in the strength and direction of the internal mag-
+netic field, and, most importantly, on the solar cycle; more solar radiation leads to
+greater ionization. This is illustrated in Figure 2. Another diﬃculty stems from
+the fact that ionosonde records are not complete. Most observation stations do
+not operate continuously for many decades. They start and end operation at dif-
+ferent times, some of them are out of service for many years, or even decades. In
+the mid-latitude northern hemisphere, there are 81 ionosonde stations, but at any
+given time, data from no more than 40 are available, as shown in Figure 3. This
+means that the estimation methods described in Section 3 cannot be used, as they
+require complete records to compute various integrals. More complex methods
+that work for incomplete records are needed.
+                      40
+                      30
+ Number of stations
+
+                      20
+                      10
+                      0
+
+
+
+
+                           1960     1970        1980        1990        2000        2010
+               Figure 3: Number of available stations in the mid–latitude northern hemisphere.
+
+
+   Let Y (sk ; τi ) be the original record at location sk , measured from 1958 to
+2015, possibly with long gaps. The set of all locations is {sk , 1 ≤ k ≤ K}, and
+the set of time points at which measurements may be available is {τi , 1 ≤ i ≤ T };
+in Gromenko, Kokoszka & Sojka (2017) these are months from January 1958 to
+December 2015. The following spatio–temporal model is postulated:
+
+                                                 Revista Colombiana de Estadstica 42 (2019) 101–122
+
+112                                                  Piotr Kokoszka & Matthew Reimherr
+
+
+                         Y (s; τ ) = µ(s; τ ) + ε(s; τ ) + θ(s; τ ),                   (16)
+where s is a generic location in a region of interest, and τ is continuous time. A
+simple form of the mean function relevant to the space physics problem is
+
+                   µ(s; τ ) = β1 + β2 τ + β3 SRF(τ ) + β4 M (s; τ ),
+
+where SRF(τ ) is the solar radio flux, cf. Fig. 2, and M (s; τ ) is a suitable function
+computed from the coordinates of the internal magnetic field. The interest lies in
+the estimation of the mean function, and testing if it contains a linear trend, i.e.
+testing H0 : β2 = 0. The function µ(·, ·) is treated as an unknown determinis-
+tic functional parameter. The second term, ε(s; τ ), describes the spatio–temporal
+variability away from the mean function. Stochastic modeling of this term is
+needed to develop inferential procedures. The term θ(s; τ ) represents a random
+error, which can be associated with measurement error. The details of the esti-
+mation and testing procedures are too complex to describe here. The conclusion
+is that β2 is significantly negative, confirming the hypothesis of global ionospheric
+contraction. The software to perform the test is available and can be used to
+test for the presence of global trends in other data of this type, for example in
+near-surface temperatures.
+   We conclude this section with a discussion of change-point detection for the
+mean function. The presentation is based on Gromenko, Kokoszka & Reimherr
+(2017). General theory for change points for scalar data is presented in Csörgő &
+Horváth (1997), several extensions to functional data are presented in Horváth &
+Kokoszka (2012). In the spatio–temporal setting we consider here, the data are
+assumed to follow the model
+
+                             Xn (s, t) = µn (s; t) + εn (s; t).
+
+In most applications, n denotes year, s, as before, spatial location, and t time
+within a year. For a fixed s, {Xn (s), n = 1, 2, . . .} is a time series of functions, one
+function per year. While we assume that the curves are observed densely in time,
+they are only observed at a finite number of spatial locations {sk : k = 1, . . . , K}.
+The goal is to determine if the mean functions, µn , are the same across n or if there
+is a change in the mean. In other words, we aim to evaluate the null hypothesis
+
+H0 : µ1 = µ2 = · · · = µN        against       HA : µ1 = . . . µn∗ ̸= µn∗ +1 = · · · = µN .
+
+The alternative of a sudden change at a single year n∗ is to be viewed as a math-
+ematical approximation. As with all testing problems, the null hypothesis of no
+change is tested, and the alternative specifies the violations of the null hypothesis
+which will be detected with the highest power. The tests described below, will
+also detect diﬀerent violations of H0 , including gradual changes taking place over
+a few years.
+   To carry out the tests, we assume that the covariance structure of the εn is
+separable, a test of which will be discussed in section 5. In particular, we assume
+that
+                      Cov(εn (s; t), εn (s′ ; t′ )) = v(t, t′ )u(s, s′ ).
+
+
+                                        Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data                      113
+
+
+             ∫ decomposition above is unique only up to a constant, we thus
+Notice that the
+assume that v(t, t) dt = 1. Gromenko, Kokoszka & Reimherr (2017) consider
+three diﬀerent test statistics based on CUSUM’s (cumulative sums), each of which
+uses the expansion (8) applied to the annual curves in diﬀerent ways. They do not
+require a specific procedure for estimating v(t, t′ ) and U = {u(sk , sk′ )}, instead
+formulating their tests assuming they have consistent estimates. Examples of how
+to estimate these quantities are given in their appendix, as well as in Aston, Pigoli
+& Tavakoli (2016) and Constantinou, Kokoszka & Reimherr (2017). The first test
+involves using a temporal FPCA, normalizing by the corresponding eigenvalues,
+and then pooling across space. The tests statistics is
+                                           ⟨ r                                    ⟩2
+              1 ∑     ∑        ∑            ∑               r ∑
+                K      p        N                                         N
+        Λ̂1 = 2   ŵk     λ̂−1
+                            i                    Xn (sk ) −       Xn (sk ), v̂i           .
+             N        i=1      r=1           n=1
+                                                            N n=1
+                   k=1
+
+The pooling weights, ŵk , can be chosen however the user prefers, but in practice,
+using weights as described in Section 3 works well. It has now become well rec-
+ognized in the FDA community that dividing by estimated eigenvalues can cause
+stability problems with certain data. Thus a second test statistic was also proposed
+which omits normalizing by the λ̂i :
+                                          ⟨ r                                   ⟩2
+                 1 ∑     ∑p ∑              ∑              r ∑
+                   K          N                                       N
+           Λ̂2 = 2   ŵk                       Xn (sk ) −       Xn (sk ), v̂i        .
+                N        i=1 r=1           n=1
+                                                          N n=1
+                      k=1
+
+
+For p large, Λ̂2 is essentially an approximation of the third and final test statistic
+                                                                                  2
+                  1 ∑      ∑         ∑   ∑              r ∑
+                     K      p         N   r                N
+                                  −1
+          Λ̂∞
+            2 =        ŵk     λ̂ i          Xn (sk ) −       Xn (sk )                .
+                  N2       i=1       r=1 n=1
+                                                        N n=1
+                      k=1
+
+Each statistic has a slightly diﬀerent limiting distribution. In particular, under
+H0
+
+                                    ∑
+                                    K            d ∫
+                                                 ∑
+                                d
+                            Λ̂1 →         w(k)               2
+                                                            Bik (t) dt
+                                    k=1          i=1
+
+                                    ∑
+                                    K            ∑
+                                                 d          ∫
+                                d
+                            Λ̂2 →         w(k)         λi        2
+                                                                Bik (t) dt
+                                    k=1          i=1
+
+                                ∑
+                                K      ∞
+                                       ∑   ∫
+                            ∞ d
+                          Λ̂2 →   w(k)       2
+                                         λi Bik (t) dt,
+                                    k=1          i=1
+
+where Bik (t) are Brownian bridges which satisfy
+
+         Cov(Bik (t), Bi′ k′ (t′ )) = 1i=i′ min{t, t′ }(1 − min{t, t′ })σ(sk , sk′ ).
+
+These asymptotics can be used for choosing rejection regions with proper Type
+1 error. To do so, one can use Monte Carlo, though (Gromenko, Kokoszka &
+
+
+                                           Revista Colombiana de Estadstica 42 (2019) 101–122
+
+114                                                          Piotr Kokoszka & Matthew Reimherr
+
+
+Reimherr 2017) also provide a normal approximation which works well when
+considering a relatively large number of spatial points. These tests can be im-
+plemented using the scpt package in R, which is available from http://www.
+personal.psu.edu/~mlr36/codes.html and includes an example code for imple-
+menting the methodology.
+         48
+
+
+
+
+                                                                                       10
+         46
+
+
+
+
+                                                                                       9
+                                                         4
+         44
+
+
+
+
+                                                                                       8
+         42
+
+
+
+
+                                                                                       7
+                     2
+         40
+
+
+
+
+                                                                    3                  6
+         38
+
+
+
+
+                                       1
+                                                                                       5
+
+
+              −105       −100         −95         −90         −85        −80
+                                                  2
+Figure 4: The spatial field showing the L distance between the mean log–precipitation
+          before and after 1966. There is an increase in precipitation throughout the
+          year in the area around location 4, decrease in the first half of the year in
+          the area around location 1. Locations close to 2 and 3 do not show a large
+          change nor a consistent pattern.
+
+    If a change point is detected, its location can be identified as the year when a
+test statistics attains maximum. Gromenko, Kokoszka & Reimherr (2017) applied
+the above test procedures (with suitable finite sample calibration) to test if the
+precipitation pattern over the midwest US states has changed. All tests led to the
+same conclusion: one change point in second half of the sixties. The pattern of the
+change is shown in Fig. 4. The biggest changes are in the area around Michigan
+Lake and south–west of the lake. To visualize the spatial distribution of change,
+the authors used the spatial field
+                                     ϕ̂(s) = ∥µˆ1 (s) − µ̂2 (s)∥,
+where
+                            ∑
+                            r̂
+                                                                        −1
+                                                                              ∑
+                                                                              N
+        µ̂1 (s; t) = r̂−1         Xn (s; t),     µ̂2 (s; t) = (N − r̂)                Xn (s; t).
+                            n=1                                              n=r̂+1
+
+They performed kriging with the exponential covariance model to obtain the heat
+map shown in Fig. 4. The application of the significance tests confirms that the
+
+                                               Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data                      115
+
+heat map shows a statistically significant change over a region, not a variation in
+the magnitude of change which may be due to chance.
+
+
+5. Separability Tests
+   The second order structure of a random field of functions is described by the
+covariance function σ(s, s′ ; t, t′ ) = Cov(X(s, t), X(s′ , t′ )). Theoretical and com-
+putational aspects of most procedures can be significantly simplified if one can
+assume that
+                            σ(s, s′ ; t, t′ ) = u(s, s′ )v(t, t′ ),                 (17)
+that is, if the spatio–temporal covariance function factors into the product of a
+purely spatial and purely temporal covariance functions. The above condition
+is, for example, required to develop the change point methodology described in
+Section 4. If (17) holds, we say that the functional random field is separable. In
+particular, the spatial dependence structure is the same for any time t. Tests
+whose null hypothesis is (17) have been proposed by (Liu, Ray & Hooker 2017),
+(Aston et al. 2016) and (Constantinou et al. 2017). We discuss the latter two
+approaches here.
+    We begin by discussing two diﬀerent procedures for estimating v(t, t′ ) and
+U = {u(sk , sk′ )}. Aston et al. (2016) used partial trace operators to estimate these
+quantities, while (Constantinou et al. 2017) combined bases expansions with a
+“flip-flop” approach, which basically iterates between estimating v and U. Partial
+trace operators are used to eliminate either the temporal or spatial component of
+the covariance, in particular, define the estimated covariance function as
+
+                                                1 ∑
+                                                    N
+                      σ̂(sk , s′k , t, t′ ) =         Xn (sk , t)Xn (sk′ , t′ ).
+                                                N n=1
+
+(In the above formula, and in the remainder of this section, we assume that the
+mean function is zero.) Then the spatial covariance is estimated using
+                                   ∫
+                           Ûkk = σ̂(sk , s′k , t, t) dt,
+                               ′
+
+
+
+
+and the temporal covariance is estimated using
+                                    ∑K
+                               ′           σ̂(sk , sk , t, t′ )
+                                       ∫
+                        v̂(t, t ) = ∑ k=1                       .
+                                     k   σ̂(sk , sk , t, t) dt
+
+The normalization above ensures that the trace of v(t, t′ ) is normalized to be
+1, though other normalizations are possible. One thing to note is that the full
+covariance σ̂ does not actually need to be estimated, as one can move to estimating
+the Û and v̂ directly.
+   The second approach to estimating v and U comes form (Constantinou et al.
+2017) and begins with basis expansions. In particular, one approximates each
+temporal curve using J basis functions:
+
+                                                Revista Colombiana de Estadstica 42 (2019) 101–122
+
+116                                                      Piotr Kokoszka & Matthew Reimherr
+
+                                              ∑
+                                              J
+                              Xn (sk , t) ≈         ξjn (sk )ej (t).
+                                              j=1
+
+The basis ej (t) can either be deterministic or data driven, such as FPCA. Testing
+separability of Xn is then translated into testing separability of ξjn (sk ), so that
+the null becomes
+
+                       H0 : Cov(ξjn (sk ), ξj ′ n (sk′ ) = Vjj ′ Ukk′ .
+
+However, this is now a multivariate problem and we can utilize multivariate meth-
+ods for estimating V and U, in particular, the maximum likelihood estimators,
+assuming the data are Gaussian, satisfy
+
+                       1 ∑                                 1 ∑ ⊤ −1
+                          N                                     N
+                V̂ =         Ξn Û−1 Ξ⊤
+                                      n             Û =        Ξ V̂ Ξn ,
+                       N n=1                               N n=1 n
+
+where Ξn = {ξjn (sk )} is a J ×K matrix. To compute these estimators, one chooses
+an initial value, for example Û0 = I, and then iterates between the two estimates,
+hence the name “flip-flop method".
+    With these estimators in hand, one can now carry out a number of diﬀerent
+tests. To construct these tests first define
+
+                              Σ := E vec(Ξn ) vec(Ξn )⊤ ,
+
+where vec is the vectorization operator, which stacks the columns of a matrix into
+a vector. Under H0 one can show that
+
+                                       Σ = V ⊗ U,
+
+where ⊗ is the Kronecker product. Constantinou et al. (2017) consider three
+diﬀerent approaches
+                                    c + (V̂ ⊗ Û − Σ),
+                                 b ⊤W
+               TW = N (V̂ ⊗ Û − Σ)                b
+                TL = N (J log det(Û) + K log det(V̂) − log det(Σ̂)),
+                                   b 2.
+                TF = N ∥V̂ ⊗ Û − Σ∥      F
+
+The first test uses the Moore–Penrose generalized inverse of the estimated covari-
+ance matrix of V̂ ⊗ Û − Σ b ,Wc + , to normalize the diﬀerence and create a Wald
+                                  c is complex, but can be found in Constantinou
+type test statistic. The form for W
+et al. (2017). The generalized inverse is necessary since the symmetry of the ma-
+trices and the non-uniqueness of U and V create a number of linear constraints.
+This turns out to be a fairly unstable test statistic in terms of Type 1 error, and
+works well only for very small J and K. The second test is derived from the
+likelihood ratio and had previously been explored in the multivariate literature in
+?. This test is also quite unstable, but only when using a chi-squared distribution
+as an asymptotic approximation. Mitchell, Genton & Gumpertz (2006) provided
+a Monte-Carlo method which provides a much more stable (in terms of type 1
+
+
+                                         Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data                 117
+
+error) test. The last test forgoes normalizing the test statistic and instead uses
+an asymptotic distribution given by a weighted sum of chi-squares. This test is
+very stable and, in the settings considered by Constantinou et al. (2017) exhib-
+ited excellent power. Lastly, we note that Aston et al. (2016) provided a testing
+procedure that focussed on testing the separability in the directions dictated by
+the eigenfunctions. They utilized a bootstrap approach instead of asymptotic dis-
+tributions, and their individual tests can be pooled to construct a global test for
+evaluating separability overall.
+
+
+
+6. Spatio-Temporal Extremes
+   In this section, we summarize the work of (French, Kokoszka, Stoev & Hall
+2019) which deals with the computation of probabilities of heat waves. The
+raw data are spatially–indexed time series of daily temperature measurements,
+X(sk , j), denoting the temperature at a spatial location sk , k = 1, . . . , K, on day
+j. As argued above, due to the natural annual climate cycle, for each site, we
+partition {X(si , j)} into years, and view the resulting 365-dimensional vectors as
+samples from a functional time series:
+
+                    Xn (sk ; ·) = {Xn (sk ; ti ), i ∈ {1, 2, . . . 365}} .              (18)
+
+Here, t 7→ Xn (sk ; t) is the temperature curve at site sk for year n, viewed as a
+function of time t in days. In contrast to the setting of previous sections, the data
+used by French et al. (2019) are not historical records, but data generated by a
+computer climate model. These artificial data are of much higher quality than
+historical records; there are no gaps, and the daily records are available at 16,100
+locations forming a grid covering much of North America. It is, at this point, not
+clear how to extend the methodology of (French et al. 2019) to historical records.
+The advantage of using computer model data is that they are predicted future
+temperatures (French et al. 2019 work with the period 2041-2070), which are
+more relevant to the prediction of future heat waves. On the other hand, these
+data do depend on a model, and the poor quality, geostatistical historical records
+are the real data.
+    French et al. (2019) propose many functionals that can quantify a heat wave,
+but here we focus on one specific approach that explains the general idea. A heat
+wave is characterized by its spatial and temporal extents and by its intensity. The
+intensity is typically quantified by a threshold. Public health concerns call for a
+fixed threshold, like 1050 F. However, in climate studies of large spatial regions,
+with many climatic zones, such a fixed threshold is not appropriate. Also the vari-
+ability of temperatures depends greatly on the geographical location, with coastal
+locations exhibiting much smaller variability than locations far away from large
+bodies of water. It is therefore reasonable to work with standardized temperatures
+
+                                           Xn (sk , ti ) − X(sk , ti )
+                         Zn (sk , ti ) =                               ,                (19)
+                                                 SD(sk , ti )
+
+                                           Revista Colombiana de Estadstica 42 (2019) 101–122
+
+118                                                         Piotr Kokoszka & Matthew Reimherr
+
+
+where
+
+                1 ∑                                         1 ∑
+                    N                                            N
+X(sk , ti ) =          Xn (sk , ti ) and SD2 (sk , ti ) =           (Xn (sk , ti )−X(sk , ti ))2 .
+                N n=1                                     N − 1 n=1
+                                                                                          (20)
+If the Zn (sk , ti ) exceed a fixed threshold z, e.g. z = 2, for a number of neighboring
+locations and over a period of time, then we have observed a heat wave (the
+Zn (sk , ti ) are practically normal). The severity of a heat wave increases with the
+size of the region, the duration and the threshold z that is exceeded. Suppose the
+Xn (sk , ti ) are maximum daily temperatures, and set
+                                              1       ∑
+                           Zn⋆ (sk , tj ) =                      Zn (sk , ti ).
+                                              ℓ
+                                                  tj −ℓ<ti ≤tj
+
+This is the average maximum temperature over the ℓ days preceding day tj . Next,
+define
+                          Zn⋆ (tj ) = min Zn⋆ (sk , tj ).
+                                               1≤k≤K
+
+If Zn⋆ (tj ) > z, then the average maximum temperature over ℓ days over K (neigh-
+boring) locations exceeds, z; this corresponds to a heat wave defined by this specific
+functional. We are interested in the probability of a heat wave in any given year.
+We assume that this probability does not depend on year n. We thus want to
+compute, for some relevant z > 0,
+                                          (                 )
+         p(z) = P (∃ j : Zn (tj ) > z) = P max Zn⋆ (tj ) > z = P (MJ > z),
+                                                      1≤j≤J
+
+where J = 365, and
+                                       d
+                               MJ = MJ,n := max Zn⋆ (tj ).
+                                                      1≤j≤J
+                                   ⋆
+The concatenated sequence Z (tj ) is stationary and weakly dependent, so (see e.g.
+Beirlant, Goegebeur, Segers & Teugels 2006, Chapter 10), there are sequences aJ
+and bJ such that              (                )
+                                MJ − bJ
+                        lim P              ≤ z → H(z),
+                       J→∞          aJ
+where H is a univariate Generalized Extreme Value distribution function. The
+function H depends on three parameters, which can be estimated, together with
+the constants aJ and bJ , using now standard R implementations.
+    Figure 5 shows examples of regions corresponding to 50, 150 and 450 neighbor-
+ing locations. Figure 6 shows a map of the probability of a heat wave for d = 50
+for three durations ℓ, with (a) corresponding to ℓ = 3, (b) to ℓ = 10, and (c) to
+ℓ = 30. When ℓ = 3, there is a surprisingly high probability of localized heat
+waves over the Labrador Peninsula. Such short heat spells may occur with prob-
+ability approaching 50%, that is on average every second year. While our EVT
+approximation may break down for such high probabilities, it is nevertheless obvi-
+ous that that part of Canada will see heat spells much more frequently than in the
+past. Generally, we see that the area around the Hudson Bay will experience an
+
+                                              Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data           119
+
+increased frequency of hot spells lasting a few days. There is a noticeable drop in
+the probability of such a heat wave around the Rocky Mountain range. The prob-
+ability is also very low along the Eastern seaboard of the United States. Increasing
+the duration to ℓ = 10 days, dramatically reduces the probability of a heat wave of
+the corresponding magnitude. The reader will note the diﬀerent probability scale.
+Many parts of Canada once again show an increased probability of a heat wave
+of this magnitude, as well as parts of Iowa and Illinois, certain regions in Texas,
+and, most visibly, the Pacific Ocean oﬀ the Southern California coast. Increas-
+ing the duration to approximately 1 month (ℓ = 30), causes the probability of a
+heat wave to drop even further; generally, throughout North America, heat waves
+of this magnitude will occur with probability of less than 1%, i.e. once per one
+hundred years, on average. Over the Canadian plains and the Canadian Rockies,
+this probability increases only slightly to about 1.5%. There are two patches, in
+Arizona and Southern Texas, with probabilities elevated to 2-3%.
+
+
+
+
+Figure 5: A map of the neighborhood structures for diﬀerent locations using 50, 150,
+          and 450 nearest neighbors. Each × marks a neighborhood centroid and the
+          sequences of grey shading mark the extents of the increasing neighborhood
+          sizes.
+
+
+
+
+                                     Revista Colombiana de Estadstica 42 (2019) 101–122
+
+120                                             Piotr Kokoszka & Matthew Reimherr
+
+
+
+
+Figure 6: Probability of a heat wave with amplitude more than 2 standard deviations
+          above the mean for spatial extent d = 50 and durations of (a) ℓ = 3, (b)
+          ℓ = 10, and (c) ℓ = 30.
+
+
+
+
+7. Conclusions
+
+    This article has focused on aspects of the statistical analysis of functions and
+time series of functions distributed over space that have attracted our interest. No
+claim is made that this survey is complete. There have been developments in the
+analysis of functional data arising in brain and other medical studies that have
+important spacial aspects, but do not readily fit into the more traditional and well
+understood paradigms of spatial statistics. One can expect that as new data sets
+consisting of functions that exhibit some form of spatial dependence arise, new
+tools may need to be developed to extract useful information.
+
+                                    Revista Colombiana de Estadstica 42 (2019) 101–122
+
+Some Recent Developments in Inference for Geostatistical Functional Data           121
+
+Acknowledgements
+    The research presented in this paper has been partially supported by the United
+States National Science Foundation grants DMS-0931948 Spatio-temporal Statis-
+tical Framework for the Evaluation of Global Change in the Ionosphere and DMS–
+1462067 FRG: Collaborative Research:Extreme Value Theory for Spatially Indexed
+Functional Data.
+              [                                                       ]
+                  Received: January 2017 — Accepted: November 2018
+
+
+References
+Aston, J., Pigoli, D. & Tavakoli, S. (2016), ‘Tests for separability in nonparametric covariance operators of random surfaces’, The Annals of Statistics 6, 1906–1948.
+Beirlant, J., Goegebeur, Y., Segers, J. & Teugels, J. (2006), Statistics of Extremes: Theory and Applications, John Wiley & Sons.
+Caballero, W., Giraldo, R. & Mateu, J. (2013), ‘A universal kriging approach for spatial functional data’, Stochastic Environmental Research and Risk Assessment 27, 1553–1563.
+Constantinou, P., Kokoszka, P. & Reimherr, M. (2017), ‘Testing separability of space-time functional processes’, Biometrika 104, 425–437.
+Csörgő, M. & Horváth, L. (1997), Limit Theorems in Change-Point Analysis, Wiley.
+Delicado, P., Giraldo, R., Comas, C. & Mateu, J. (2010), ‘Statistics for spatial functional data: some recent contributions’, Environmetrics 21, 224–239.
+French, J., Kokoszka, P., Stoev, S. & Hall, L. (2019), ‘Quantifying the risk of heat waves using extreme value theory and spatio-temporal functional data’, Computational Statistics and Data Analysis 131, 176–193.
+Gelfand, A. E., Diggle, P. J., Fuentes, M. & Guttorp, P., eds (2010), Handbook of Spatial Statistics, CRC Press.
+Gromenko, O. & Kokoszka, P. (2012), ‘Testing the equality of mean functions of spatially distributed curves’, Journal of the Royal Statistical Society (C) 61, 715–731.
+Gromenko, O. & Kokoszka, P. (2013), ‘Nonparametric inference in small data sets of spatially indexed curves with application to ionospheric trend determination’, Computational Statistics and Data Analysis 59, 82–94.
+Gromenko, O., Kokoszka, P. & Reimherr, M. (2017), ‘Detection of change in the spatiotemporal mean function’, Journal of the Royal Statistical Society (B) 79, 29–50.
+Gromenko, O., Kokoszka, P. & Sojka, J. (2017), ‘Evaluation of the global cooling trend in the ionosphere using functional regression models with incomplete curves’, The Annals of Applied Statistics 11.
+Gromenko, O., Kokoszka, P., Zhu, L. & Sojka, J. (2012), ‘Estimation and testing for spatially indexed curves with application to ionospheric and magnetic field trends’, The Annals of Applied Statistics 6, 669–696.
+Hörmann, S. & Kokoszka, P. (2013), ‘Consistency of the mean and the principal components of spatially distributed functional data’, Bernoulli 19, 1535–1558.
+Horváth, L. & Kokoszka, P. (2012), Inference for Functional Data with Applications, Springer.
+Kokoszka, P. & Reimherr, M. (2017), Introduction to Functional Data Analysis, CRC Press.
+Liu, C., Ray, S. & Hooker, G. (2017), ‘Functional principal components analysis of spatially correlated data’, Statistics and Computing 27, 1639–1654.
+Lu, N. & Zimmerman, D. (2005), ‘The likelihood ratio test for a separable covariance matrix’, Statistics & Probability Letters 73, 449–457.
+Menafoglio, A., Secchi, P. & Rosa, M. D. (2013), ‘A universal kriging predictor for spatially dependent functional data of a hilbert space’, Electronic Journal of Statistics 7, 2209–2240.
+Mitchell, M. W., Genton, M. G. & Gumpertz, M. L. (2006), ‘A likelihood ratio test for separability of covariances’, Journal of Multivariate Analysis 97, 1025–1043.
+Rishbeth, H. (1990), ‘A greenhouse eﬀect in the ionosphere?’, Planetary and Space Science 38, 945–948.
+Roble, R. G. & Dickinson, R. E. (1989), ‘How will changes in carbon dioxide and methane modify the mean structure of the mesosphere and thermosphere?’, 16, 1441–1444.
+Schabenberger, O. & Gotway, C. A. (2005), Statistical Methods for Spatial Data Analysis, Chapman & Hall/CRC.
+Sherman, M. (2011), Spatial Statistics and Spatio–Temporal Data: Covariance Functions and Directional Properties, Wiley.
+Wackernagel, H. (2003), Multivariate Geostatistics, Springer.

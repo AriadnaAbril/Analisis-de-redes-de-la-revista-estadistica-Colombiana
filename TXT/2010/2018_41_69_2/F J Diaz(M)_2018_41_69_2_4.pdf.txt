@@ -1,0 +1,2789 @@
+Construction of the Design Matrix for Generalized Linear Mixed-Eects Models in the Context of Clinical Trials of Treatment Sequences. Construcción de la matriz de diseño en modelos lineales de efectos mixtos generalizados en un contexto de ensayos clínicos de secuencias de tratamientos Francisco J. Diaz
+The University of Kansas Medical Center, Kansas City, Kansas, United States
+Abstract
+The estimation of carry-over eects is a dicult problem in the design and analysis of clinical trials of treatment sequences including cross-over trials. Except for simple designs, carry-over eects are usually unidentiable and therefore nonestimable. Solutions such as imposing parameter constraints are often unjustied and produce diering carry-over estimates depending on the constraint imposed. Generalized inverses or treatment-balancing often allow estimating main treatment eects, but the problem of estimating the carry-over contribution of a treatment sequence remains open in these approaches. Moreover, washout periods are not always feasible or ethical. A common feature of designs with unidentiable parameters is that they do not have design matrices of full rank. Thus, we propose approaches to the construction of design matrices of full rank, without imposing articial constraints on the carry-over eects. Our approaches are applicable within the framework of generalized linear mixed-eects models. We present a new model for the design and analysis of clinical trials of treatment sequences, called Antichronic System, and introduce some special sequences called Skip Sequences. We show that carry-over eects are identiable only if appropriate Skip Sequences are used in the design and/or data analysis of the clinical trial. We explain how Skip Sequences can be implemented in practice, and present a method of computing the appropriate Skip Sequences. We show applications to the design of a cross-over study with 3 treatments and 3 periods, and to the data analysis of the STAR*D study of sequences of treatments for depression.
+Key words Augmented regression; Carry-over eects; Vross-over design; Design matrix; Estimability; Generalized inverses; Generalized least squares; Identiability; Maximum likelihood; Placebo; Quasi-likelihood; Random effects linear models; Robust xed-eects estimators.
+Resumen
+La estimación de los efectos de arrastre es un problema difícil en el diseño y análisis de ensayos clínicos de secuencias de tratamientos, incluyendo ensayos cruzados. Excepto por diseños simples, estos efectos son usualmente no identicables y, por lo tanto, no estimables. La imposición de restricciones a los parámetros es a menudo no justicada y produce diferentes estimativos de los efectos de arrastre dependiendo de la restricción impuesta. Las inversas generalizadas o el balance de tratamientos a menudo permiten estimar los efectos principales de tratamiento, pero no resuelven el problema de estimar la contribución de los efectos de arrastre de una sequencia de tratamiento. Además, los períodos de lavado no siempre son factibles o éticos. Los diseños con parámetros no identicables comúnmente tienen matrices de diseño que no son de rango completo. Por lo tanto, proponemos métodos para la construcción de matrices de rango completo, sin imponer restricciones articiales en los efectos de arrastre. Nuestros métodos son aplicables en un contexto de modelos lineales mixtos generalizados. Presentamos un nuevo modelo para el diseño y análisis de ensayos clínicos de secuencias de tratamientos, llamado Sistema Anticrónico, e introducimos secuencias de tratamiento especiales llamadas Secuencias de Salto. Demostramos que los efectos de arrastre son identicables sólo si se usan Secuencias de Salto apropiadas. Explicamos como implementar en la práctica estas secuencias, y presentamos un método para calcular las secuencias apropiadas. Presentamos aplicaciones al diseño de un estudio cruzado con 3 tratamientos y 3 períodos, y al análisis del estudio STAR*D de secuencias de tratamientos para la depresión.
+Palabras clave Cuasi-verosimilitud; diseño cruzado; efectos de arrastre; estimabilidad; estimadores robustos de efectos jos; identicabilidad; inversas generalizadas; matriz de diseño; máxima verosimilitud; mínimos cuadrados generalizados; modelos lineales de efectos aleatorios; placebo.
+
+
+1. Introduction
+      The estimation of carry-over eects is a challenging problem in the design
+and analysis of clinical trials (CTs) of treatment sequences. Parametrizations of
+generalized linear mixed-eects models (GLMMs) that include carry-over eects
+usually produce design matrices that are not of full rank (Jones & Kenward 2015).
+When the design matrix is not of full rank, not all linear contrasts of parameters
+are identiable (Christensen 2011). In particular, except for very simple designs
+and parametrizations, carry-over eects are usually not identiable, which creates
+diculties in the quantication of the contribution of carry-over eects to the
+subjects' responses. The most common solution when the design matrix is not of
+full rank is to impose linear constraints that produce full rank. For instance, in
+cross-over trials, one assumption is that carry-over eects add up to zero (Jones
+
+
+
+                                         Revista Colombiana de Estadística   41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                              193
+
+
+
+& Kenward 2015). Such constraints are usually not justied, however, in terms
+of the clinical phenomenon under study, and this limits parameter interpretation
+(Fleiss 1989). Moreover, as pointed out by Christensen (2011), dierent computer
+packages may use dierent linear constraints, giving the impression that program-
+mers employ some constraints for the sole purpose of delivering a computer output.
+The problem is that although dierent linear constraints on unidentiable parame-
+ters produce identical estimates of an identiable parameter, they lead to dierent
+estimates of the unidentiable parameters (Christensen 2011, p. 97).
+
+   Another common approach when the design matrix is not of full rank is to
+use generalized inverses (Christensen 2011, Bronson 1989). Usually, data analysts
+can use this approach to estimate overall dierences among treatment eects.
+Only identiable contrasts can be estimated in this way, however, and further
+elaborations on how treatments administered in earlier stages of the clinical trial
+aect the nal response are often dicult, except for simple parametrizations that
+are not always justied (Fleiss 1989, Senn 2002, Jones & Kenward 2015). With
+this approach, therefore, the problem of examining the contribution of carry-over
+to the subjects' responses remains open.
+
+   The main objective of this article is to propose an approach to construct-
+ing a design matrix of full rank for clinical trials (CTs) of treatment sequences
+(including cross-over trials) without imposing unjustied constraints on the pa-
+rameters representing carry-over eects. The goal is to achieve the identiability
+of model parameters including the parameters corresponding to carry-over eects.
+The proposed approach is applicable within the framework of GLMMs and allows
+assessing the contribution of carry-over eects to the subjects' responses.         With
+this approach, data analysts can assess not only rst-order carry-over eects but
+also eects from treatments administered two or more stages (or periods) earlier.
+
+   Cross-over trials are the most common CTs of treatment sequences (Jones &
+Kenward 2015, Senn 2002, Diaz, Berg, Krebill, Welty, Gidal, Alloway & Privitera
+2013, Berg, Welty, Gidal, Diaz, Krebill, Szaarski, Dworetzky, Pollard, Elder Jr,
+Jiang, Jiang, Switzer & Privitera 2017, Grajales & Lopez 2006). In this article,
+however, the author is not only concerned with cross-over trials but also with CTs
+of treatment sequences in general. A representative example of a CT of treatment
+sequences, whose study design is not usually treated in the literature of cross-over
+trials, is the Sequenced Treatment Alternatives to Relieve Depression (STAR*D)
+study (Fava, Rush, Trivedi, Nierenberg, Thase, Sackeim, Quitkin, Wisniewski, La-
+vori, Rosenbaum & Kupfer 2003). In that study, the researchers investigated adult
+subjects who were treated in outpatient settings for non-psychotic major depressive
+disorder. The primary purpose of the study was to determine which alternative
+treatments worked best if Citalopram monotherapy did not produce an acceptable
+response.   The investigators examined a large number of treatments and treat-
+ment sequences including antidepressants and/or cognitive therapy and combined
+standard randomization procedures and a detailed protocol with a naturalistic ap-
+proach that modeled real-life clinical practice. For instance, if a treatment fails,
+the subject and physician may choose the next treatment from a prescribed list
+of alternative treatments that are allowed at that stage, or the subject may be
+randomly assigned a treatment from a subset of the list determined by the subject
+
+
+
+                                     Revista Colombiana de Estadística   41 (2018) 191233
+
+194                                                                       Francisco J. Diaz
+
+and/or the physician.     The idea was to repeat this procedure until reaching an
+acceptable treatment.
+
+      The diculty of modeling carry-over eects is well documented in the cross-
+over trials literature (Senn & Lambrou 1998, Senn, D'Angelo & Potvin 2004, Senn
+2002, Abeyasekera & Curnow 1984, Fleiss 1989).          For pharmacokinetic studies,
+the modern consensus is that minimizing carry-over eects during the design and
+implementation of the study is better than attempting to model these eects dur-
+ing the data-analysis phase (Senn 2002, Privitera, Welty, Gidal, Diaz, Krebill,
+Szaarski, Dworetzky, Pollard, Elder, Jiang, Jiang & Berg 2016). In particular,
+specialists recommend washout periods in order to rationally exclude the pos-
+sibility of carry-over eects, followed by regression modeling that does not in-
+clude carry-over eect parameters [Senn(2002), Center for Drug Evaluation and
+Research(2001, 2003)]. In pharmacodynamic or behavioral studies, however, the
+situation is more complex. Although washout periods of sucient length may help
+eliminate the carry-over eects of some therapies, the permanence of carry-over ef-
+fects cannot always be ruled out when cognitive or learning processes are involved
+in the therapy (Hofmann, Wrobel, Kessner & Bingel 2014).           Moreover, washout
+periods may not be ethical or convenient in some cases.         For instance, patients
+may not agree to stop receiving treatment temporarily because they believe that
+doing this may exacerbate their symptoms.
+
+      In some cases, in cross-over trials, a balance of treatments across periods can
+be used to eliminate the inuence of carry-over eects on treatment comparisons
+(Senn 2002). Even in these cases, however, an evaluation of how one treatment
+administered in one period aects the responses measured in subsequent periods
+cannot be conducted if the carry-over eects are not identiable. When the pres-
+ence of carry-over eects cannot be rationally ruled-out, another common solution
+is to include only rst-order carry-over eects in the modeling equations. However,
+this type of carry-over eect, despite its widespread use in data analyses of phar-
+macological trials, may not be consistent with standard pharmacokinetic theory
+(Senn 2002).
+
+      Mixed-eects regression modeling is a well-established approach in statistical
+practice (Frees 2004, Diaz et al. 2013, Berg et al. 2017, Diaz 2016). In particular,
+the approach is frequently used in the analysis of clinical trials collecting repeated
+measures and/or longitudinal data.       This article presents new developments in
+GLMMs that have not been published before. These developments are applicable
+to continuous and discrete responses, including dichotomous and count responses.
+Our approach is applicable to pharmacological and non-pharmacological therapies
+and combinations of these.     It can also accommodate the same treatment being
+administered at dierent stages (or periods) of the trial to some subjects as well
+as dierent treatment durations at a particular stage. In addition, it allows the
+examination of whether clinical decisions made at a particular sequence stage
+aect the subjects' responses in future stages as well as the investigation of delayed
+treatment eects. For instance, for the STAR*D study, we can answer the question:
+Is the benet of cognitive therapy administered in the rst stage still present in
+the second stage which consisted of only antidepressant drugs?
+
+
+
+                                      Revista Colombiana de Estadística   41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                              195
+
+
+
+   GLMMs are a combination of two general modeling frameworks, which are very
+popular in statistical practice: random eects linear regression models (RELMs)
+and generalized linear models (GLMs) (see the review by Rabe-Hesketh & Skrondal
+2009).   RELMs (Henderson 1953, Laird & Ware 1982) consist of the classic lin-
+ear regression model with the additional assumption that some of the regression
+coecients are random variables.     RELMs have had a dramatic impact on the
+statistical analysis of repeated measures and longitudinal data (Frees 2004, Fitz-
+maurice & Molenberghs 2004, Hooks, Marx, Kachman & Pedersen 2009, Diaz
+et al. 2013, Diaz 2017). A GLM (Nelder & Wedderburn 1972) is essentially a linear
+regression model whose response has a distribution that belongs to an exponential
+family of distributions with a possibly transformed mean response that depends
+linearly on covariates.   The richness of GLMs comes of the profound statistical
+properties of exponential families (see Shao 2003) and the fact that many useful
+families are exponential (e.g. normal, Poisson and Bernoulli). Popular GLMMs
+are the Poisson regression model with random eects (Long, Preisser, Herring &
+Golin 2015), the logistic regression model with random eects (Vermunt 2005),
+and RELMs.
+
+   The most popular estimation methods for GLMMs are maximum likelihood,
+quasi-likelihood, and generalized least squares (GLS) (Breslow & Clayton 1993,
+Rabe-Hesketh, Skrondal & Pickles 2005, Frees 2004), but robust methods such as
+the generalized method of moments (Kim & Frees 2007) and robust xed-eects
+estimation (Hausman 1978, Mundlak 1978, Frees 2001, Kim & Frees 2006, Ebbes,
+Bockenholt & Wedel 2004, Frees 2004) also exist.       These methods can estimate
+only identiable model parameters (Christensen 2011). Thus, if the design matrix
+is not of full rank, users cannot estimate all parameters. Therefore, ideally, the
+design matrix should be of full rank to ensure the estimability of all parameters
+and contrasts of interest. As illustrated in this article, the denition of covariates
+in the context of clinical trials of treatment sequences is not a trivial algebraic
+problem if we want to obtain a design matrix of full rank that includes all carry-
+over eects of interest. In this article, we propose a new model, called Antichronic
+System (AS), along with new experimental design and analysis strategies that
+assist in the construction of design matrices of full rank. Once users implement
+the proposed tools, they can utilize the usual estimation methods.
+
+   In addition to the diculties of building an appropriate design matrix, we
+face another challenge in the application of GLMMs to clinical trials of treatment
+sequences.   The treatments administered at some stages may be determined by
+(unmeasured or measured) subjects' characteristics and/or by their responses to
+treatments administered in previous stages. Problems such as self-selection, simul-
+taneity, and omitted variables may occur (Kim & Frees 2006, Ebbes et al. 2004).
+Such problems can occur, for instance, when the subjects are not randomly as-
+signed to the sequences.    They cause correlations between random eects and
+covariates and, consequently, if data analysts employ inappropriate estimation
+methods, they bias the estimators of GLMM parameters. Fortunately, the econo-
+metrics literature contains well-established solutions for analogous problems. In
+the case of RELMs, the most popular solutions are robust xed-eect estimation,
+which provides unbiased estimates of regression coecients for stage dependent
+
+
+
+                                     Revista Colombiana de Estadística   41 (2018) 191233
+
+196                                                                               Francisco J. Diaz
+
+covariates (Hausman 1978, Kim & Frees 2006), and augmented regression, which
+provides unbiased coecient estimates for time invariant covariates such as demo-
+graphics (Mundlak 1978, Frees 2001, 2004). These are the estimation methods we
+will adopt for the analysis of the STAR*D data. On the other hand, if reasons
+exist to believe that these issues did not occur, standard maximum likelihood,
+quasi-likelihood or GLS may be appropriate.
+
+      Due to the novelty of our approach and to ensure mathematical coherence,
+rigorous denitions of the new concepts will be necessary.                    In sections 2-3, we
+introduce some special sequences of treatments, called skip sequences (SSs), and
+propose that SSs be incorporated in the experimental design and analysis of trials
+because they guarantee the existence of design matrices of full rank.                      Section 4
+introduces antichronic systems (ASs), which are models of treatment sequences.
+Section 5 connects ASs with GLMMs. Section 6 presents our main results, which
+show the important role of SSs in the construction of design matrices. Theorem 2
+shows that the identiability of all model parameters is guaranteed only if SSs are
+implemented. Theorems 3-4 establish methods for implementing SSs in practice.
+Section 7 presents a test to examine whether the responses obtained in a treatment
+stage (or period) are inuenced by a previous stage. Section 8 shows an application
+to the design of cross-over trials with 3 treatments and 3 periods. Sections 9-10
+analyze the STAR*D data using ASs. See proofs of theorems in Appendix A. To
+understand some of the proofs, the reader must have a familiarity with advanced
+algebraic treatments of GLMMs (for instance, Frees 2004).
+
+
+
+
+2. Introduction to the Strategies to Obtain
+   a Design Matrix of Full Rank
+      This and the next section present a convenient notation representing the pro-
+cess of administering a sequence of medical or behavioral treatments (MBTs) to
+a subject (or a patient) suering from a chronic disease.                  Let Y be a (possibly
+transformed) variable measuring or indicating some aspect of the state of a par-
+ticular chronic disorder of a subject (or patient).               Assume the goal of a MBT
+is to modify the value of Y . Examples of Y are: 1) a dichotomous indicator of
+whether or not a child with autism has appropriate expressive language skills; 2)
+the positive or negative subscales of the PANSS syndrome scale, which measure
+schizophrenia severity; 3) blood glucose or cholesterol concentrations, which par-
+tially assess the metabolic syndrome; 4) the 17-item Hamilton Rating Scale for
+Depression (HAM-D17); or 5) the total number of abstemious days (NADs) in a
+month, which assesses chronic alcoholism.
+
+      Assume the CT consists of         at most q stages, q ≥ 2. (In a cross-over trial,
+a stage corresponds to a period.)         At Stage i, li dierent MBTs (or decisions)
+Ai,1 , . . . , Ai,li are available for administration to the subject, where li ≥ 2, i =
+1, . . . , q ; the clinician must administer one and only one of these decisions to the
+subject. The set of all decisions, {A1,1 , . . . , A1,l1 , . . . , Aq,1 , . . . , Aq,lq } is called the
+treatment pool, and Ai,1 , . . . , Ai,li are called i-stage decisions. Here, Ai,j 6= Ai,j 0
+
+                                            Revista Colombiana de Estadística      41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                       197
+
+
+               0
+for all j 6= j , but the same decision can be used in two or more dierent stages,
+                                                              0                       0
+that is, we can have that Ai,j = Ai0 ,j 0 for some i 6= i and some pair (j, j ). In other
+words, our methods can accommodate the same treatment occurring at dierent
+stages for some subjects. Also, in our formulation, the MBTs of a particular stage
+can have dierent durations. For instance, A1,1 can represent administer cognitive
+therapy for only 1 month, A1,2 can represent administer cognitive therapy for 3
+months, and so on.
+
+    Let Y0,ω be the baseline value of Y for a subject ω , measured just before the
+sequence of decisions is administered. Our formulation introduces a new mathe-
+matical object, symbolized as Ϙ (read koppa) and called the                basal backdrop. As
+explained in Section 4, Ϙ acts as a zero vector in computations. The symbol Ϙ is
+interpreted as the existing clinical context under which Y0,ω is measured, that is,
+the context before Stage 1 begins. By denition, Aij 6= Ϙ for all i and j . That is,
+no treatment from the treatment pool can be administered at baseline.
+
+    Ϙ allows representing symbolically two proposed alternative strategies for ob-
+taining a design matrix of full rank. In one strategy, Ϙ represents placebo and it
+is assumed that placebo eects are negligible. For instance, in a CT with q = 2
+stages, the pair (A1,5 , A2,3 ) represents a sequence in which a subject receives treat-
+ment A1,5 at Stage 1 and treatment A2,3 at Stage 2. In contrast, the pair (Ϙ, A2,3 )
+will be used to represent the following sequence of events: the subject is adminis-
+tered placebo at the rst stage and A2,3 at the second stage. Similarly, if q = 3,
+the triplet (Ϙ, Ϙ, A2,3 ) will indicate that the subject is administered placebo in the
+rst two stages and treatment A2,3 at the third stage. This strategy is called                 real
+placebo.
+    In the second strategy, called      virtual placebo, Ϙ symbolizes a virtual absence of
+treatment at a particular stage, but the rst treatment that the patient receives
+corresponds to a treatment from a subsequent stage. For instance, in a CT with
+q = 2 stages, the pair (Ϙ, A2,3 ) will be used to represent the following strategy:
+the subject is not administered any 1-stage treatment during Stage 1, but is ad-
+ministered A2,3 at Stage 1 instead. That is, the subject skips having a 1-stage
+treatment, receives the 2-stage treatment A2,3 right after measuring Y0,ω , andcom-
+pletes the trial at the end of Stage 1. Although A2,3 is implemented in this subject
+as if it were a 1-stage treatment, A2,3 will be treated as a 2-stage treatment in
+the design matrix. In particular, the response determined by A2,3 will be treated
+as a response measured at the end of Stage 2. Provided Y0,ω measures a stable
+illness state, this strategy is methodologically sound and does not compromise the
+conclusions of data analysis. This is a consequence of Theorem 4. As shown in
+Theorems 2 and 3, the above strategies help construct design matrices of full rank.
+
+
+
+
+3. Admissible and Skip Sequences
+    For r = 1, ..., q , a treatment sequence up to Stage r is viewed as an element
+of the Cartesian product Ar = {Ϙ, A1,1 , . . . , A1,l1 } × {Ϙ, A2,1 , . . . , A2,l2 } × · · · × {Ϙ,
+Ar,1 , . . . , Ar,lr }. For x S ∈ Ar , denote S = (S1 , . . . , Sr ), where Si ∈ {Ϙ, Ai,1 , . . . ,
+Ai,li }, i ≤ r. A sequence S ∈ Ar is called inadmissible if there exist i and j with
+
+
+                                           Revista Colombiana de Estadística    41 (2018) 191233
+
+198                                                                                         Francisco J. Diaz
+
+1 ≤ i < j ≤ r such that Si 6= Ϙ but Sj = Ϙ, or if Si = Ϙ for all i = 1, . . . , r. A
+sequence that is not inadmissible is called                   admissible. The subset of admissible
+sequences in       Ar is denoted as A∗r . An admissible sequence S = (S1 , . . . , Sr )
+is called a skip sequence (SS) if Si = Ϙ for some i. An inadmissible sequence
+S 6= (Ϙ, . . . , Ϙ) can be interpreted as a protocol violation in which a subject was
+returned at some stage ≥ 2 to baseline conditions, which are not part of the
+treatment pool.
+
+      Thus, any admissible sequence can be written as either
+
+
+        (A1,j1 , A2,j2 , . . . , Ar,jr ), (Ϙ, A2,j2 , . . . , Ar,jr ), . . . , or (Ϙ, Ϙ, . . . , Ϙ, Ar,jr ),
+
+for some      r = 1, ..., q and some ji 's such that ji ∈ {1, ..., li }.                    Only admissible
+sequences will be used in our model.                     Examples of admissible sequences in A3
+are    (A1,2 , A2,2 , A3,1 ), (Ϙ, A2,2 , A3,1 ), and (Ϙ, Ϙ, A3,1 ).           All these except the rst
+are skip.      In the second sequence, under a virtual-placebo strategy, the subject
+skipped receiving any 1-stage treatment, but received A2,2 at Stage 1 and A3,1
+at Stage 2, completing the trial at the end of Stage 2. In the third sequence, the
+subject "skipped" receiving 1- and 2-stage treatments, but received A3,1 at Stage 1
+and completed the trial at the end of Stage 1. Examples of inadmissible sequences
+are (A1,2 , Ϙ, A3,1 ) ∈ A3 ,       (A1,2 , A2,2 , Ϙ) ∈ A3 , (A1,2 , Ϙ) ∈ A2 and S = (Ϙ, . . . , Ϙ).
+
+
+4. Antichronic Systems
+      This section presents a new model of sequences of decisions.                                We assume
+that there is a clearly dened population of subjects to whom admissible se-
+quences of possibly dierent lengths will be administered.                              Suppose a subject
+experienced (or was administered) a sequence               S ∈ A∗r . Under a real placebo
+strategy, we assume that the subject's response Y was measured at the end of
+stages 1, . . . , r . Alternatively, under a virtual placebo strategy, we assume that
+the response was measured at the end of stages m(S), m(S) + 1, . . . , r , where
+m(S) = min {i; 1 ≤ i ≤ r, Si 6= Ϙ}. Measured responses from subject ω are denoted
+as Yk,ω with k ∈ {0, 1, . . . , r} under real placebo, or k ∈ {0, m(S), m(S) + 1, . . . , r}
+under virtual placebo. Thus, after administering S , the subject's response vec-
+           (r)        (r)
+tor is Y ω     = Y ω (S) = (Y0,ω , Y1,ω , . . . , Yr,ω ) T under real placebo, but it is =
+  Y0,ω , Ym(S),ω , Ym(S)+1,ω , . . . , Yr,ω T under virtual placebo. Under virtual placebo,
+if Si = Ϙ for some particular i, Yi,ω is undened. However, Y0,ω must be measured
+in both approaches.
+
+      Importantly, our model identies decision Ai,j with a                         row vector of dimen-
+sion   li which has 1 in its j -th component but 0 elsewhere. (That is, Ai,j =
+(0, ..., 0, 1, 0, ..., 0) ∈ Rli ). Also, if Ϙ occurs at Stage i, we identify Ϙ with the
+                                                                   l
+zero row vector of dimension li . [That is, Ϙ = 0 ∈ R i .] Thus, a sequence
+S = (S1 , . . . , Sr ) is viewed as a sequence of row vectors S1 , . . . , Sr such that Si has
+dimension li .
+
+Denition 1. A set C of admissible sequences is called an antichronic system
+(AS) if, for subject ω , there exist a unique number αω and unique column vectors
+
+
+
+                                                  Revista Colombiana de Estadística          41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                          199
+
+
+
+β ij,ω of dimension li , i = 1, . . . , j, j = 1, . . . , q , such that, for all r = 1, . . . , q , if
+the subject experiences sequence S = (S1 , . . . , Sr )∈ C , then
+
+                                                                  k
+                                                                  X
+         Eω [Y0,ω ] = g −1 (Λω ) ,     Eω [Yk,ω ] = g −1 (Λω +          Siβ ik,ω ) ,      and
+                                                                  i=1
+
+                                              Λω = αω + λ T Xω                                     (1)
+
+where k = 1, . . . , r if real placebo is implemented, or k = m(S), . . . , r under virtual
+                                                                          ∗
+placebo. We assume C includes at least one sequence in Aq .
+
+    Here, g is a known link function and Eω [ · ] represents conditional expectation
+given subject ω , that is, given both Λω and β ij,ω , i = 1, . . . , j, j = 1, . . . , q . In
+addition, Xω is a p×1 vector of baseline clinical, environmental, genetic, biological
+                                               p
+or demographic covariates, and λ ∈ R . The number αω and the vectors β ij,ω are
+all characteristic constants of subject ω (they do not change over time). However,
+some of them may vary from subject to subject. Thus, at the subject population
+level, αω and β ij,ω are viewed as particular realizations of a random variable α and
+a random vector β ij , which may possibly take on constant values. It is possible to
+assume that λ varies from subject to subject, but the simpler model that assumes a
+xed λ will suce to introduce our ideas. For xed ω , under real placebo, the con-
+ditional distributions of Y0,ω , Y1,ω , . . . , Yr,ω belong to the same exponential family
+(e.g.   normal, Poisson or Bernoulli), although with possibly dierent parameter
+values. Similarly, under virtual placebo and xed ω , the conditional distributions
+of Y0,ω and Ym(S),ω , . . . , Yr,ω belong to the same exponential family. Importantly,
+observe Siβ ik,ω    = 0 if Si = Ϙ, because Ϙ acts as a zero vector in computations
+(that is, Si = 0 in that case).
+                                                   S
+                                                       Pk
+    To interpret equation (1), denote βk,ω =              i=1 θik,ω with θik,ω = Siβ ik,ω . The
+         S
+eect βk,ω of subsequence (S1 , . . . , Sk ) on Yk,ω is equal to the sum:                   Eect of
+1-stage treatment on Yk,ω (that is,            θ1k,ω ) plus eect of 2-stage treatment on
+Yk,ω  (θ2k,ω ) plus . . .plus eect of k -stage treatment on Yk,ω  (θkk,ω ). Thus, by
+                                               T
+denoting β ik,ω = (βik,ω,1 , . . . , βik,ω,li ) , we see that βik,ω,j is the eect of decision
+Ai,j on response Yk,ω , if decision Ai,j was actually taken at stage i, i ≤ k . Note
+that we can easily model        delayed treatment eects. For instance, if higher values
+of Y represent a less severe illness, and if βik,ω,j            > 0, but βir,ω,j ≤ 0 for all r
+with i ≤ r < k , then βik,ω,j can be interpreted as a               delayed benecial eect of
+treatment Ai,j on response Yk,ω . Finally, note we are measuring all these eects
+with respect to baseline conditions.
+
+    The virtual placebo approach requires an additional assumption. To present
+the assumption, we need the concept of interchangeable sequences.             Let r and
+t be such that 1 ≤ r < t ≤ q . We say that a sequence S = (S1 , . . . , Sr ) ∈
+A∗r is interchangeable with a sequence T ∈ A∗t if T = (Ϙ, . . . , Ϙ, S1 , . . . , Sr ). As
+an interpretation, the skip sequence T may represent the hypothetical situation
+in which the administration of S was postponed t − r stages but the baseline
+conditions did not change during the rst t − r stages.
+
+    Interchangeability assumption for virtual placebo: Suppose S ∈ A∗r and T ∈ A∗t
+                                                                                            (t)
+are interchangeable sequences.           Then, for a particular subject                ω , Yω (T ) has
+
+
+                                            Revista Colombiana de Estadística      41 (2018) 191233
+
+200                                                                            Francisco J. Diaz
+
+                                (r)
+the same distribution as Yω           (S). Thus, interchangeable sequences S and T will
+potentially produce the same responses in a subject. Consequently, the eect of
+treatment sequence S will not change in the hypothetical situation that we delay
+the administration of the sequence t − r stages, provided the subject continues on
+the baseline clinical backdrop (Ϙ) during the delay.
+
+      The practical consequence of the Interchangeability Assumption is that the
+eect of T = (Ϙ, . . . , Ϙ, S1 , . . . , Sr ) on a subject ω can be examined by administering
+S = (S1 , . . . , Sr ) right after measuring Y0,ω , and labeling the obtained responses as
+Yt−r+1,ω , Yt−r+2,ω , . . . , Yt,ω . That is, we do not need to delay the administration
+of S by administering placebo during the rst t − r stages, and we can use the
+responses to S to incorporate T in the design matrix. Thus the name virtual
+placebo.     We demonstrate in Section 6 that this approach is valid under the
+Interchangeability Assumption and that we need sequences like                   T in order to
+build a design matrix of full rank. This approach is recommendable when placebo
+is unfeasible or unethical, but other applications are possible as illustrated in
+Sections 9-10.    Note that the Interchangeability Assumption is an assumption
+about particular sequences S and T . Not all sequences of an AS have to satisfy
+interchangeability assumptions in order for the virtual placebo approach to be
+applicable.
+
+      Finally, note that both equation (1) and the Interchangeability Assumption
+implicitly require that Y0,ω measures a stable illness state (relative to sequence
+duration).    That is, they are applicable if the subject's baseline state will not
+change rapidly in the hypothetical situation that the subject is not intervened.
+That subjects must enter the study in a stable condition is an inclusion criterion
+of many clinical trials.
+
+
+
+
+5. Matrix Representation of Responses
+      Next we exhibit the connection between ASs and the algebraic machinery that
+underlies GLMMs.       To motivate the connection using q = 2, suppose subject ω
+                                           ∗
+was administered S = (S1 , S2 ) ∈ A2 with S1 6= Ϙ. Then, by equation (1),
+
+
+
+                             *          *          *
+           g Eω [Y0,ω ] = Λω + 0 β 11,ω + 0 β 12,ω + 0 β 22,ω
+                                        *          *
+           g Eω [Y1,ω ] = Λω + S1β 11,ω + 0 β 12,ω + 0 β 22,ω
+                             *
+           g Eω [Y2,ω ] = Λω + 0 β 11,ω + S1β 12,ω + S2β 22,ω
+
+
+                                       *   *       *
+                                                                 Λω
+                                                                    
+                                1      0       0   0
+                                          *       *          β 11,ω 
+                         =
+                           1         S1       0   0 
+                                                     
+                                                              
+                                                               β
+                                                                       
+                                                                                           (2)
+                                       *                          12,ω
+                                1      0   S1      S2 3×(m +1) β 22,ω
+                                                          2             (m +1)×12
+
+
+
+
+                                           Revista Colombiana de Estadística   41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                                     201
+
+
+
+where the ~
+          0 's represent row vectors, not all of them with the same dimension, and
+m2 = 2l1 + l2 . If S1 = Ϙ, we treat S1 as a zero vector; and if a virtual placebo
+approach is followed we do not use the equation at the second row.
+                                                                       ∗
+    In general, suppose that S = (S1 , . . . , Sr ) ∈ Ar .                  If the study follows a real
+placebo strategy, we dene
+
+  V = V (S) =
+
+   *         *     *      *               *      *      *     *      *                       
+    0         0      0     0     ···       0      0      0      0     0     0    ···      0
+             *     *      *               *      *      *     *      *                     
+   S1
+   *         0      0     0     ···       0      0      0      0     0     0 ···         0 
+                                                                                            
+                          *               *      *      *     *      *                     
+   0
+   *        S1     S2     0     ···       0      0      0      0     0     0 ···         0 
+              *     *                      *      *      *     *      *                     
+   0         0      0     S1    ···       0      0      0      0     0     0    ···      0                 (3)
+                                                                                           
+   ..         .     .      .              .       .      .     .      .     .            . 
+                                                                                           
+               .     .      .    ..        .       .      .     .      .     .   ..       . 
+   .          .     .      .         .    .       .      .     .      .     .        .   .
+   *         *     *      *                      *      *            *                     
+   0         0      0     0     ···      Sr−1    0      0     ···    0     0    ···      0 
+                                                                                           
+       *      *     *      *               *
+       0      0     0      0     ···       0      S1    S2     ···    Sr    0    ...      0       (r+1)×mq
+                   Pq
+where mq       =      i=1 ui , with ui = l1 + · · · + li . If the study implements virtual
+placebo and S is not skip, V        = V (S) is dened exactly as in equation (3); but if S
+is skip, V is dened as the matrix obtained after eliminating rows 2 through m(S)
+from the matrix in (3).
+
+    The number of rows of V is equal to the dimension of the subject's response
+Y (r)
+  ω (S). The rst row of V includes only zeros because, by equation (1), Y0,ω does
+not depend on any investigated MBT. All V matrices need to be put on top of
+each other to build the study design matrix. Therefore, they must have the same
+number of columns. For this reason, if r < q , the last mq − mr columns of V must
+contain only zeros. If r = q , the additional zero columns in equation (3) are not
+needed. The following theorem gives a matrix representation of responses.
+
+Theorem 1. Let C be an antichronic system and suppose that, by the end of Stage
+r, r ≤ q , a particular subject ω with covariate vector Xω has been administered
+sequence S = (S1 , . . . , Sr ) ∈ C . Then,
+                                           = g −1 (Wω γ ω ) , where
+                                   h     i
+                              Eω Y (r) ω
+                                                               T
+                                     γ ω = αω , λ T , δ (q)ω       ,
+δ (q)   β T11,ω , β T12,ω , β T22,ω , β T13,ω , β T23,ω , β T33,ω , . . . , β T1q,ω , β T2q,ω , . . . , β Tqq,ω ,
+                                                                                                           
+  ω =
+
+                                            X ω , . . . , X ω ]T and 1 = (1, . . . , 1)T
+             Wω = [11, X ∗ω , V ] , X ∗ω = [X
+(X∗ω and 1 have the same number of rows as V .) For convenience, we denote
+                                                           T
+                          = g −1 (a1 ) , . . . , g −1 (ak ) .
+                         
+                       T
+g −1 (a1 , . . . , ak )
+
+    Theorem 1 shows that an AS is algebraically analogous to a GLMM of re-
+peated measures of Y . Specically, g (Eω [Yr,ω ]) depends linearly not only on the
+
+
+
+                                                 Revista Colombiana de Estadística            41 (2018) 191233
+
+202                                                                                                   Francisco J. Diaz
+
+covariates in Xω but also on stage-dependent covariates whose values for a sub-
+ject who underwent sequence S = (S1 , . . . , Sr ) are given in the rst mr columns
+of V (S).      Thus, at least in principle, to estimate AS parameters, we can adapt
+standard software for tting GLMMs (or RELMs in the case of Gaussian response
+with identity link). For example, we can use SAS GLIMMIX or MIXED proce-
+dures (SAS Institute Inc, Cary, NC, USA) or Stata's meglm and mixed commands
+(StataCorp LP, College Station, TX, USA). Stata's xtreg command with the option
+fe provides xed-eects estimators for RELMs, which are robust to self-selection,
+simultaneity and omitted variables (Hausman 1978, Ebbes et al. 2004, Kim &
+Frees 2006). The option vce(robust) additionally provides Huber/White estima-
+tors of standard errors, which are robust to covariance matrix misspecications
+(Huber et al. 1967, White 1982).
+
+      Fitting an AS requires that appropriate (stage-dependent) covariates be cre-
+ated, using matrix V (S) as a template. The supplementary material, described
+in Appendix C, provides a Stata ado program written by the author, called as-
+design, which creates the covariates. The help le of asdesign provides additional
+instructions to t an AS.
+
+      Here, we are interested in estimating the                       xed eects vector E[γγ ], where γ =
+                 T
+      λT
+ α, λ , δ  δ (q)      and
+
+            δ (q) =       β T11 , β T12 , β T22 , β T13 , β T23 , β T33 , . . . , β T1q , β T2q , . . . , β Tqq
+                                                                                                            
+
+(We interpret γ ω as a constant vector characterizing one particular subject, which
+is a realization of the random vector γ .)                           If the experimental design does not
+incorporate SSs, however, the study design matrix will not be of full rank and,
+             γ ] will not be identiable. We show this in Theorems 2-3.
+therefore, E[γ
+
+      Finally, note that the Interchangeability Assumption does not participate in
+the proof of Theorem 1. This assumption is required to prove Theorem 4, which
+guarantees that the introduction of SSs for the virtual placebo approach will not
+aect parameter interpretation.
+
+
+
+
+6. Experimental Designs and Data Analysis
+   Strategies for Antichronic Systems
+      This section presents the crux of our proposal: to estimate all AS model pa-
+rameters, CTs of treatment sequences must incorporate SSs in their experimental
+                                                                    γ ] identi-
+design and/or data analysis. First, we show we need SSs to render E[γ
+able. Then we explain strategies for constructing SSs in practice.
+
+      In the context of a CT, let S
+                        (1) (2)
+                                       (1)
+                                           , S (2) , . . . , S (d) be distinct admissible sequences.
+Assume that C =         S , S , . . . , S (d) is an AS, and that we have a sample of
+N subjects, each of whom experienced one sequence                           in C . Suppose Ni subjects
+                           (i)
+                                                               Pd
+completed sequence S           , i = 1, . . . , d, where           i=1 i = N and Ni ≥ 1 for all i.
+                                                                       N
+For S = (S1 , . . . , Sr ) ∈ C , if subject ω has covariate vector Xω and underwent
+sequence S , the matrix Wω = W (S, X ω ) = [1                   1, X ∗ω , V (S)] is the subject 's design
+matrix (DM), ω = 1, . . . , N .
+
+                                                      Revista Colombiana de Estadística               41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                                203
+
+
+
+                                            γ ] will be identiable if and only
+    Under the usual assumptions of GLMMs, E[γ
+
+         study design matrix K = W1T , . . . , WNT T is of full rank, regardless of the
+                                                           
+if the
+                          γ ] (for instance, quasi-likelihood, maximum likelihood,
+method used to estimate E[γ
+generalized method of moments or robust xed-eect estimation) (see Christensen
+2011). The following theorem indicates the importance of SSs for the estimation
+     γ ].
+of E[γ
+
+                                                               T  T
+Theorem 2. Let D = W S (1) , . . . , W S (d)          , where W (S) = [11, V (S)].
+                                         T
+
+A necessary condition for K to be of full rank is that the following two facts
+simultaneously occur: (1) ρ(K) = ρ(D)+p, and (2) at least one subject experiences
+a treatment sequence S ∈ C such that S is skip. (Here, ρ(A) = rank of A.)
+    The practical consequence of Theorem 2 is that, to estimate                         E[γγ ] through
+any method implemented in statistical software for GLMMs without imposing
+                             γ ], the clinical trial must implement SSs. Appendix
+additional restrictions on E[γ
+B illustrates ASs with a DM of full rank.               In practice, at the design stage of a
+CT, we must add SSs to the set of investigated treatment sequences until D is of
+full rank. This sometimes can also be done at the data analysis stage of existing
+data, as in Section 9.       With existing data, however, it is not always possible to
+implement an adequate amount of SSs (see below). Condition 1 of Theorem 2 is
+achieved when the covariates in X ω are not perfectly correlated with each other
+and the nal sequence allocations.
+
+    The next theorem will be useful to nd the appropriate SSs at the design stage
+of a CT.
+
+Theorem 3. Suppose S h1i , . . . , S hci are c distinct non-skip sequences in A∗q , which
+will occur with positive probability in the CT. Assume that each 1-stage treatment
+will be administered in the rst stage of at least one of these sequences. Denote
+                               T               T iT         q
+                                                      and τ =
+                        h                                   X
+                  Γ=      S h1i , . . . , S hci                 li − ρ(Γ)
+                                                                        i=1
+
+
+Then, there exist τ skip sequences SϘh1i , . . . , SϘhτ i such that D = D1T , D2T T is of
+                                                                                               
+
+full rank, where
+                                          T                                             T
+                                             and D2 = W (SϘh1i )T , . . . , W (SϘhτ i )T
+                                                    
+   D1 = W (S h1i )T , . . . , W (S hci )T
+
+                                                     γ ] will be identiable and
+    The practical implication of Theorem 3 is that E[γ
+                                                                                   h1i
+therefore     estimable if the CT implements all the sequences S                       , . . . , S hci ,
+  h1i         hτ i                      h1i      hτ i
+SϘ , . . . , SϘ . That is, adding SϘ , . . . , SϘ to the design will produce a de-
+sign matrix of full rank. The theorem's proof actually establishes a procedure
+                   h1i     hτ i                 h1i
+to construct SϘ , . . . , SϘ    starting from S     , . . . , S hci . In essence, these SSs are
+taken from some of the families of SSs,
+
+
+      F (Ai,j ) = (S1 , . . . , Sq ) ∈ A∗q ; Si = Ai,j and Sk = Ϙ for k < i ,
+                 
+
+                                                               i = 2, . . . , q and j = 1, . . . , li
+
+
+                                             Revista Colombiana de Estadística       41 (2018) 191233
+
+204                                                                                                Francisco J. Diaz
+                         Pq
+There are a total of         i=2 li families, but only τ of them need to be used. To illus-
+trate, for q = 4, any member of the family F (A2,3 ) can be written as (Ϙ, A2,3 , B, C),
+where B and C are 3-stage and 4-stage treatments.
+                                                                h1i             hτ i
+      Specically, the procedure to construct SϘ                      , . . . , SϘ     consists of the following
+easy steps: (1) Using the treatment names, label the columns of Γ.                                       With our
+notation, the labels are
+
+
+                    A1,1 , . . . , A1,l1 , A2,1 , . . . , A2,l2 , . . . , Aq,1 , . . . , Aq,lq ,
+
+from the left to the right column of Γ. (2) Convert Γ into an echelon matrix using
+only elementary row operations, and then identify the columns of the echelon that
+                                  h1i
+do not have a pivot. Let A            , . . . , Ahτ i denote their labels. (3) Lastly, for each
+                             hki
+k = 1, . . . , τ , choose SϘ from the family F Ahki . We recommend choosing the
+                                                              
+                      hki
+                          
+sequence in F A             that both can be implemented in practice and will cause the
+lightest burden for the subjects.
+                                          For each k , the CT has to implement at least
+one SS from the family F             Ahki . Otherwise, E[γγ ] will not be estimable. Section
+8 illustrates this procedure for a cross-over design.
+
+      As explained in Section 2, two general strategies to implement SSs in practice
+are possible: real and virtual placebo.                  In the real placebo strategy, the trialist
+implements sequence          S by administering a placebo at each stage k with k <
+m(S). The rest of this section elaborates further on virtual placebo. This strategy
+exploits the following theorem, which is a consequence of the Interchangeability
+Assumption.
+
+
+Theorem 4. Let C be an antichronic system and S, T ∈ C . Suppose that S =
+(S1 , . . . , Sr ) ∈ A∗r is interchangeable with T ∈ A∗t , where r < t. Then, for a
+specic subject ω,
+                         g −1 (W (S, X ω ) γ ω ) = g −1 (W (T, X ω ) γ ω )
+
+     The practical consequence of Theorem 4 is that we can use W (T, X ω ) in place
+of   W (S, X ω ) in order to code the covariates of a subject who experienced S .
+The theorem guarantees that doing this will not aect the interpretation of model
+                          γ ].
+parameters contained in E[γ
+
+      As suggested by Theorem 4, T = (Ϙ, . . . , Ϙ, S1 , . . . , Sr ) can be implemented in a
+CT by administering S = (S1 , . . . , Sr ) without delay after measuring Y0,ω , labeling
+the obtained r responses as Yt−r+1,ω , Yt−r+2,ω , . . . , Yt,ω . For instance, suppose that
+q = 3 and that (Ϙ, Ϙ, A) is needed, where A is a 3-stage treatment. To implement
+this sequence, some subjects are administered treatment A right after measuring
+Y0,ω , without a previous administration of 1-stage or 2-stage treatments. Then, the
+response produced by A is labeled as Y3,ω . Responses to 1- or 2-stage treatments
+will not be needed from these subjects, because the DMs of these subjects will not
+have rows corresponding to these stages.
+
+      Under some circumstances, we can use virtual placebo in the analysis of data
+from studies that did not implement SSs in their protocol. The method constructs
+SSs at the data-analysis phase of the study and is also based on Theorem 4. To
+
+
+
+                                                 Revista Colombiana de Estadística                 41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                205
+
+
+
+code the covariates of a subject who experienced S , we can use W (T, X ω ) in place
+of W (S, X ω ) if the skip sequence T is needed to construct a study design matrix of
+full rank and S is interchangeable with T . For instance, for q = 2, suppose that A
+is   simultaneously a 1-stage and 2-stage treatment, and that, after providing Y0,ω ,
+a particular subject was administered A at Stage 1, then the subject provided Y1,ω
+at the end of this stage, but then he/she dropped out of the study right after that.
+                                                       ∗
+These events can be represented as S = (A) ∈ A1 . Matrix V (S) corresponding
+                                                                         γ ], we
+to S = (A) can be used to construct K . But if we need SSs to estimate E[γ
+can use matrix V (T ) instead, where T      = (Ϙ, A) ∈ A∗2 , and relabel Y1,ω as Y2,ω .
+We followed this method in the analysis of the STAR*D data in Sections 9-10.
+Clearly, this approach to data analysis is not always applicable to studies that
+were not designed with SSs in mind, because it requires that some treatments be
+simultaneously administered at two or more dierent stages, and appropriate SSs
+may not always be available. This also highlights the importance of incorporating
+SSs at the planning stage of a CT.
+
+
+
+
+7. Eect of a Stage on Future Responses
+      ASs allow testing naturally the null hypothesis that clinical decisions made at
+a particular stage do not aect the subjects' responses in future stages. Note that
+β ik includes all the eects of i -stage treatments on Yk,ω . If β ik 6= 0, we say that
+Stage i aects Yk,ω . The importance of this concept is that if β ik = 0 for i < k ,
+then clinical decisions made at Stage i will not aect the response measured at
+Stage k , and there are no delayed eects of Stage i on Yk,ω . To examine whether
+Stage i does not aect Yk,ω we test the null hypothesis, β ik = 0. This test can
+be implemented with standard statistical software for tting GLMMs, examining
+the joint signicance of the covariates corresponding to β ik . These covariates are
+called i-to-k   transition covariates. For a particular subject, the values of these
+(stage-dependent) covariates are in columns c1 through c2 of matrix V , where
+                Pi−1                        Pi
+c1 = mk−1 +    j=1 lj +1 and c2 = mk−1 +      j=1 lj . For convenience, the covariates
+corresponding to β ii are called i-stage covariates; these are also stage-dependent.
+
+      For instance, for q   = 2, the third terms of the equations in (2) contain the
+1-to-2 transition covariates. There are l1 of these covariates, one for each 1-Stage
+treatment. Similarly, rst and second stage covariates are in the second and fourth
+terms, respectively. Tables 2 and 5 illustrate these types of covariates for the cross-
+over example (Section 8) and the STAR*D data (Section 9), respectively.
+
+
+
+
+                                       Revista Colombiana de Estadística   41 (2018) 191233
+
+206                                                                       Francisco J. Diaz
+
+8. Application: Improving a Cross-Over Design with
+   3 Treatments and 3 Periods
+      This Section illustrates an application of the proposed methodology to the
+design of a cross-over study of 3 treatments administered in 3 periods. The treat-
+ments are denoted A, B and C .       Specically, we show how placebo can be im-
+plemented in order to achieve the estimability of carry-over eects. Suppose the
+trialist wants to implement 6 sequences arranged in 2 Latin squares, as follows
+(Senn 2002):
+
+                                       A B C
+                                       B C A
+                                       C A B
+                                       A C B
+                                       B A C
+                                       C B A
+We assume a baseline measure is obtained prior to the administration of a sequence.
+We also assume a normal response Y , independent and identically distributed ran-
+dom errors, and a random intercept representing subjects's heterogeneity (Jones
+& Kenward 2015). Cross-over studies often assign the same number of subjects to
+the investigated sequences, but we do not need to assume this for this illustration.
+
+      Table 1 shows the expected responses by sequence and period for the above
+sequences, assuming the responses satisfy an AS (sequences 1-6).            In Table 1, a
+parameter τAij measures the eect of treatment A on Y , when A is administered
+in period i and Y is measured at the end of period j , for i ≤ j and i, j = 0, 1, 2, 3.
+This eect is measured relative to the average baseline response µ.            The eects
+of treatments    B and C are dened analogously.        Table 1 also shows expected
+responses for some skip sequences (sequences 7-12). Here, we interpret Ϙ as placebo
+and assume placebo has negligible eects on Y .
+
+      We built the DM corresponding to sequences 1-6 without assuming any linear
+constraint on model parameters. For a design with only one subject per sequence,
+the DM is shown in Table 2. For a study with more than one subject in a sequence,
+the study DM will include the rows corresponding to the sequence as many times
+as subjects are assigned to the sequence. As predicted from Theorem 2, the matrix
+in Table 2 (and the study DM in general) are not of full rank.
+
+      Here, we are interested in estimating the percent contribution of carry-over to
+the total eect of a treatment sequence. For instance, the percent contribution of
+carry over to the total eect of sequence ABC is dened as
+
+                                 τA13 + τB23
+                                                   × 100
+                            µ + τA13 + τB23 + τC33
+Similarly, the contribution of carry-over to the total eect of the partial sequence
+AB is
+                                     τA12
+                                                × 100
+                                µ + τA12 + τB22
+Carry-over contributions for other sequences are dened analogously.
+
+
+                                      Revista Colombiana de Estadística   41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                               207
+
+
+Table 1: Expected responses under a cross-over design with 3 treatments, 3 periods
+         and 6 sequences (Sequences 1-6), assuming an antichronic system. Expected
+         responses for some skip sequences are also shown (Sequences 7-12). Placebo
+         is symbolized with Ϙ.
+
+                                                   Period
+       Sequence      0 Baseline       1                 2                    3
+  1
+
+  2
+
+  3
+
+  4
+
+  5
+
+  6
+
+
+  Some skip sequences:
+
+  7
+
+  8
+
+  9
+
+  10
+
+  11
+
+  12
+
+
+
+      In general, however, if the cross-over trial includes only sequences 1-6, the
+numerators of the carry-over contributions will not be estimable and, therefore,
+we will not be able to estimate the carry-over contributions. To demonstrate this
+assertion, we used Searle criterion for estimability (Searle 1966).         According to
+this criterion, if τ is the column vector containing the 19 parameters in Table 1
+(including µ), L is a row vector, and L τ is a contrast of these parameters, then
+L τ is estimable if and only if
+
+                              L − L(M T M )− M T M = 0
+
+where M is the matrix in Table 2 and (M
+                                              T
+                                                  M )− is the Moore-Penrose inverse of
+  T
+M M (Bronson 1989).         Using Searle criterion, we found that all parameters in
+Table 1 are nonestimable, except µ, τA11 , τB11 and τC11 , if only sequences 1-6 are
+implemented in the trial. In addition, although the denominators of all percent
+carry-over contributions are estimable, the numerators are not.
+
+      To assess carry-over contributions, the estimability of all model parameters is
+needed. By Theorem 2, we will be able to achieve estimability if we add SSs to
+
+
+
+                                      Revista Colombiana de Estadística   41 (2018) 191233
+
+208                                                                       Francisco J. Diaz
+
+the design.     Figure 1 illustrates how to compute appropriate skip sequences in
+accordance to the procedure explained after Theorem 3. The top portion of the
+gure shows the matrix Γ, whose six rows represent sequences 1-6.                  The gure
+also shows the reduced row echelon form of matrix Γ. Since the echelon has four
+columns without pivots, at least four skip sequences are necessary to achieve the
+estimability of all model parameters.     The bottom of Figure 1 suggests that we
+need to add to the design the sequences (Ϙ, Ϙ, A), (Ϙ, Ϙ, B) and (Ϙ, Ϙ, C), and at
+least one of the sequences (Ϙ, C, T ) with T = A, B, or C . Thus, for instance, if at
+least one subject is randomized to each of the sequences 1-10 in Table 1, percent
+carry-over contributions can be estimated. Table 3 shows the DM corresponding
+to the skip sequences 7-10 in Table 1, assuming only one subject per sequence
+and without imposing any parameter constraint.          The reader can verify that if
+Tables 2 and 3 are combined, the resultant matrix is of full rank as predicted from
+Theorem 3. Therefore, the study DM of a cross-over trial including sequences 1-10
+will be of full rank, provided that at least one subject undergoes each sequence.
+We computed the Moore-Penrose inverse with SAS PROC IML (SAS Institute
+Inc.) and the echelon matrix in Figure 1 with the calculator TI-Nspire CX CAS
+(Texas Instruments Inc.).
+
+
+
+
+                                   Period 1            Period 2                 Period 3
+
+                Sequence
+                               1      0       0    0      1       0       0        0       1
+                               0      1       0    0      0       1       1        0       0
+      Γ                        0      0       1    1      0       0       0        1       0
+                               1      0       0    0      0       1       0        1       0
+                               0      1       0    1      0       0       0        0       1
+                               0      0       1    0      1       0       1        0       0
+
+                               1      0       0    0      0           1     0        1       0
+                               0      1       0    0      0           1     1        0       0
+      Echelon                  0      0       1    0      0           1     1        1     ̶ 1
+                               0      0       0    1      0       ̶ 1     1
+                                                                          ̶          0       1
+                               0      0       0    0      1         ̶
+                                                                    1       0      ̶ 1       1
+                               0      0       0    0      0           0     0        0       0
+
+ Columns without pivots
+
+Figure 1: Illustration of the computation of skip sequences for a cross-over design with
+          3 treatments, 3 periods and 6 sequences, according to Theorem 3.
+
+
+
+
+                                      Revista Colombiana de Estadística    41 (2018) 191233
+
+                                     Table 2: Design matrix for sequences 1-6 in Table 1, assuming an antichronic system. The parameter corresponding to a particular column
+                                              is shown at the top of the column. For a study with Ni subjects on a sequence, the complete study design matrix includes the
+                                              four rows of the sequence Ni times.
+
+                                                                        Period 1       1‐to‐2 transition       Period 2       1‐to‐3 transition   2‐to‐3 transition       Period 3
+
+                                             Sequence Period
+
+                                             1           0     1    0       0      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             1           1     1    1       0      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             1           2     1    0       0      0     1      0     0    0       1      0     0      0     0      0      0     0    0       0      0
+                                             1           3     1    0       0      0     0      0     0    0       0      0     1      0     0      0      1     0    0       0      1
+                                             2           0     1    0       0      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             2           1     1    0       1      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             2           2     1    0       0      0     0      1     0    0       0      1     0      0     0      0      0     0    0       0      0
+                                             2           3     1    0       0      0     0      0     0    0       0      0     0      1     0      0      0     1    1       0      0
+                                             3           0     1    0       0      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             3           1     1    0       0      1     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             3           2     1    0       0      0     0      0     1    1       0      0     0      0     0      0      0     0    0       0      0
+                                             3           3     1    0       0      0     0      0     0    0       0      0     0      0     1      1      0     0    0       1      0
+                                             4           0     1    0       0      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                                                                                                                                                                         Design Matrix for Clinical Trials of Treatment Sequences
+
+
+
+
+                                             4           1     1    1       0      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             4           2     1    0       0      0     1      0     0    0       0      1     0      0     0      0      0     0    0       0      0
+                                             4           3     1    0       0      0     0      0     0    0       0      0     1      0     0      0      0     1    0       1      0
+                                             5           0     1    0       0      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+
+
+
+
+ Revista Colombiana de Estadística
+                                             5           1     1    0       1      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             5           2     1    0       0      0     0      1     0    1       0      0     0      0     0      0      0     0    0       0      0
+                                             5           3     1    0       0      0     0      0     0    0       0      0     0      1     0      1      0     0    0       0      1
+                                             6           0     1    0       0      0     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             6           1     1    0       0      1     0      0     0    0       0      0     0      0     0      0      0     0    0       0      0
+                                             6           2     1    0       0      0     0      0     1    0       1      0     0      0     0      0      0     0    0       0      0
+                                             6           3     1    0       0      0     0      0     0    0       0      0     0      0     1      0      1     0    1       0      0
+
+
+
+
+41 (2018) 191233
+                                                                                                                                                                                                209
+
+Francisco J. Diaz
+
+
+
+
+                                                                                                                                                                     41 (2018) 191233
+                    Table 3: Design matrix for the four skip sequences, (Ϙ, Ϙ, A), (Ϙ, Ϙ, B ), (Ϙ, Ϙ, C ) and (Ϙ, C , A). Combining this matrix with that in Table
+                             2 produces a matrix of full rank. The rows corresponding to a particular sequence must be included in the study design matrix
+                             as many times as subjects are assigned to the sequence.
+
+
+
+
+                                                                                                                                                                          Revista Colombiana de Estadística
+                                                   Period 1       1‐to‐2 transition       Period 2       1‐to‐3 transition   2‐to‐3 transition       Period 3
+                      Sequence Period
+                      7             0     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      7             1     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      7             2     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      7             3     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     1     0        0
+                      8             0     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      8             1     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      8             2     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      8             3     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     1        0
+                      9             0     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      9             1     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      9             2     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      9             3     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        1
+                      10            0     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      10            1     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      0     0     0        0
+                      10            2     1    0      0       0    0     0      0     0      0       1    0     0      0      0     0      0     0     0        0
+                      10            3     1    0      0       0    0     0      0     0      0       0    0     0      0      0     0      1     1     0        0
+    210
+
+Design Matrix for Clinical Trials of Treatment Sequences                              211
+
+
+
+9. Application: Fitting an AS to the STAR*D Data
+   In this section, we use virtual placebo for the analysis of the STAR*D clinical
+trial database which was provided by the National Institutes of Mental Health.
+The author did not conduct this clinical trial or participate in it. The STAR*D
+study investigators have declared in their publications that the study was approved
+by ethical committees and that patient consents were obtained (Fava et al. 2003).
+The database provided to the author did not contain information identifying the
+subjects, and the author maintained the database in a password-protected com-
+puter system.
+
+   The STAR*D study investigated 4,041 adult subjects with non-psychotic ma-
+jor depressive disorder (Fava et al. 2003).   We analyzed the 1,439 subjects who
+did not have an acceptable response to Citalopram (CIT) monotherapy but con-
+tinued in the study receiving alternative treatments.      Here, Y is the HAM-D17
+total depression score and Y0,ω is the score obtained right after CIT monotherapy
+ended. The HAM-D17 scale produced values from 0 to 42 inclusive, and all integer
+numbers in this range were observed in the patient population. Thus, we treated
+the HAM-D17 score as a continuous variable, as most statisticians would do in
+practice. An AS model with identity link and Gaussian response was tted. The
+design matrix K was built using our Stata program asdesign (see Appendix C).
+
+   Alternative treatments given right after Citalopram monotherapy failure are
+named here 1-stage treatments (Table 4). If a 1-stage treatment was declared
+to be successful by the clinician, the subject was passed to follow-up (FU). If
+the 1-stage treatment failed, the subject and clinician were presented with other
+treatment choices; these other choices, together with FU, are named here 2-stage
+treatments. Although additional treatment choices were available if a 2-stage treat-
+ment failed, we analyzed here only sequences of at most 2 additional treatments
+given after CIT monotherapy failure; that is, q = 2 (Table 4).
+
+   In the STAR*D data, correlated eects were possible because 2-stage decisions
+may have been correlated with observed or unobserved subjects' characteristics
+that determined the responses to Stage-1 decisions. Thus, we assumed a model
+with correlated eects and used robust xed-eects estimators to estimate re-
+gression coecients of rst and second stage covariates and transition covariates
+(Kim & Frees 2006, Ebbes et al. 2004, Frees 2004) (Table 5, footnote g). Addi-
+tional advantages of this approach are that the actual structure and distribution
+of random eects do not need to be specied, and it is not necessary to con-
+duct subject-level variable selection because these variables are not used in robust
+xed-estimation. However, since we were also interested in estimating the eects
+of demographics, we additionally conducted a separate augmented regression to es-
+timate their eects (Mundlak 1978, Frees 2001, 2004) (Table 5, footnote d). In the
+augmented regression, we treated second-stage covariates as endogenous and used
+their average to augment the regression equation.       Since subjects were initially
+randomized to rst-stage treatments, rst-stage and 1-to-2 transition covariates
+were treated as exogenous. Huber/White robust standard errors were computed
+(Huber et al. 1967, White 1982) (Table 5).
+
+
+
+                                     Revista Colombiana de Estadística   41 (2018) 191233
+
+212                                                                           Francisco J. Diaz
+
+Table 4: Sequences of at most two additional treatments administered to 1,439 sub-
+         jects with major depression from the STAR*D study who were refractory to
+         Citalopram monotherapy.
+
+  Sequence    Stage 1a     Stage 2b        Nc      Sequence     Stage 1a      Stage 2b     Nc
+         1    BUP          ‐‐             87d            20     CIT+CTH       BUP          10
+         2    BUP          BUP+LI          18            21     CIT+CTH       FU           45
+         3    BUP          BUP+THY          8            22     CIT+CTH       VEN          12
+         4    BUP          FU              69            23     CTH           ‐‐          20d
+         5    BUP          MIRT            28            24     CTH           BUP           5
+         6    BUP          NTP             29            25     CTH           FU           33
+         7    CIT+BUP      ‐‐             68d            26     CTH           VEN           4
+         8    CIT+BUP      CIT+LI          14            27     SER           ‐‐          75d
+         9    CIT+BUP      CIT+THY         20            28     SER           FU           87
+        10    CIT+BUP      FU             150            29     SER           MIRT         33
+        11    CIT+BUP      MIRT            10            30     SER           NTP          22
+        12    CIT+BUP      NTP             17            31     SER           SER+LI       11
+        13    CIT+BUS      ‐‐             78d            32     SER           SER+THY      10
+        14    CIT+BUS      CIT+LI          10            33     VEN           ‐‐          81d
+        15    CIT+BUS      CIT+THY         17            34     VEN           FU          101
+        16    CIT+BUS      FU             137            35     VEN           MIRT         21
+        17    CIT+BUS      MIRT            18            36     VEN           NTP          22
+        18    CIT+BUS      NTP             26            37     VEN           VEN+LI       10
+        19    CIT+CTH      ‐‐             18d            38     VEN           VEN+THY      15
+FU: follow-up; CTH: Cognitive Therapy; BUP: Bupropion; BUS: Buspirone; CIT: Citalopram;
+LI: Lithium; MIRT: Mirtazapine; NTP: Nortriptyline; SER: Sertraline; TCP: Tranylcypromine;
+THY: Thyroid; VEN: Venlafaxine.
+a Stage 1 treatments are the treatments from Level 2 of the STAR*D study. In Level 1 of the
+
+study, only Citalopram monotherapy was given to the subjects.
+b Stage 2 treatments are the treatments from Levels 2A and 3 of STAR*D study. A follow-up
+
+(FU) after Level 2 of the study was treated as a treatment choice for Stage 2. The rst HAM-
+D17 score available from follow-up was usually obtained at the end of the 3rd month of follow-up
+and was used in the t of the AS model.
+c Number of subjects who underwent the treatment sequence.
+d These subjects withdrew from the study after completing Stage 1 (=Level 2 of STAR*D study).
+
+
+
+
+      Stata's xtreg and mixed commands were used (StataCorp LP, College Station,
+TX, USA). For comparison purposes, we also present GLS estimates for a random
+intercept model with i.i.d errors (Table 5).         These estimates would be more ap-
+propriate if there were not correlated eects, but this cannot be guaranteed in the
+STAR*D data. Residual analyses showed both that the model tted well and that
+the assumption of normality for the untransformed scores was reasonable.
+
+
+
+
+                                          Revista Colombiana de Estadística   41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                        213
+
+
+
+Table 5: Parameter estimates of a 2-stage antichronic system model of HAM-D17 scores
+         computed with 3,303 scores from 1,434 STAR*D subjects refractory to Citalo-
+         pram monotherapy.a
+
+                              GLS estimators (random intercept)b        Robust estimatorsc
+                              Regression     95% Confidence        Regression     95% Confidence
+         Covariates           coefficient    Interval              Coefficient    interval
+
+ Age (y)                      0.060***       [0.033, 0.087]          0.055***      [0.032, 0.078]d
+ Black or African Americane   2.52***        [1.61, 3.44]             2.01***       [1.16, 2.85]d
+ Cocaine abuser or            –3.70*         [–7.10, –0.31]          –3.87***      [–6.15, –1.60]d
+ dependentf
+
+ First stage covariates
+ BUP                          –5.09***       [–6.17, –4.01]          ‒5.26***      [‒6.45, ‒4.06]g
+ CIT+BUP                      –5.87***       [–6.75, –4.98]          ‒4.90***      [‒5.87, ‒3.93]g
+ CIT+BUS                      –4.87***       [–5.72, –4.02]          ‒4.16***      [‒5.15, ‒3.16]g
+ CIT+CTH                      –4.67***       [–6.16, –3.19]          ‒4.65***      [‒6.50, ‒2.80]g
+ CTH                          –5.58***       [–7.47, –3.68]          ‒4.57***      [‒7.03, ‒2.10]g
+ SER                          –4.74***       [–5.70, –3.77]          ‒5.56***      [‒6.70, ‒4.43]g
+ VEN                          –5.89***       [–6.93, –4.85]          ‒6.01***      [‒7.23, ‒4.80]g
+
+ Transition covariatesh
+       BUP                    0.73           [–2.76, 4.22]             0.28        [‒3.65, 4.21]g
+       CIT+BUP                0.58           [–2.80, 3.95]             0.66        [‒3.17, 4.48]g
+       CIT+BUS                0.48           [–2.90, 3.86]             0.60        [‒3.22, 4.41]g
+       CIT+CTH                –0.53          [–3.50, 2.44]             ‒1.29       [‒4.71, 2.14]g
+       CTH                    –0.0021        [–3.52, 3.51]             ‒0.35       [‒4.62, 3.91]g
+       SER                    –0.86          [–4.30, 2.59]             ‒2.05       [‒5.93, 1.83]g
+       VEN                    –0.48          [–3.94, 2.97]             ‒1.66       [‒5.58, 2.25]g
+
+ Second stage covariates
+ BUP                          –2.53*         [–4.60, –0.46]          ‒2.85**       [‒4.91, ‒0.79]g
+ BUP+LI                       –4.35          [–8.90, 0.21]            ‒5.48*       [‒9.96, ‒0.99]g
+ BUP+THY                      –10.6***       [–16.0, –5.17]          ‒11.2***      [‒17.0, ‒5.32]g
+ CIT+LI                       –3.96          [–8.29, 0.36]            ‒5.09*       [‒9.29, ‒0.88]g
+ CIT+THY                      –5.81**        [–9.79, –1.83]           ‒5.58*       [‒10.2, ‒1.01]g
+ FU                           –6.69***       [–9.92, –3.45]          ‒5.03**       [‒8.70, ‒1.36]g
+ MIRT                         –5.17**        [–8.72, –1.62]          ‒5.95**       [‒9.90, ‒2.01]g
+ NTP                          –5.25**        [–8.78, –1.72]          ‒6.02**       [‒10.1, ‒1.95]g
+ SER+LI                       –4.91          [–10.3, 0.46]            ‒6.29*       [‒11.3, ‒1.32]g
+ SER+THY                      –3.26          [–8.47, 1.95]            ‒3.49         [‒8.24, 1.26]g
+ VEN                          –4.17***       [–6.36, –1.97]          ‒4.68**       [‒7.66, ‒1.70]g
+ VEN+LI                       –8.25**        [–13.6, –2.87]          ‒7.78**       [‒13.2, ‒2.34]g
+ VEN+THY                      –5.71*         [–10.5, –0.96]           ‒5.92*       [‒11.1, ‒0.76]g
+ Constant (ߤఈ )               14.9***        [13.7, 16.1]            17.4***       [17.2, 17.6]g
+
+∗ p < 0.05, ∗∗ p < 0.01, ∗∗∗ p < 0.001.
+
+Note: To estimate model parameters, skip sequences with BUP and VEN at the second stage
+were implemented.
+FU: follow-up; CTH: Cognitive Therapy; BUP: Bupropion; BUS: Buspirone; CIT: Citalopram;
+Li: Lithium; MIRT: Mirtazapine; NTP: Nortriptyline; SER: Sertraline; TCP: Tranylcypromine;
+THY: Thyroid; VEN: Venlafaxine.
+
+
+
+
+                                            Revista Colombiana de Estadística    41 (2018) 191233
+
+214                                                                             Francisco J. Diaz
+a The data were obtained from version 4.1 of the limited access datasets distributed from the
+
+NIH-supported Sequenced Treatment Alternatives to Relieve Depression (STAR*D). Before
+
+tting the models, a few inconsistencies in the STAR*D data were found and corrected by the
+
+author. Inconsistencies and corrections were documented in a text le that is available from the
+
+author on request.
+b For the random intercept model estimated with GLS, estimated standard deviations of intercept
+
+and error were σ̂α = 5.56 (95% condence interval, [5.26, 5.88]) and σ̂ = 5.12 ([4.95, 5.29]).
+c To estimate regression coecients of demographic variables, augmented regression was used.
+
+To estimate regression coecients of rst and second stage covariates and transition covariates,
+
+robust xed-eects estimators were used.
+d Augmented regression (Mundlak 1978; Frees 2001, 2004) and Huber/White sandwich standard
+
+errors (Huber 1967, White 1982) were used. The estimators are robust to correlated eects and
+
+covariance matrix misspecication.
+e The dichotomous covariate was dened as 1 if the subject was self-declared black or African
+
+American, 0 otherwise.
+f The dichotomous covariate was dened as 1 if the subject declared to be cocaine abuser or
+
+dependent, 0 otherwise.
+g Robust xed eects estimators (Hausman 1978, Kim and Frees 2006) and Huber/White sand-
+
+wich standard errors (Huber 1967, White 1982) were computed. The estimators are robust to
+
+correlated eects and covariance matrix misspecication.
+h 1-to-2 transition covariates. These covariates were jointly signicant (robust test of H
+                                                                                       0 : β 1,2 =
+0, p= 0.0079), suggesting that treatments at Stage 1 aected signicantly the responses measured
+at the end of Stage 2. However, no individual transition covariate reached signicance.
+
+
+
+
+      Data and skip sequences used are described in the rest of this section. Five
+of the 1,439 subjects did not provide any of the three scores Y0,ω , Y1,ω and Y2,ω .
+Each of the other 1,434 subjects provided at least one of them. Thus, the 2-stage
+AS was tted with these 1,434 subjects (Table 5). An assumption of missingness
+at random was made to include subjects who did not have all three values of Y .
+In total, the subjects provided 3,303 HAM-D17 scores for this analysis.
+
+      After CIT monotherapy failed, subjects had seven alternative treatment choices
+for Stage 1; thus, l1 = 7 (Table 4). For Stage 2, subjects had 13 alternative choices,
+including follow-up (FU) (l2 = 13). Note that the STAR*D protocol did not use
+the term Stage (footnotes a and b of Table 4).
+
+      Skip sequences were built as follows. Both Bupropion (BUP) and Venlafaxine
+(VEN) were simultaneously 1-stage and 2-stage treatments (Table 4).                          Also, 87
+subjects who were on BUP at Stage 1 withdrew from the study after complet-
+ing this stage (Sequence 1 in Table 4).           Applying Theorem 4, these 87 subjects
+were assigned the skip sequence,          (Ϙ, BUP) ∈ A∗2 .      Similarly, the skip sequence,
+(Ϙ, VEN) ∈ A∗2 was assigned to each of 81 subjects who were on VEN at Stage 1
+but withdrew after completing this stage (Sequence 33 in Table 4).
+
+      In summary, we built an AS that included the 38 sequences in Table 4, but
+Sequences 1 and 33 were redened to corresponding interchangeable SSs.                            By
+following this approach, we obtained a           study design matrix K of full rank. Pa-
+rameter estimates are shown in Table 5.              Note that, here, Ϙ can be interpreted
+
+
+
+                                           Revista Colombiana de Estadística    41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                               215
+
+
+
+as CIT monotherapy. Also, the regression coecient of follow-up (FU) must be
+interpreted with caution, because two dierent subjects on FU may have been
+under dierent therapies.
+
+   Note that subjects in Sequence 7 of Table 4 took CIT+BUP at Stage 1 but
+withdrew from the study after completing this stage. These subjects cannot be
+used to build SSs because CIT+BUP was not a 2-stage treatment. Thus, Sequence
+                                     ∗
+7 was treated as (CIT + BUP) ∈ A1 . Similar comments can be made for subjects
+in Sequences 13, 19, 23 and 27.      In contrast, Sequence 35 in Table 4, say, was
+                                ∗
+treated as (VEN, MIRT) ∈ A2 .
+
+
+
+
+10. Results for STAR*D Data
+   Hausman test comparing robust xed-eects estimators with GLS estimators
+                                                   2
+conrmed that there were correlated eects (χ          = 346.9, df = 27, p < 0.0001)
+(Frees 2004). Therefore, robust xed-eects estimators and augmented regression
+were necessary.
+
+   At α = 0.05, each 1-Stage treatment reduced signicantly the average HAM-
+D17 score during Stage 1 in subjects who received the treatment (Table 5). Using
+the robust xed-eects estimates, we found that Stage 1 signicantly aect Y2,ω
+[overall test with robust estimates, F (7, 1433) = 2.74, p = 0.0079].         That is, at
+least one transition covariate was signicant according to the overall test. How-
+ever, none of the individual regression coecients of transition covariates reached
+signicance. Thus, the evidence is weak that treatments used at Stage 1 had a
+potential inuence on HAM-D17 scores measured at the end of Stage 2. In par-
+ticular,   there did not appear to be appreciable delayed eects. Not even cognitive
+therapy (CTH), which was a 1-stage treatment, gave these dicult-to-treat sub-
+jects a signicant added advantage at ghting their illness at the next stagethe
+regression coecient for the transition covariate corresponding to CTH was −0.35,
+95% CI, (−4.62, 3.91) (Table 5). The other 1-stage treatments included drugs and
+it is possible that these drugs' blood levels dropped during Stage 2, which may
+explain in part why Stage 1 treatments did not aect substantially the 2
+                                                                                  nd stage
+response.
+
+   Only one 2-stage treatment did not lower signicantly the HAM-D17 aver-
+age score in comparison with the score measured at the end of CIT monotherapy,
+namely SER+THY (Table 5). Also, according to the robust augmented regression,
+self-declared blacks or African Americans had signicantly higher HAM-D17 av-
+erage scores after controlling for treatment; cocaine abuser or dependent subjects
+had signicantly lower average scores; and subjects of older age had signicantly
+higher average scores.
+
+   The regression coecients of 1-stage treatments were not signicantly dierent
+from each other (using robust estimation, F (6, 1433) = 1.13, p = 0.3398; Table
+5). Therefore, there was no evidence that 1-stage treatments had dierential aver-
+age eects on HAM-D17. Similarly, 2-stage treatments did not have signicantly
+dierent average eects on HAM-D17 (F (12, 1433) = 1.18, p = 0.2927).
+
+
+
+                                      Revista Colombiana de Estadística   41 (2018) 191233
+
+216                                                                       Francisco J. Diaz
+
+      We also tested the appropriateness of the Interchangeability Assumption. This
+assumption implies that the regression coecients of BUP for the rst and second
+stage covariates are equal and that those of VEN are equal as well. Employing
+the robust standard errors, a simultaneous Wald test of these two null hypotheses
+was not signicant (F (2, 1433) = 2.06, p = 0.1275). This suggests the assumption
+was appropriate.
+
+      With a few additions, our model allows investigating interactions between
+treatments administered at dierent stages.       Transition covariates are useful in
+this regard. As an illustration, we examined the interaction between BUP admin-
+istered at the rst stage and MIRT administered at the second stage by computing
+the product of the transition covariate corresponding to BUP and the second-stage
+covariate corresponding to MIRT. Using robust estimation, this interaction was
+not signicant (p    = 0.70).   It is also possible to compute interactions between
+baseline covariates and stage or transition covariates.
+
+      In general, however, some interaction terms may induce a non-full-rank design
+matrix.    Thus, future research must investigate how the presence of interaction
+terms aects the rank of design matrices, and must give conditions for the identi-
+ability of their regression coecients. Fortunately, however, the omission of sig-
+nicant interaction terms should not bias robust xed-eects estimators because
+they are robust to omitted variables (Kim & Frees 2006).
+
+
+
+
+11. Discussion
+      The main contribution of this article is the introduction of skip sequences in
+the design and analysis of clinical trials of treatment sequences. These sequences
+guarantee the existence of design matrices of full rank and, therefore, guarantee
+the identiability (estimability) of carry-over eects. Importantly, we did not need
+unjustied linear constraints in order to examine carry-over eects. Skip sequences
+also facilitate the implementation of many estimation methods for GLMMs.
+
+      Theorem 2 indicates the importance of SSs in the experimental design and
+statistical analysis of CTs of treatment sequences, and theorem 3 gives a proce-
+dure for selecting appropriate SSs at the planning stage of a particular study.
+This procedure is very general, being applicable to any number of study stages
+and treatments, and to continuous or discrete responses, including dichotomous
+responses.
+
+      Real placebo can be used to implement SSs in practice. Alternatively, a virtual
+placebo approach can be applied to the analysis of data from some CTs such as
+the STAR*D study which did not specically implement SSs in their protocol. As
+illustrated with the STAR*D data, useful insights can also be obtained in such CTs.
+This approach, however, cannot always be applicable if SSs are not implemented
+in the study protocol. Theorem 4 supports the use of virtual placebo. A virtual
+placebo approach can also be applied when real placebo is unethical or unfeasible.
+In such cases, appropriate SSs must be selected at the design stage of the CT.
+
+
+
+
+                                      Revista Colombiana de Estadística   41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                              217
+
+
+
+   ASs are applicable if we can assume the subjects' health will not improve or
+deteriorate rapidly should they remain under baseline conditions. In other words,
+Y0,ω must measure a stable illness state. Having a stable illness is an inclusion
+criterion of many clinical trials. Our approach is applicable to these trials. This
+assumption, however, may not be applicable to some conditions such as advanced
+cancer or mental illness in acute state.
+
+   Our model does not include stage-dependent variables other than the investi-
+gated MBTs. The reason is that CTs are highly controlled experiments that at-
+tempt maintaining other variables aecting the response constant during the study.
+Therefore, in a well-conducted CT, the response Y should be a function            only of
+both MBTs administered during the CT and baseline covariates. For instance, it
+is well known that smoking aects the metabolism of some neurotropic drugs (e.g.
+Botts, Diaz, Santoro, Spina, Muscatello, Cogollo, Castro & de Leon 2008). In a
+CT investigating these drugs, a subject quitting smoking (or starting smoking)
+during the CT is usually considered a protocol violation.       Therefore, data from
+this subject is not included in data analyses. Thus, although it would be easy to
+incorporate in our model stage-dependent covariates other than those proposed in
+this article, doing so would be just a mere academic exercise that is inconsistent
+with the principles of CTs.
+
+   Note also that variables changing as a result of the investigated MBTs should
+not be treated as independent variables in ASs, because ASs account for the eects
+of treatments applied in one stage on subsequent stages. Thus, for instance, if a 1-
+stage treatment changed the value of a mediating variable that ultimately aected
+Y2,ω , the corresponding 1-to-2 transition covariate will be signicant. This means
+that we do not need to include the mediating variable as independent variable.
+
+   Our approach based on SSs poses an interesting question: when Theorem 3
+guarantees that two or more alternative sets of SSs will produce a design matrix
+of full rank, which set will produce the lowest standard errors for the estimates of
+the regression coecients? This open problem needs to be investigated by future
+research.
+
+   If the value of Y is missing for some stages, the corresponding rows of V can
+be eliminated accordingly. In such case, the assumption of missingness at random
+must be made, as we did to t an AS to the STAR*D data.
+
+
+
+
+Acknowledgements
+   The STAR*D study was supported by NIMH Contract #N01MH90003, and
+has the ClinicalTrials.gov Identier, NCT00021528.         The author was supported
+by an Institutional Clinical and Translational Science Award, NIH/NCATS Grant
+Number UL1TR000001 (awarded to the University of Kansas Medical Center).
+The author was not involved in the planning or conduction of the STAR*D study
+and has never received any payment or salary from its associated NIMH contract
+or its investigators.   This manuscript may not reect the opinions or views of
+the STAR*D study investigators or the NIH. The author thanks Mr.                 Douglas
+
+
+
+                                     Revista Colombiana de Estadística   41 (2018) 191233
+
+218                                                                                  Francisco J. Diaz
+
+Eikermann and Guanlin Zhang for editorial assistance and making useful com-
+ments. Mr. Jiawei Duan also made useful comments. The author also thanks the
+two anonymous reviewers, whose comments motivated interesting additions to the
+manuscript.
+
+                        
+                         Received: March 2017  Accepted: May 2018
+References
+Abeyasekera, S. & Curnow, R. N. (1984), `The desirability of adjusting for residual eects in a crossover design',         Biometrics 40, 10711078.
+Berg, M., Welty, T. E., Gidal, B. E., Diaz, F. J., Krebill, R., Szaarski, J. P., Dworetzky, B. A., Pollard, J. R., Elder Jr, E. J., Jiang, W., Jiang, X., Switzer, R. D. & Privitera, M. D. (2017), `Bioequivalence between generic and branded lamotrigine in people with epilepsy: the EQUIGEN randomized clinical trial', JAMA Neurology 74, 919926.
+Botts, S., Diaz, F., Santoro, V., Spina, E., Muscatello, M. R., Cogollo, M., Castro, F. E. & de Leon, J. (2008), `Estimating the eects of co-medications on Progress in Neuro-plasma olanzapine concentrations by using a mixed model', Psychopharmacology & Biological Psychiatry 32, 14531458.
+Breslow, N. E. & Clayton, D. G. (1993), `Approximate inference in generalized linear mixed models', Journal of the American Statistical Association pp. 9-25.
+Bronson, R. (1989),         Matrix Operations, Schaum's Outline Series, 1 edn, McGraw-Hill, New York.
+Center for Drug Evaluation and Research (2001), Us food and drug administration. guidance for industry: Statistical approaches to establishing bioequivalence. https://www.fda.gov/ downloads/drugs/guidances/ucm070244.pdf, Accessed February 22, 2018.
+Center for Drug Evaluation and  Research (2003), Us food and   administration. guidance for industry: Bioavailability and bioequivalence studies for orally administered drug products - general considerations. https://www.fda.gov/ohrms/dockets/ac/03/brieng/3995B1_07_GFI-BioAvail-BioEquiv.pdf, Accessed February 22, 2018.
+Christensen, R. (2011),   Plane Answers to Complex Questions: The Theory of Linear Models, Springer, New York.
+Diaz, F. J. (2016), `Measuring the Individual Benet of a Medical or Behavioral TUsing Generalized Linear Mixed-Eects Models', Statistics in Medicine 35, 40774092.
+Diaz, F. J. (2017), `Estimating individual benets of medical or behavioral treatments in severely ill patients',   Statistical Methods in Medical Research (DOI: 10.1177/0962280217739033).
+Diaz, F. J., Berg, M. J., Krebill, R., Welty, T., Gidal, B. E., Alloway, R. & Priitera, M. (2013), `Random-eects linear modeling and sample size tables for two special cross-over designs of average bioequivalence studies: the 4-period, 2-sequence, 2-formulation and 6-period, 3-sequence, 3-formulation designs', Clinical Pharmacokinetics 52, 10331043.
+Ebbes, P., Bockenholt, U. & Wedel, M. (2004), `Regressor and random-eects dependencies in multilevel models',  Statistica Neerlandica 58, 161-178.
+Fava, M., Rush, A. J., Trivedi, M. H., Nierenberg, A. A., Thase, M. E., Sackeim, H. A., Quitkin, F. M., Wisniewski, S., Lavori, P. W., Rosenbaum, J. F. & Kupfer, D. J. (2003), `Background and rationale for the sequenced treatment alternatives to relieve depression (STAR*D) study', Psychiatric clinics of North America 26, 457494.
+Fitzmaurice, G. & Molenberghs, G. (2004), Advances in longitudinal data analysis,   in G. Fitzmaurice, G. Molenberghs, M. Davidian & G. Verbeke, eds, `Longitudinal data analysis', Chapman and Hall/CRC, London.
+Fleiss, J. L. (1989), `A critique of recent research on the two-treatment Crossover design',   Controlled Clinical Trials 10, 237-243.
+Frees, E. W. (2001), `Omitted variables in longitudinal data models', The Canadian Journal of Statistics 29, 573595.
+Frees, E. W. (2004),    Longitudinal and Panel Data, Cambridge, Cambridge University Press.
+Grajales, L. F. & Lopez, L. A. (2006), `Data imputation in switchback designs using a mixed model with correlated errors', Revista Colombiana de Estadística 29, 221-238.
+Hausman, J. A. (1978), `Specication tests in econometrics',  Econometrica 46, 1251-1271.
+Henderson, C. R. (1953), `Estimation of variance and covariance components', Biometrics 9, 226252.
+Hofmann, M., Wrobel, N., Kessner, S. & Bingel, U. (2014), `Minimizing carryover elects after treatment failure and maximizing therapeutic outcome. Can changing the route of administration mitigate the inuence of treatment history?',   Zeitschrift fur Psychologie 222, 171-178.
+Hooks, T., Marx, D., Kachman, S. & Pedersen, J. (2009), `Optimality criteria for models with random eects',     Revista Colombiana de Estadística 32, 17-31.
+Huber, P. J. et al. (1967), The behavior of maximum likelihood estimates under nonstandard conditions,   in `Proceedings of the fth Berkeley symposium on mathematical statistics and probability', Vol. 1, University of California Press, pp. 221233.
+Jones, B. & Kenward, M. G. (2015), Design and Analysis of Cross-over Trials, CRC Press, Boca Raton.
+Kim, J.-S. & Frees, E. W. (2006), `Omitted variables in multilevel models', Psychometrika 71, 659690.
+Kim, J.-S. & Frees, E. W. (2007), `Multilevel modeling with correlated eects', Psychometrika 72, 505533.
+Laird, N. M. & Ware, J. H. (1982), `Random eects models for longitudinal data', Biometrics 38, 963974.
+Long, D. L., Preisser, J. S., Herring, A. H. & Golin, C. E. (2015), `A marginalized zero-inated Poisson regression model with random eects', Journal of the
+      Royal Statistical Society: Series C 64, 815-830.
+Mundlak, Y. (1978), `On the pooling of time series and cross-section data', Econometrica 46, 6985.
+Nelder, J. A. & Wedderburn, R. W. M. (1972), `Generalized linear models', Journal of the Royal Statistical Society, Series A 135, 370384.
+Privitera, M. D., Welty, T. E., Gidal, B. E., Diaz, F. J., Krebill, R., Szaarski, J. P., Dworetzky, B. A., Pollard, J. R., Elder, E. J., Jiang, W., Jiang, X. & Berg, M. (2016), `Generic-to-Generic Lamotrigine Switches in People with Epilepsy: A Randomized Controlled Trial',     Lancet Neurology 15, 365372.
+Rabe-Hesketh, S. & Skrondal, A. (2009), Generalized linear mixed-eects models, in `Longitudinal Data Analysis', Chapman and Hall/CRC, London, pp. 93-120.
+Rabe-Hesketh, S., Skrondal, A. & Pickles, A. (2005), `Maximum likelihood estimation of limited and discrete dependent variable models with nested random eects',   Journal of Econometrics 128, 301-323.
+Searle, S. R. (1966),   Matrix Algebra for the Biological Sciences, Wiley, New York.
+Senn, S. (2002),    Cross-over Trials in Clinical Research, 2 edn, Wiley, Hoboken.
+Senn, S., D'Angelo, G. & Potvin, D. (2004), `Carry-over in cross-over trials in bioequivalence: Theoretical concerns and empirical evidence', Pharmaceutical Statistics 3, 133142.
+Senn, S. & Lambrou, D. (1998), `Robust and realistic approaches to carry-over', Statistics in Medicine 17, 28492864.
+Shao, J. (2003),    Mathematical Statistics, 2 edn, Springer, New York.
+Vermunt, J. K. (2005), `Mixed-eects logistic regression models for indirectly observed discrete outcome variables', Multivariate Behavioral Research 40, 281-301.
+White, H. (1982), `Maximum likelihood estimation of misspecied models', Econometrica 50, 125.
+
+
+Appendix A. Proofs of Theorems
+      Some proofs utilize the following convenient matrix notation. If ai , i = 1, . . . , n,
+                                                                                                                  n
+is a sequence of scalars or matrices, the matrix [a1 , . . . , an ] is denoted with ∃i=1 ai ,
+                             T T
+               T                                i=1                        i
+and the matrix a1 , . . . , an   is denoted with ∃n ai . The symbols ∃i and ∃ are
+read stack right and stack down, respectively.                                For simplicity, for a constant
+                                                       n
+number or matrix a, we denote ∃        a = ∃ni=1 a = [a, . . . , a] and ∃n a = ∃i=1
+                                                                                n a =
+ T            T
+ a , . . . , aT , in which a is repeated n times.
+
+Proof of Theorem 1. Observe that, in general, if a ij and b ij are column vectors
+of the same dimension, then
+
+                             ri
+                          r0 X
+                          X                                                                      T
+                                       a Tij b ij = ∃ri=1 ∃rj=1 a Tij        ∃ri=1 ∃rj=1 b Tij
+                                                       0     i
+                                                                               0     i
+
+
+                          i=1 j=1
+
+
+Then, by Fubini's theorem,
+
+
+                r
+              r X                        h
+                                       r X
+              X                        X                                                                    T
+                        a Tih b ih =                 a Tih b ih = ∃rh=1 ∃hi=1a Tih       ∃rh=1 ∃hi=1b Tih
+                                                                                     
+                                                                                                                      (4)
+              i=1 h=i                  h=1 i=1
+
+
+Fix
+                                                                    Pr placebo) or k ∈
+     r and k , where r = 1, . . . , q , and k ∈ {0, 1, . . . , r} (real
+{0, m(S), m(S) + 1, . . . , r} (virtual placebo). Denote τik ,ω = h=i I{h=k} Siβ ih ,ω ,
+where I{h=k} = 1 if h = k , or I{h=k} = 0 if h 6= k . Observe that τik ,ω = 0 if i > k
+and τik ,ω = Siβ ik ,ω if i ≤ k . Thus,
+
+
+                                             k
+                                             X                     r
+                                                                   X
+                                                     Siβ ik ,ω =         τik ,ω                                       (5)
+                                               i=1                 i=1
+
+                                                                              
+                                           ∗          r
+Now dene the row vectors T k = ∃h=1                         ∃hi=1 (I{h=k} Si ) , k = 0, . . . , r, and observe
+                                  
+                                 *         *
+that the rst row of V is T ∗0 , 0 , where 0 is a row vector of zeros of dimension
+                                                         
+                                                        *
+                                                     ∗ 0
+mq − mr . And, for j ≥ 2, the j -th row of V is    T k,     with k = j − 2 + m(S).
+                                      
+                 (q)  q        h     T
+Also note that δ ω = ∃h=1 ∃i=1β ih,ω     Therefore, by equations (1), (4) and (5),
+
+
+
+                                                          Revista Colombiana de Estadística           41 (2018) 191233
+
+222                                                                             Francisco J. Diaz
+
+
+
+                                       k
+                                                         !                             r
+                                                                                                      !
+                                       X                                               X
+ Eω [Yk,ω ] = g −1    αω + λ T X ω +         Siβ ik ,ω       = g −1   αω + λ T X ω +         τik ,ω
+                                       i=1                                             i=1
+
+                                       r X
+                                         r
+                                                                      !
+                                       X
+           = g −1     αω + λT X ω +              I{h=k} Siβ ih ,ω
+                                       i=1 h=i
+                                                
+           = g −1 αω + λ T X ω + T ∗k (δδ (r)
+                                          ω   )T
+
+                                                  
+                                         *
+                −1          T        ∗         (q) T
+           =g         αω + λ X ω + T k , 0 (δδ ω )
+
+
+Denition A.1 To prove Theorem 2, we need to dene a new binary matrix
+operation. For a matrix A with rows Ai , i = 1, . . . , n, and a matrix B with rows Bj ,
+j = 1, . . . , k , dene the new product of A and B as A ∗ B = ∃j=1
+                                                                                     
+                                                                   k   ∃i=1
+                                                                         n [Ai , Bj ] ,
+where [Ai , Bj ] is a row vector that contains from left to right the elements of the
+i-th row of A rst, and then those of the j -th row of B . Observe that A ∗ B has
+n · k rows.
+
+Lemma A.1. (Used in proof of Theorem 2.) Let A be an n × p matrix. Let Ik be
+the k × k identity matrix. Let Jn       be an n × 1 vector with ones in all its entries.
+If there exists a p × 1 vector c such that       Ac = Jn , then ρ (A ∗ Ik ) = ρ(A) + k − 1
+for all k ≥ 1, where ∗ is the product dened in Denition A.1.
+
+
+Proof of Lemma A.1. Let Ai and Bi denote the i-th rows of A and Ik , respec-
+tively. We will reduce A ∗ Ik into echelon form by using both elementary row and
+column transformations. Let 0k = (0, . . . , 0) denote a row with k zeros. (Here, the
+symbol  ⇐⇒  is read has the same rank as, and numbers above this symbol
+refer to explanations below.) Then,
+
+
+
+
+                                        Revista Colombiana de Estadística       41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                  223
+
+
+
+
+                                        A ∗ Ik =
+
+
+                                                                                    
+        A1       B1               B1       A1                  B1              A1
+   
+       A2       B1   
+                      
+                             
+                                 B1       A2   
+                                                
+                                                     
+                                                            B1 − B1         A2 − A1     
+                                                                                         
+        .       .               .       .                    .              .       
+         .       .                 .       .                      .              .
+         .       .                 .       .                      .              .
+                                                                                    
+                                                                                    
+        An       B1               B1       An                B1 − B1         An − A1
+                                                                                    
+                                                                                    
+                                                                                    
+       - - - - -               - - - - -                 - - - - - - - - - - - -    
+                                                                                    
+   
+       A1       B2   
+                      
+                             
+                                 B2       A1   
+                                                
+                                                     
+                                                              B2              A1        
+                                                                                         
+   
+       A2       B2   
+                      
+                             
+                                 B2       A2   
+                                                
+                                                     
+                                                            B2 − B2         A2 − A1     
+                                                                                         
+        .       .               .       .                    .              .       
+         .       .                 .       .                      .              .
+         .       .                 .       .                      .              .
+                                                                                    
+                           1                     2 
+                          ⇐⇒                    ⇐⇒ 
+                                                                                      
+        An       B2               B2       An                B2 − B2         An − A1
+                                                                                       
+                                                                                    
+                                                                                    
+       - - - - -               - - - - -                 - - - - - - - - - - - -    
+                                                                                    
+             .                         .                                 .
+             .                         .                                 .
+                                                                                    
+            .                       .                               .               
+                                                                                    
+        - - - - -                 - - - - -                   - - - - - - - - - - - -
+                                                                                    
+                                                                                    
+   
+       A1       Bk   
+                      
+                             
+                                 Bk       A1   
+                                                
+                                                     
+                                                              Bk              A1        
+                                                                                         
+        A2       Bk               Bk       A2                Bk − Bk         A2 − A1
+                                                                                    
+                                                                                    
+         .       .                 .       .                      .               .
+                                                                                    
+        .       .               .       .                    .               .      
+        .       .               .       .                    .               .      
+        An       Bk               Bk       An                Bk − Bk         An − A1
+
+
+
+
+                                       Revista Colombiana de Estadística     41 (2018) 191233
+
+224                                                                                          Francisco J. Diaz
+
+
+                                                                                            
+                                                                    B1              A1
+                                                                    B2              A1
+                                              
+               B1          A1
+                                                                                            
+                                                                                            
+                                                                       .           .        
+       
+              0k        A2 − A1               
+                                                   
+                                                    
+                                                                        .
+                                                                        .
+                                                                                    .
+                                                                                    .
+                                                                                             
+                                                                                             
+               .                    .         
+                .                    .                             Bk               A1
+                                                                                            
+                .                    .
+                                                                                          
+                                                                                          
+               0k        An − A1                             - - - - - - - - -
+                                                                                          
+                                                                                          
+       
+              - - - - - - - - -
+                                               
+                                                   
+                                                             0k            A2 − A1          
+                                                                                             
+                                                               .                    .
+                                              
+               B2          A1                                  .                    .
+                                                                                            
+                                                               .                    .
+                                                                                          
+                                              
+                         A2 − A1
+                                                                                            
+       
+              0k                              
+                                                   
+                                                             0k            An − A1          
+                                                                                             
+               .                    .         
+                .                    .                       - - - - - - - - -
+                                                                                            
+                .                    .
+                                              
+                                                3                                          
+      =                                        ⇐⇒ 
+       
+                                                              0k            A2 − A1
+                                                                                             
+              0k        An − A1                                                           
+                                                               .                    .
+                                                                                          
+               - - - - - - - - -                               .                    .
+                                                                                            
+                                                               .                    .
+                                                                                          
+                                              
+                             .
+                                                                                            
+                             .                                0k            An − A1
+                                              
+                             .
+                                                                                          
+                                                                                          
+                                                             - - - - - - - - -
+                                                                                            
+               - - - - - - - - -
+                                                                                          
+                                                                                .
+                                                                                          
+               Bk          A1                                                   .
+                                              
+                                                                                .
+                                                                                          
+                                                                                            
+               0k        A2 − A1
+                                                                                          
+                                                          - - - - - - - - -               
+                .                    .
+                                                                                          
+       
+               .
+                .
+                                     .
+                                     .
+                                               
+                                                   
+                                                             0k            A2 − A1          
+                                                                                             
+                                                               .                    .
+               0k        An − A1                               .                    .
+                                                                                            
+                                                              .                    .        
+                                                              0k            An − A1
+
+                                                
+                         B1              A1
+         
+                        B2              A1      
+                                                 
+                        .                .      
+                         .                .
+                         .                .
+                                                
+                                                
+                         Bk              A1
+                                                
+                                                
+                                                
+                   - - - - - - - - -            
+                                                
+         
+                   0k        A2 − A1            
+                                                 
+                                                      
+                                                                        B1              A1
+                                                                                              
+                     .                   .
+                     .                   .                              B2              A1
+                                                
+                     .                   .
+                                                                                           
+                                                                                             
+                                                                            .           .
+                                                
+                             An − A1                                        .           .
+                                                                                             
+         
+                   0k                           
+                                                                          .           .
+                                                                                              
+                                                                                             
+                    - - - - - - - - -
+                                                
+                                                  5                   Bk              A1
+                                                                                              
+       4 
+      ⇐⇒                                         ⇐⇒                                        
+                        0k              0p          
+                                                              - - - - - - - - -
+                                                                                              
+                                                                                              
+                          .              .
+                                                                                           
+         
+                         .
+                          .
+                                         .
+                                         .
+                                                 
+                                                     
+                                                                  0k           A2 − A1       
+                                                                                              
+                                                                   .                    .
+                                                
+                         0k              0p                        .                    .
+                                                                                             
+                                                                   .                    .
+                                                                                           
+                                                
+                    - - - - - - - - -                                           An − A1
+                                                
+                                                                 0k
+                                .               
+                                 .
+                                 .
+                                                
+                                                
+                                                
+                   - - - - - - - - -            
+                                                
+         
+                        0k              0p      
+                                                 
+                          .              .
+                          .              .
+                                                
+                         .              .       
+                         0k              0p
+
+                                              Revista Colombiana de Estadística              41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                                    225
+
+                                                                                        
+                     B1                  A1                        B1            A1
+           
+                  B1 − B2               0p       
+                                                  
+                                                       
+                                                                B1 − B2         0p        
+                                                                                           
+                           .              .                            .          .
+                           .              .                            .          .
+                                                                                        
+                           .              .                            .          .
+                                                                                        
+                                                                                        
+                   B1 − Bk               0p                      B1 − Bk          0p
+                                                                                        
+                                                   6                                      7
+        ⇐⇒                                        ⇐⇒                                     ⇐⇒ ∆,
+           
+                 - - - - - - - - -                           - - - - - - - - -          
+                                                                                        
+           
+                  0k          A2 − A1            
+                                                  
+                                                       
+                                                                      B1   A2             
+                                                                                           
+                      .              .                                 .    .
+                      .              .                                 .    .
+                                                                                        
+                     .              .                               .    .              
+                   0k          An − A1                                 B1   An
+
+
+
+                                                                                                    
+                          B1 − B2             0p                1      −1   ···        0       | 0p
+                                .             .         ..   .   .   .       .
+                                .             .                .   .   .
+                                                                           | ..
+                                                                                                      
+                               .             .         .    .   .   .                               
+                                                                                                    
+               
+                         B1 − Bk             0p        1 0 · · · −1 | 0
+                                                                              p
+                                                                                                       
+                                                                                                       
+                          - - - - - - - - -             ------------------
+                                                                                                    
+     where ∆ =                                       =                                              .
+                                                                                                      
+                              B1        A1               1 0 · · · 0 | A1                           
+                                                                                                    
+               
+                              B1        A2            
+                                                          1 0 · · · 0 | A2                           
+                                                                                                       
+                                .         .                  .  . .   .      .
+                                .         .                  .  . .   .      .
+                                                                                                    
+                               .         .                .  . .   .  |   .                         
+                               B1        An                 1 0 · · · 0 | An
+
+
+                                                                                                1
+where ∆ is a matrix with dimension {k −1+n}×{k +p}. Above,                                     ⇐⇒ is obtained
+                                 2
+by switching columns;  ⇐⇒ is obtained by subtracting the rst row of the block
+                              3
+from the other block's rows; ⇐⇒ by moving the rst row of each block to the
+                            4
+upper part of the matrix; ⇐⇒ by subtracting the second block from the blocks
+           5                                6
+below it; ⇐⇒ by deleting rows with zeroes; ⇐⇒ by adding rst row to rows in
+                    7
+second block; and ⇐⇒ by putting rst row at top of second block.
+
+
+   Now observe that the last p columns of ∆ constitute the matrix
+
+
+                                                          
+                                                      0p
+                                            . 
+                                            .. 
+                                                
+                                         H=
+                                            0p 
+                                                 
+                                                
+                                            --- 
+                                              A    {k−1+n}×p
+
+
+
+                                                               0Tk−1
+                                                                         
+                                                        Jk−1
+By hypothesis, Jk−1+n − Hc = J k−1+n −             =           . Also, the rst
+                                                         0Tn    Jn
+column of ∆ is Jk−1+n . By replacing the rst column of ∆ with the column
+Jk−1+n − Hc , which can be viewed as a sequence of elementary column transfor-
+
+
+                                                   Revista Colombiana de Estadística           41 (2018) 191233
+
+226                                                                                                   Francisco J. Diaz
+
+mations on matrix ∆, we obtain that A ∗ Ik has the same rank as
+
+                                                                                        
+                                          1       −1       ···     0        |       0p
+                                    ..   .
+                                          .
+                                              .
+                                              .
+                                                  .
+                                                  .
+                                                          .
+                                                      | ..
+                                                                                         
+                                    .    .   .   .                                      
+                                                                                        
+                                    1 0 · · · −1 | 0                                    
+                                                          p                             
+                                    ------------------
+                                                                                        
+                                                                                         
+                                       0 0 · · · 0 | A1
+                                                                                        
+                                                                                        
+                                                                                        
+                                   
+                                      0 0 · · · 0 | A2                                  
+                                                                                         
+                                        .  . .   .      .
+                                        .  . .   .      .
+                                                                                        
+                                       .  . .   .  |   .                                
+                                       0 0 · · · 0 | An
+
+The rank is ρ(A) + k − 1.
+
+
+Proof of Theorem 2. If subject ω underwent sequence S , denote W ω = W (S),
+                                                T                T    T
+ω = 1, . . . , N .    Denote Q =                W1 ,...,WN                  .   Clearly, for xed i, all subjects
+                                          (i)
+                                                                                                                          
+who experienced sequence S                      have the same matrix W . Note that ρ(D) = ρ                            Q
+                                                                                                                      (i)
+                                                                                                                          
+                                                                             S
+because, for any ω = 1, . . . , N , there exists i = 1, . . . , d such that W ω = W
+                                                      
+and, for any i, there exists ω such that W ω = W S (i) , which imply that any row
+in Q is equal to some row in D , and any row in D is equal to some row in Q .
+
+      Suppose rst that
+                                                                     
+            C = {A1,1 , ..., A1,l1 } × {A2,1 , ..., A2,l2 } × · · · × Aq,1 , ..., Aq,lq                                (6)
+
+
+that is, that all possible decision combinations occur but
+                                   Qq                                                        .QϘ does not occur at
+                                                                                                j
+any stage.       Then, d =             i=1 li .   Denote a0            = d, aj = d              i=1 li , j = 1, . . . , q ;
+and G0 =∃a0 1, G1 = ∃a1 Il1 , G2 = ∃a2 {Il1 ∗ Il2 }, G3 = ∃a3 {(Il1 ∗ Il2 ) ∗ Il3 }, . . .,
+                  
+and Gq = ∃aq          (· · · ((Il1 ∗ Il2 ) ∗ Il3 ) ∗ · · · ) ∗ Ilq          , where ∗ is the product dened in
+Denition A.1. Then, the rows of D can be rearranged as
+
+                                                  *                   *        
+                                           G0         0      ...       0
+                                *                                     *  
+                                1                 G1        ...       0 
+                               ∗
+                            D = .
+                                                                         
+                                ..                    .     ..         . 
+                                                       .      .         . 
+                                                      .                . 
+                                 *                 *         *
+                                 1                    0      0         Gq {d(q+1)}×m
+                                                                                                q
+
+
+            *
+where the 1 's are column vectors with only ones, not all of the same dimension. By
+                                                                                         Pj
+Lemma A.1, ρ (G0 ) = 1, ρ (G1 ) = l1 and ρ (Gj ) = l1 +                                   i=2 (li − 1), j = 2, . . . , q .
+Hence, if C satises equation (6),
+
+                             Pq
+       ρ Q = ρ(D) = ρ (D∗ ) = j=0 ρ (Gj ) = 1 + mq − q(q − 1)/2 < 1 + mq
+          
+
+(Recall that q ≥ 2.)
+
+      Now note that if S is not skip for any S ∈ C , and if there exists S ∈ C such
+             ∗
+that S ∈ Ar for some r < q , that is, if at least one subject did not receive a q -stage
+
+
+
+                                                       Revista Colombiana de Estadística               41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                                                     227
+
+
+                                                                                                           ∗
+treatment, then the number of rows of D is ≤ d(q + 1); or if S ∈ Aq for all S ∈ C
+                                        Qq
+but the number of sequences in C is ≤
+                                         i=1 li , then the number of rows of D is
+also ≤ d(q + 1). In both situations, ρ Q ≤ 1 + mq − q(q − 1)/2.
+
+     But, K is of full rank if and only if ρ(K) = 1 + p + mq . This implies that K will
+                                  
+not be of full rank if ρ(K) = ρ Q + p but S is not skip for any S ∈ C , because,
+                                                                           
+in such case, ρ(K) ≤ 1 + p + mq − q(q − 1)/2. In particular, if ρ(K) = ρ Q + p
+and C satises equation (6), then ρ(K) = 1 + p + mq − q(q − 1)/2, which is the
+maximum possible rank of K when no subject experiences a skip sequence.
+
+
+Proof of Theorem 3. By reorganizing the rows of D1 and subtracting rows from
+their duplicates, and then eliminating rows with only zeros, we obtain
+
+D1 ⇐⇒
+
+            *                    *                     *                                                   *                 
+      1      0                    0                     0                         ···                          0
+ *                               *                     *                                                   *                  
+ 0 Il1                           0                     0                         ···                          0
+                                                                                                                              
+                                                                                                                               
+ * *                    
+                             hii     hii
+                                                       *                                                   *                  
+ 0 0
+                   ∃i=1
+                     c     S1    , S2                   0                         ···                          0               
+                                                                                                                               
+ * *                             *                                                                       *                  
+                                                      hii       hii    hii
+ 0 0
+                                 0          ∃i=1
+                                              c   S1 , S2 , S3                    ···                          0               
+                                                                                                                               
+                                                                                                                              
+ .. .
+     .
+                                   .
+                                   .
+                                                            .
+                                                            .                     ..                           .
+                                                                                                               .
+                                                                                                                               
+                                                                                       .
+ * *.
+ .                                .                        .                                                  .               
+                                  *                     *                                                   *
+                                                                                                                               
+                                                                                                                              
+ 0 0                             0                     0                         ···                          0               
+ * *                             *                     *                                                                    
+                                                                                                          hii          hii
+  0 0                             0                     0                         ···      ∃i=1
+                                                                                            c            S1 , . . . , Sq
+                                                                 *
+where Ili is the li × li identity matrix, the           0 's represent matrices of zeros, and,
+as before, the                  ⇐⇒  is read has the same rank as. [We obtained Il1 in
+                 i=1       hii
+place of ∃c            S1        in the above matrix because of the assumption that every 1-
+stage treatment is implemented in the rst stage of at least one of the sequences
+S h1i , . . . , S hci .]
+                                                                                                
+                                                                       i=1        hii      hii
+     By applying elementary row operations to ∃c                                 S1 , S2             , we can obtain an
+
+echelon matrix E2 which has the form
+                                                                       
+                                                       Il1       B12
+                                                   *
+                                             E2 =  0            C2 
+                                                                    
+                                                       *          *
+                                                       0          0
+where C2 is also a row echelon matrix. Noting that the number of columns of
+C2 is l2 , let τ2 = l2 − ρ (C2 ), and let w2,1 < · · · < w2,τ2 be the indices of the
+columns of C2 that do not have a pivot. Recall that the rank of a matrix is equal
+to the number of columns minus the number of columns without pivots. Clearly,
+1 ≤ w2,1 < · · · < w2,τ2 ≤ l2 .
+     For i = 2, . . . , q and j = 1, . . . , li , consider the family of skip sequences,
+
+       F(i, j) = F (Ai,j ) = (S1 , . . . , Sq ) ∈ A∗q ; Si = Ai,j and Sk = Ϙ for k < i
+                            
+
+
+
+                                                 Revista Colombiana de Estadística                       41 (2018) 191233
+
+228                                                                                          Francisco J. Diaz
+
+A particular sequence in F(i, j) will be denoted F(i, j, ∗). If F(i, j, ∗) = (S1 , . . . , Sq ),
+we denote F(i, j, ∗)t = (S1 , . . . , St ) for 1 ≤ t ≤ q .
+
+   Now take τ2 skip sequences F (2, w2,1 , ∗) , . . . , F (2, w2,τ2 , ∗) from F (2, w2,1 ) , . . . ,
+F (2, w2,τ2 ), respectively, and consider the matrix
+                                                                
+                                                      hii   hii
+                                             
+                                             ∃i=1
+                                              c     S1 , S2
+                                     M2 =  - - - - - - - - - - - 
+                                                                 
+
+                                            ∃j=1
+                                             τ2 F (2, w2,j , ∗)2
+
+By using elementary row operations,
+
+                                                                                                    
+                         
+                                             E2
+                                                                                      Il1    B12
+                                                                                       *
+         M2      ⇐⇒            - - - - - - - - - - - -        ⇐⇒ E20 := 
+                                                                           0                 Il2 
+                                                                                                  
+                                                                                       *       *
+                              ∃j=1
+                               τ2  F (2, w2,j , ∗)2                                    0         0
+
+           j=1
+because ∃τ       F (2, w2,j , ∗)2 has 1's only in its columns l1 + w2,1 < · · · < l1 + w2,τ2 ,
+             2
+which are matched with the columns of C2 that do not have a pivot after converting
+the upper part of M2 into E2 . Then, ρ (M2 ) = l1 +l2 . Now observe that, by starting
+with the same elementary row operations used to obtain E2 , we can obtain
+
+                                                                                            
+                                                                      Il1   B12        B13
+                                                             *
+                                                             0             C2         B23 
+                                                                                         
+                             hii  hii  hii
+                 ∃i=1
+                  c         S1 , S2 , S3           ⇐⇒ E3 := 
+                                                             *             *              
+                                                             0             0          C3 
+                                                                      *     *           *
+                                                                      0     0           0
+
+where C3 is row echelon. Denoting τ3 = l3 − ρ (C3 ), let w3,1 < · · · < w3,τ3 be the
+columns of C3 that do not have a pivot. Now take τ3 sequences F (3, w3,1 , ∗) , . . .,
+F (3, w3,τ3 , ∗) from F (3, w3,1 ) , . . ., F (3, w3,τ3 ), respectively. By using elementary
+row operations, we obtain
+
+                                             
+                         hii     hii      hii                                                       
+               ∃i=1    S     , S     ,  S                                          E3
+              c         1       2        3                   ------------                         
+              ------------                                                                        
+                                               
+       M3 := 
+              ∃j=1                                        ⇐⇒  ∃j=1 F (2, w2,j , ∗)3
+                                                                                                    
+                       F  (2,   w      , ∗)
+                                                
+              τ2
+                                  2,j                          τ2
+                                                                                                     
+                                            3                                                       
+                - - - - - -   - - -   - -  -
+                                                
+                                                              ------------                         
+               ∃j=1
+                τ3     F (3, w3,j , ∗)3                         ∃j=1
+                                                                 τ3  F (3, w3,j , ∗)3
+
+                                                         
+                               Il1     B12    B13
+                               *                                                                
+                 
+                               0      Il2    B23
+                                                          
+                                                                Il1            B12        B13
+                              *       *
+                                                               *
+                                                                0               Il2       B23 
+                                                                                             
+              ⇐⇒               0       0         C3
+                                                           ⇐⇒ 
+                                                         
+                                                                *                *            
+                               *       *          *
+                 
+                                0       0         0
+                                                               0                0        Il3 
+                                                                                               
+                                                                 *                *        *
+                                                         
+                                                         
+                            - - - - - - - - - - - -             0               0         0
+                             j=1
+                            ∃τ3 F (3, w3,j , ∗)3
+
+                                                  Revista Colombiana de Estadística          41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                                     229
+
+
+
+where the second equivalence was obtained by using row operations analogous
+                                  0                                                                          j=1
+to those used to obtain E2 , and the third equivalence is because the 1's of ∃τ
+                                                                                                               3
+F (3, w3,j , ∗)3 are aligned vertically with the columns of C3 that do not have a
+pivot. Then, ρ (M3 ) = l1 + l2 + l3 .
+
+   Thus, working iteratively in this way, we can construct                             q − 1 sequences of
+numbers, namely wi,1 < · · · < wi,τi , i = 2, . . . , q , and matrices of the form
+
+
+                                                               
+                                            hii             hii
+                                                                   
+                                   ∃i=1
+                                    c     S1    , . . . , S k
+                    Mk :=                                          ,       k = 2, . . . , q,
+                                                                   
+                                  - - - - - - - - - - - - - - -
+                              ∃h=2
+                               k   ∃j=1
+                                    τh        F (h, wh,j , ∗)k
+
+                                                                                                                
+                                                                                       i=1     hii           hii
+such that ρ (Mk ) = l1 + · · · + lk . By construction, since Γ = ∃c                           S1 , . . . , S q ,
+                                                                                           Pq
+a conversion of Γ into a row echelon matrix shows that ρ(Γ) =
+     Pq                                                                                      i=1 li − τ , where
+τ=       i=2 τi .
+
+   Now observe that, for all i = 2, . . . , q and j = 1, . . . , li ,
+
+
+
+     W (F(i, j, ∗)) =
+
+             *         *                  *                  *                             *              
+         1    0 mi−1    0 mi −mi−1         0 mi+1 −mi          0 mi+2 −mi+1       ...       0 mq −mq−1
+             *                            *                  *                             *              
+      1      0 mi−1    F(i, j, ∗)i        0 mi+1 −mi          0 mi+2 −mi+1       ...       0 mq −mq−1
+                                                                                                          
+                                                                                                           
+             *         *                                     *                             *              
+      1
+             0 mi−1    0 mi −mi−1        F(i, j, ∗)i+1        0 mi+2 −mi+1       ···       0 mq −mq−1     
+                                                                                                           
+             *         *                  *                                                *              
+      1
+             0 mi−1    0 mi −mi−1         0 mi+1 −mi          F(i, j, ∗)i+2      ···       0 mq −mq−1     
+                                                                                                           
+      .         .            .                 .                    .            ..             .
+      ..        .            .                 .                    .                           .
+                                                                                                           
+                 .            .                 .                    .                 .         .
+                                                                                                           
+                                                                                                          
+              *         *                  *                  *
+       1      0 mi−1    0 mi −mi−1         0 mi+1 −mi          0 mi+2 −mi+1       ...        F(i, j, ∗)q
+
+         *
+where 0 k is a row vector of zeros of dimension k , and the dimension of W (F(i, j, ∗))
+is (q − i + 2) × (mq + 1).
+
+   Then, reordering rows,
+
+
+                                                                        
+                                                    D1
+                               ------------             
+                                                        
+                               ∃j=1 W (F (2, w , ∗)) 
+                               τ2             2,j       
+                            D=
+                               ∃j=1 W (F (3, w3,j , ∗))  ⇐⇒
+                                                         
+                                 τ 3
+                                          .
+                                                        
+                                         .              
+                                         .              
+                                 j=1
+                                ∃τq W (F (q, wq,j , ∗))
+
+
+
+
+                                               Revista Colombiana de Estadística             41 (2018) 191233
+
+230                                                                                                     Francisco J. Diaz
+
+
+       *              *                                 *                                                  *                    
+  1     0              0                                 0                      ···                         0
+ *                    *                                 *                                                  *                    
+ 0
+      Il1             0                                 0                      ···                         0                    
+                                                                                                                                 
+ *     *          
+                      hii  hii
+                                                        *                                                  *                    
+ 0
+       0     ∃i=1
+               c     S1 , S2                             0                      ···                         0                    
+                                                                                                                                 
+ *     *              *                                                                                  *                    
+                                                       hii  hii  hii
+ 0
+       0              0                   ∃i=1
+                                            c         S1 , S2 , S3              ···                         0                    
+                                                                                                                                 
+                                                                                                                                
+ .      .              .                                 .                     .                            .                   
+ .      .              .                                 .                         .
+                                                                                        .
+                                                                                                             .
+ .      .              .                                 .                                                  .
+                                                                                                                                 
+                                                                                                                                 
+ *     *              *                                 *                                                  *                    
+ 0
+       0              0                                 0                      ···                        0                     
+                                                                                                                                 
+ *     *              *                                 *                                            
+                                                                                                         hii         hii
+                                                                                                                                
+ 0
+       0              0                                 0                      ···              ∃i=1
+                                                                                                  c    S1 , . . . , Sq
+                                                                                                                                 
+                                                                                                                                 
+                                                                                                                                
+ −     −    - - - - - - - - - - - -        - - - - - - - - - - - -         - - -                 - - - - - - - - - - - -        
+ *     *                                                *                                                  *
+                                                                                                                                 
+             ∃j=1
+              τ2 F (2, w2,j , ∗)2                                               ···
+                                                                                                                                
+ 0     0                                                0                                                  0                    
+ *     *              *                                                                                    *                    
+                                       ∃h=2 ∃j=1
+                                                             
+ 0     0              0                     τh F h, wh,j , ∗ 3                 ···                         0
+                                                                                                                                
+                                       3                                                                                        
+                                                                                                                                 
+ .      .              .                                 .                     .                            .
+ ..     .              .                                 .                         .                        .
+                                                                                                                                 
+        .              .                                 .                             .                    .
+                                                                                                                                 
+                                                                                                                                 
+ *     *              *                                 *                                                  *                    
+ 0
+       0              0                                 0                      ···                         0                    
+                                                                                                                                 
+  *     *              *                                 *
+                                                                                                ∃h=2 ∃j=1
+                                                                                                                            
+  0     0              0                                 0                      ···              q    τh F       h, wh,j , ∗ q
+
+
+We nally obtain
+
+                                                 *           *   *                         *    
+                                           1      0           0   0        ···              0
+                              *                              *   *                         *  
+                              0 Il1                          0   0        ···              0 
+                                                                                              
+                              * *                                *                         * 
+                              0 0                        M2      0        ···              0 
+                        D ⇐⇒  * *
+                                                                                              
+                                                              *                             * 
+                              0 0
+                                                             0   M3       ···              0 
+                              .  .                           .   .        ..                .
+                              .. .                           .   .                          .
+                                                                                               
+                                  .                           .   .             .            .
+                                                                                               
+                                                                                              
+                               *  *                           *   *
+                               0 0                            0   0        ···              Mq
+                                                  Pq
+and conclude that ρ(D) = 1 + l1 +                       i=2 ρ (Mi ) = 1 + mq , which is equal to the
+number of columns of D . Thus, with the selected skip sequences, D is of full rank.
+
+
+Proof of Theorem 4. By Theorem 1, Eω [YY (r)
+                                         ω (S)] = g
+                                                    −1
+                                                       (W (S, X ω ) γ ω ), and
+                                                           (r)           (t)
+similarly for T . By the Interchangeability Assumption, Y ω    (S) and Y ω (T ) have
+                                    (r)            (t)
+                                                 Y ω (T )]. Then,
+                                  Y ω (S)] = Eω [Y
+the same distribution. Hence, Eω [Y
+
+
+                        g −1 (W (S, X ω ) γ ω ) = g −1 (W (T, X ω ) γ ω ) .
+
+
+Appendix B. Examples of Antichronic Systems with
+            a Full-Rank Design Matrix
+Example B.1. Consider the simplest ASs, which occur when q = 2 and l1 =
+l2 = 2. In this case, A∗q includes only four non-skip sequences, namely: S h1i =
+(A1,1 , A2,1 ), S h2i = (A1,1 , A2,2 ), S h3i = (A1,2 , A2,1 ), and S h4i = (A1,2 , A2,2 ), for
+
+
+                                                  Revista Colombiana de Estadística                     41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                                    231
+
+
+
+which
+
+                                                                                        
+                                          1               0   0     0     0     0    0
+                             W S h1i =  1                  1   0     0     0     0    0 
+                                           1                0   0     1     0     1    0
+                                                                                        
+                                         1                0   0     0     0     0    0
+                             W S h2i =  1                  1   0     0     0     0    0 
+                                           1                0   0     1     0     0    1
+                                                                                        
+                                         1                0   0     0     0     0    0
+                             W S h3i =  1                  0   1     0     0     0    0 
+                                           1                0   0     0     1     1    0
+                                                                                        
+                                         1                0   0     0     0     0    0
+                                 h4i
+                         and W S       =  1                0   1     0     0     0    0 
+                                           1                0   0     0     1     0    1
+                            h1i
+Suppose that C1 =           S , . . . , S h4i       is an antichronic system. By Theorem 2, an
+               γ ] cannot be computed if only the sequences in C1 are implemented
+estimator of E[γ
+in a CT, even if each sequence in C1 is administered to at least one subject, because,
+in this case, mq = 6, q(q −1)/2 = 1 and ρ(K) = p+6 < p+7 (see proof of Theorem
+2); that is, the study design matrix will never be of full rank. Only two SSs are
+                          h5i
+possible, namely S              = (Ϙ, A2,1 ) and S h6i = (Ϙ, A2,2 ), for which, respectively,
+
+                                       1                 0   0     0     0     0    0
+                                                                                           
+                              W S h5i =
+                                          1                 0   0     0     0     1    0
+                                       1                 0   0     0     0     0    0
+                                                                                           
+                                  h6i
+                          and W S      =
+                                          1                 0   0     0     0     0    1
+
+    Thus, for q = l1 = l2 = 2, the design matrix will be of full rank for some systems
+including at least one SS, provided each sequence of the system is administered to
+at least one subject. Examples of such systems are
+
+                 n     o           n        o                   n  o
+        C2 = C1 ∪ S h5i ; C3 = C1 ∪ S h6i ; C4 = C1 ∪ S h5i , S h6i , and
+                                n                             o
+                           C5 = S h1i , S h2i , S h3i , S h5i
+
+To show that the design matrix is of full rank for C5 , say, just observe that the rank
+                 T               T               T               T T
+of [W    S h1i        , W S h2i        , W S h3i        , W S h5i     ] is 7.         Mathematical software
+such as   Mathematica (Wolfram Research, Inc.), or the calculator TI-Nspire CX
+CAS (Texas Instruments Inc.) are helpful in these rank computations.
+
+
+Example B.2. Now suppose that q = 3 and l1 = l2 = l3 = 2. Here, A∗q includes
+                                                                                                          h3i
+8 possible non-skip sequences (see Figure 2). For instance, in the Figure, S                                    =
+                                                                          h9i                            h10i
+(A1,1 , A2,2 , A3,1 ).    Consider the skip sequences                S          = (Ϙ, Ϙ, A3,2 ) and S           =
+
+
+                                                   Revista Colombiana de Estadística           41 (2018) 191233
+
+232                                                                            Francisco J. Diaz
+
+Figure 2: Graphical representation of all possible non-skip sequences with q = 3 and
+          l1 = l2 = l3 = 2 .
+
+
+                       Stage 1      Stage 2        Stage3       Sequence
+
+
+
+                                                   A3,1         S< 1 >
+
+                                    A2,1
+
+                                                   A3,2         S< 2 >
+
+                       A1,1
+
+                                                   A3,1         S< 3 >
+
+                                    A2,2
+
+                                                   A3,2         S< 4 >
+
+
+
+                                                   A3,1         S< 5 >
+
+                                    A2,1
+
+                                                   A3,2         S< 6 >
+
+                       A1,2
+
+                                                   A3,1         S< 7 >
+
+                                    A2,2
+
+                                                   A3,2         S< 8 >
+
+
+
+
+(Ϙ, A2,2 , A3,1 ). To illustrate,
+
+
+                        1 0 0 0 0 0 0 0 0 0 0 0 0
+                                                 
+                    1 1 0 0 0 0 0 0 0 0 0 0 0 
+           W S h3i =                             
+                       1 0 0 1 0 0 1 0 0 0 0 0 0 
+                        1 0 0 0 0 0 0 1 0 0 1 1 0
+                    1 0 0 0 0 0 0 0 0 0 0 0 0 
+           W S h9i =
+                        1 0 0 0 0 0 0 0 0 0 0 0 1
+                                                 
+                      1 0 0 0 0 0 0 0 0 0 0 0 0
+           W S h10i =  1 0 0 0 0 0 1 0 0 0 0 0 0 
+                        1 0 0 0 0 0 0 0 0 0 1 1 0
+
+
+                                           Revista Colombiana de Estadística   41 (2018) 191233
+
+Design Matrix for Clinical Trials of Treatment Sequences                                  233
+
+        h1i
+If C1 = S , . . . , S h8i , the design matrix will be of full rank for the systems
+               n              o          n                          o n               o
+     C2 = C1 ∪ S h9i , S h10i and C3 = S h1i , S h3i , . . . , S h7i ∪ S h9i , S h10i
+
+provided each sequence in the system is administered to at least one subject. Other
+systems for which the design matrix is of full rank are possible when both q = 3
+                                                               h10i
+and l1 = l2 = l3 = 2. For instance, in the denition of S             in C2 , A2,1 could be
+used in place of A2,2 .
+
+
+
+
+Appendix C. Description of Supplementary
+            Material (Computer Code)
+   The author wrote a Stata command (asdesign) which creates the design matrix
+using three input variables: the subject identier, the stage and the treatment
+variables. A help le for asdesign is also included, which additionally shows code
+for tting antichronic systems.
+
+   The included les are:
+
+   asdesign.ado: Stata program that runs as a regular command.
+   asdesign.sthlp: Help le for asdesign.
+   Instructions for asdesign.docx: Word le with instructions to install
+asdesign.
+
+   The above les are available from the author on request.
+
+
+
+
+                                       Revista Colombiana de Estadística   41 (2018) 191233
+

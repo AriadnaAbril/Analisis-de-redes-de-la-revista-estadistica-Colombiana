@@ -1,0 +1,1145 @@
+PLS Generalized Linear Regression and Kernel Multilogit Algorithm (KMA) for Microarray Data Classiﬁcation Problem. Regresión lineal generalizada por MCP y algoritmo kernel multilogit para la clasiﬁcación de datos de microarreglos
+Centro de Investigación en Matemáticas A.C., Guanajuato, México. 
+Abstract
+This study involves the implentation of the extensions of the partial least squares generalized linear regression (PLSGLR) by combining it with logistic regression and linear discriminant analysis, to get a partial least squares generalized linear regression-logistic regression model (PLSGLR-log), and a partial least squares generalized linear regression-linear discriminant analysis model (PLSGLRDA). A comparative study of the obtained classiﬁers with the classical methodologies like the k-nearest neighbours (KNN), linear discriminant analysis (LDA), partial least squares discriminant analysis (PLSDA), ridge partial least squares (RPLS), and support vector machines(SVM) is then carried out. Furthermore, a new methodology known as kernel multilogit algorithm (KMA) is also implemented and its performance compared with those of the other classiﬁers. The KMA emerged as the best classiﬁer based on the lowest classiﬁcation error rates compared to the others when applied to the types of data are considered; the unpreprocessed and preprocessed.
+Key words: Generalized linear regression; Kernel multilogit algorithm; Partial least squares.
+Resumen
+Este estudio combina el modelo de regresión lineal generalizado por mínimos cuadrado parciales (RLGMCP), con regresión logística y análisis discriminante lineal, para obtener los modelos de regresión logística generalizada por mínimos cuadrados parciales, (RLGMCP) y regresión logística generalizada-discriminante por mínimos cuadrados parciales (RLGDMCP). Se realiza un estudio comparativo con clasiﬁcadores clásicos como, k-vecinos más cercanos (KVC), análisis discriminante lineal (ADL), análisis discriminante de por mínimos cuadrados parciales (ADMCP), regresión por mínimos cuadrados parciales (RMCP) y máquinas de vectores de soporte de soporte vectorial (MSV). Además, se implementa una nueva metodología conocida como algoritmo de kernel multilogit (AKM). Su desempeño es comparado con los de los otros clasiﬁcadores. De acuerdo con las tasas de error de clasiﬁcación obtenidas a partir de los diferentes tipos de datos, el KMA es el de mejor resultado.
+Palabras clave: Regresíon lineal generalizada;  Algoritmo de kernel multilogit; Mínimos cuadrados parciales.
+
+
+1. Introduction
+    The ﬁeld of genomics has witnessed a tremendous increase in the amount
+of data generation due to biotechnological advances like microarrays and next-
+generation sequencing platforms. These biotechnological advances have made it
+possible to simultaneously monitor expression levels for thousands of genes, and
+thus help in solving particular problems related to the identiﬁcation of molecular
+variants in them, and their relation to the classiﬁcation, diagnosis, prognosis and
+treatment of diﬀerent conditions. The high dimensional data generated from
+microarray technology involve many thousands of genes measured simultaneously,
+a diﬀerent microarray for each individual. This deﬁnitely introduces some noise
+and unwanted variations that might stem from technical or unknown sources.
+     In a microarray experiment let n and p be the numbers of the samples and genes
+respectively, so that the generated data is a n × p matrix. The main challenge
+with these technologies is that the resultant data are noisy due to biological and
+technological variations, and at the same time they usually are high dimensional,
+i.e., they have more variables than cases due to a low sample size, so n << p. This
+condition makes the direct application of most classical statistical methodology
+implausible, leading researchers to propose new solutions for this type of problem.
+   Normally before the down stream analysis of the data generated from DNA
+microarrays, a preprocessing and normalization stage is performed to remove
+the noise, ﬁltering out the genes with low expression values, addressing missing
+values, and standardizing the data via a log-transformation. One of the most used
+preprocessing procedures for microarray data was proposed by Dudoit, Fridlyand
+& Speed (2002), which entails three basic steps, namely: thresholding, ﬁltering
+out of genes outside of a range of minimum/maximum intensities, and ﬁnally,
+standardization of the expression values by a log transformation (Alshamlan, Badr
+& Alohali 2013, Dudoit et al. 2002).
+
+                   Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+PLS Generalized Linear Regression and Kernel Multilogit Algorithm (KMA)               235
+
+    This work considers classiﬁcation problems for microarray data sets under two
+conditions: un-preprocessed and preprocessed. In the un-preprocessed data all
+genes available in the study are included, while in the preprocessed only the subset
+of genes believed to play important roles in the biological problem of interest
+are used. We extend the Partial Least Squares Generalized Linear Regression
+(PLSGLR) algorithm of Bastien, Vinzi & Tenenhaus (2005) by combining it with
+Logistic Regression, to give PLSGLR-log, and with Linear Discriminant Analysis
+to come up with PLSGLRDA. Furthermore, we compare their performance with
+that of the kernel multilogit algorithm (KMA) proposed by Dalmau, Alarcón &
+González (2015), and of the classical methods: the k-Nearest Neighbour (KNN),
+Ridge Partial Least Squares (RPLS), Partial Least Squares-Linear Discriminant
+Analysis (PLSDA), the usual Linear Discriminant Analysis (LDA) and the Support
+Vector Machines (SVM), when applied to a set of microarray data, referred to in
+this work as the Colon data set by Alon, Barkai, Notterman, Gish, Ybarra, Mack
+& Levine (1999). We evaluate the classiﬁers with regard to their classiﬁcation
+error rates in this data set and compare them.
+    Our work addresses problems similar to many studies involving classiﬁcation
+in microarrays, with typically high dimensional data and low numbers of samples
+(or subjects). Following a two stage strategy, many involve the use of the original
+PLS to build the components, even though the response variables are discrete, for
+example the analysis of Nguyen & Rocke (2002a, 2002b); this is intuitively not
+correct since the original PLS is an algorithm best suited for continuous response
+variables (that is, variables with numeric values that have an inﬁnite number of
+values between any two values). And in almost all of the procedures a variable
+(gene) selection step is implemented, with an accompanying computing cost. This
+paper describes a procedure suitable for categorical data, and its performance is
+studied with and without the gene selection step, and compared to that of each
+of the other classiﬁers used. An additional advantage of our approach is that the
+PLSGLR can deal with missing values, unlike the original PLS, commonly used in
+the literature.
+    The proposed two stage strategy for the classiﬁcation problem is described as
+follows.
+    To the best of our knowledge, the proposed combination of PLS generalized
+linear regression algorithm with logistic and discriminant analysis has not been
+used before in cases where n << p. The PLS generalized linear regression
+algorithm is simple, and a good performance when compred to the classical
+methods would make it an attractive alternative (See Table 1).
+
+
+2. Kernel Multilogit Algorithm (KMA)
+   The KMA was recently proposed by Dalmau et al. (2015). This algorithm
+works by ﬁrst transforming a categorical response variable to a continuous one via
+a multilogit transformation. A categorical variable in this case refers to the one
+that contain a ﬁnite number of categories or distinct groups for instance tumor and
+non-tumor. The transformed variable is then used with the explanatory variables
+
+
+                  Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+236         Adolphus Wagala, Graciela González-Farías, Rogelio Ramos & Oscar Dalmau
+
+
+in a regression model for classiﬁcation and prediction. Finally, the new predicted
+variables are transformed back using the inverse multilogit function to the original
+space to enable classiﬁcation.
+
+                                Table 1: Proposed strategy
+  Steps
+  Step 1: Dimension reduction
+  In this stage, we propose to use PLSGLR to project the high dimensional data to a low
+  dimension space thus resulting in new components (latent variables), which preserve the
+  information in the intrinsic structure of the data.
+
+  Step 2: Use of latent variables for classiﬁcation
+  Analyze the obtained latent variables with the classical statistical classiﬁers:
+      i PLSGLR components with logistics regression to get the PLSGLR-logistic model
+        denoted as (PLSGLR-log)
+      ii PLSGLR components with linear discriminant analysis model to get PLSGLR-Linear
+         Discriminant Analysis model denoted as (PLSGLRDA)
+
+
+   Let the response variable vector y be categorical with class labels {1, 2, . . . , C}.
+To classify a discrete variable from predictor variables x, the ﬁrst step is to
+transform the response variable y into a new space using the multilogit function.
+The multinomial logit model with C as the reference category can be given as
+
+                                   exp{f (x; θj )}
+            Pr(y = j | x) =                                  ,       j = {1, 2, . . . , C − 1}
+                                   P
+                                   C−1
+                              1+           exp{f (x; θi )}
+                                    i=1
+                                                                                                 (1)
+                                              1
+            Pr(y = C | x) =                                      ,
+                                    P
+                                    C−1
+                               1+          exp{f (x; θi )}
+                                     i=1
+
+where f (x; θi ) = xT θi . The expected value of y being a multinomial random
+variable is given by E(y | x) = [Pr(y = 1 | x), Pr(y = 2 | x), . . . , Pr(y = C | x)]T .
+Now, denoting t = E(y | x), the original response variable y is not used but
+instead a transformed version ϑ = logit(t) is used. The logit transformation is
+done with C as the reference category as follows
+                                              tj
+                     ϑj = logit(tj ) = log       ,   j = {1, 2, . . . , C − 1}                   (2)
+                                              tC
+where ϑj ∈ ϑ, tj ∈ t.
+    In the second step a parametric linear model is proposed and its parameter
+estimates can be obtained via the standard Bayesian formula Pr(ϑ | x) = Pr(x |
+ϑ)Pr(ϑ)/Pr(x) where Pr(ϑ | x) is the posterior probability distribution, Pr(x | ϑ)
+is the likelihood function and Pr(x) is the normalization constant, assuming
+that ϑ ∈ RC−1 for a given x ∈ Rm follows a multivariate normal distribution
+ϑ | x ∼ N (ΘT x, α2 I), Θ ∈ Rm×C−1 ,Pr(ϑ | x) is also multivariate normally
+distributed. Furthermore, the prior parameters are assumed to follow a normal
+distribution, i.e. θ ∼ N (0, β 2 I) where β is known. The parameter matrix Θ is
+
+                     Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+PLS Generalized Linear Regression and Kernel Multilogit Algorithm (KMA)                237
+
+thus estimated by optimizing an equivalent of a regularized least squares function
+                               b = arg minU(Θ)
+                               Θ
+                                         Θ                                             (3)
+                           U (Θ) = ∥ϑ − XΘ∥2F + λ∥Θ∥2F ,
+
+where ϑ = [ϑ(i) ]Ti=1,2,...,n , X = [x(i) ]Ti=1,2,...,n , ∥.∥F is the Frobenius norm of a
+matrix and λ is the regularization parameter. The result is a closed form estimate
+         b = (XT X+λI)−1 XT ϑ. To capture non-linearities which may be present,
+given by Θ
+a dual representation Θ = XT Γ is taken so that
+
+                         U (Γ) = ∥ϑ − XXT Γ∥2F + λ∥XT Γ∥2F
+
+then U (Γ) is optimized to get Γ      b = (K + λI)−1 ϑ, where K = XXT is the
+Gram matrix, Kij = ⟨x , x ⟩ + 1. However a more general kernel Kij =
+                             (i)  (j)
+
+((ϕ(x(i) ), ϕ(x(j) )) where ϕ(·) is a nonlinear mapping, is preferred in practice.
+    The ﬁnal step of the algorithm involves prediction/classiﬁcation given a new set
+of response variables xnew . This entails estimation of ϑnew by ϑnew = Γ   bT xbnew ,
+but xbnew = K((ϕ(x(i) ), ϕ(x(new) )). The computed ϑnew is used to estimate tnew
+by using tnew = logit−1 (ϑnew ). The inverse of a logit function is given by
+
+                            exp{ϑnew
+                                  j  }
+                tnew =                     ,         j = {1, 2, . . . , C − 1}
+                 j
+                             P
+                            C−1
+                         1+     exp{ϑnew
+                                     j   }
+                              i=1
+                                                                                       (4)
+                                    1
+                tnew =                           .
+                 J
+                              P
+                              C−1
+                         1+         exp{ϑnew
+                                         j   }
+                              i=1
+
+
+    The class labels associated with xnew are then computed using the estimated
+conditional distribution by ﬁnding the components that maximize those of tnew
+i.e. using the Bayes rule. The computed tnew is then used to get the class label
+ y new ) of the new data; for details see (Dalmau et al. 2015).
+(b
+
+
+3. Partial Least Squares (PLS) and Some of its
+   Applications in Genomics
+    PLS is a very useful approach because it is able to analyze data with
+many, noisy, collinear as well as incomplete variables. PLS is usually utilized
+in data reduction when there is multicollinearity or when the data have more
+variables than the number of samples. Essentially, the PLS aims at maximizing
+the covariance between the response variables Y and the predictors X, i.e.,
+cov(X T Y ) of highly multidimensional data by ﬁnding a linear subspace of the
+explanatory variables (Wold, Sjöström & Erikson 2001, Höskuldsson 1988). Some
+literature on PLS can be found in (Wold et al. 2001, Wold, Ruhe, Wold &
+Dunn III 1984, Höskuldsson 1988), among others.
+
+                   Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+238      Adolphus Wagala, Graciela González-Farías, Rogelio Ramos & Oscar Dalmau
+
+
+    The research on PLS is still very active due to its ability to address problems
+associated with the high dimensional data such as multicollinearity and high
+dimensionality, among others. In the recent past, PLS has been utilized
+predominantly in high dimensional data in diﬀerent ﬁelds like chemometrics and
+the “omics” like genomics, proteomics, metabolomics, and many other ﬁelds that
+generate large amounts of data, like spectroscopy (Gromski, Muhamadali, Ellis,
+Xu, Correa, Turner & Goodcare 2015). Recent applications of PLS in microarray
+studies include Huang, Tu, Huang, Lien, Lai & Chuang (2013), who applied PLS
+regression (PLSR) in breast cancer intrinsic taxonomy, for classiﬁcation of distinct
+molecular sub-types by using PAM50 signature genes as predictive variables in PLS
+analysis and the latent binary gene component analyzed by a logistic regression
+for each molecular sub-type. Also, Telaar, Liland, Repsilber & Nürnberg (2013)
+extended the notion of PLS-discriminant analysis (PLS-DA) to Powered PLS-DA
+(PPLS-DA), introducing a ‘power parameter’ maximised towards the correlation
+between the components and the group-membership, thereby achieving a minimal
+classiﬁcation error. Furthermore, Xi, Gu, Baniasadi & Raftery (2014) discussed
+the PLS-DA with applications to metabolites data. Other articles involving the
+usage of PLS include: Dong, Zhang, Zhu, Wang & Wang (2014) who used PLS
+to investigate the underlying mechanism of the post-traumatic stress disorder
+(PTSD) using microarray data; Gusnanto, Ploner, Shuweihdi & Pawitan (2013),
+who made gene selection based on partial least squares and logistic regression
+random-eﬀects (RE) in classiﬁcation models; gene selection involving PLS was
+also done by Wang, An, Chen, Li & Alterovitz (2015). The sparse PLS has also
+been utilized by many researchers; for instance, Chun & Keles (2009),Lee, Lee, Lee
+& Pawitan (2011) and Chung & Keles (2010) provided an eﬃcient algorithm for
+the implementation of sparse PLS for variable selection in high dimensional data.
+Furthermore, Lê Cao, Rossouw, Robert-Granieé & Besse (2008) used sparse PLS
+for variable selection when integrating omics data. They implemented sparsity via
+lasso penalization of the PLS loading vectors when computing the singular value
+decomposition.
+
+
+4. PLS Generalized Linear Regression Algorithm
+   In this section, we present an algorithm that can be applied to any Generalized
+Linear Regression which was developed by (Bastien et al. 2005). Consider the
+response data y with the explanatory variables x1 , . . . , xp ; then a PLS-General
+Linear Regression (PLSGLR) can be written as
+
+                                      X
+                                      m          X
+                                                  p          
+                                                        ∗
+                             g(θ) =         ch         whj xj ,                        (5)
+                                      h=1        j=1
+
+where θ a conditional expectation of the variable y if its distribution is continuous,
+or a vector of probabilities if the variable y follows a discrete distribution with a
+ﬁnite support, while g(.) is the link function chosen according to  Pthe   probability
+                                                                      p      ∗
+distribution of y. The PLS components are given by th =                    w
+                                                                      j=1 hj xj , j =
+
+
+                   Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+PLS Generalized Linear Regression and Kernel Multilogit Algorithm (KMA)                239
+
+1, . . . , p, h = 1, . . . , m. To compute the PLS components, let X = x1 . . . , xp be a
+matrix of p centred explanatory variables xj ’s. The key objective is to determine
+m orthogonal PLS components deﬁned as a linear combination of the xj ’s. The
+algorithm is presented as follows:
+
+   1. Computation of the ﬁrst PLS component t1 : First, the regression coeﬃcients
+      a1j of xj are computed using the usual Generalized Linear Model (GLM)
+      procedure of y on xj , j = 1 . . . p. The column vector a1 which contains a1j
+      is then normalized: w1 = a1 /∥a1 ∥. Finally, the component t1 is computed
+      as t1 = Xw1 /w1′ w1 .
+
+   2. Computation of the second PLS component t2 : Involves the computation of
+      the linear model coeﬃcients a2j of xj in the GLM setting of y on t1 and
+      xj , j = 1, . . . , p. Since the main idea of PLS is to create the orthogonal
+      components t2 , the component t1 is added as a variable in estimating y
+      on t1 and xj , j = 1, . . . , p. This is because the structure of PLSGLR does
+      not allow the residuals of y to be obtained in each iteration that would
+      aid in construction of orthogonal components. The column vector a2 which
+      contains a2j is normalized: w2 = a2 /∥a2 ∥ and thereafter, the residual matrix
+      X1 is obtained via the regression of X on t1 . The use of residual matrix in
+      the attainment of the next component ensures orthogonality between the
+      diﬀerent components. The component t2 is calculated by t2 = X1 w2 /w2′ w2 .
+      Finally, t2 is expressed in pterms of X: t2 = Xw∗2 .
+
+   3. Computation of the hth PLS Component th : Consider the already computed
+      components t1 , . . . , th−1 ; the ﬁnal component th is computed by calculating
+      the GLM coeﬃcients ahj of xj by ﬁtting y on t1 , . . . , th−1 and xj , j =
+      1, . . . , p. Next, the column vector ah , which contains ahj is normalized
+      as: wh = ah /∥ah ∥. The residual matrix Xh−1 of the regression of
+      X on t1 , . . . , th−1 is then computed. The use of the residual matrix
+      and the previously obtained t1 , . . . , th−1 as covariables in calculating
+      the GLM coeﬃcients helps the creation of orthogonal components, as
+      previously explained. The ﬁnal component th is thus computed as th =
+      Xh−1 wh /wh′ wh . Finally, th is expressed in terms of X : th = Xw∗h .
+
+    While computing the components th , the nonsigniﬁcant elements in ah can be
+set to zero in order to simplify calculations, since only the signiﬁcant response
+variables are needed to build the PLS components. The number of m components
+to be used can be determined through cross-validation or by hard thresholding.
+The iteration can be stopped once there are no more signiﬁcant coeﬃcients in ah
+(Bastien et al. 2005).
+    Consider xh−1,i , a column vector of the transpose of the ith row of Xh−1 ; then
+thi = x′h−1,i wh /wh′ wh of the ith case on the component th . This is basically the
+slope of the ﬁtted line of the univariate OLS linear regression without intercept for
+xh−1,i on wh , which can be estimated even with some data missing. Consequently,
+the component is computed based on the available data. Therefore the PLSGLR
+algorithm by (Bastien et al. 2005) eﬀectively copes up with missing data.
+
+                   Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+240       Adolphus Wagala, Graciela González-Farías, Rogelio Ramos & Oscar Dalmau
+
+
+5. Error Rate as a Measure of Classiﬁcation
+   Accuracy
+    In literature, there exist numerous metrics for the classiﬁcation accuracy for
+instance the error rate, sensitivity and speciﬁcity among others. Following the
+methodology of Boulesteix, Strobl, Augustin & Daumer (2008), consider a random
+vector X ∈ Rp and the response vector y ∈ {0, . . . , k − 1}. If f denotes the joint
+distribution of X and y then a classiﬁer is a function say C that maps from Rp to
+{0, . . . , k−1} thereby assigning classes to a vector of some matrix X corresponding
+to the p-dimensional gene expression vector while yb is the predicted class.
+                               C : Rp → {0, . . . , k − 1}
+                                                                                       (6)
+                                   X → yb
+For f (X, y) and y are known then the Bayes classiﬁer can be constructed by
+                        Cbayes (X) = arg max P (Y = k/X)                               (7)
+                                             k
+
+from the derivation of the posterior distribution P (y/X). The error rate is thus
+given by the distribution
+
+
+                            Err(C) = Pf (C(X) ̸= y)
+                                                                                       (8)
+                                     = Ef (IC((X) ̸= y))
+Now suppose that we have data for n sample observations (say patients) denoted
+by D = d1 , . . . , dn which are identically independently distributed observations
+di = (yi , xi ). Here yi ∈ {0, . . . , k − 1} denotes the membership of the response
+vector while xi = (xi1 , . . . , xip )T the p-vector of the expression data for the ith
+patient. Given the learning data set is given by D1 = (d∗1 , . . . , d∗L ) where L is
+the number of observations chosen for the learning set. If the classiﬁer deﬁned
+by equation 6 and learnt using the data D1 using the classiﬁcation method M is
+                M
+denoted by CD    1
+                    then the error rate given D1 is given by
+                           M
+                          CD1
+                              = Ef (I(y ̸= CD
+                                            M
+                                             1
+                                               (X))/D1 )                               (9)
+which is unknown because the joing distribution f is unknown. However, for
+Dt = (d∗1 , . . . , d∗T ) the estimator for error can be obtained as
+                                    XT
+                     d M , Dt ) = 1
+                     Err(C              I(yti ̸= CD
+                                                  M
+                                                     (xti ))                          (10)
+                           D1
+                                  T i=1            1
+
+
+
+
+where Xti = (xti 1 , . . . , xti p ) is the p-vector giving the tth observation’s gene
+expression. The sensitivity and speciﬁcity are a consequence of the estimated error
+rate given by equation 9, for more details see Boulesteix et al. (2008). In this paper
+we therefore compare the diﬀerent classiﬁers based on the error rates because it
+is deemed adequate in identifying the best classiﬁer. Furthermore, the sensitivity
+and speciﬁcity of a classiﬁer are not ﬁxed characteristics but are inﬂuenced by the
+type of misclassiﬁcation scheme utilized.
+
+                   Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+PLS Generalized Linear Regression and Kernel Multilogit Algorithm (KMA)                          241
+
+6. Applications to a Real Data Set
+    We describe in detail the analysis of the Colon data by Alon et al. (1999),
+obtained from the R package plsgenomics, which consists of a (62 × 2000) matrix
+giving the expression levels of 2000 genes for 62 colon tissue samples.
+   An exploratory analysis of the data was done in order to visualize the
+diﬀerences in the un-preprocessed and preprocessed microarray data sets. The
+preprocessing is done using the R package plsgenomics see https://rdrr.
+io/cran/plsgenomics/, that implements the recommendations of Dudoit et al.
+(2002). To visualize the diﬀerences between the preprocessed and un-preprocessed
+data sets, we consider the pairs of box plots, relative log expression (RLE), and
+principal components analysis (PCA) plots presented in Figures 1,2, 3, 4 and 5
+respectively.
+                                     Un−preprocessed colon data
+
+
+
+                       4.0
+
+
+
+
+                       3.5
+
+
+
+
+                       3.0
+          expression
+
+
+
+
+                       2.5
+
+
+
+
+                       2.0
+
+
+
+
+                       1.5
+
+
+
+
+                       1.0
+                              2
+                              4
+                              6
+                              8
+                             10
+                             12
+                             14
+                             16
+                             18
+                             20
+                             22
+                             24
+                             39
+                             42
+                             43
+                             48
+                             50
+                             51
+                             54
+                             55
+                             60
+                             62
+                              1
+                              3
+                              5
+                              7
+                              9
+                             11
+                             13
+                             15
+                             17
+                             19
+                             21
+                             23
+                             25
+                             26
+                             27
+                             28
+                             29
+                             30
+                             31
+                             32
+                             33
+                             34
+                             35
+                             36
+                             37
+                             38
+                             40
+                             41
+                             44
+                             45
+                             46
+                             47
+                             49
+                             52
+                             53
+                             56
+                             57
+                             58
+                             59
+                             61
+
+
+
+
+                                                     sample
+Figure 1: Box plot for the un-preprocessed colon data. The box plot for un-preprocessed
+          data clearly shows that the data are noisy and have a lot of variations. The
+          data have some unwanted variations that are expected to aﬀect the analysis.
+          They also lack symmetry.
+
+
+
+
+                             Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+242       Adolphus Wagala, Graciela González-Farías, Rogelio Ramos & Oscar Dalmau
+                                                            Preprocessed colon data
+
+
+                                                                                                Normal
+
+
+                                                                                                Tumor
+                                        4
+
+
+
+
+                                        2
+
+
+
+
+                                        0
+
+
+
+
+                               −2
+                                                  2
+                                                  4
+                                                  6
+                                                  8
+                                                 10
+                                                 12
+                                                 14
+                                                 16
+                                                 18
+                                                 20
+                                                 22
+                                                 24
+                                                 39
+                                                 42
+                                                 43
+                                                 48
+                                                 50
+                                                 51
+                                                 54
+                                                 55
+                                                 60
+                                                 62
+                                                  1
+                                                  3
+                                                  5
+                                                  7
+                                                  9
+                                                 11
+                                                 13
+                                                 15
+                                                 17
+                                                 19
+                                                 21
+                                                 23
+                                                 25
+                                                 26
+                                                 27
+                                                 28
+                                                 29
+                                                 30
+                                                 31
+                                                 32
+                                                 33
+                                                 34
+                                                 35
+                                                 36
+                                                 37
+                                                 38
+                                                 40
+                                                 41
+                                                 44
+                                                 45
+                                                 46
+                                                 47
+                                                 49
+                                                 52
+                                                 53
+                                                 56
+                                                 57
+                                                 58
+                                                 59
+                                                 61
+                                                                        sample
+
+Figure 2: Box plot for the preprocessed colon data. This plot presents less variations.
+          The data seem to have a symmetric distribution and do not show the
+          presence of unwanted variation. From the two ﬁgures, it is expected that
+          the preprocessed data would be easier to analyze.
+                                                   RLE plot for un−preprocessed colon data
+
+
+                                             2
+
+
+
+
+                                             1
+              Relative Log Expression
+
+
+
+
+                                             0
+
+
+
+
+                                            −1
+
+
+
+
+                                            −2
+                                                    2
+                                                    4
+                                                    6
+                                                    8
+                                                   10
+                                                   12
+                                                   14
+                                                   16
+                                                   18
+                                                   20
+                                                   22
+                                                   24
+                                                   39
+                                                   42
+                                                   43
+                                                   48
+                                                   50
+                                                   51
+                                                   54
+                                                   55
+                                                   60
+                                                   62
+                                                    1
+                                                    3
+                                                    5
+                                                    7
+                                                    9
+                                                   11
+                                                   13
+                                                   15
+                                                   17
+                                                   19
+                                                   21
+                                                   23
+                                                   25
+                                                   26
+                                                   27
+                                                   28
+                                                   29
+                                                   30
+                                                   31
+                                                   32
+                                                   33
+                                                   34
+                                                   35
+                                                   36
+                                                   37
+                                                   38
+                                                   40
+                                                   41
+                                                   44
+                                                   45
+                                                   46
+                                                   47
+                                                   49
+                                                   52
+                                                   53
+                                                   56
+                                                   57
+                                                   58
+                                                   59
+                                                   61
+
+
+
+
+                                                                         sample
+
+
+
+
+                                                 Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+PLS Generalized Linear Regression and Kernel Multilogit Algorithm (KMA)                                      243
+                  RLE plot for the preprocessed colon data
+
+
+                                                                                         Normal
+                                     4
+
+
+                                                                                         Tumor
+
+
+
+
+                                     2
+          Relative Log Expression
+
+
+
+
+                                     0
+
+
+
+
+                                    −2
+                                          2
+                                          4
+                                          6
+                                          8
+                                         10
+                                         12
+                                         14
+                                         16
+                                         18
+                                         20
+                                         22
+                                         24
+                                         39
+                                         42
+                                         43
+                                         48
+                                         50
+                                         51
+                                         54
+                                         55
+                                         60
+                                         62
+                                          1
+                                          3
+                                          5
+                                          7
+                                          9
+                                         11
+                                         13
+                                         15
+                                         17
+                                         19
+                                         21
+                                         23
+                                         25
+                                         26
+                                         27
+                                         28
+                                         29
+                                         30
+                                         31
+                                         32
+                                         33
+                                         34
+                                         35
+                                         36
+                                         37
+                                         38
+                                         40
+                                         41
+                                         44
+                                         45
+                                         46
+                                         47
+                                         49
+                                         52
+                                         53
+                                         56
+                                         57
+                                         58
+                                         59
+                                         61
+                                                                sample
+Figure 3: RLE plots for the un-preprocessed and preprocessed colon data. The RLE
+          plot for the un-preprocessed data shows the presence of a lot of heterogeneity,
+          implying that the data have variations that do not necessarily come from
+          biological factors. However, the RLE plot for the processed data shows
+          homogeneity and lack of unwanted noise, and should give better results when
+          analyzed statistically.
+
+
+
+
+    The same pair of data sets is examined using RLE plots, to show how the
+preprocessed data compares with the un-preprocessed data set with regard to the
+batch eﬀect or any other abnormality. The RLE plots have been extensively used
+in studies of microarray data to reveal the eﬀectiveness of data normalization;
+for an example see Gagnon-Bartsch & Speed (2011). The RLE plots are simple
+yet very powerful in the visualization of data to detect unwanted variations. To
+understand how an RLE plot is constructed, consider a data matrix Xp×n where
+p is the number of genes while n the number of microarray samples, and so the
+element of the data matrix xij represents the ith gene in the j th sample. The RLE
+plot is then constructed by ﬁrst calculating the median across each of the p rows,
+and then substracting the respective median across each row of the data matrix
+X, i.e (xij − medianxi∗ ). The median is used because it is robust and not aﬀected
+by outliers. A box plot is then generated for each of the n samples, and a good one
+will be centered around zero and its width (interquartile range) should be equal
+to or less than 0.2 see Gagnon-Bartsch & Speed (2011).
+
+                                         Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+244                  Adolphus Wagala, Graciela González-Farías, Rogelio Ramos & Oscar Dalmau
+
+
+    Finally we compare the ease of classiﬁcation between the un-preprocessed and
+preprocessed data. The simplest way to visualize the separability of categories in
+a given data set is the use of principal components analysis (PCA) plots.
+
+                                           PCA plot for un−preprocessed colon data
+
+
+                                                        3
+
+
+
+                                                                           4
+                                                                                 57
+
+
+
+
+                      0.2
+
+
+                                                                 41
+
+
+                                                                                                        60 2
+                                                            58                                             5422
+
+
+                                                                                                                 12
+                                                                                 39                                             31
+                                                                                      1 49
+                                                                                                         50 37             48         29              45
+                                                                                        53
+                                                        16
+                                                                  14
+
+
+                                                                                  27        55156221
+       PC2 (8.44%)
+
+
+
+
+                                                                                             51 40                    28
+                                                                                 26                                                                        status
+                                                                                 7 35                       42                              43
+                      0.0                                                                                                                                   a   Normal
+                                                                                     61                           34
+                                                                           8           56
+                                                                                     13                                                                     a   Tumor
+                                                                                                  959
+                                                                                                                                 30
+                                                                                                    10
+
+                                                                                                    25
+                                                   6             19    5
+                            24
+
+
+                                                                                                                            52
+                                              17
+                                             18
+
+
+                                                                                                                                             47
+
+                                                                  20
+                                                                                                                                                 46
+                     −0.2                                                       36
+
+                                                                                3332                                                       44
+                                                   23
+                                                                           38
+
+
+
+
+                                                                                                                                      11
+
+
+
+                            −0.4               −0.2                                         0.0                                            0.2
+                                                                 PC1 (44.88%)
+
+Figure 4: PCA plot for the un-preprocessed Colon data. The PCA plots show that it
+          is harder to separate/classify the un-preprocessed data.
+
+
+
+
+    According to Gagnon-Bartsch & Speed (2011), one of the key challenges of
+the removal of unwanted variation is the diﬃculty in distinguishing the unwanted
+variations from the biological variation of interest. Furthermore, they note that
+the most appropriate way to deal with unwanted variation depends on the ﬁnal
+objective of the analysis, for instance: diﬀerential expression (DE), classiﬁcation,
+or clustering.
+
+                                   Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+PLS Generalized Linear Regression    and
+                           PCA plot for    Kernel colon
+                                        preprocessed Multilogit
+                                                        data    Algorithm (KMA)                                                                                                          245
+
+                                                                                                                                 56
+
+
+                                                                                20
+
+
+               0.2                                                                                                               42
+                                                                                                                                  43
+                                                                                             6
+                                                      32
+                                                                                                                                      62
+
+
+
+                               44     46
+
+                                                                                                                     10
+                                                                                                                                                50
+                                                                       18                                                                                          48
+                          11
+               0.1                                                                                                                                       39
+                                 33        47
+                                      23                                         24                    8                                                       49
+                                                                                                                                                         54
+                          36
+
+                     38                                                                                                                              45
+                                                 52                                                             55
+
+                                                                                                                                                                        60
+                                                                  5
+
+                                                                                                                14                                                           status
+        PC2
+
+
+
+
+                                                                                                                                                                              a Normal
+               0.0                                    17              59                                                                                                      a Tumor
+                                                                                 1361
+
+                                                                                     15                                                    12
+                                                      25                                                                                                      57
+                                                                                       51
+
+                                            19
+                                                                                40
+                                                                                                  53
+                                                                                                                                                         22
+                                                                       34
+
+                                                                                     16                                                              2
+              −0.1                                                                                              31
+
+                                                                            35
+                                                           30                               27
+                                                                  7                                                       41
+
+                                                 9
+
+                                                                                                           58
+                                                                                                                                                 43
+                                                            28             26
+                                                                                                   1
+              −0.2                                                    21
+                                                                                             37
+
+
+                                                                                                  29
+
+
+
+                               −0.2                        −0.1                             0.0                            0.1                                0.2
+                                                                                      PC1
+
+Figure 5: PCA plots for the preprocessed Colon data.It is relatively easier to
+          separate/classify preprocessed data.
+
+
+
+6.1. Analysis of the Un-Preprocessed Data
+    In this analysis, we compare the performance of our proposed model extensions
+PLSGLR-log, PLSGLRDA and the KMA (Dalmau et al. 2015) to that of the
+classical methods when the data has neither been preprocessed nor variables
+been selected, thus testing the performance of the classiﬁcation algorithms in the
+presence of noise. The performance of the methodologies is then compared using
+a 10 fold cross validation (10-CV) and the corresponding classiﬁcation error rates
+are computed. The results are presented in Table 2.
+    We note that there exist several metrics for measuring the performance of
+various classiﬁers. A particular method is judged to be the “best” if it has a
+lower classiﬁcation error rate relative to the other methods, otherwise it is a poor
+classiﬁer.
+
+                               Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+246      Adolphus Wagala, Graciela González-Farías, Rogelio Ramos & Oscar Dalmau
+
+Table 2: Rate of classiﬁcation error for the diﬀerent methods when applied to the un-
+         preprocessed data set
+ DATA     PLSGLR-log    PLSGLRDA        KNN     LDA     PLSDA     RPLS     SVM     KMA
+ Colon       38.3          31.7         60.0    25.0     11.7      15.0    18.3     1.7
+
+
+
+   The results based on minimal cross validation classiﬁcation error rates indicate
+that for the Colon data, the KMA emerges as the best, followed by PLSDA, and
+RPLS, while the worst were KNN and PLSGLR-log.
+
+
+6.2. Analysis of Preprocessed Data
+    During the preprocessing of microarray data the feature selection step is usually
+performed. This is because out of the thousands of variables (genes expression
+levels) generated, only a handful may play an important role towards the biological
+problem of interest. The thousands of data points are likely to be noisy due to
+biological or technical reasons. Thus the feature selection extracts a subset of
+the genes that are most informative (optimum subset of features). This reduces
+the noise by removing irrelevant or redundant features (Awada, Khoshgoftaar,
+Dittman, Wald & Napolitano 2012, Dudoit et al. 2002). Most commonly used
+feature selection methods involve ranking the genes based on some value of
+a univariate statistic, like the t-statistic, the F-statistic, or the Wilcoxon and
+Kruskal-Wallis statistics. A cut-oﬀ point based on either the number of genes or
+the p-value is imposed, to determine the number of variables to be used. Dudoit
+et al. (2002) suggest a gene selection method based on ranking. This is achieved by
+ﬁnding the ratio of between-group to within-group sum of squares (BSS/W SS)
+so that for a gene j,
+                                     P P
+                                             I(yi = k)(x̄kj − x̄.j )2
+                   BSSj /W SSj = Pi Pk                                           (11)
+                                           k I(yi = k)(xij − x̄kj )
+                                                                    2
+                                       i
+
+where x̄.j and x̄kj are the average expression levels of gene j and across all samples
+in class k, respectively. The p genes with the biggest ratio are selected. In this
+study, we adopted the (Dudoit et al. 2002) method of feature selection.
+    The preprocessing and the gene selection were performed using the
+recommendations of Dudoit et al. (2002). This decision stems from the fact that
+this method has been proven work relatively well in literature of several studies
+involving such as by Fort & Lambert-Lacroix (2005), Dudoit et al. (2002) among
+others and seem to perform relatively well. The top p genes were thus selected
+using Equation 11 for the implementation of the classiﬁcation methods.
+   The classiﬁcation error rates for the various methodologies when applied to the
+data under consideration are presented in Table 3.
+    The results indicate that KMA was the best, followed by RPLS, PLSDA.
+PLSGRDA performed equally well, while KNN emerged as the worst classiﬁer,
+also in every comparison.
+
+
+
+                   Revista Colombiana de Estadística - Applied Statistics 43 (2020) 233–249
+
+PLS Generalized Linear Regression and Kernel Multilogit Algorithm (KMA)               247
+
+Table 3: classiﬁcation error rates for the diﬀerent methods when applied to the
+         preprocessed data set
+ DATA     PLSGLR-log    PLSGLRDA       KNN     LDA     PLSDA     RPLS     SVM     KMA
+ Colon       16.4          13.3        26.7    15.0     11.7      11.7    14.8    11.2
+
+
+
+7. Summary and Conclusions
+   In this study, two extensions of the PLSGLR were considered in addition to
+the KMA for a comparative study with some classical classiﬁcation methodologies,
+namely KNN, LDA, PLSDA, RPLS and SVM, when applied to one commonly used
+microarray data set. The data were considered when un-preprocessed and when
+preprocessed. For both the un-preprocessed and preprocessed cases, the KMA
+emerged as a clear “winner” based on lower classiﬁcation error rates. The KMA
+algorithm can therefore be recommended for classiﬁcation problems involving noisy
+and non-noisy data. This could be due to the fact that the chosen kernels map the
+samples to a higher dimensional space, where they become linearly separable. This
+leads to a better classiﬁcation ability by the KMA. Furthermore, the three new
+algorithms can therefore be considered as an addition to the existing literature for
+the microarray data classiﬁcation problems.
+
+
+Acknowledgements
+   We acknowledge the partial support from the Mexico’s Consejo Nacional de
+Ciencias y Tecnología (CONACyT) project number 252996. Part of this work was
+done when A.W was a PhD Candidate at CIMAT, AC. Guanajuato, Gto, México
+(Wagala 2018).
+                                                                
+               Recibido: agosto de 2019 — Aceptado: enero de 2020
+
+
+References
+Alon, U., Barkai, N., Notterman, D. A., Gish, K., Ybarra, S., Mack, D. & Levine, A. J. (1999), ‘Broad patterns of gene expression revealed by clustering analysis of tumor and normal colon tissues probed by oligonucleotide arrays’, Proceedings of the National Academy of Sciences of the United States of America 96(12), 6745–6750.
+Alshamlan, H. M., Badr, G. & Alohali, Y. (2013), A study of cancer microarray gene expression proﬁle: Objectives and approaches, in ‘Proceedings of the World Congress on Engineering’, Vol. II, London.
+Awada, W., Khoshgoftaar, T. M., Dittman, D., Wald, R. & Napolitano, A. (2012), A review of the stability of feature selection techniques for bioinformatics data, in ‘2012 IEEE 13th International Conference on Information Reuse & Integration (IRI)’, IEEE, pp. 356–363.
+Bastien, P., Vinzi, E. V. & Tenenhaus, M. (2005), ‘PLS generalised linear regression’, Computational Statistics and Data Analysis 48, 17–46.
+Boulesteix, A. L., Strobl, C., Augustin, T. & Daumer, M. (2008), ‘Evaluating microarray-based classiﬁers: an overview’, Cancer informatics 6, 77–97.
+Chun, H. & Keles, S. (2009), ‘Sparse partial least squares regression for simultaneous dimension reduction and variable selection’, Journal of the Royal Statistical Society. Series B, Statistical Methodology 72(1), 325. *http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2810828/
+Chung, D. & Keles, S. (2010), ‘Sparse partial least squares classiﬁcation for high dimensional data’, Statistical Applications in Genetics and Molecular Biology 9(1), 17.
+Dalmau, O., Alarcón, T. E. & González, G. (2015), ‘Kernel multilogit algorithm for multiclass classiﬁcation’, Computational Statistics and Data Analysis 82, 199–206.
+Dong, K., Zhang, F., Zhu, Z., Wang, Z. & Wang, G. (2014), ‘Partial least squares based gene expression analysis in posttraumatic stress disorder’, European Review for Medical and Pharmacological Sciences 18, 2306–2310.
+Dudoit, S., Fridlyand, J. & Speed, T. (2002), ‘Comparison of discrimination methods for the classiﬁcation of tumors using gene expression data’, Journal of the American Statistical Association 97(457), 77–86.
+Fort, G. & Lambert-Lacroix, S. (2005), ‘Classiﬁcation using partial least squares with penalized logistic regression’, Bioinformatics 7, 1104–1111.
+Gagnon-Bartsch, J. A. & Speed, T. P. (2011), ‘Using control genes to correct for  unwanted variation in microarray data’, Biostatistics 13(3), 539–552. *http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3577104/
+Gromski, S., Muhamadali, H., Ellis, D., Xu, Y., Correa, E., Turner, M. & Goodcare, R. (2015), ‘A tutorial review: Metabolomics and partial least squares-discriminant analysis a marriage of convenience or a shotgun wedding’, Analytica Chimica Acta 879, 10–23.
+Gusnanto, A., Ploner, A., Shuweihdi, F. & Pawitan, Y. (2013), ‘Partial least squares and logistic regression random-eﬀects estimates for gene selection in supervised classiﬁcation of gene expression data’, Journal of Biomedical Informatics pp. 697–709.
+Höskuldsson, A. (1988), ‘PLS regression methods’, Journal of Chemometrics 2, 211–228.
+Huang, C. C., Tu, S. H., Huang, C. H., Lien, H. H., Lai, L. H. & Chuang, E. (2013), ‘Multiclass prediction with partial least square regression for gene expression data: Applications in breast cancer intrinsic taxonomy’, BioMed Research International pp. 1–9.
+Lê Cao, K., Rossouw, D., Robert-Granieé, C. & Besse, P. (2008), ‘A Sparse PLS for variable selection when integrating omics data’, Statistical Applications in Genetics and Molecular Biology 7(1).
+Lee, D., Lee, W., Lee, Y. & Pawitan, Y. (2011), ‘Sparse partial least-squares regression and its applications to high-throughput data analysis’, Chemometrics and Intelligent Laboratory Systems 109(1), 1–8.
+Nguyen, D. V. & Rocke, D. M. (2002a), ‘Multi-class cancer classiﬁcation via partial least squares with gene expression proﬁles’, Bioinformatics 18(9), 1216–1226.
+Nguyen, D. V. & Rocke, D. M. (2002b), ‘Tumor classiﬁcation by partial least squares using microarray gene expression data’, Bioinformatics 18(1), 39–50.
+Telaar, A., Liland, K., Repsilber, D. & Nürnberg, G. (2013), ‘An extension of PPLS-DA for classiﬁcation and comparison to ordinary PLS-DA’, PLoS ONE 8 2, e55267.
+Wagala, A. (2018), Problems in Statistical Genetics: Classiﬁcation and Testing for Network Changes, PhD thesis, Centro de Investigación en Matemáticas A. C., Department of Probability & Statistics. *https://cimat.repositorioinstitucional.mx
+Wang, A., An, N., Chen, G., Li, L. & Alterovitz, G. (2015), ‘Improving plsrfe based gene selection for microarray data classiﬁcation’, Computers in Biology and Medicine 62, 14–24.
+Wold, S., Ruhe, A., Wold, W. & Dunn III, W. J. (1984), ‘The collinearity problem in linear regression, the partial least squares approach to generalized inverses’, SIAM Journal on Scientiﬁc and Statistical Computing 5(3), 735–743.
+Wold, S., Sjöström, M. & Erikson, L. (2001), ‘PLS-regression: A basic of chemometrics.’, Chemometrics and Intelligent Laboratory Systems 58, 109–130.
+Xi, B., Gu, H., Baniasadi, H. & Raftery, D. (2014), ‘Statistical analysis and modeling of mass spectrometry-based metabolomics data’, Methods Mol Biol. 1198, 333–353.

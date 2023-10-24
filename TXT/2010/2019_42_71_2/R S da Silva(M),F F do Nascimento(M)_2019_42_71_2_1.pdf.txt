@@ -1,0 +1,1788 @@
+Extreme Value Theory Applied to r Largest Order Statistics Under the Bayesian Approach. Teoría de valores extremos aplicada a las r estadísticas de orden superior desde el punto de vista bayesiano
+Fernando Ferraz do Nascimento.  Universidade de São Paulo, São Paulo, Brazil. Universidade Federal do Piauí, Teresina, Brazil
+Abstract
+Extreme value theory (EVT) is an important tool for predicting eﬃcient gains and losses in economic and environmental domains. Moreover, EVT was initially developed for use with normal and gamma parametric distribution patterns. However, economic and environmental data present a heavy-tailed distribution in most cases, which is in contrast with the above patterns. Thus, the framing of extreme events using EVT presented great diﬃculties. Furthermore, it is nearly impossible to use conventional models to make predictions about non-observed events that exceeded the maximum number of observations. In some situations, EVT is used to analyze only the maximum values of a given dataset, which provides few observations. In such cases, it is more eﬀective to use the r largest order statistics. This study proposes Bayesian estimators for the parameters of the r largest order statistics. We use a Monte Carlo simulation to analyze the experimental data and observe certain estimator properties, such as mean, confiance interval, credibility interval, bias, and root mean square error (RMSE); estimation provided inferences for these parameters and return levels. In addition, this study proposes a procedure for selecting the r-optimal of the r largest order statistics based on the Bayesian approach and applying the Markov chains Monte Carlo (MCMC) method. Simulation results reveal that the Bayesian approach produced performance similar to that of the maximum likelihood estimation. Finally, the applications developed using the Bayesian approach showed a gain in accuracy compared with other estimators.
+Key words: Markov chain monte carlo; Extreme value; Bayesian inference.
+Resumen
+La teoría de valores extremos (EVT) es una herramienta importante para predecir ganancias y pérdidas eficientes en ambientes económicos y ambientales. Además, la EVT se desarrolló inicialmente para uso con patrones de distribución paramétricos normales y gamma. Sin embargo, los datos económicos y ambientales presentan una distribución de cola pesada en la mayoría de los casos, lo que contrasta con los patrones anteriores. Así, la formulación de eventos extremos con EVT presenta grandes dificultades. Además, es casi imposible usar modelos convencionales para obtener predicciones sobre eventos no observados que excedieron el número máximo de observaciones. En algunas situaciones, EVT es utilizado para analizar solamente los valores máximos de un conjunto de datos dado, que proporcionan poca información. En tales casos, es más eficiente usar las r estadísticas de orden superior. Este trabajo propone estimadores bayesianos para los parámetros de las r estadísticas de orden superior. Utilizamos simulaciónes de Monte Carlo para analizar los datos experimentales y observar ciertas propiedades del estimador como: media, intervalos de confianza y credibilidad, sesgo y error cuadrático medio (RMSE). Este tipo de estimación proporciona inferencias para estos parametros y niveles de retorno. Tambien, proponemos un procedimiento para seleccionar el r-óptimo de la distribución de las r estadísticas de orden superior basadas en el enfoque bayesiano y aplicando el método de Monte Carlo para cadenas de Markov (MCMC). Los resultados de la simulación muestran que el enfoque bayesiano produce un rendimiento similar al de la estimación de máxima verosemelianza. Finalmente, las aplicaciones desarrolladas utilizando el enfoque bayesiano mostraron una ganancia en la precisión en comparación con otros estimadores.
+Palabras clave: Monte Carlo para cadena de Markov; Valores extremos; Inferencia bayesiana.
+
+
+1. Introduction
+    Meteorological events such as prolonged droughts, floods, and earthquakes are
+raising grave concerns about the future of society. According to Parmesan, Root
+& Willig (2000), extreme changes in temperature have a greater influence on en-
+vironmental changes than fluctuations in mean temperature. Moreover, Sang &
+Gelfand (2009) have confirmed that the evolution of climatic extremes is more
+significant than average climate trends.
+    The motivation to work with generalized extreme value (GEV) came from
+the distribution of maximum and minimum values for example, monthly or an-
+nual maxima, for which it is necessary to know the Fx of daily distribution.
+Nevertheless, this distribution is unidentified owing to a minor number of ob-
+servations being crucial to obtaining asymptotic results in some cases. Fisher
+& Tippett (1928) theorem shows results for the distribution of maximum and
+minimum values.
+    Mises (1936) and Jenkinson (1955) first proposed GEV distribution. This
+function is denoted here by H and has the following distribution function:
+
+                                      Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Value Theory Applied to r Largest Order Statistics                                        145
+                                  {      { (     (    ))− ξ1 }
+                                      exp − 1 + ξ y−µ            if ξ ̸= 0;
+               H(y | ξ, σ, µ) =          {     { ( y−µ
+                                                    σ
+                                                       )}}                                (1)
+                                      exp − exp − σ           if ξ = 0.
+
+              (    )
+where 1 + ξ y−µ  σ    > 0. The model has three parameters: location (µ), scale
+(σ), and shape (ξ). The limiting case ξ → 0 Hξ corresponds to the Gumbel
+distribution. The ξ < 0 or ξ > 0 case corresponds to the Weibull or Fréchet
+distribution, respectively.
+   The model density is given by
+                   {                }
+                                 −1                − 1 −1
+                           (y−µ)
+                 exp −(1+ξ ( σ )) ξ σ    (1+ξ( y−µ            if   ξ<0 and −∞<y<(µ− σ
+                                                σ ))                                ξ );
+                                       1
+               
+               
+                                                      ξ
+               
+ hµ,ξ,σ (y)=                                                  or   ξ>0 and y≥(µ−σ/ξ);
+               
+               
+               
+               
+                exp − exp − y−µ
+                    {     { ( σ )}} σ1 exp{( (y−µ)
+                                               σ )}           if   ξ=0 and y∈R.
+
+
+    As there are innumerable applications of the GEV model, this study does not
+aim to utilize GEV, but rather to use the r largest order statistics. One motivation
+from the literature is the work of Smith (1986) who dedicated himself to answer
+the following question: suppose we have not only an annual maximum, but the ten
+largest values from a given data set. How can we use that data to obtain better
+estimates than those obtained using only annual maximum values?
+    The same issue was previously raised by Pirazzoli (1982) and Pirazzoli (1983),
+who collected the ten highest water levels (with some exceptions) for each year
+from 1887 to 1981 and used these values to study the extreme the value distribution
+of the sea level in Venice.
+   Next, consider x1 , x2 , . . . , xm a vector of the original data. The data are
+grouped into sequences of observations of size n. For suﬃciently large n, each
+maximum length sequence is extracted, thereby finding a sample with k maximum
+values. Therefore n × k, Mn,1 , . . . , Mn,k . The resulting distribution is modeled ac-
+cording to the GEV. By inverting equation (1.1), we obtain estimates of extremes
+quantiles p of the maximum, turning zp = H −1 (1 − p) and consequently achieving
+the following:
+                    {
+                      µ − σξ [1 − (− log(1 − p))−ξ ] if ξ ̸= 0;
+               zp =                                                                  (2)
+                      µ − σ log(− log(1 − p)),            if ξ = 0.
+
+    Another way to conduct high quantile estimation is through quantile regres-
+sion. In this model, which can be seen in the work of Yu & Moyeed (2001) and in
+the Bayesian approach of Kozumi & Kobayashi (2011), a regression model for the
+quantile p of the response variable is proposed, in this case being a diﬀerent model
+for each p ∈ (0, 1). In the context of extreme values, we can obtain any quantile p
+not requiring modeling for each p by using equation (2). Nascimento, Gamerman
+& Lopes (2011) considered regression structures in relation to generalized Pareto
+distribution (GPD) parameters. Yet another approach is to propose the variances
+of high quantiles over time through a structure of dynamic models. Gonçalves,
+Migon & Bastos (2019) presented this approach for quantile regression, whereas
+
+                                            Revista Colombiana de Estadstica 42 (2019) 143–166
+
+146                         Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+
+Nascimento, Gamerman & Lopes (2016) performed the modeling for GPD param-
+eters. Furthermore, Huerta & Sansó (2007) presented this approach for GEV,
+where it was possible to obtain any quantile p variances over time through a
+unique model.
+    This study aims to use the r largest order statistics with a Bayesian approach
+in the construction of posterior distribution of the parameters and calculations
+of high quantiles for the r largest order statistics and the selection of r-optimal.
+Moreover, results are compared with GEV distribution and the library available
+in the R (EVA) (Bader, Yan & Zhang 2017), which contains functions for the
+generating points of r largest order statistics the and estimation of its parameters
+(µ, σ, ξ) through the maximum likelihood method.
+    Section 2 presents the model of r largest order statistics, which is based on
+the work of Coles, Bawa, Trenner & Dorazio (2001) and the Bayesian inference
+procedure. Section 3 shows the simulations from the proposed model with diﬀer-
+ent configurations of the parameters and values of r. We compare the Bayesian
+method eﬃciency with the maximum likelihood method proposed by Smith (1984)
+and implemented in R through the EVA package (Bader & Yan 2016). Section
+4 illustrates the model of the r largest order statistics employing the Bayesian
+method applied in two situations: the temperature in ◦ C of Teresina, the capital
+of Piauí (a Brazilian state), and the return level of the São Paulo Stock Ex-
+change (BOVESPA). Experimental results show improvement in the precision of
+parameter estimation and return levels when the r largest order statistics are
+used compared with standard GEV distribution. Section 5 summarizes the main
+conclusions of this work. The Appendix contains the details of random number
+generation from the r largest order statistics distribution.
+
+
+2. R Largest Order Statistics Distribution
+    One reason for the diﬃculty in framing extreme values is the limited quan-
+tity of information available with which to estimate the parameters. In par-
+ticular, extremes are rare and may result in a huge variability, thereby provid-
+ing less information about the occurrence probabilities of a specific phenomenon
+(Nascimento 2012). Thus, an alternative for analyzing extreme events in blocks of
+size n is to use the r largest order statistics.
+
+                   Mn(k) = K-th largest value of (X1 , . . . , Xn ).
+
+    It is important to note that these blocks are not independent. For example,
+a second, larger observation of a block is dependent on the larger value, and so
+on. Coles et al. (2001) showed that it is possible to identify a distribution of the
+r largest order statistics when ξ ̸= 0. The density is given as follows:
+
+
+
+
+                                      Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Value Theory Applied to r Largest Order Statistics                                           147
+                                               { (      ( (r)     ))−1/ξ }
+                                                          (z − µ)
+   f (z   (1)
+                ,...,z   (r)
+                               | µ, σ, ξ) = exp − 1 + ξ
+                                                             σ
+                                                   ∏
+                                                   r       (     ( (k)     ))−1/ξ−1
+                                                                  (z − µ)
+                                                 ×    σ −1 1 + ξ                    , (3)
+                                                                      σ
+                                                 k=1
+
+where z (r) ≤, . . . , ≤ z (1) .
+     Where r = 1, (3) is reduced to the GEV family as in (1). Where ξ = 0 for (3),
+it is understood as a limit form when ξ → 0 is taking the density family function
+below.
+                                         {     [ ( (r)    )]}
+                                                  z −µ
+   f (z (1) , . . . , z (r) | µ, σ) = exp − exp −
+                                                      σ
+                                                       ∏r      [ ( (k)  )]
+                                                           −1     z −µ
+                                                    ×     σ exp −         . (4)
+                                                                      σ
+                                                           k=1
+
+
+   If r = 1 is reduced to the Gumbel density family, those densities correlate with
+the largest r inside one block only or in a dataset with m blocks of size n. Thus,
+we have a total of m × r observations.
+
+
+2.1. Prior Distribution
+    Considering the density given in (2.1), we first specified a prior distribution
+for each component of the parametric vector (µ, σ, ξ) . For σ, the parameter is nec-
+essarily positive; thus, we considered a Gamma(a, b) prior distribution as defined
+in (Nascimento 2012). However, µ and ξ, may have negative values. Therefore,
+according to Nascimento (2012) the prior distributions N (µ0 , σµ2 ) and N (ξ0 , σξ2 )
+are normal. Thus, the joint prior distribution of the parameters is given by
+
+     p(µ, σ, ξ) ∝ σ a−1 exp(−bσ) exp(−(µ − µ0 )2 /(2σµ2 )) exp(−(ξ − ξ0 )2 /(2σξ2 )).
+
+    Following this, we chose a non-informative scenario prior with large variances of
+a = 0.001, b = 0.001, µ0 = 0, σµ2 = 103 , ξ0 = 0, and σξ2 = 1. Identical values were
+used for GEV in the MCMC4Extremes package in R (Do Nascimento & Moura e
+Silva 2016). Thus, the negative values of ξ were limited to [−0.5, 0], as situations
+where ξ < −0.5 are extremely rare in environmental data (Coles & Tawn 1996).
+
+
+2.2. Posterior Distribution
+    Regarding r largest order statistics distribution, we have seen the distribution
+density given in equation (2.1). Taking the log-likelihood function as the product
+of the densities in (z1 , . . . , zn ), we have the following function when ξ ̸= 0:
+
+
+
+
+                                               Revista Colombiana de Estadstica 42 (2019) 143–166
+
+148                             Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+                                     (        )∑      (              )
+                 ∑
+                 m
+                                         1
+                                                r             (k)
+                                                           ξ(zi − µ)
+  l(µ, σ, ξ) =         −r log(σ) −         +1      log 1 +
+                 i=1
+                                         ξ                      σ
+                                               k=1
+                                                             [     (          )]− ξ1
+                                                                      (r )
+                                                                     zi i − µ
+                                                           − 1+ξ                     .
+                                                                         σ
+
+   Stating that 1 + ξ(z (k) − µ)/σ > 0, for k = 1, . . . , ri , i = 1, . . . , m; otherwise,
+the log-likelihood is zero.
+   Finally, the proportional function of the posterior distribution was obtained
+by taking π(µ, σ, ξ) ∝ p(µ, σ, ξ)el(µ,σ,ξ) . However, in performing some algebraic
+manipulations, it is possible to verify that the posterior distribution does not have
+a known form see algorithm in appendix. Thus, a form to sample posterior distri-
+bution points was developed using the Metropolis–Hastings algorithm (Gamerman
+& Lopes 2006). The algorithm convergence was evaluated performing three simul-
+taneous chains with diﬀerent initial values. The convergence chains were visually
+measured using the chain behaviors. They were separated in blocks and each was
+updated according to Metropolis rules once most parameters were without full
+posterior conditional distributions within a closed form.
+
+
+2.3. Selection of Value of r
+    Selection of the r-optimal is an important task. High values of r approximate to
+the distribution given in (1.1) coupled with the low values of r produced a smaller
+data set and higher variances. We considered the Bayesian-adapted criteria used
+by Bader et al. (2017), in which the null hypothesis of the r largest order statistics
+                (r)
+is given by: H0 . The r largest order statistics distribution fit the sample of the
+r largest order statistics well.
+                                                                           (r)
+    Next, we examine a statistic for testing the null hypothesis H0 and construct-
+ing a Balakrishnan, Kannan & Nagaraja (2007) punctuation function and matrix
+information.
+   The Fisher information matrix I(θ) was based on the work of Tawn (1988).
+Owing to the instability of the maximum likelihood estimators, this matrix is
+necessary for ξ > −0.5. Thus, the statistic punctuation is given by
+
+                                         1 T
+                               Vn =        S (θ̂n )I −1 (θ̂n )S(θ̂n ).
+                                         n
+
+      Thus, two proposals for Vn approximation were used.
+
+
+2.3.1. Parametric Bootstrap: (PB Score)
+                                                                                            (r)
+    The first solution is the parametric bootstrap. The procedure for testing H0
+is from Bader et al. (2017). It is important to emphasize that this is a computa-
+tionally robust method.
+
+                                             Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Value Theory Applied to r Largest Order Statistics                                     149
+
+2.3.2. Test of Diﬀerential Entropy: (ED)
+
+    The other test was based on the diﬀerential entropy of the r largest order
+statistics and r − 1 largest order statistics. This entropy is a continually uncertain
+variable, in which the density function was based on that of (Singh 2013).
+                                          ∫ ∞
+                        E[− ln f (y)] = −       f (y) log f (y)dy.
+                                             −∞
+
+
+    The log-likelihood diﬀerence between the r largest order statistics and the
+                                                                     (r)
+r − 1 largest order statistics provided a deviation measurement for H0 , showed
+a large diﬀerence in the estimated deviation, and suggested a possible incorrect
+                   (r)
+specification of H0 .
+
+2.3.3. Hypothesis Testing Procedure
+                                   (r)
+   As there are R hypotheses H0 , r = 1, . . . , R were tested in sequence for the
+proposed method. Thus, we found an imposed condition where the hypothesis
+                                                                           (k)
+should be rejected in the following order: If H0r is rejected, r < R then H0 will
+be rejected for all r < k ≤ R.
+    Despite the extensive research on multiple sequential test, such as Benjamini
+(2010a), Shaﬀer (1995) and Benjamini (2010b), and the false discovery rate control
+FDR by Benjamini & Hochberg (1995) and Benjamini & Yekutieli (2001), there
+is no definitive procedure for false discovery rate control in the ordered samples
+obtained until the work of G’Sell, Wager, Chouldechova & Tibshirani (2016).
+    Considering a null hypothesis sequence H1 , . . . , Hm , the ordered test rejected
+H1 , . . . , Hm to some k ∈ {0, 1, . . . , M }, (k is the largest integer value on which
+the hypothesis is rejected), and p1 , . . . , pm ∈ [0,1], the p-values corresponded to
+m hypothesis. The methods of G’Sell et al. (2016) transformed the p-values in a
+monotone sequence and proposed two rejection rules, each of which returned a cut
+k̂ so that H1 , . . . , Hk was rejected. The first was named ForwardStop.
+                          {                                          }
+                                               1∑
+                                                  k
+               k̂F = max k ∈ {1, . . . , m}; −       log(1 − pi ) ≤ α ,
+                                               k i=1
+
+and the second was called StrongStop
+                                                             
+                                                ∑m
+                                                    log pj  αk 
+              k̂S = max k ∈ {1, . . . , m}; exp             ≤    ,
+                                                      j       m
+                                                     j=k
+
+where α is a pre-defined level, and both rules allow FDR Control to the level α
+for the supposition of the p-values. Moreover, ForwardStop defined the threshold
+rejection of the largest k in which the mean of the first k p-values transformed
+was suﬃciently short. Otherwise, StrongStop oﬀered a greater guarantee than
+ForwardStop. If the not null p-values actually precede the p-values, this method
+
+                                         Revista Colombiana de Estadstica 42 (2019) 143–166
+
+150                          Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+
+controls the family-wise error rate (FWER) (Shaﬀer 1995) at the α level along
+with the FDR. Hence, this α was referred to the FDR and to StrongStop, and α
+was referred to the FWER.
+
+
+2.4. Return Level to the r Largest Order Statistics
+    Owing to the diﬃculty in finding the cumulative distribution of r largest order
+statistics, maximum return levels can be used; i.e., we used the accumulated value
+of the GEV distribution (Soares & Scotto 2004).
+    Parameter estimation for the proposed model allowed for the estimation of
+the expected levels in t time periods, which are represented by the quantile p =
+1 − 1/t of the GEV quantile formula described in equation (2). For example, when
+estimating monthly maximum temperature data, the estimated quantile of 95% is
+considered high as it was expected to occur once every t = 20 periods of time.
+    In situations where the parameter estimation ξ¨ < 0, the distribution was upper
+bounded, Thus, one may find the estimate of the maximum value that the data
+can assume given by
+
+                                               σ̈
+                                  z̈0 = µ̈ −      .
+                                               ξ¨
+
+
+3. Simulation
+   To demonstrate the parameter eﬃciency, the estimation points of the r largest
+order statistics were simulated through the R package EVA of (Bader & Yan
+2016). Diﬀerent configurations of parameter values were analyzed with a view to
+understanding the estimated characteristics of the parameters and verify whether
+the proposed methodology provided accurate and satisfactory results.
+    This was simulated using sample sizes of 50, 75, and 100 of the r largest order
+statistics for µ = 0, σ = 1 and ξ ∈ {−0.25, 0.25}. Furthermore, all parameters
+were estimated according to the Bayesian approach and by the maximum likelihood
+method (Smith 1984) implemented in R by Bader & Yan (2016). The r largest
+order statistics were tested for r ∈ {1, 2, 3, 4, 5, 10}. Parameter selection and the r
+largest were identical to those used by Bader et al. (2017).
+    Figure 1 represents the r largest order statistics density with µ = 0, σ ∈ {1, 2},
+ξ ∈ {−0.25, 0.25}, and r = 1. As ξ increased, the density began to show a heavier-
+tailed behavior; i.e., the ξ chosen tended to show two possible situations in the
+data behavior.
+   The Bayesian approach was applied throughout the MCMC algorithm. Two-
+hundred iterations were used as burn-in; that is, 200 iterations were utilized for
+the initial estimation process. Following this, the subsequent 10000 iterations were
+kept for simulations inference with a sample size n = 50 after discharge.
+   Two-hundred iterations were also used for burn-in, and 10000 iterations were
+kept for simulation inference with n = 75. For simulations with a sample size
+
+                                      Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Value Theory Applied to r Largest Order Statistics                                   151
+
+of n = 100, 200 iterations were used for burn-in and 10 000 iterations were kept
+for inference. Approximately one in every 10000/n (n ∈ {50, 75, 100}) simulations
+were used as samples, and the selection of the burn-in and the number of iterations
+were the same as those from Nascimento (2012). The code was developed in R-
+3.3.1 (Kohl 2015) using one AMD Dual Core Pro Netbook with 2 Gb of RAM.
+The processing time allowed for 6 iterations per second when n = 100.
+
+
+
+
+Figure 1: Density of r-largest order statistics with µ = 0, σ ∈ {1, 2}, ξ ∈ {−0.25, 0.25}
+          and r = 1, continuous line (ξ = −0.25, σ = 1), dotted line (ξ = 0.25, σ = 1),
+          dashed line (ξ = −0.25, σ = 2), dashed and dotted line (ξ = 0.25, σ = 2).
+
+
+   Metropolis (Hastings 1970) was used in the R simulations and aimed to evaluate
+maximum likelihood of θ̂, estimator vector, and Bayesian (distribution posterior
+mean) θ̈ of the r largest order statistics distribution. Furthermore, we considered
+the size of the sample, the true values of the parameters, and the r largest to be
+the same as previously mentioned.
+    In all the Monte Carlo experiments, 10 000 Monte Carlo reproductions were
+used to evaluate the performance for each type of estimation, calculating the mean,
+bias, CI 95% (confiance interval and credibility interval), and the RMSE of the
+estimators.
+    The simulations results are shown in Tables 1 and 2. The Bayesian estimation
+produced satisfactory results in all proposed configurations. This was particularly
+true for the ξ parameter, where an RMSE less than or equal to using four decimal
+digits in relation to the maximum likelihood estimators for ξ. Shown in bold
+in Table 1 are cases where the Bayesian estimators presented lower RMSE and
+less bias in relation to the maximum likelihood estimator. Hence, the Bayesian
+estimators were superior in 61.1% of the biases and 64.8% of the RMSEs. In
+Table 2, we can see the low RMSE on the estimation of the ξ parameter using the
+Bayesian approach. Although the Bayesian estimators produced better results in
+only 13.0% of the biases and 44.4% of the RMSEs, both procedures were generally
+similar, as were both estimators approaches. It is important to note that the red
+intervals are those that did not contain true parameter values; most of these cases
+contained the maximum likelihood estimators.
+    Note that the means in Tables 1 and 2 represent the means of the simulations
+for each scenario and have the objective of being close to the true values of the
+parameters (µ = 0, σ = 1, ξ = −0.25) in Table 1 and (µ = 0, σ = 1, ξ = 0.25) in
+Table 2. Thus, only in cases for µ = 0 will the bias coincide with the mean of the
+simulated values. For more details on MCMC eﬃciency, see the Appendix.
+
+                                       Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+
+
+
+                                                                                                                                                                                                                                 Revista Colombiana de Estadstica 42 (2019) 143–166
+                                                         Table 1: Estimation of the r largest order statistics parameters, biases, CI 95% (Confiance interval and credibility interval), and the root
+                                                                  mean square error (RMSE) with the Bayesian approach (θ̈) and maximum likelihood (θ̂), for µ = 0, σ = 1 and ξ = −0.25.
+                                                                                              Estimation of µ                                Estimation of σ                                  Estimation of ξ
+                                                             n     r    Est.     Mean      Biases          CI 95%     RMSE      Mean     Biases           CI 95%     RMSE       Mean     Biases             CI 95%      RMSE
+                                                             50    1    θ̂      0.0126     0.0126   (-0.497,0.054)    0.0261   0.9830   -0.0170    (0.716,1.100)     0.0122   -0.2701   -0.0201    ( -0.369,-0.055)     0.0108
+                                                                        θ̈     -0.0087   -0.0087    (-0.413,0.232)    0.0263   1.0158   0.0158     (0.857,1.313)     0.0127   -0.2326   0.0174      (-0.430,-0.089)    0.0100
+                                                                   2    θ̂     -0.0009    -0.0009   (-0.162,0.302)    0.0174   0.9842   -0.0158    (0.785,1.028)     0.0048   -0.2657   -0.0157     (-0.412,-0.189)     0.0056
+                                                                        θ̈     -0.0012    -0.0012   (-0.183,0.342)   0.0172    1.0112   0.0112     (0.863,1.185)     0.0049   -0.2410   0.0090       (-0.259,0.068)    0.0051
+                                                                   3    θ̂      0.0014     0.0014   (-0.269,0.205)    0.0174   0.9858   -0.0142    (0.858,1.083)     0.0040   -0.2677   -0.0177     (-0.325,-0.114)      0.046
+                                                                        θ̈      0.0097     0.0097   (-0.363,0.091)    0.0176   1.0110   0.0110     (0.829,1.047)     0.0042   -0.2482   0.0018      (-0.337,-0.125)    0.0041
+                                                                   4    θ̂     -0.0025    -0.0025    (-0.32,0.107)    0.0161   0.9889   -0.0111   ( 0.809,0.991)     0.0030   -0.2600   -0.0100      (-0.341,-0.16)     0.0030
+                                                                        θ̈      0.0097     0.0097   (-0.316,0.129)    0.0163   1.0123    0.0123    (0.911,1.129)     0.0033   -0.2443   0.0057      (-0.308,-0.100)    0.0029
+                                                                   5    θ̂     -0.0139    -0.0139   (-0.414,0.047)    0.0132   0.9861   -0.0139     (0.89,1.101)     0.0032   -0.2568   -0.0068     (-0.285,-0.109)     0.0030
+                                                                        θ̈     -0.0002   -0.0002    (-0.201,0.269)   0.0130    1.0087   0.0087     (0.933,1.155)    0.0029    -0.2421    0.0079     (-0.276,-0.113)    0.0023
+                                                                   10   θ̂     -0.0133    -0.0133   (-0.168,0.269)    0.0115   0.9886   -0.0114    (0.913,1.102)     0.0026   -0.2557   -0.0057     (-0.303,-0.178)     0.0013
+                                                                        θ̈      0.0057    0.0057    (-0.168,0.280)    0.0117   1.0073   0.0073     (0.945,1.140)     0.0027   -0.2469   0.0031      (-0.309,-0.182)    0.0013
+                                                             75    1    θ̂      0.0075     0.0075   (-0.266,0.234)    0.0154   0.9911   -0.0089    (0.837,1.186)     0.0084   -0.2631   -0.0131     (-0.345,-0.089)     0.0064
+                                                                        θ̈     -0.0082    -0.0082   (-0.115,0.380)   0.0154    1.0130    0.0130    (0.813,1.157)     0.0088   -0.2362    0.0138     (-0.411,-0.071)   0.0062
+                                                                   2    θ̂     -0.0004    -0.0004   (-0.328,0.076)    0.0120   0.9887   -0.0113    (0.843,1.071)     0.0035   -0.2625   -0.0125      (-0.27,-0.058)     0.0038
+                                                                        θ̈     -0.0009    -0.0009   (-0.170,0.259)   0.0119    1.0067   0.0067     (0.940,1.169)     0.0036   -0.2450   0.0050      (-0.385,-0.193)    0.0035
+                                                                   3    θ̂     -0.0046    -0.0046   (-0.192,0.198)    0.0108   0.9906   -0.0094    (0.887,1.067)     0.0024   -0.2584   -0.0084     (-0.328,-0.161)     0.0026
+                                                                        θ̈      0.0005    0.0005    (-0.166,0.218)   0.0107    1.0080   0.0080     (0.887,1.066)     0.0025   -0.2444   0.0056      (-0.345,-0.163)    0.0025
+                                                                   4    θ̂     -0.0018    -0.0018   (-0.276,0.105)    0.0108   0.9930   -0.0070    (0.903,1.063)     0.0019   -0.2566   -0.0066      (-0.336,-0.19)     0.0019
+                                                                        θ̈      0.0053     0.0053    (0.034,0.446)   0.0108    1.0094    0.0094    (0.966,1.128)     0.0020   -0.2446   0.0054      (-0.351,-0.216)    0.0018
+                                                                   5    θ̂     -0.0024    -0.0024   (-0.181,0.192)    0.0094   0.9920   -0.0080    (0.908,1.057)     0.0020   -0.2573   -0.0073     (-0.335,-0.203)     0.0016
+                                                                        θ̈      0.0064     0.0064   (-0.233,0.170)    0.0096   1.0077   0.0077     (0.988,1.178)     0.0021   -0.2470   0.0030      (-0.275,-0.130)    0.0015
+                                                                   10   θ̂     -0.0063    -0.0063   (-0.307,0.047)    0.0080   0.9948   -0.0052    (0.927,1.079)     0.0017   -0.2526   -0.0026     (-0.297,-0.196)     0.0008
+                                                                        θ̈      0.0058    0.0058    (-0.122,0.238)   0.0080    1.0080    0.0080    (0.956,1.108)     0.0018   -0.2460    0.0040     (-0.291,-0.191)    0.0008
+                                                             100   1    θ̂      0.0094     0.0094   (-0.077,0.339)    0.0117   0.9917   -0.0083    (0.837,1.131)     0.0061   -0.2603   -0.0103     (-0.442,-0.251)     0.0046
+                                                                        θ̈     -0.0033   -0.0033    (-0.192,0.271)   0.0116    1.0084    0.0084    (0.902,1.216)     0.0063   -0.2388    0.0112     (-0.305,-0.086)    0.0045
+                                                                   2    θ̂     -0.0006    -0.0006   (-0.244,0.114)    0.0088   0.9913   -0.0087    (0.896,1.084)     0.0028   -0.2589   -0.0089     (-0.374,-0.215)     0.0027
+                                                                        θ̈     -0.0013    -0.0013   (-0.178,0.172)   0.0087    1.0052   0.0052     (0.890,1.077)    0.0028    -0.2447   0.0053      (-0.418,-0.245)    0.0025
+                                                                   3    θ̂     -0.0018    -0.0018   (-0.062,0.269)    0.0078   0.9932   -0.0068    (0.884,1.035)     0.0017   -0.2556   -0.0056     (-0.329,-0.186)     0.0018
+                                                                        θ̈      0.0018    0.0018    (-0.322,0.021)   0.0078    1.0067   0.0067     (0.922,1.090)    0.0017    -0.2441    0.0059     (-0.312,-0.152)    0.0017
+                                                                   4    θ̂     -0.0006    -0.0006   (-0.283,0.046)    0.0077   0.9929   -0.0071       (0.91,1.05)    0.0014   -0.2563   -0.0063     (-0.319,-0.191)     0.0014
+                                                                        θ̈      0.0048     0.0048   (-0.168,0.176)    0.0078   1.0054   0.0054     (0.975,1.128)    0.0014    -0.2470   0.0030      (-0.285,-0.173)    0.0014
+                                                                   5    θ̂     -0.0079    -0.0079   (-0.087,0.244)    0.0071   0.9908   -0.0092    (0.937,1.079)     0.0015   -0.2545   -0.0045     (-0.292,-0.172)     0.0011
+                                                                        θ̈     -0.0016   -0.0016    (-0.108,0.211)   0.0071    1.0026   0.0026     (0.911,1.055)    0.0014    -0.2465   0.0035      (-0.322,-0.188)    0.0011
+                                                                   10   θ̂     -0.0016    -0.0016   (-0.164,0.128)    0.0056   0.9955   -0.0045    (0.896,1.015)     0.0012   -0.2529   -0.0029     (-0.311,-0.226)     0.0006
+                                                                        θ̈      0.0077     0.0077   (-0.081,0.231)    0.0057   1.0060    0.0060    (0.970,1.096)    0.0012    -0.2476   0.0024      (-0.291,-0.210)    0.0006
+152
+
+                                                     Table 2: Estimation of the r largest order statistics parameters, biases, CI 95% (Confiance interval and credibility interval) and the root
+                                                              mean square error (RMSE) by the Bayesian approach (θ̈) and maximum likelihood (θ̂), for µ = 0, σ = 1 and ξ = 0.25.
+                                                                                            Estimation of µ                                Estimation of σ                               Estimation of ξ
+                                                           n     r    Est.     Mean     Biases           CI 95%     RMSE      Mean     Biases          CI 95%     RMSE      Mean     Biases          CI 95%     RMSE
+                                                           50    1    θ̂      0.0164    0.0164    (-0.553,0.044)    0.0277   0.9849   -0.0151    (0.662,1.234)    0.0191   0.2482   -0.0018    (0.225,0.760)    0.0189
+                                                                      θ̈      0.0214    0.0214    (-0.367,0.202)    0.0279   1.0402    0.0402    (0.675,1.230)    0.0237   0.2676    0.0176    (0.138,0.669)   0.0182
+                                                                 2    θ̂     -0.0031   -0.0031    (-0.156,0.391)    0.0170   0.9887   -0.0113    (0.856,1.256)    0.0128   0.2528    0.0028   (-0.041,0.295)    0.0123
+                                                                      θ̈      0.0181    0.0181    (-0.068,0.466)    0.0181   1.0258    0.0258    (0.873,1.282)    0.0150   0.2601    0.0101    (0.001,0.302)   0.0104
+                                                                 3    θ̂     -0.0054   -0.0054    (-0.036,0.497)    0.0150   0.9916   -0.0084    (0.878,1.323)    0.0105   0.2523    0.0023    (0.085,0.402)    0.0080
+                                                                      θ̈      0.0174    0.0174    (-0.268,0.220)    0.0163   1.0239    0.0239    (0.839,1.241)    0.0126   0.2611    0.0111    (0.110,0.374)   0.0078
+                                                                 4    θ̂     -0.0033   -0.0033    (-0.340,0.050)    0.0152   0.9987   -0.0013    (0.686,0.972)    0.0106   0.2577    0.0077   (-0.011,0.249)    0.0077
+                                                                      θ̈      0.0220    0.0220    (-0.071,0.475)    0.0164   1.0285    0.0285    (0.931,1.424)    0.0124   0.2620    0.0120    (0.094,0.429)   0.0058
+                                                                 5    θ̂     -0.0008   -0.0008    (-0.172,0.314)    0.0143   0.9960   -0.0040    (0.845,1.260)    0.0111   0.2501    0.0001    (0.108,0.369)    0.0059
+                                                                      θ̈      0.0218    0.0218    (-0.126,0.408)    0.0156   1.0226    0.0226    (0.926,1.436)    0.0127   0.2542    0.0042    (0.204,0.486)   0.0048
+                                                                 10   θ̂     -0.0060   -0.0060    (-0.209,0.271)    0.0132   0.9941   -0.0059    (0.841,1.282)    0.0131   0.2562    0.0062    (0.206,0.414)    0.0068
+                                                                      θ̈      0.0151    0.0151    (-0.255,0.191)    0.0145   1.0169    0.0169    (0.790,1.188)   0.0119    0.2531   0.0031     (0.138,0.347)   0.0029
+                                                           75    1    θ̂      0.0059    0.0059    (-0.456,0.047)    0.0173   0.9865   -0.0135    (0.770,1.190)    0.0127   0.2533    0.0033    (0.095,0.480)    0.0103
+                                                                      θ̈      0.0082    0.0082    (-0.011,0.600)    0.0175   1.0217    0.0217    (0.958,1.473)    0.0146   0.2657    0.0157    (0.060,0.508)   0.0102
+                                                                 2    θ̂     -0.0065   -0.0065    (-0.317,0.068)    0.0109   0.9873   -0.0127    (0.748,1.078)    0.0077   0.2498   -0.0002    (0.141,0.450)    0.0068
+                                                                      θ̈      0.0060   0.0060     (-0.235,0.159)   0.0113    1.0104   0.0104     (0.770,1.151)    0.0082   0.2561    0.0061    (0.269,0.616)   0.0067
+                                                                 3    θ̂     -0.0052   -0.0052     (0.006,0.453)    0.0100   0.9957   -0.0043    (0.946,1.317)    0.0073   0.2542    0.0042    (0.107,0.365)    0.0057
+                                                                      θ̈      0.0107    0.0107    (-0.066,0.384)    0.0104   1.0167    0.0167    (0.951,1.366)    0.0083   0.2583    0.0083    (0.198,0.482)   0.0048
+                                                                 4    θ̂     -0.0028   -0.0028    (-0.274,0.088)    0.0101   0.9969   -0.0031    (0.790,1.100)    0.0075   0.2494   -0.0006    (0.133,0.367)    0.0045
+                                                                                                                                                                                                                         Value Theory Applied to r Largest Order Statistics
+
+
+
+
+                                                                      θ̈      0.0131    0.0131    (-0.151,0.229)    0.0107   1.0152    0.0152    (0.841,1.182)    0.0083   0.2539    0.0039    (0.137,0.375)   0.0040
+                                                                 5    θ̂     -0.0036   -0.0036    (-0.195,0.150)    0.0090   0.9984   -0.0016    (0.771,1.058)    0.0066   0.2509    0.0009    (0.109,0.318)    0.0032
+                                                                      θ̈      0.0106    0.0106    (-0.224,0.145)    0.0097   1.0143    0.0143    (0.847,1.173)    0.0076   0.2551    0.0051    (0.162,0.367)    0.0034
+                                                                 10   θ̂     -0.0013   -0.0013    (-0.139,0.217)    0.0101   1.0004    0.0004    (0.822,1.122)    0.0120   0.2526    0.0026    (0.141,0.299)    0.0038
+                                                                      θ̈      0.0104    0.0104    (-0.172,0.202)   0.0095    1.0113    0.0113    (0.901,1.233)   0.0073    0.2521   0.0021     (0.201,0.356)   0.0018
+                                                           100   1    θ̂      0.0028    0.0028    (-0.381,0.068)    0.0131   0.9875   -0.0125    (0.807,1.210)    0.0092   0.2493   -0.0007    (0.219,0.577)    0.0074
+                                                                      θ̈      0.0052    0.0052    (-0.181,0.291)    0.0132   1.0140    0.0140    (0.877,1.262)    0.0100   0.2583    0.0083    (0.052,0.429)   0.0073
+                                                                 2    θ̂     -0.0039   -0.0039    (-0.195,0.140)    0.0092   0.9935   -0.0065    (0.787,1.038)    0.0061   0.2509    0.0009    (0.034,0.277)    0.0049
+                                                                      θ̈      0.0054    0.0054    (-0.154,0.210)    0.0094   1.0108    0.0108    (0.876,1.184)    0.0066   0.2558    0.0058    (0.121,0.375)   0.0049
+                                                                 3    θ̂     -0.0062   -0.0062    (-0.177,0.149)    0.0077   0.9947   -0.0053    (0.824,1.081)    0.0054   0.2510    0.0010    (0.082,0.298)    0.0040
+                                                                      θ̈      0.0050   0.0050     (-0.203,0.147)    0.0079   1.0098    0.0098    (0.892,1.195)    0.0060   0.2549    0.0049    (0.163,0.382)   0.0036
+                                                                 4    θ̂      0.0048    0.0048    (-0.084,0.296)    0.0075   1.0021    0.0021    (0.969,1.327)    0.0066   0.2487   -0.0013    (0.231,0.447)    0.0037
+                                                                      θ̈      0.0150    0.0150    (-0.205,0.106)    0.0080   1.0136    0.0136    (0.819,1.081)   0.0060    0.2511   0.0011     (0.144,0.325)   0.0029
+                                                                 5    θ̂     -0.0039   -0.0039    (-0.147,0.172)    0.0071   0.9984   -0.0016    (0.842,1.109)    0.0056   0.2542    0.0042    (0.130,0.313)    0.0037
+                                                                      θ̈      0.0078    0.0078    (-0.064,0.283)   0.0071    1.0121    0.0121    (0.949,1.262)    0.0057   0.2552    0.0052    (0.199,0.382)   0.0026
+                                                                 10   θ̂     -0.0031   -0.0031    (-0.030,0.334)    0.0073   0.9977   -0.0023    (0.974,1.302)    0.0054   0.2535    0.0035    (0.220,0.365)    0.0037
+                                                                      θ̈      0.0084    0.0084    (-0.088,0.244)   0.0072    1.0095    0.0095    (0.918,1.204)    0.0057   0.2524   0.0024     (0.187,0.334)   0.0014
+
+
+
+
+Revista Colombiana de Estadstica 42 (2019) 143–166
+                                                                                                                                                                                                                         153
+
+154                                               Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+
+   In this simulation, a comparison of return levels was also made according to
+the configuration of the last parameters in Table 1 and 2 (n = 100, µ = 0, σ = 1,
+ξ ∈ {−0.25, 0.25}), the estimation for using the maximum likelihood estimation
+(MLE, also known as classical inference), and the Bayesian estimation.
+    According to Figure 2, the Bayesian return levels and MLE were similar, mean-
+ing that in both cases they contained the mean return line as true parameters
+(black line).
+
+                                                      ξ = − 0.25                                                        ξ = 0.25
+
+
+                                                  MLE                                                               MLE
+
+
+
+
+                                                                                                   20
+                                                  Bayesian                                                          Bayesian
+                                 3
+                                 2
+
+
+
+
+                                                                                                   15
+                                 1
+                  Return Level
+
+
+
+
+                                                                                    Return Level
+
+                                                                                                   10
+                                 0
+
+
+
+
+                                                                                                   5
+                                 −1
+                                 −2
+
+
+
+
+                                                                                                   0
+
+
+
+
+                                      1e−01   1e+00     1e+01      1e+02    1e+03                       1e−01   1e+00     1e+01    1e+02   1e+03
+
+                                                  Return Period                                                     Return Period
+
+Figure 2: Return levels of 95%, for the MLE (dashed line) and Bayesian approach
+          (dotted line) and the mean return line of the true parameter (black line) with
+          µ = 0, σ = 1, ξ ∈ {−0.25, 0.25} and r = 10.
+
+
+    During r-optimal selection, a comparison between Bayesian estimation and
+MLE was developed in which both tests (ED test) showed similar behaviors (Figure
+3). Moreover, the Bayesian approach may also be used in the r-optimal choice.
+Finally, Figures 3 shows that all configurations indicate that the cut-oﬀ point at t
+0.05 for the r-optimal choice, when r = 10, it satisfied the proposed simulation.
+    As shown in Figure 4, the comparison between the Bayesian estimation and
+MLE were equivalent when using the PB Score test. Also, note that at the inter-
+section of the three methods, the cut-oﬀ point occurred at 0.05 for the r-optimal
+selection when r = 10. Thus, the results shown in Figure 3 and Figure 4 are
+eﬃcient for r-optimal selection.
+
+                                                                           Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Value Theory Applied to r Largest Order Statistics                                                                                                                                                                  155
+
+
+
+
+                                                 p−value                                                   p−value                                                     p−value
+
+                                    0.0   0.2   0.4    0.6   0.8   1.0                       0.0   0.5   1.0    1.5   2.0   2.5                      0.0   0.5   1.0   1.5       2.0         2.5              3.0
+
+
+
+
+                               1
+
+
+
+
+                                                                                        1
+
+
+
+
+                                                                                                                                                1
+
+
+
+
+                                                                                                                                                                                       MLE
+
+
+
+                                                                                                                                                                                                   Bayesian
+                               2
+
+
+
+
+                                                                                        2
+
+
+
+
+                                                                                                                                                2
+                               3
+
+
+
+
+                                                                                        3
+
+
+
+
+                                                                                                                                                3
+                               4
+
+
+
+
+                                                                                        4
+
+
+
+
+                                                                                                                                                4
+                               5
+
+
+
+
+                                                                                        5
+
+
+
+
+                                                                                                                                                5
+                                                                                                                                  ForwardStop
+                  UnAdjusted
+
+
+
+
+                                                                           Strongstop
+                               6
+
+
+
+
+                                                                                        6
+
+
+
+
+                                                                                                                                                6
+                               7
+
+
+
+
+                                                                                        7
+
+
+
+
+                                                                                                                                                7
+                               8
+
+
+
+
+                                                                                        8
+
+
+
+
+                                                                                                                                                8
+                               9
+
+
+
+
+                                                                                        9
+
+
+
+
+                                                                                                                                                9
+                               10
+
+
+
+
+                                                                                        10
+
+
+
+
+                                                                                                                                                10
+Figure 3: P-values using the ForwardStop, StrongStop and unadjusted methods, for
+          the ED test, applied in simulated data, with µ = 0, σ = 1, ξ = −0.25 and
+          r = 10. The blue line represents the cut-oﬀ point for 0.05, continuous line
+          with ball represents the p-values obtained by the Bayesian method and the
+          dashed line with triangle represents the p-values obtained by the maximum
+          likelihood method.
+
+
+
+4. Applications
+
+   In this section, the results from the actual data analysis of extreme values in
+environmental and financial sciences are presented.
+   Temperature of Teresina-PI
+   The first analysis was performed on a dataset consisting of the temperature
+measurements of Teresina city, capital of Piauí, which is located in the northeast-
+ern region of Brazil. Specifically, this dataset comprised the daily temperature
+maximum in ◦ C of Teresina-PI collected from January 2012 to November 2015.
+However, owing to temperature seasonality, we decided to select only the three
+hottest months, namely, September, October, and November. This was under-
+taken to reduce data dependence.
+   As shown in Table 3, the average daily maximum temperature in the selected
+period was 37.83 ◦ C with a standard deviation of 1.73 ◦ C. The lowest recorded
+maximum was 30.5 ◦ C and the highest recorded was 41.1 ◦ C.
+
+                                                                         Revista Colombiana de Estadstica 42 (2019) 143–166
+
+156                                                    Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+
+
+
+                                                  p−value                                                   p−value                                                          p−value
+
+                                    0.0    0.2   0.4    0.6   0.8   1.0                       0.0   0.5   1.0    1.5   2.0   2.5                           0.0   0.5   1.0   1.5       2.0         2.5              3.0
+
+
+
+
+                               1
+
+
+
+
+                                                                                         1
+
+
+
+
+                                                                                                                                                      1
+
+
+
+
+                                                                                                                                                                                             MLE
+
+
+
+                                                                                                                                                                                                         Bayesian
+                               2
+
+
+
+
+                                                                                         2
+
+
+
+
+                                                                                                                                                      2
+                               3
+
+
+
+
+                                                                                         3
+
+
+
+
+                                                                                                                                                      3
+                               4
+
+
+
+
+                                                                                         4
+
+
+
+
+                                                                                                                                                      4
+                               5
+
+
+
+
+                                                                                         5
+
+
+
+
+                                                                                                                                                      5
+                                                                                                                                        ForwardStop
+                                                                            Strongstop
+                  UnAdjusted
+
+                               6
+
+
+
+
+                                                                                         6
+
+
+
+
+                                                                                                                                                      6
+                               7
+
+
+
+
+                                                                                         7
+
+
+
+
+                                                                                                                                                      7
+                               8
+
+
+
+
+                                                                                         8
+
+
+
+
+                                                                                                                                                      8
+                               9
+
+
+
+
+                                                                                         9
+
+
+
+
+                                                                                                                                                      9
+                               10
+
+
+
+
+                                                                                         10
+
+
+
+
+                                                                                                                                                      10
+Figure 4: P-values using the ForwardStop, StrongStop, and unadjusted methods, for
+          the PB Score test, applied in simulated data with µ = 0, σ = 1, ξ = −0.25,
+          and r = 10. The blue line represents the cut-oﬀ point for 0.05 continuous line
+          with ball represents the p-values obtained by the Bayesian method and the
+          dashed line with triangle represents the p-values obtained by the maximum
+          likelihood method.
+
+
+Table 3: Descriptive analysis of the daily maximum temperature of Teresina-PI. 2012-
+         2015, only the months of September, October and November.
+
+              Min.                        Q1            Median                           Mean                   S.D.               Q3                      Max.
+              30.5                        37.3                38.2                       37.83                   1.73              39                       41.1
+
+
+
+    When using only the maximum monthly value, we made a total of 48 observa-
+tions. In order to choose the r largest order statistics, the mechanism described
+in subsection (2.3) was used and the parameters estimates were derived using the
+Bayesian method (as opposed to the maximum likelihood method used by Bader
+et al. 2017).
+    The ED test and the parametric bootstrap were used with 10000 replicates.
+As shown in Figure 5 the unadjusted sequence test produced the only rejection of
+  (r)
+H0 to the level of α = 0.05 when considering a cut-oﬀ p-value 0.05. According
+to Bader et al. (2017), the unadjusted sequence test also produced the correct r
+selection. However, it is a more conservative method as it selects a small r.
+
+                                                                          Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Value Theory Applied to r Largest Order Statistics                                                                                                                                                              157
+
+                                                                                                                                                                        (r)
+     Thus, using the ED method, the non-sequential test rejected H0 for r = 6;
+i.e., between r = 6 and r = 5 there existed a large deviation in the expected
+                                                        (1)       (5)
+diﬀerence. In addition, this was also rejected for H0 , . . . , H0 , which indicates
+that the distribution of r largest order statistics is best suited where r=6.
+
+
+
+
+                                                 p−value                                                    p−value                                                           p−value
+
+                                    0.0   0.2   0.4    0.6   0.8   1.0                        0.0   0.5   1.0    1.5   2.0   2.5                      0.0   0.5   1.0              1.5   2.0        2.5   3.0
+                               1
+
+
+
+
+                                                                                         1
+
+
+
+
+                                                                                                                                                 1
+
+
+
+
+                                                                                                                                                                        PB Score
+
+
+
+
+                                                                                                                                                                                               ED
+                               2
+
+
+
+
+                                                                                         2
+
+
+
+
+                                                                                                                                                 2
+                               3
+
+
+
+
+                                                                                         3
+
+
+
+
+                                                                                                                                                 3
+                               4
+
+
+
+
+                                                                                         4
+
+
+
+
+                                                                                                                                                 4
+                               5
+
+
+
+
+                                                                                         5
+
+
+
+
+                                                                                                                                                 5
+                                                                                                                                   ForwardStop
+                  UnAdjusted
+
+
+
+
+                                                                            Strongstop
+                               6
+
+
+
+
+                                                                                         6
+
+
+
+
+                                                                                                                                                 6
+                               7
+
+
+
+
+                                                                                         7
+
+
+
+
+                                                                                                                                                 7
+                               8
+
+
+
+
+                                                                                         8
+
+
+
+
+                                                                                                                                                 8
+                               9
+
+
+
+
+                                                                                         9
+
+
+
+
+                                                                                                                                                 9
+                               10
+
+
+
+
+                                                                                         10
+
+
+
+
+                                                                                                                                                 10
+
+
+
+
+Figure 5: P-values using the ForwardStop, StrongStop and unadjusted methods, for ED
+          and PB Score tests, applied at temperature in ◦ C of Teresina, in the period
+          of 2012-2015, for the months of September, October, and November. The
+          blue line represents the cut-oﬀ point to 0.05.
+
+
+    The Bayesian approach was used to estimate the parameters for r = 1, . . . , r =
+10, with MCMC (Gamerman & Lopes 2006). Furthermore, Table 4 contains the
+credible interval of 95%, and the parameter estimates for r = 6 were µ̈ = 40.037,
+σ̈ = 0.451, and ξ¨ = −0.311. Note that as r increased, estimator accuracy improved.
+    Figure 6 contains the return levels for t = 100 with credible intervals of 95%
+for the distribution of r largest order statistics. Where r = 2, r = 3, . . . , r = 10,
+the dotted lines represent 95% of credibility interval for the predictive distribution
+(continuous line). Note that from r = 6, the return levels exhibit similar behavior
+in terms of range amplitude, which reinforces the choice of r = 6.
+    Also shown in Figure 6, the approximate temperature of 40 ◦ C always occurred
+at least once in each of the months of September, October and November at the
+return level (r = 6). Thus, considering only the referred months, that temper-
+ature value is expected to occur every year. Note that as ξ < 0, the maximum
+temperature that could occur was approximately 42 ◦ C.
+
+                                                                         Revista Colombiana de Estadstica 42 (2019) 143–166
+
+158                                Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+Table 4: Parameter estimates for r largest order statistics and credible interval of 95%,
+         with r = 1, . . . , r = 10; in bold are the estimates for r-optimal (r = 6), for
+         each parameter the lower limit (2.5%), the posterior mean and the upper limit
+         (97.5%).
+  r                  µ̈                            σ̈                           ξ̈
+  1    39.265     39.595        40.005   0.369    0.530   0.934    -0.518     -0.100   0.482
+  2    39.453     39.747        40.158   0.377    0.481   0.780    -0.368     -0.017   0.701
+  3    39.651     39.868        40.144   0.377    0.465   0.700    -0.312     -0.097   0.298
+  4    39.793     39.979        40.260   0.417    0.473   0.627    -0.426     -0.283   -0.075
+  5    39.816     40.011        40.310   0.417    0.474   0.643    -0.440     -0.316   -0.103
+  6    39.856    40.037      40.317      0.416    0.451   0.638   -0.409      -0.311   -0.124
+  7    39.877     40.058        40.285   0.408    0.446   0.574    -0.410     -0.322   -0.173
+  8    39.924     40.098        40.361   0.416    0.448   0.573    -0.460     -0.363   -0.223
+  9    39.975     40.119        40.356   0.411    0.448   0.564    -0.464     -0.380   -0.245
+ 10    39.980     40.151        40.386   0.411    0.443   0.530    -0.473     -0.399   -0.290
+
+
+
+      BOVESPA
+    The second analysis was performed using a dataset derived from the mean
+return index of the São Paulo stock exchange (BOVESPA). São Paulo is the largest
+city in Brazil and is located in the southeast region. More specifically, this dataset
+comprised the maximum annual returns (business days only) of the São Paulo
+stock exchange from January 2000 to December 2014.
+   As shown in Table 5, the average daily maximum return in the 2000-2014 time
+period was 1.36, with a standard deviation of 1.25. The highest daily return was
+14.66 on 10/14/2018, at the height of the world economic crisis.
+
+Table 5: Descriptive analysis of the maximum daily return of BOVESPA. 2000-2014.
+
+                Min.       Q1      Median        Mean     S.D.    Q3        Max.
+                 0        0.48       1.05        1.36     1.25    1.89      14.66
+
+    Using only the maximum monthly returned a total of 15 observations. Thus,
+using the same analysis routine performed in the first application, we obtained
+                (r)
+the rejected H0 at the α = 0.05 level. In all three cases, the PB Score test
+had p-values < 0.05. Moreover, using an intersection of these three methods, we
+identified the first r-optimal lower that satisfied the three cases for r = 8. As
+shown in Figure 7, we used the PB Score test and chose r = 8. Using the Forward
+                                                            (1)  (2)       (7)
+Stop and Strong Stop methods for the PB Score, the H0 , H0 , . . . , H0 were
+rejected and the first k̂ < α, was returned to r = 8.
+    The Bayesian approach was used to estimate the parameters for r = 1, . . . , r =
+8 (cases r > 8 were omitted because they had similar results for r = 8) and by
+MCMC (Gamerman & Lopes 2006). Table 6 contains the credible interval of 95%,
+for r = 8 and the parameter estimates are: µ̈ = 6.775, σ̈ = 1.770 and ξ¨ = 0.176,
+and note that as r increases, the estimators become more accurate.
+
+                                            Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Value Theory Applied to r Largest Order Statistics                                                                                                                159
+
+
+
+
+                                                                 48
+
+
+
+
+                                                                                                                      42.5
+            55
+
+
+
+
+                                                                 46
+
+
+
+
+                                                                                                                      42.0
+            50
+
+
+
+
+                                                                                                                      41.5
+  returns
+
+
+
+
+                                                       returns
+
+
+
+
+                                                                                                            returns
+                                                                 44
+
+
+
+
+                                                                                                                      41.0
+            45
+
+
+
+
+                                                                 42
+
+
+
+
+                                                                                                                      40.5
+                                                                                                                      40.0
+                                                                 40
+            40
+
+
+
+
+                   0   20   40         60   80   100                    0   20   40         60   80   100                    0   20   40          60   80   100
+
+                                 r=2                                                  r=3                                                  r=4
+
+
+
+
+                                                                                                                      42.0
+                                                                 42.0
+            42.0
+
+
+
+
+                                                                                                                      41.5
+                                                                 41.5
+            41.5
+  returns
+
+
+
+
+                                                       returns
+
+
+
+
+                                                                                                            returns
+
+                                                                                                                      41.0
+                                                                 41.0
+            41.0
+
+
+
+
+                                                                 40.5
+
+
+
+
+                                                                                                                      40.5
+            40.5
+            40.0
+
+
+
+
+                                                                 40.0
+
+
+
+
+                   0   20   40         60   80   100                    0   20   40         60   80   100             40.0   0   20   40          60   80   100
+
+                                 r=5                                                  r=6                                                  r=7
+                                                                                                                      41.5
+                                                                 41.5
+            41.5
+
+
+
+
+                                                                                                                      41.0
+                                                                 41.0
+  returns
+
+
+
+
+                                                       returns
+
+
+
+
+                                                                                                            returns
+            41.0
+
+
+
+
+                                                                 40.5
+
+
+
+
+                                                                                                                      40.5
+            40.5
+
+
+
+
+                   0   20   40         60   80   100                    0   20   40         60   80   100                    0   20   40          60   80   100
+
+                                 r=8                                                  r=9                                                  r=10
+
+
+Figure 6: Return levels for the r largest statistics-order statistics, with r = 2, . . . , 10,
+          dashed lines are the 95% limits of the credibility intervals and the continuous
+          line is the posterior mean.
+
+
+   As shown in Figure 8, the mean return from the BOVESPA was approximately
+11% at least once every twelve years at the return level (r = 8). In addition, we
+found that the return chart for r = 8 was more compact than the others, which
+returned estimates with a shorter interval reinforced the choice of r = 8.
+
+
+
+
+                                                                            Revista Colombiana de Estadstica 42 (2019) 143–166
+
+160                                                     Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+
+
+
+                                                   p−value                                                        p−value                                                       p−value
+
+                                      0.0   0.2   0.4    0.6   0.8   1.0                       0.0        0.5   1.0    1.5   2.0   2.5                        0.0   0.5   1.0   1.5              2.0   2.5   3.0
+
+
+
+
+                                1
+
+
+
+
+                                                                                          1
+
+
+
+
+                                                                                                                                                         1
+
+
+
+
+                                                                                                                                                                                      PB Score
+
+
+
+
+                                                                                                                                                                                                       ED
+                                2
+
+
+
+
+                                                                                          2
+
+
+
+
+                                                                                                                                                         2
+                                3
+
+
+
+
+                                                                                          3
+
+
+
+
+                                                                                                                                                         3
+                                4
+
+
+
+
+                                                                                          4
+
+
+
+
+                                                                                                                                                         4
+                                5
+
+
+
+
+                                                                                          5
+
+
+
+
+                                                                                                                                                         5
+                                                                                                                                           ForwardStop
+                   UnAdjusted
+
+
+
+
+                                                                             Strongstop
+                                6
+
+
+
+
+                                                                                          6
+
+
+
+
+                                                                                                                                                         6
+                                7
+
+
+
+
+                                                                                          7
+
+
+
+
+                                                                                                                                                         7
+                                8
+
+
+
+
+                                                                                          8
+
+
+
+
+                                                                                                                                                         8
+                                9
+
+
+
+
+                                                                                          9
+
+
+
+
+                                                                                                                                                         9
+                                10
+
+
+
+
+                                                                                          10
+
+
+
+
+                                                                                                                                                         10
+Figure 7: P-values using the ForwardStop, StrongStop, and unadjusted, for ED and PB
+          Score tests, applied to the BOVESPA in the period of 2000-2014. The blue
+          line represents the cut-oﬀ point to 0.05.
+
+
+Table 6: Parameter estimates for r largest order statistics, and credible interval of 95%,
+         with r = 1, . . . , r = 8, in bold is the estimates for the r-optimal (r = 8) for
+         each parameter the lower limit (2.5%), the posterior mean and the upper limit
+         (97.5%)
+       r                             µ̈                                                              σ̈                                                                   ξ̈
+       1   4.353        5.108                     6.069              0.728                     1.187                   2.577             0.005                      0.362                              1.125
+       2   4.905        5.541                     7.450              1.061                     1.505                   3.656             0.053                      0.347                              0.830
+       3   5.352        5.953                     6.818              1.255                     1.666                   2.973             0.094                      0.266                              0.752
+   .   4   5.718        6.218                     7.092              1.266                     1.721                   2.636             0.062                      0.269                              0.568
+       5   5.752        6.377                     7.467              1.340                     1.754                   2.708             0.032                      0.240                              0.484
+       6   6.006        6.512                     7.677              1.411                     1.778                   2.768             0.086                      0.247                              0.482
+       7   6.192        6.637                     8.286              1.454                     1.857                   3.765             0.099                      0.255                              0.623
+       8   6.131   6.775                          7.416              1.361                     1.770                  2.315              0.023                      0.176                              0.338
+
+
+
+
+                                                                           Revista Colombiana de Estadstica 42 (2019) 143–166
+
+Value Theory Applied to r Largest Order Statistics                                                  161
+
+
+
+
+                                                                800
+          150
+
+
+
+
+                                                                600
+          100
+returns
+
+
+
+
+                                                      returns
+
+                                                                400
+                                                                200
+          50
+
+
+
+
+                                                                0
+          0
+
+
+
+
+                 0   20   40         60   80    100                   0   20   40         60   80    100
+
+                               r=1                                                  r=2
+
+
+
+
+                                                                80
+          80
+
+
+
+
+                                                                60
+          60
+returns
+
+
+
+
+                                                      returns
+
+                                                                40
+          40
+
+
+
+
+                                                                20
+          20
+
+
+
+
+                 0   20   40         60   80    100                   0   20   40         60   80    100
+
+                               r=3                                                  r=4
+                                                                35
+          40
+
+
+
+
+                                                                30
+          30
+
+
+
+
+                                                                25
+returns
+
+
+
+
+                                                      returns
+
+                                                                20
+          20
+
+
+
+
+                                                                15
+                                                                10
+          5 10
+
+
+
+
+                 0   20   40         60   80    100                   0   20   40         60   80    100
+
+                               r=5                                                  r=6
+          60
+
+
+
+
+                                                                30
+          50
+
+
+
+
+                                                                25
+          40
+returns
+
+
+
+
+                                                      returns
+
+                                                                20
+          30
+
+
+
+
+                                                                15
+          20
+
+
+
+
+                                                                10
+          10
+
+
+
+
+                 0   20   40         60   80    100                   0   20   40         60   80    100
+
+                               r=7                                                  r=8
+
+
+Figure 8: Return levels for the r largest order statistics, with r = 2, . . . , 8, dashed lines
+          are the 95% limits of the credibility intervals and the continuous line is the
+          posterior mean.
+
+
+
+
+                                               Revista Colombiana de Estadstica 42 (2019) 143–166
+
+162                         Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+
+5. Final Remarks
+    For the two applications developed during this research, we obtained more
+precise results in terms of parameter estimation and return levels by comparing
+GEV estimations with r largest order statistics. However, it is important to note
+that the estimate parameters are unstable from a certain r value. Regarding the
+Teresina temperature data, the use of r largest order statistics proved a suitable
+alternative for analyzing a larger amount of data when the number of observations
+was reduced to the range of 2012 to 2015. This was also true of the BOVESPA
+return data.
+    Regarding selection of the optimum values in these applications, sequential
+tests were used for the ED and PB scoring methods (Figures 5 and 7). In both
+cases, the lowest r held the p-value of < 0.05, which preserved the principle of
+parsimony.
+   In addition, it is important to note that using the Bayesian approach for pa-
+rameter estimation produced results similar to (and in some cases superior to)
+those of the maximum likelihood method according to the results obtained in our
+simulations.
+   One final item of note is the algorithm developed in this study, which was
+an alternative to the ismev package (Coles 2006) and EVA (Bader & Yan 2016).
+Moreover, we verified that the estimate return level presented behavior similar to
+the above methods. Thus, the incorporation of r largest order statistics varying
+over time (Huerta & Sansó 2007) to improve adjustments for series with high
+seasonality is a recommendation for future work.
+
+
+Acknowledgements
+    The authors declare that there is no conflict of interest regarding the publica-
+tion of this paper and wish to thank the associate editor and the referees for many
+useful comments and suggestions. The first author’s research was supported by
+donations from CAPES, Brazil. The second author’s research was supported by
+donations from CNPq, Brazil.
+              [                                              ]
+               Received: March 2018 — Accepted: December 2018
+
+
+References
+Bader, B. & Yan, J. (2016), ‘eva: Extreme value analysis with goodness-of-fit testing’. R package version 0.2.
+Bader, B., Yan, J. & Zhang, X. (2017), ‘Automated selection of r for the r largest order statistics approach with adjustment for sequential testing’, Statistics and Computing 27(6), 1435–1451.
+Balakrishnan, N., Kannan, N. & Nagaraja, H. N. (2007), Advances in ranking and selection, multiple comparisons, and reliability: methodology and applications, Springer Science & Business Media.
+Benjamini, Y. (2010a), ‘Discovering the false discovery rate’, Journal of the Royal Statistical Society: series B (statistical methodology) 72(4), 405–416.
+Benjamini, Y. (2010b), ‘Simultaneous and selective inference: Current successes and future challenges’, Biometrical Journal 52(6), 708–721.
+Benjamini, Y. & Hochberg, Y. (1995), ‘Controlling the false discovery rate: a practical and powerful approach to multiple testing’, Journal of the royal statistical society. Series B (Methodological) pp. 289–300.
+Benjamini, Y. & Yekutieli, D. (2001), ‘The control of the false discovery rate in multiple testing under dependency’, Annals of statistics pp. 1165–1188.
+Coles, S. (2006), ‘Ismev: an introduction to statistical modeling of extreme values’. http://cran. r-project. org/web/packages/ismev/index.html.
+Coles, S., Bawa, J., Trenner, L. & Dorazio, P. (2001), An introduction to statistical modeling of extreme values, Vol. 208, Springer.
+Coles, S. G. & Tawn, J. A. (1996), ‘A bayesian analysis of extreme rainfall data’, Applied statistics pp. 463–478.
+Do Nascimento, F. F. & Moura e Silva, W. V. (2016), ‘MCMC4Extremes: Posterior Distribution of Extreme Value Models in R’. R package version 1.1.
+Fisher, R. A. & Tippett, L. H. C. (1928), ‘On the estimation of the frequency distributions of the largest and smallest sumber of a sample’, Proceedings of the Cambridge Philosophycal Society 24, 180–190.
+Gamerman, D. & Lopes, H. F. (2006), Markov chain Monte Carlo: stochastic simulation for Bayesian inference, Chapman and Hall/CRC.
+Gonçalves, K. C., Migon, H. S. & Bastos, L. S. (2019), ‘Dynamic quantile linear models: A bayesian approach’, Bayesian Analysis (online). https://arxiv.org/abs/1711.00162.
+G’Sell, M. G., Wager, S., Chouldechova, A. & Tibshirani, R. (2016), ‘Sequential selection procedures and false discovery rate control’, Journal of the royal statistical society: series B (statistical methodology) 78(2), 423–444.
+Hastings, W. K. (1970), ‘Monte carlo sampling methods using markov chains and their applications’, 57(l).
+Huerta, G. & Sansó, B. (2007), ‘Time-varying models for extreme values’, Environmental and Ecological Statistics 14(3), 285–299.
+Jenkinson, A. F. (1955), ‘The frequency distribution of the annual maximum (or minimum) values of meteorological elements’, Quarterly Journal of the Royal Meteorological Society 81(348), 158–171.
+Kozumi, H. & Kobayashi, G. (2011), ‘Gibbs sampling methods for bayesian quantile regression’, Journal of statistical computation and simulation 81(11), 1565–1578.
+Mises, R. v. (1936), ‘La distribution de la plus grande de n valeurs’, Revue Mathmatique de L’Union Interbalcanique 1, 141–160.
+Nascimento, F. F. (2012), Modelos Probabilisticos para dados Extremos: Teoria e aplicacoes, Teresina: Piaui.
+Nascimento, F. F., Gamerman, D. & Lopes, H. F. (2011), ‘Regression models for exceedance data via the full likelihood’, Environmental and ecological statistics 18(3), 495–512.
+Nascimento, F. F., Gamerman, D. & Lopes, H. F. (2016), ‘Time-varying extreme pattern with dynamic models’, Test 25(1), 131–149.
+Parmesan, C., Root, T. L. & Willig, M. R. (2000), ‘Impacts of extreme weather and climate on terrestrial biota’, Bulletin of the American Meteorological Society 81(3), 443–450.
+Pirazzoli, P. (1982), ‘Maree estreme a venezia (periodo 1872–1981)’, Acqua Aria 10, 1023–1039.
+Pirazzoli, P. (1983), ‘Flooding in venice: a worsening problem’. International Geographical Union Union, Bologna.
+Sang, H. & Gelfand, A. E. (2009), ‘Hierarchical modeling for extreme values observed over space and time’, Environmental and ecological statistics 16(3), 407–426.
+Shaﬀer, J. P. (1995), ‘Multiple hypothesis testing’, Annual review of psychology 46(1), 561–584.
+Singh, V. P. (2013), Entropy theory and its application in environmental and water engineering, John Wiley & Sons.
+Smith, R. L. (1984), Threshold methods for sample extremes, in ‘Statistical extremes and applications’, Springer, pp. 621–638.
+Smith, R. L. (1986), ‘Extreme value theory based on the r largest annual events’, Journal of Hydrology 86(1-2), 27–43.
+Soares, C. G. & Scotto, M. (2004), ‘Application of the r largest-order statistics for long-term predictions of significant wave height’, Coastal Engineering 51(5-6), 387–394.
+Tawn, J. A. (1988), ‘An extreme-value theory model for dependent observations’, Journal of Hydrology 101(1-4), 227–250.
+Yu, K. & Moyeed, R. A. (2001), ‘Bayesian quantile regression’, Statistics & Probability Letters 54(4), 437–447.
+Appendix: MCMC algorithm
+    Sampling was performed in blocks with Metropolis-Hastings proposals for each
+block owing to unrecognizable form of the respective full conditionals. Each r-
+largest order statistics parameter was sampled separately, and three (µ, σ, ξ) for
+each component were sampled per block.
+   Details of the MCMC sampling scheme are given below. For iteration s, pa-
+rameters were updated as follows:
+    Sampling µ, σ, ξ: it can be seen from the posterior distribution in (2.3). How-
+ever, its complete conditional has no known form, meaning it is necessary to sample
+µ, σ and ξ using the Metropolis-Hastings algorithm. Next, sample µ∗ , σ ∗ and ξ ∗ ,
+respectively for
+                               2
+N (µ(s) , Kµ ), Gama(σ (s) /Kσ , σ (s) /Kσ ) and N (ξ (s) , Kξ ). We then accept, µ(s+1) =
+µ∗ , σ (s+1) = σ ∗ and ξ (s+1) = ξ ∗ with probability α(θ(s) , θ∗ ), in which θ(s) =
+(µ(s) , σ (s) , ξ (s) ) and θ∗ = (µ∗ , σ ∗ , ξ ∗ ).
+                              {                                                             }
+                                 π(µ∗ , σ ∗ , ξ ∗ )fG (σ (s) | σ ∗ /Kσ , σ ∗ /Kσ )
+                                                                    2
+          (s)     ∗
+    α(θ         , θ ) = min 1,                                                                  .
+                               π(µ(s) , σ (s) , ξ (s) )fG (σ ∗ | σ (s)2 /Kσ , σ (s) /Kσ )
+
+fG follows the Gamma distribution.
+   •   MCMC verification through simulations.
+    In order to check the credible interval (Bayesian) of 95% and the confidence
+interval (maximum likelihood) of 95%, the r largest order statistics points were
+generated according to the last configuration in Table 1. Thus, µ = 0, σ = 1, ξ =
+−0.25, r = 10 e n = 100. The MCMC chain was generated based on specifications
+from (Do Nascimento & Moura e Silva 2016).
+    As shown in Figure A1, the confidence and credible intervals of 95% were
+equivalent; i.e., the Bayesian approach proved an eﬃcient alternative for interval
+estimation.
+
+
+
+
+Figure A1: Histogram of 10000 points of the MCMC chain for the parameters (µ, σ, ξ)
+           of the r largest order statistics, with the real expected value being (line red)
+           µ = 0, σ = 1, ξ = −0.25, r = 10, and the credible interval (dashed line)
+           and the confidence interval (black line), both 95%.
+
+
+
+                                               Revista Colombiana de Estadstica 42 (2019) 143–166
+
+166                       Renato Santos da Silva & Fernando Ferraz do Nascimento
+
+
+    Observe that the MCMC in Figure A2 presents satisfactory results for the r
+largest order statistics parameter estimations (µ, σ, ξ).
+
+
+
+
+Figure A2: MCMC for µ, σ, ξ, with the true values being (line red) µ = 0, σ = 1,
+           ξ = −0.25 and r = 10.
+
+
+
+
+                                   Revista Colombiana de Estadstica 42 (2019) 143–166
+

@@ -1,0 +1,450 @@
+Combinación de métodos factoriales y de análisis de conglomerados en R: el paquete FactoClass
+Universidad Nacional de Colombia
+Resumen
+Se presenta el paquete de R FactoClass, donde se implementa la estrategia descrita en Lebart et al. (1995), que combina métodos factoriales con análisis de conglomerados, en la exploración multivariada de tablas de datos. Se utilizan funciones de ade4 (Chessel et al. 2004) para realizar el análisis factorial de los datos y de stats para el análisis de conglomerados. Se crean funciones para tareas específicas y se modifican algunas de las existentes. Se describen los pasos para crear FactoClass en ambiente Windows y se ilustra el uso del paquete con un ejemplo.
+Palabras clave: software estadístico, análisis multivariado, análisis en componentes principales, análisis de correspondencias, K-medias, clasificación jerárquica, LATEX.
+Introducción
+En este documento el término clasificación se utiliza como sinónimo de análisis o formación de conglomerados o clasificación no supervisada. En ningún momento hace referencia a la clasificación supervisada o discriminación, la cual no está incluida en el paquete construido.
+    Para el análisis de una tabla de datos haciendo uso de métodos multivariados,
+Lebart et al. (1995) presentan una estrategia que consiste en realizar primero un
+análisis factorial según la naturaleza de los datos y luego una clasificación basada
+en un algoritmo mixto: clasificación jerárquica con el método de Ward y agregación
+alrededor de centros móviles (K-medias). Finalmente se obtiene una partición del
+conjunto de datos y la caracterización de cada una de las clases, según las variables
+activas e ilustrativas, ya sean cuantitativas o cualitativas.
+    Para la caracterización de las clases se utilizan los valores test, que son índices
+descriptivos construidos siguiendo la metodología de pruebas de hipótesis, pero sin
+el objetivo de hacer inferencias. La ordenación de los valores test dentro de cada
+clase permite obtener las variables continuas que la caracterizan positivamente,
+en el sentido de que la media de la clase es suficientemente mayor de la media
+global, o negativamente cuando la media de la clase es inferior. Para las categorías
+de variables nominales, la ordenación permite obtener aquellas categorías cuya
+proporción dentro de la clase se diferencia lo suficiente de la proporción global, ya
+sea porque es mayor (valor test positivo) o menor (valor test negativo).
+    Para la puesta en práctica de la estrategia mencionada utilizando el lengua-
+je R (R Development Core Team 2007a) se programa el paquete denominado
+FactoClass, el cual utiliza funciones de ade4 (Chessel et al. 2004) para reali-
+zar el análisis factorial de los datos y de stats para los métodos de clasificación.
+Se programan las funciones complementarias que se requieren, incluyendo algunas
+para producir salidas en formato LATEX1 , utilizando el paquete xtable (Dahl 2006).
+FactoClass permite obtener salidas similares a las que aparecen en los programas
+estadísticos SPAD (Lebart et al. 1999) y DTM (Lebart 2007).
+    La creación de paquetes portables facilita la labor académica cuando se utiliza
+R como lenguaje para la ejecución de los métodos estadísticos. Un paquete es
+útil aun cuando no se requiera la programación de nuevas funciones, ya que se
+pueden incluir tablas de datos y líneas de comandos para los talleres de un curso.
+Por ejemplo el texto de Dalgaard (2002) tiene asociado el paquete ISwR (Dalgaard
+2005), que incluye las tablas de datos y las líneas de programación para los ejemplos
+incluidos en el texto.
+    De nuestra experiencia en la creación del paquete en ambiente Windows, des-
+cribimos los aspectos en los que tuvimos especial dificultad, ya que nos parece útil
+para quienes deseen hacer paquetes portables (ver apéndice A).
+   En la sección 2 se resume la estrategia de análisis combinando los métodos,
+luego, en la sección 3 se describe el paquete, y finalmente se ilustra su utilización
+con un ejemplo, en la sección 4.
+  1 MiKT X project page: http://www.miktex.org/ Ver por ejemplo De Castro (2003).
+         E
+
+
+                                      Revista Colombiana de Estadística 30 (2007) 231–245
+
+Combinación de métodos factoriales y de análisis de conglomerados en R               233
+
+2. Estrategia combinada de un método factorial y
+   formación de conglomerados
+     La estrategia descrita en Lebart et al. (1995) sigue los pasos que se muestran en
+la figura 1. En esta sección aparecen las fórmulas que sustentan alguna modificación
+de una función existente o la programación de una función nueva para FactoClass.
+
+
+
+
+Figura 1: Diagrama de flujo de la estrategia combinada de análisis factorial y métodos
+          de clasificación. Si el número n de elementos por clasificar sobrepasan el
+          umbral nmáx , se realiza un agrupamiento antes de la clasificación jerárquica.
+
+
+
+2.1. Análisis factorial
+    FactoClass utiliza el paquete estadístico ade4 (Chessel et al. 2004) para rea-
+lizar el análisis factorial de los datos, en particular las funciones:
+
+dudi.pca: análisis de componentes principales (ACP),
+dudi.coa: análisis de correspondencias simples (ACS),
+dudi.acm: análisis de correspondencias múltiples (ACM),
+witwit.coa: análisis de correspondencias interno (ACI) (Cazes et al. 1988).
+
+                                      Revista Colombiana de Estadística 30 (2007) 231–245
+
+234                                    Campo Elías Pardo & Pedro César Del Campo
+
+Estas funciones retornan un objeto de tipo dudi con los valores y vectores pro-
+pios y las coordenadas factoriales de las filas y columnas. Las demás ayudas a la
+interpretación se obtienen con la función inertia.dudi.
+    Las funciones dudi de ade4 reciben los datos en un objeto data.frame y uti-
+lizan todas las columnas como activas.
+    El paquete ade4 tiene varias funciones para obtener los planos factoriales; sin
+embargo en FactoClass se incluye la función planfac que recibe un objeto dudi
+y produce un plano factorial similar a los del paquete FactoMineR (Husson et al.
+2007) o a los de ade4. Para la programación de esta función se tomaron partes de
+las funciones de estos dos paquetes.
+
+
+2.2. Clasificación a partir de los factores
+     La utilización de las coordenadas factoriales permite tener un marco común en
+el proceso de formación de conglomerados. Para el proceso de clasificación el aná-
+lisis factorial previo se constituye en un pretratamiento, que transforma los datos
+originales en variables continuas no correlacionadas. Tomar todos los factores para
+la formación de conglomerados es equivalente a efectuar una clasificación de las
+filas de la tabla de datos utilizando las variables originales. Tomar menos factores
+implica realizar un filtrado: se supone que los ejes utilizados para la clasificación
+tienen la información relevante y que los desechados se deben a las fluctuaciones
+aleatorias que constituyen el ruido. El diagrama de valores propios orienta la de-
+cisión del número de ejes que se utilizan en la clasificación. Algunas veces, sobre
+todo en tablas pequeñas, se usan todos los ejes.
+
+
+2.3. El método de Ward
+   El método de Ward utiliza la distancia entre clases que cumple con el objetivo
+de unir, en cada paso del proceso de aglomeración, las dos clases que incrementen
+menos la inercia intraclases.
+    Sean A y B dos clases no vacías y disjuntas y sean pA , pB y gA , gB sus pesos y
+centros de gravedad, respectivamente. La distancia de Ward entre los dos grupos,
+en función de la distancia euclidiana canónica d, viene dada por:
+                                       pA pB 2
+                         W (A, B) =           d (gA − gB )                         (1)
+                                      pA + pB
+
+(la deducción se puede ver en Pardo 1992).
+  En particular para dos individuos i y l, con pesos pi y pl , la distancia de
+Ward es:
+                                      pi pl 2
+                          W (i, l) =         d (i, l)                      (2)
+                                     pi + pl
+
+    En FactoClass se crea la función ward.cluster, la cual transforma la distan-
+cia euclidiana en distancia de Ward utilizando la fórmula (2) y llama la función
+hclust del paquete básico stats. En ward.cluster se incluye una gráfica de
+
+                                    Revista Colombiana de Estadística 30 (2007) 231–245
+
+Combinación de métodos factoriales y de análisis de conglomerados en R               235
+
+los índices de nivel para facilitar la decisión de cuántas clases seleccionar para la
+partición.
+
+
+2.4. El algoritmo K-medias
+    Este algoritmo para la obtención de una partición directa de un conjunto de
+“individuos” por variables cuantitativas requiere el número de clases por obtener y
+de puntos iniciales para cada una de ellas. La propuesta de Lebart et al. (1995) es
+utilizarlo para obtener una partición que minimice la inercia intraclases. Esto se
+logra localmente (depende de los puntos iniciales) usando la distancia euclidiana
+canónica entre los individuos y los centros móviles utilizados para la agregación.
+En cada paso del algoritmo se actualizan los centros móviles calculando los centros
+de gravedad de la partición obtenida del paso anterior.
+    Para una clase k, conformada por el conjunto de individuos Ik con pesos pi y
+coordenadas sobre el eje s notadas Fs (i), el término general de la coordenada de
+su centro de gravedad sobre un eje factorial s es:
+                                         X
+                               gs (k) =      pi Fs (i)                          (3)
+                                           i∈Ik
+
+y su inercia intra en el subespacio de los S primeros ejes factoriales es:
+                                         X           S
+                                                     X
+                   InerciaIntra(k) =            pi         (Fs (i) − gs (k))2        (4)
+                                         i∈Ik        s=1
+
+    La función kmeans de stats no maneja pesos distintos para las filas. Estos
+pesos influyen en los centros de gravedad (3) y en las inercias intra de las clases
+(4). Se modifica entonces esta función para incluir los pesos de las filas y obtener
+las inercias intra clases; se nombra kmeansW. En su opción por defecto la función
+kmeans utiliza el algoritmo de Hartigan & Wong (1979) programado en Fortran
+con el nombre kmns.f, función que se modifica dándole el nombre de kmnsw.f. Las
+líneas de programación modificadas cambian los cálculos de centros de gravedad
+y suma de cuadrados intra-clase por los de las fórmulas (3) y (4).
+
+
+2.5. Caracterización de las clases
+    Para seleccionar las variables continuas o las categorías de las variables nomi-
+nales más características de cada clase, se mide la desviación entre los valores rela-
+tivos a la clase y los valores globales, utilizando los valores test (Lebart et al. 1995,
+pp.181-184):
+
+Variable continua en una clase. Para una variable continua X, con media
+general X, el valor test asociado a la media X k de la clase k es:
+                                             Xk − X
+                              tk (X) = r                                             (5)
+                                            n − nk
+                                                     SX
+                                           (n − 1)nk
+
+                                      Revista Colombiana de Estadística 30 (2007) 231–245
+
+236                                     Campo Elías Pardo & Pedro César Del Campo
+
+donde SX es la desviación estandar de la variable X en todo el conjunto de datos,
+n el número de “individuos” clasificados y nk el número de “individuos” dentro de
+la clase k.
+
+Categoría en una clase. En una clase k conformada por nk individuos, de los
+n clasificados, nkj tienen la modalidad j. El valor test para j en la clase k se
+obtiene con un modelo hipergeométrico: de una “urna” con n “bolas”, de las cuales
+nj son “bolas negras”, se extrae una muestra de nk “bolas” y se obtienen nkj “bolas
+negras”. Si N es la variable aleatoria que designa la “cantidad de bolas negras en
+una muestra de tamaño nk ”, el valor p asociado al supuesto de extracción aleatoria,
+cuando la frecuencia relativa de la categoría j en la clase es mayor que la frecuencia
+global, es:
+                                                min(nk ,nj )
+                                                   X
+             V alorpk (j) = P rob(N ≥ nkj ) =                  h(x; n, nj , nk )    (6)
+                                                  x=njk
+
+
+donde h(x; n, nj , nk ) es la distribución de probabilidad hipergeométrica de pará-
+metros n, nj y nk calculada en x. Si la frecuencia relativa de la categoría j dentro
+de la clase k es menor que la global, entonces el valor p es:
+
+                 V alorpk (j) = P rob(N ≤ nkj ) = H(nkj ; n, nj , nk )              (7)
+
+donde H(nkj ; n, nj , nk ) es la función de distribución de probabilidad hipergeomé-
+trica acumulada, evaluada en nkj .
+   El valor test se obtiene buscando el cuantil de la normal estándar correspon-
+diente al valor p calculado mediante (6) o (7).
+    Para la caracterización de las clases, se incluye la función cluster.carac,
+donde se calculan los valores test con las fórmulas descritas en esta sección y se
+retorna un objeto list con información similar a la que se obtiene en los programas
+SPAD (Lebart et al. 1999) y DTM (Lebart 2007).
+
+
+2.6. Algoritmo de clasificación mixta
+   La propuesta descrita en Lebart et al. (1995) aprovecha las ventajas del método
+de Ward y las del K-medias, combinándolos de la manera siguiente:
+
+  1. Clasificación inicial. Si la cantidad de individuos por clasificar es muy alta,
+     es probable que la clasificación jerárquica no se pueda ejecutar directamente.
+     Entonces se efectúa esta primera etapa, la cual busca obtener rápidamente y
+     a bajo costo una partición de los individuos en s clases homogéneas, donde
+     s es mucho mayor que el número de clases deseado en la población, y menor
+     que la cantidad de individuos. Se emplea el algoritmo de agregación alrededor
+     de centros móviles (K-medias).
+      Se utiliza la función modificada kmeansW, dando el número de clases, con lo
+      cual los centros iniciales se establecen al azar.
+
+                                     Revista Colombiana de Estadística 30 (2007) 231–245
+
+Combinación de métodos factoriales y de análisis de conglomerados en R             237
+
+  2. Agregación jerárquica con el método de Ward. Se efectúa una clasificación as-
+     cendente jerárquica donde los elementos terminales del árbol son las s clases
+     de la partición inicial o los individuos directamente. El árbol correspondiente
+     se construye según el criterio de Ward, el cual une en cada paso de agregación
+     las dos clases que incrementen lo menos posible la inercia intraclases.
+     Se hace con la nueva función cluster.ward luego de calcular las distancias
+     entre filas o entre las clases previas obtenidas en 1.
+
+  3. Corte del árbol. El árbol o dendrograma que resume el procedimiento de
+     clasificación permite ver la estructura de clases de los individuos que son
+     objeto de análisis. En el gráfico de índices de nivel es más fácil observar los
+     cambios de inercia más grandes (saltos) y decidir el número de clases K.
+     Se consigue con la función cutree de stats. Para el paso siguiente es nece-
+     sario calcular los pesos y centros de gravedad de las clases obtenidas.
+
+  4. Consolidación de la clasificación. La partición obtenida en el paso anterior
+     no es óptima siempre, debido a la estructura de particiones anidadas del
+     dendrograma obtenido. Para mejorarla se utiliza de nuevo un procedimiento
+     de agregación alrededor de centros móviles (K-medias), utilizando los centros
+     de gravedad de las clases obtenidas al cortar el árbol como centros iniciales.
+     De nuevo se utiliza kmeansW, pero dando los centros de gravedad del paso
+     anterior como puntos iniciales.
+
+
+2.7. Identificación de las clases sobre los planos factoriales
+    Los centros de gravedad de las clases se pueden proyectar sobre los planos
+factoriales, y los individuos de cada clase se pueden diferenciar mediante signos o
+colores.
+   La función construida plot.FactoClas recibe un objeto de tipo FactoClass
+y produce el plano factorial solicitado.
+
+
+3. Descripción del paquete FactoClass
+    La función FactoClass realiza la estrategia completa sin incluir el plano facto-
+rial con las clases, ni las salidas en formato LATEX. Sin embargo algunas funciones
+se pueden utilizar separadamente. Por ejemplo la función cluster.carac se puede
+usar para caracterizar la partición asociada a una variable nominal con variables
+continuas y nominales presentes en una tabla de datos.
+   Las funciones del paquete FactoClass se presentan en la tabla 1 y los datos
+de ejemplos incluidos se relacionan en la tabla 2.
+    No es necesario extenderse más en la descripción del paquete, ya que luego de
+instalado y cargado se puede obtener la ayuda para todas las funciones utilizando
+? y el nombre de la función; por ejemplo ?cluster.carac.
+
+                                    Revista Colombiana de Estadística 30 (2007) 231–245
+
+238                                          Campo Elías Pardo & Pedro César Del Campo
+
+              Tabla 1: Funciones y su descripción del paquete FactoClass.
+           Función                                     Descripción
+      Fac.Num             División de variables cualitativas y cuantitativas.
+      list.to.data        list a data.frame.
+      planfac             Gráfico de planos factoriales.
+      dudi.tex            Tabla de coordenadas y ayudas para la interpretación de los ejes
+                          principales de un objeto dudi en formato LATEX utilizando xtable
+                          (Dahl 2006).
+      ward.cluster        Tabla de coordenadas, ayudas de interpretación de los ejes prin-
+                          cipales. Clasificación jerárquica por método de Ward (§2.3).
+      kmeansW             Realiza K-medias teniendo en cuenta las ponderaciones de los
+                          individuos (§2.4).
+      cluster.carac       Caracterización de las clases según variables (§2.5).
+      FactoClass          Combinación de métodos factoriales y de clasificación no supervi-
+                          sada (§2).
+      FactoClass.tex      Tabla de coordenadas, ayudas para la interpretación de los ejes
+                          principales y métodos de clasificación en LATEX.
+      plot.FactoClass     Gráfico de planos factoriales con clasificación para objetos
+                          FactoClass.
+
+4. Ejemplo: descripción de las manzanas de Bogotá
+   según estratos socioeconómicos
+Objetivo. Comparar las 19 localidades de Bogotá según la distribución de sus
+manzanas en los seis estratos socioeconómicos. En Colombia se estratifican las
+manzanas de las ciudades en seis estratos, siendo el primero el de menor nivel
+socioeconómico.
+
+
+Los datos. La tabla Bogotá es una tabla de contingencia que clasifica las man-
+zanas según localidades y estratos en el año de 1997 (DAPD 1997). Se incluye una
+columna SinEstrato para contabilizar las manzanas no residenciales.
+
+
+Procedimiento de análisis. Se realiza un análisis de correspondencias sim-
+ples (ACS) tomando como columnas activas los estratos 1 a 6 y como columna
+ilustrativa SinEstrato.
+    Se sigue la estrategia descrita en la sección 2 para obtener una clasificación de
+las 19 localidades mediante su agrupación por su parecido en el perfil de distribu-
+ción de manzanas según estratos.
+
+                                          Revista Colombiana de Estadística 30 (2007) 231–245
+
+Combinación de métodos factoriales y de análisis de conglomerados en R             239
+
+Número de ejes utilizados para la clasificación. En tablas pequeñas como
+esta no es necesario hacer un filtrado, y por tanto se utilizan los cinco ejes facto-
+riales del ACS para la clasificación. En este caso el ACS sirve como procedimiento
+de cuantificación de las categorías, al remplazar las frecuencias por coordenadas
+factoriales.
+
+Cálculos en R utilizando el paquete FactoClass
+  1. División de las columnas en activas e ilustrativas. Los procedimientos de
+     ade4 requieren que los elementos activos e ilustrativos estén en tablas sepa-
+     radas:
+     library(FactoClass)
+     data(Bogota)
+     Bog.act <- Bogota[-1]
+     Bog.ilu <- Bogota[ 1]
+  2. FactoClass en forma interactiva
+     FC.bogota<-FactoClass(Bog.act, dudi.coa,Bog.ilu)
+     En la pantalla aparece el diagrama de valores propios, que permite escoger el
+     número de ejes para el análisis. En este ejemplo pequeño son suficientes dos
+     ejes que retienen 67.5 % de la inercia (este valor se puede verificar una vez
+     se complete la función FactoClass con: inertia.dudi(FC.bogota$dudi)).
+     En la consola se teclea 2 y Enter ; luego se introduce el número de ejes que
+     se utilizan en el proceso de clasificación (cinco ejes) y finalmente el núme-
+     ro de clases deseados para la partición, decisión que se toma observando el
+     diagrama de índices de nivel y el dendrograma (figura 2). El procedimiento
+     termina y el objeto FC.bogota contiene todos los resultados: análisis facto-
+     rial, lista de índices para crear el dendrograma, coordenadas de los centros
+     de las clases, descripción de la consolidación de las clases, descripción de las
+     clases según las variables cualitativas, cuantitativas y de frecuencia.
+  3. Tablas de FC.bogota en formato LATEX:
+     FactoClass.tex( FC.bogota, job="Bogota", append=TRUE,dir=getwd(),
+                     p.clust=FALSE )
+
+  4. Clases sobre el primer plano factorial factorial (figura 3):
+             plot(FC.bogota,col.row=c("maroon2","orchid4","darkgoldenrod2",
+                  "dark red","aquamarine4"),cframe=1)
+
+  5. Columna ilustrativa SinEstrato (SE) sobre el primer plano factorial 
+Figura 3: Primer plano factorial del ACS de la tabla de contingencia Bogotá. Se
+          destacan las clases mostrando sus centros de gravedad y la clase a la
+          que pertenece cada localidad. Se incluye SE como columna ilustrativa.
+
+Análisis de resultados. El lector podrá verificar los resultados escribiendo en
+la consola de R el comando que se muestra dentro del paréntesis en cada caso.
+    El primer plano factorial de este análisis se muestra en la figura 3. Se observa
+el ordenamiento de las localidades en el plano según su perfil de estratos: al lado
+derecho las localidades Usme y Ciudad Bolívar, asociadas al estrato 1 ; al centro se
+encuentran las localidades con mayor porcentaje de estrato 2 que el promedio; a
+la izquierda, las asociadas al estrato 3, y arriba las que incrementan el porcentaje
+de estratos 4, 5 y 6 con respecto al promedio. La posición del perfil de manzanas
+SinEstrato, cerca al origen del primer plano factorial, permite concluir que su
+distribución según localidades es similar a la distribución global de las manzanas
+estratificadas.
+    Las localidades Usme y Ciudad Bolívar contribuyen con el 60.2 % de la iner-
+cia del primer eje, mientras que Chapinero, Usaquén y Teusaquillo son las que
+más contribuyen en el segundo eje (en conjunto 63.7 % de la inercia del eje)
+(inertia.dudi(FC.bogota$dudi,T)$row.abs). Las 19 localidades están bien re-
+presentadas en el plano factorial (inertia.dudi(FC.bogota$dudi,T)$row.cum).
+    El proceso de consolidación no introduce cambios a la partición obtenida al
+cortar el árbol en cinco clases (figura 2). La clase 2 es la de más localidades y tiene
+casi la mitad de las manzanas. La clase cinco es la de mayor inercia intra y la más
+alejada del origen (FC.bogota$clus.summ).
+
+                 Tabla 3: Caracterización de las clases según estratos.
+                                              Porcentaje             
+    La tabla 3 de caracterización de las clases es una parte de
+FC.bogota$carac.frec. La clase asignada a cada localidad se obtiene con
+FC.bogota$cluster. Con las siguientes instrucciones se logra un mosaiplot
+(Friendly 1994) para una caracterización gráfica de clases (se requiere la función
+gsummary del paquete nlme (Pinheiro et al. 2007)):
+
+library(nlme)
+gsummary(Bog.act,groups=FC.bogota$cluster,FUN=sum)->clasEst
+mosaicplot(clasEst,color=TRUE,main="")
+
+En la caracterización de las clases (tabla 3) se incluye la categoría SinEstrato (SE),
+que corresponde a la columna ilustrativa. Se observa un incremento de manzanas
+sin estratificar en las clases C1 (seguramente por mayor cantidad de zonas verdes)
+y C4 (zonas industriales), y una disminución en las zonas más deprimidas (C2 y
+C3).
+
+
+Conclusiones del ejemplo. El primer plano factorial del ACS de la tabla de
+contingencia que clasifica las manzanas de Bogotá según estratos y localidades
+(figura 3), junto con la partición en cinco clases (figura 2), permite corroborar que
+Bogotá es una ciudad fuertemente estratificada geográficamente. Las localidades
+más pobres (clase 3: Usme y Ciudad Bolívar) son las de estratos 1 y 2, práctica-
+mente sin estrato 3 y sin manzanas en estratos superiores, se ubican en la periferia
+sur de la ciudad. En contraste las clases 1 (Chapinero y Usaquén) y 5 (Teusaquillo
+y Barrios Unidos), que contienen en conjunto el 11.2 % de las manzanas de Bogotá,
+son las que más estratos 4, 5 y 6 tienen y se ubican en el centro-norte. Las clases
+2 y 4, en el centro del plano factorial, son las mayoritarias y tienen sobre todo
+manzanas en estrato 2 y 3.
+
+
+Obtención del paquete FactoClass
+    El paquete FactoClass se instala en R (versión 2.4.1 en adelante) a partir del
+zip disponible en la página:
+   http://www.docentes.unal.edu.co/cepardot/docs/
+Agradecimientos
+Agradecemos al profesor Jorge Ortiz por su labor como editor de este artículo y a los dos árbitros anónimos, quienes hicieron valiosos comentarios que ayudaron a mejorarlo. También a los estudiantes del curso de Métodos multivariados de datos de los dos semestres de 2007, de la carrera de Estadística, que utilizaron el paquete y detectaron algunos errores.
+Referencias
+Cazes, P., Chessel, D. & Doledec, S. (1988), ‘L’analyse des correspondances internes d’un tableau partitionné. Son usage en hydrobiologie’, Revue de Statistique Appliquée 36(1), 39–54.
+Chessel, D., Dufour, A. B. & Thioulouse, J. (2004), ‘The ade4 Package - I: One table Methods’, R News 4(1), 5–10.
+Dahl, D. B. (2006), xtable: Export Tables to LaTeX or HTML. David B. Dahl with contributions from many others. R package version 1.4-2.
+Dalgaard, P. (2002), Introductory Statistics with R, Springer, New York.
+Dalgaard, P. (2005), ISwR: Introductory Statistics with R. R package version 1.0-6.
+DAPD (1997), Población, estratificación y aspectos socioeconómicos de Santa Fe de Bogotá, Departamento Administrativo de Planeación Distrital, Bogotá.
+De Castro, R. (2003), El universo LATEX, segunda edn, Unibiblos, Universidad Nacional de Colombia, Bogotá.
+Friendly, M. (1994), ‘Mosaic Displays for Multi-Way Contingency Tables’, Journal of the American Statistical Association 89(425), 190–200.
+Hartigan, J. A. & Wong, M. A. (1979), ‘A K-means Clustering Algorithm’, Applied Statistics 28(100–108).
+Husson, F., Lê, S. & Mazet, J. (2007), FactoMineR: Factor Analysis and Data Mining with R. R package version 1.05. http://factominer.free.fr, http://www.agrocampus-rennes.fr/math/
+Lebart, L. (2007), ‘DTM. Data and Text Mining’, Software. http://ses.enst.fr/lebart/
+Lebart, L., Morineau, A., Lambert, T. & Pleuvret, P. (1999), SPAD. Système Pour l’Analyse des Donèes, Paris. http://www.spad.eu
+Lebart, L., Morineau, A. & Piron, M. (1995), Statisitique exploratoire multidimensionnelle, Dunod, Paris.
+Ligges, U. (2006), ‘R Help Desk: Accessing the Sources’, R News 6(4), 43–45.
+Ligges, U. & Murdoch, D. (2005), ‘R Help Desk: Make ‘R CMD’ Work under Windows – an Example’, R News 5(2), 27–28.
+Pardo, C. E. (1992), Análisis de la aplicación del método de Ward de clasificación jerárquica en el caso de variables cualitativas, Tesis de Maestría, Estadística, Universidad Nacional de Colombia, Facultad de Ciencias, Departamento de Matemáticas y Estadística, Bogotá.
+Pinheiro, J., Bates, D., DebRoy, S. & the R Core team., D. S. (2007), nlme: Linear and Nonlinear Mixed Effects Models. R package version 3.1-83.
+R Development Core Team (2007a), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0. http://www.R-project.org
+R Development Core Team (2007b), Writing R Extensions, R Foundation for Statistical Computing, Vienna, Austria.

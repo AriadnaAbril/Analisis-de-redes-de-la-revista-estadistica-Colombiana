@@ -1,0 +1,1033 @@
+Introducción a kernel ACP y otros métodos espectrales aplicados al aprendizaje no supervisado
+Universidad Nacional de Colombia
+Resumen
+En el presente trabajo, se introducen las técnicas de kernel ACP (KACP) y conglomeramiento espectral con algunos ejemplos ilustrativos. Se pretende estudiar los efectos de aplicar ACP como preproceso sobre las observaciones que se desean agrupar, para lo cual se hacen experimentos con datos reales. Entre las tareas adicionales que requieren estos procedimientos está la sintonización de parámetros (ajuste de valores); el alineamiento del kernel se presenta como alternativa de solución. La técnica de alineamiento del kernel presenta buenos resultados al contrastar las curvas de alineamiento con los índices de Rand obtenidos para los datos evaluados. Finalmente, el estudio muestra que el éxito de ACP depende del problema y que no se tiene un criterio general para decidir.
+Palabras clave: método kernel, análisis de conglomerados, teoría de grafos, selección de modelo.
+Introducción
+El análisis de componentes principales (ACP) y la búsqueda de conglomerados
+están entre las técnicas de mayor uso en el análisis exploratorio de datos. Estas han sido aplicadas a una variedad de problemas de las ciencias sociales, la biología, la visión artificial, entre muchos otros. Básicamente, el ACP se enfoca en la representación de los datos reduciendo su dimensión. Este hecho da lugar a una cantidad de propiedades interesantes (i.e. la reducción de ruido), que también pueden aprovecharse (Jolliffe 2002). Aunque, ACP no supone conocimiento previo sobre la distribución de los datos, funciona mejor sobre cierto tipo de configuraciones. Diferentes extensiones no lineales de este método han sido propuestas a lo largo de los años, y una de las aproximaciones que ha recibido mayor acogida está enmarcada en los métodos kernel, que presentan una solución aparentemente simple, pero conceptualmente amplia.
+    El análisis de conglomerados, o clustering, intenta determinar si la muestra
+que se tiene está conformada por elementos de diferentes poblaciones a través de
+la búsqueda de agrupaciones de puntos. Determinar la estructura del grupo no
+es trivial porque no existe información previa sobre su forma. Entre los métodos
+de conglomeramiento, el algoritmo de k-medias ha sido, tal vez, el más difundido.
+Recientemente, los algoritmos de conglomeramiento basados en las propiedades
+espectrales de los grafos han ganado auge por su fácil implementación al utilizar
+conceptos de álgebra lineal que son de uso extensivo.
+    En este trabajo se estudian los efectos de aplicar el análisis de componentes
+principales lineales y no lineales (utilizando kernel ACP) como etapa previa a la
+búsqueda de conglomerados. Diferentes consideraciones son de especial atención
+al aplicar los algoritmos; por ejemplo, la sintonización de los parámetros cuando
+no existe un punto de referencia ground truth sobre el cual ajustar variables. Por
+tanto, se estudia el método de alineamiento del kernel como posible alternativa al
+problema.
+    El trabajo está desarrollado de la siguiente forma: breve introducción teórica
+de los métodos aplicados y ejemplos que ayudan a su comprensión básica, pruebas
+realizadas sobre conjuntos de datos reales para establecer si la combinación de
+técnicas refleja mejoras en la obtención de resultados, y comentarios y conclusiones.
+Todos los algoritmos fueron desarrollados en MatLabr .
+
+
+2. Análisis de componentes principales (ACP)
+    El análisis de componentes principales es una técnica de representación de da-
+tos enfocada a la reducción de dimensión. El ACP ha sido la tendencia dominante
+para el análisis de datos en un gran número de aplicaciones. Su atractivo recae
+en la simplicidad y capacidad de reducción de dimensión, minimizando el error
+cuadrático de reconstrucción producido por una combinación lineal de variables
+latentes, conocidas como componentes principales, las cuales se obtienen a par-
+tir de una combinación lineal de los datos originales. Los parámetros del modelo
+pueden calcularse directamente de la matriz de datos centralizada X, bien sea
+
+                                      Revista Colombiana de Estadística 31 (2008) 19–40
+
+Introducción a kernel ACP y otros métodos espectrales                                    21
+
+por descomposición en valores singulares o por la diagonalización de la matriz de
+covarianza (positiva semidefinida) (Jolliffe 2002). Sea xi el i-ésimo vector de obser-
+vación (vector columna) de tamaño c, X = (x1 , x2 , . . . , xn )T . La matriz de rotación
+U permite calcular las p componentes principales z que mejor representan x.
+
+                                          z = UT x                                      (1)
+
+U puede obtenerse al solucionar un problema de valores propios, y está definida
+como los p mayores vectores propios de XT X, esto es,
+
+                                      XT XU = nUΛ                                       (2)
+
+   La matriz XT X está asociada a la matriz de covarianza C = n1 XT X; además,
+puede calcularse como1
+                                       n
+                                    1X
+                              C=          xi xTi                           (3)
+                                    n i=1
+
+    El problema de valores propios Cu = λu implica que todas las soluciones de u
+deben estar en el espacio generado por el conjunto de vectores x1 , x2 , . . . , xn ; por
+lo cual (Schölkopf et al. 1996),
+
+                          λhxi , ui = hxi , Cui,     ∀i = 1, . . . , n.                 (4)
+
+    A continuación se describe una adaptación del procedimiento anterior cuando
+la reducción del espacio no se hace sobre los datos originales sino sobre un mapeo
+o transformación de los mismos.
+
+
+3. Kernel ACP
+    Es posible sustituir el espacio original de las observaciones X , que en general
+corresponde a Rp , por un espacio provisto de producto punto H mapeado a través
+de φ : X 7→ H (Schölkopf & Smola 2002). Partiendo de la misma suposición sobre
+la cual se construyó la matriz de covarianza C, la cual implica que los datos están
+centralizados en H, procedemos a construir la matriz de covarianza en el nuevo
+espacio:
+                                        n
+                                     1X
+                              CH =         φ(xi )φ(xi )T                         (5)
+                                     n i=1
+
+    Si H es de dimensión infinita, se puede pensar de φ(xi )φ(xi )T como el operador
+lineal que transforma h ∈ H a φ(xi )hφ(xi ), hi. En este caso debemos encontrar
+los valores propios no nulos (λ > 0) y sus respectivos vectores propios uH que
+satisfacen
+                                    λuH = CH uH                                  (6)
+  1 En realidad se calcula el estimado de la matriz de covarianza de los datos.
+
+
+
+
+                                           Revista Colombiana de Estadística 31 (2008) 19–40
+
+22               Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+   De la misma forma, las soluciones de uH deben estar dentro del espacio gene-
+rado por {φ(x1 ), φ(x2 ), . . . , φ(xn )}. Entonces,
+
+                    λhφ(xk ), uH i = hφ(xk ), CH uH i,      ∀k = 1, . . . , n                  (7)
+
+   Además, es posible definir los vectores propios en términos de los datos ma-
+peados en H:
+                                     Xn
+                               uH =      αi φ(xi )                          (8)
+                                              i=1
+
+Combinando (7) y (8), se obtiene
+
+      n
+      X
+  λ         αi φ(xk ), φ(xi ) =
+      i=1
+                      n             n        
+                   1X               X
+                         αi φ(xk ),     φ(xj ) φ(xj ), φ(xi ) ,           ∀k = 1, . . . , n    (9)
+                   n i=1            j=1
+
+
+     Definiendo la matriz K como kij = φ(xi ), φ(xj ) , se obtiene
+
+                                         nλKα = K 2 α                                         (10)
+
+donde α denota el vector columna que sintetiza la representación de uH dada en
+(8), a través del conjunto de observaciones mapeadas por φ. Debido a la simetría
+de K, sus vectores propios generan el espacio completo; por tanto
+
+                                          nλα = Kα                                            (11)
+
+genera las soluciones de la ecuación (10). De esta forma, los valores propios aso-
+ciados a α corresponden a nλ; en consecuencia, cada uno de los uH corresponden
+al mismo ordenamiento de los α. Es necesario trasladar la restricción de kuH k = 1
+a los correspondientes vectores propios de K:
+                              n
+                              X
+                         1=           αi αj φ(xi ), φ(xj ) = λhα, αi                          (12)
+                              i,j=1
+
+
+   Para la extracción de componentes principales, deben proyectarse los datos
+mapeados a H sobre los respectivos vectores propios seleccionados. Podemos hacer
+uso de
+                                     Xn
+                        uH , φ(x) =      αi φ(xi ), φ(x)                    (13)
+                                              i=1
+
+   La centralización de los datos es posible al reemplazar la matriz K por su
+correspondiente versión centralizada:
+
+                            e = K − 1n K − K1n + 1n K1n
+                            K                                                                 (14)
+
+                                             Revista Colombiana de Estadística 31 (2008) 19–40
+
+Introducción a kernel ACP y otros métodos espectrales                                23
+
+donde 1n es una matriz cuadrada de tamaño n × n cuyas entradas son 1/n. Para
+los m datos de prueba en el vector t que deben ser mapeados se tiene:
+                                test
+                               kij   = φ(ti ), φ(xj )                              (15)
+
+y su versión centralizada:
+                    e test = K test − 1′n K − K test 1n + 1′n K1n
+                    K                                                              (16)
+
+donde 1n es una matriz de tamaño m × n cuyas entradas son 1/m.
+
+
+3.1. Algunos kernels
+   Ya se ha planteado el problema de ACP en términos de los productos punto
+entre las observaciones mapeadas a un espacio H. Ahora bien, no es necesario hacer
+explícito este mapeo φ; en vez de esto, podemos usar una función k : X ×X 7→ R la
+cual, en ciertas condiciones, representa el producto punto en H, es decir, k(x, x′ ) =
+hφ(x), φ(x′ )i. Entre las funciones kernel más comunes están:
+
+      Kernel lineal: corresponde al producto punto en el espacio de entrada:
+
+                                     k(x, x′ ) = hx, x′ i                          (17)
+
+      Kernel polinomial: representa la expansión a todas las combinaciones de
+      monomios de orden d, y está dado por
+
+                                    k(x, x′ ) = hx, x′ id                          (18)
+
+      Kernel gaussiano: está contenido dentro de las funciones de base radial:
+                                                      
+                                ′           kx − x′ k2
+                          k(x, x ) = exp −                                 (19)
+                                               2σ 2
+
+      Kernel hiperbólico: está asociado a las funciones de activación de las redes
+      neuronales:
+                           k(x, x′ ) = tanh (ξhx, x′ i + b)                   (20)
+      Los parámetros ξ > 0 y b < 0 denotan escala y corrimiento, respectivamente.
+
+    En la figura 1 se presentan algunos ejemplos de los mapeos que se pueden
+lograr al aplicar ACP con la representación del producto punto utilizando las
+funciones kernel descritas. Las intensidades de gris en los planos dibujados son
+proporcionales a los valores que toma cada componente principal en cada punto
+evaluado del plano; por ejemplo, en la figura 1(a) el plano izquierdo corresponde a
+la primera componente principal utilizando el kernel lineal, lo cual es equivalente al
+ACP convencional. Note que los niveles de gris están asociados a las proyecciones
+ortogonales de todos los puntos del plano sobre el mayor eje principal de la elipsoide
+que contiene los datos (puntos negros). En la figura 1(b) se observa el efecto de
+
+                                       Revista Colombiana de Estadística 31 (2008) 19–40
+
+24                          Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+mapeo no lineal al aplicar un producto punto modificado, en particular, el kernel
+polinomial de orden 2; en este ejemplo, es fácil apreciar que el mapeo no lineal
+corresponde a la proyección de los puntos ubicados en el plano a un cono en R3 . La
+primera y segunda componentes son aproximadamente proyecciones de los puntos
+en R3 al plano cuyo vector normal es paralelo al eje principal del cono; por tanto,
+la tercera componente tiene la dirección del eje principal del cono. Los casos de las
+figuras 1(c) y 1(d) son de naturaleza más abstracta y se pueden ver como mapeos
+no lineales a espacios de funciones (dimensión infinita). Es posible observar que el
+kernel gaussiano descompone la estructura de agrupaciones presente en los datos
+del la figura 1(c) y el kernel hiperbólico trata de desdoblar la estructura de variedad
+no lineal presente en los puntos de la figura 1(d).
+                                                                              PC1, autovalor =0.21779          PC2, autovalor =0.14415
+                                                                                 1                                1
+          PC1, autovalor =2.1838       PC2, autovalor =0.23387
+                                                                                0.5                              0.5
+      5                                5                                         0                                0
+      4                                4                                       −0.5                             −0.5
+      3                                3                                        −1                               −1
+
+      2                                2                                                  −1       0       1                −1       0       1
+
+      1                                1                                      PC3, autovalor =0.11943
+      0                                0
+                                                                                 1
+     −1                               −1
+                                                                                0.5
+     −2                               −2
+                                                                                 0
+     −2         0       2       4     −2         0       2       4             −0.5
+                                                                                −1
+
+                                                                                          −1       0       1
+
+
+
+
+                            (a) Kernel lineal                                  (b) Kernel polinomial de orden 2
+      PC1, autovalor =0.19807          PC2, autovalor =0.17944                PC1, autovalor =0.32193          PC2, autovalor =0.03514
+           2                                2                                         4                                 4
+
+
+                                                                                      2                                 2
+           1                                1
+                                                                                      0                                 0
+           0                                0
+                                                                                  −2                                   −2
+
+          −1                               −1
+                                                                                  −4                                   −4
+                                                                                                                             0   2       4   6
+               −1   0       1   2               −1   0       1   2                         0   2       4   6
+
+      PC3, autovalor =0.064614         PC4, autovalor =0.05421                PC3, autovalor =0.030074         PC4, autovalor =0.014873
+           2                                2                                         4                                4
+
+                                                                                      2                                2
+           1                                1
+                                                                                      0                                0
+           0                                0
+                                                                                  −2                               −2
+          −1                               −1
+                                                                                  −4                               −4
+               −1   0       1   2               −1   0       1   2                         0   2       4   6                 0   2       4   6
+
+
+
+
+               (c) Kernel gaussiano σ = 0.5                               (d) Kernel hiperbólico ξ = 0.08 y b = −π/2
+Figura 1: Ejemplos de mapeos conseguidos con KACP para diferentes configuraciones
+          de los datos y diferentes kernel
+
+
+    A continuación se presentan las técnicas de conglomeramiento que se desea
+utilizar en conjunto con ACP (lineal y no lineal).
+
+
+4. Conglomeramiento por k-medias
+    En el caso del algoritmo de k-medias, cada una de las k agrupaciones de obser-
+vaciones que se desea revelar está representada por un punto µl para l = 1, . . . , k,
+denominado centroide. Cada una de las observaciones xi de la muestra se asigna
+al grupo de puntos Cl para el que se cumple que mı́n (dist(xi , µl )) (Peña 2002).
+                                                                                                   l
+
+
+                                                                     Revista Colombiana de Estadística 31 (2008) 19–40
+
+Introducción a kernel ACP y otros métodos espectrales                                 25
+
+En esta aproximación se pretende minimizar la suma de las distancias cuadráti-
+cas promedio entre los puntos pertenecientes a una partición y el centroide que la
+define.                                                     
+                            Xk
+                                1  X
+                      SC =                    dis(xi , µl )2                 (21)
+                               Ml
+                              l=1       {i| xi ∈Cl }
+
+donde Ml es el número de puntos que conforman Cl . Una de las distancias cua-
+dráticas más comunes es kxi − µl k22 .
+   El algoritmo de k-medias se puede dividir en dos fases:
+
+      La primera parte se conoce como reasignación por lotes, en la cual, partiendo
+      de un conjunto de centroides establecidos por algún criterio de inicialización
+      (por ejemplo: puntos aleatorios de la muestra, las k observaciones de la mues-
+      tra más alejadas entre ellas, etc), se agrupan los puntos a la vez de acuerdo
+      con las distancias a los centroides y se recalculan como la media de los puntos
+      asignados al mismo grupo. El procedimiento se itera hasta que las medias no
+      cambian y, por tanto, la partición generada por las distancias a las medias
+      se mantiene constante.
+
+      En seguida, se trata de reasignar cada uno de los puntos a otro conglomerado,
+      tal que al recalcular µl (21), este sea menor que el actual. Este proceso se
+      repite hasta que ninguno de los puntos tenga que reasignarse, lo que asegura
+      un mínimo local para SC.
+
+
+5. Conglomeramiento espectral
+   Antes de introducir los algoritmos de conglomeramiento espectral, es necesario
+dar algunos conceptos asociados a su construcción, como la representación con
+grafos, en particular los grafos de similitud.
+
+
+5.1. Preliminares sobre los grafos
+    Dado un conjunto de observaciones x1 , . . . , xn y alguna noción de similitud sij
+entre pares de puntos xi y xj , una forma intuitiva de agrupar las observaciones
+es unir los puntos en diferentes subconjuntos disyuntos, tal que la similitud entre
+puntos pertenecientes a diferentes subconjuntos sea baja, mientras que para pares
+de puntos pertenecientes a un mismo subconjunto se mantenga un alto grado de
+similitud. Partiendo solo de estos elementos (el conjunto y la función de similitud),
+podemos representar la muestra a través de un grafo de similitud G = (V, E) que
+conecta el conjunto de vértices V mediante un conjunto de aristas E. Un grafo está
+conformado por los vértices vi , los cuales representan los puntos xi , y las conexiones
+entre ellos, conocidas como aristas del grafo, las cuales están pesadas por wij , si
+sij toma valores positivos o mayores que cierto umbral. Con esta definición del
+grafo de similitud es posible construir un criterio de agrupamiento con base en
+la partición del grafo G (Luxburg 2006). Sea G = (V, E) un grafo no dirigido, es
+
+                                        Revista Colombiana de Estadística 31 (2008) 19–40
+
+26             Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+decir wij = wji , la matriz de adyacencia W = (wij )i,j=1,...,n representa las aristas
+que conectan los vértices vi y vj cuando wi j = 0, se dice que los vértices no están
+conectados. El grado de un vértice vi está dado por
+                                             n
+                                             X
+                                      di =         wij
+                                             j=1
+
+
+   La matriz D de grados está definida como la matriz diagonal cuyos elementos
+son los grados di , . . . , dn . Dado un subconjunto de vértices A ⊂ V , denotando su
+complemento A = V \ A, se define el vector indicador 1A = (f1 , . . . , fn )T ∈ Rn
+como aquel cuyas entradas fi = 1, si vi ∈ A, y fi = 0 de otra forma. Pueden
+considerarse dos formas de medir el tamaño de un subconjunto A ⊂ V :
+
+                            |A| := el número de vértices en A
+                                      X
+                        vol(A) :=         di
+                                    {i| vi ∈A}
+
+
+    Un subconjunto A ⊂ V de un grafo está conectado si cualquier par de vértices
+en A puede juntarse a través de un camino de vértices conectados que también
+pertenezcan a A. Un subconjunto A se denomina componente conectado si no
+existen conexiones entre los vértices de A y A. Los conjuntos A1 , . . . , Ak forman
+una partición del grafo G, si Ai ∩ Aj = ∅ y A1 ∪ · · · ∪ Ak = V .
+
+
+5.2. Grafos de similitud
+     Existen diferentes concepciones sobre cómo transformar un conjunto de puntos
+x1 , . . . , xn , asociados a una función de similitud o distancia en un grafo. El objetivo
+principal es modelar las relaciones en las vecindades de los puntos. En este trabajo
+se consideran los siguientes tipos de grafo:
+
+      El ǫ-vecindario. Todas las parejas de puntos cuya distancia sea menor a
+      un umbral ǫ son conectados en el grafo. Se dice que este grafo es no pesado,
+      ya que la matriz de adyacencia toma valores de 0 o 1.
+      Los k-vecinos más cercanos. Se conectan al vértice vi las k parejas más
+      cercanas a este. Note que esta situación genera un grafo dirigido; por tanto,
+      si se quiere que la matriz de adyacencia sea simétrica, se debe aplicar otro
+      criterio para la generación de conexiones. Una forma consiste en conectar
+      los vértices vi y vj si uno de los puntos, xi o xj , está entre los k vecinos
+      más cercanos del otro. La segunda forma consiste en unir los vértices vi
+      y vj , solo si xi es uno de los vecinos más cercanos de xj , y viceversa. La
+      primera aproximación se denomina grafo de los k-vecinos más cercanos; la
+      segunda, grafo de los k-vecinos más cercanos mutuos. Las conexiones están
+      ponderadas con el valor de la similitud sij .
+      El grafo completamente conectado. En este caso, simplemente se co-
+      nectan todos los vértices, es decir, cualquier vértice del grafo está conectado
+
+                                          Revista Colombiana de Estadística 31 (2008) 19–40
+
+Introducción a kernel ACP y otros métodos espectrales                                                                                                                            27
+
+      directamente con el resto de vértices. Una medida de similitud recomendable
+      podría asociarse al kernel gaussiano porque esta función define vecindarios
+      de manera implícita.
+
+    La figura 2 presenta las diferentes configuraciones de grafos y sus matrices de
+adyacencia asociadas; los puntos más claros sobre la matriz de adyacencia indican
+pesos más grandes en las conexiones entre pares de vértices del grafo, mientras
+que los puntos totalmente negros corresponden a la ausencia de conexiones entre
+los pares de vértices.
+
+      Matriz de Adyacencia                         Grafo
+                                 1.5                                                        Matriz de Adyacencia                               Grafo
+                                                                                                                          1.5
+
+
+                                     1
+                                                                                                                           1
+
+
+                                 0.5
+                                                                                                                          0.5
+
+
+
+                                     0                                                                                     0
+
+
+
+                                −0.5                                                                                  −0.5
+
+
+
+                                 −1                                                                                       −1
+                                 −0.5        0     0.5       1    1.5       2                                             −0.5       0         0.5       1         1.5       2
+
+
+
+
+         (a) ǫ-vecindario para ǫ = 0.7.                                                  (b) k-vecinos más cercanos con k = 5.
+       Matriz de Adyacencia                      Grafo
+                               1.5                                                        Matriz de Adyacencia                           Grafo
+                                                                                                                    1.5
+
+
+                                1
+                                                                                                                     1
+
+
+                               0.5
+                                                                                                                    0.5
+
+
+                                0
+                                                                                                                     0
+
+
+
+                              −0.5                                                                                 −0.5
+
+
+
+                               −1                                                                                   −1
+                               −0.5      0       0.5     1       1.5    2                                           −0.5         0       0.5         1       1.5         2
+
+
+
+
+ (c) k-vecinos más cercanos mutuos con k = 5.                                           (d) Grafo completamente conectado.
+     Figura 2: Diferentes configuraciones de grafos para un conjunto de puntos.
+
+
+   Para los kernels definidos positivos, que representan un producto punto en el
+espacio transformado H, es posible obtener distancias entre pares de puntos:
+                                p
+                   dis(x, x′ ) = k(x, x) − 2k(x, x′ ) + k(x′ , x′ )          (22)
+
+
+5.3. Laplaciano de un grafo
+    Una de las herramientas principales del conglomeramiento espectral son los
+laplacianos de los grafos (un tratado más detallado puede encontrarse en Chung
+(1997)). En este trabajo se consideran tres tipos de laplacianos:
+
+      Laplaciano no normalizado. La matriz del laplaciano no normalizado está
+      definida como
+                                 L=D−W                                   (23)
+      Esta matriz se distingue por ser semidefinida positiva, lo cual implica que
+      tiene valores propios reales no negativos; si V es completo, entonces 0 = λ1 ≤
+      λ2 ≤ · · · ≤ λn y el vector propio asociado a λ1 es un vector constante de
+      unos multiplicado por algún factor de escala. En el caso de que la matriz L se
+      pueda ordenar en k bloques completos, el valor propio 0 tiene multiplicidad
+
+                                                                                Revista Colombiana de Estadística 31 (2008) 19–40
+
+28            Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+      k. Una propiedad muy importante que puede asociar este laplaciano con la
+      partición de un grafo está dada por
+      Para todo vector f ∈ Rn , se tiene que
+                                                n
+                                          1 X
+                               f T Lf =           wij (fi − fj )2                    (24)
+                                          2 i,j=1
+
+      Laplacianos normalizados. En este caso se consideran dos tipos de nor-
+      malizaciones:
+                      Lsym := D−1/2 LD−1/2 = I − D−1/2 W D−1/2                       (25)
+                                   −1               −1
+                        Lrw := D        L=I −D           W                           (26)
+      En este caso se satisface que
+                                            n
+                                                                    !2
+                           T        1 X                   fi  fj
+                         f Lsym f =         wij          √ −p                        (27)
+                                    2 i,j=1                di  dj
+
+      Además, existe una relación muy estrecha entre ambos laplacianos: λ es un
+      valor propio de Lrw con su respectivo vector propio u, si y solo si λ es un
+      valor propio de Lsym con el correspondiente vector propio w = D1/2 u; 0 es
+      un valor propio de Lrw con vector propio 1, entonces 0 es un valor propio de
+      Lsym con vector propio D1/2 1. Ambas matrices son semidefinidas positivas
+      y, por tanto, tienen valores propios reales no negativos.
+
+
+5.4. Algoritmos de conglomeramiento espectral
+   Los algoritmos presentados a continuación tienen como entrada el número k de
+conglomerados por construir y la matriz de similitudes S ∈ Rn×n .
+
+Algoritmo 1: conglomeramiento espectral para laplaciano no normalizado y la-
+placiano normalizado Lrw .
+ 1: Construir el grafo utilizando alguno de los métodos expuestos en 5.2 para
+    obtener la matriz de adyacencia W .
+ 2: Calcular el laplaciano no normalizado L dado por (23).
+ 3: if (laplaciano no normalizado = true) then
+ 4:    Calcular los primeros k vectores propios u1 , . . . , uk de L.
+ 5: else if (laplaciano normalizado Lrw = true) then
+ 6:    Calcular los primeros k vectores propios u1 , . . . , uk del problema de vectores
+       propios generalizado Lu = λDu.
+ 7: end if
+ 8: Construir la matriz U ∈ Rn×k que contiene los k primeros vectores propios
+    como sus columnas.
+ 9: Hacer que yi , para i = 1, . . . , n, sea cada una de las filas de U .
+10: Aplicar el algoritmo de k-medias a los puntos (yi )i=1,...,n en Rk y agruparlos
+    en los conglomerados C1 , . . . , Ck .
+
+
+                                         Revista Colombiana de Estadística 31 (2008) 19–40
+
+Introducción a kernel ACP y otros métodos espectrales                                29
+
+Algoritmo 2: conglomeramiento espectral para laplaciano normalizado Lsym .
+ 1: Construir el grafo utilizando alguno de los métodos expuestos en 5.2 para
+    obtener la matriz de adyacencia W .
+ 2: Calcular el laplaciano normalizado Lsym dado por (25).
+ 3: Calcular los primeros k vectores propios u1 , . . . , uk de Ls ym.
+ 4: Construir la matriz U ∈ Rn×k que contiene los k primeros vectores propios
+    como sus columnas.
+ 5: Normalizar la matriz U por filas para que cada una tenga norma 1, es decir,
+                P
+    bij = uij /( k u2ik )1/2 .
+    u
+                                                                       b.
+ 6: Hacer que yi , para i = 1, . . . , n, sea cada una de las filas de U
+ 7: Aplicar el algoritmo de k-medias a los puntos (yi )i=1,...,n en Rk y agruparlos
+    en los conglomerados C1 , . . . , Ck .
+
+
+    En los dos casos, los puntos x1 , . . . , xn se ordenan de acuerdo con las agrupa-
+ciones hechas en C1 , . . . , Ck .
+
+
+6. Selección de algoritmos de conglomeramiento
+   espectral
+   Para evaluar los algoritmos de conglomeramiento espectral se trabajan dos
+conjuntos de datos artificiales en dos dimensiones, que se describen a continuación:
+
+      Conglomeramiento con diferente variabilidad intragrupo: consiste
+      en 3 distribuciones gaussianas con diferentes medias y matrices de covarian-
+      za. En el caso particular, cada uno de los grupos tiene 50 puntos (figura
+      3(a)). Este tipo de configuración es común en los datos reales donde el com-
+      portamiento de la perturbación intraclase no es homocedástico para todas
+      las clases presentes. En este caso deben ser más apreciables los efectos de
+      tener en cuenta la normalización del laplaciano del grafo construido.
+      Conglomerados no linealmente separables: en este conjunto de datos,
+      el primer conglomerado se deriva de una distribución gaussiana isotrópica; el
+      segundo conglomerado es una corona circular que encierra al primer conglo-
+      merado. Cada conglomerado cuenta con 100 datos (figura 3(b)). El propósito
+      de este conjunto es vislumbrar las propiedades de conectividad de los dife-
+      rentes tipos de grafos.
+
+    Como medida de similitud y forma de dar pesos a las aristas del grafo, se utiliza
+el kernel gaussiano, ya que cumple las restricciones de no negatividad. La compa-
+ración de los algoritmos de conglomeramiento es independiente de la sintonización
+del parámetro del kernel (o en el caso del grafo ǫ-vecindario del parámetro ǫ), es de-
+cir, suponiendo que existe algún criterio de sintonización, se comparan los índices
+de Rand ajustados (Yeung & Ruzzo 2000) para diferentes valores de σ o ǫ, según
+el caso. Las figuras 4 y 5 ilustran el comportamiento de los algoritmos de conglo-
+meramiento espectral considerando las variaciones del parámetro de sintonización
+
+                                       Revista Colombiana de Estadística 31 (2008) 19–40
+
+30                                         Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+
+                                   Datos a agrupar                                                               Datos a agrupar
+                          6                                                                  1.5
+                                   Clase 1                                                                      Clase 1
+                                   Clase 2
+                          4                                                                    1                Clase 2
+                                   Clase 3
+                                                                                             0.5
+                          2
+
+                                                                                               0
+                          0
+                                                                                            −0.5
+                    −2
+                                                                                             −1
+
+                    −4                                                                      −1.5
+                                  −4            −2           0            2                                     −1                  0                  1
+
+                   (a) Diferentes varianzas intragrupo.                                                     (b) Linealmente no separables.
+                          Figura 3: Datos artificiales para las pruebas de conglomerado espectral.
+
+
+(kernel o vecindario, dependiendo del grafo). Las curvas presentadas se obtienen
+de promediar 10 iteraciones independientes de los algoritmos de conglomeramiento
+espectral, tal que cada muestra de prueba es independiente de las otras, pero se
+genera a partir de la misma distribución subyacente.
+
+                   0.7                                                                                     1
+                                                                  No normalizado
+                   0.6                                            Normalizado RW                          0.9
+                                                                  Normalizado Sym
+                   0.5                                                                                    0.8
+                                                                                               Rand IDX
+        Rand IDX
+
+
+
+
+                   0.4                                                                                    0.7
+
+
+                   0.3                                                                                    0.6
+
+
+                   0.2                                                                                    0.5
+
+                                                                                                                                                  No normalizado
+                   0.1                                                                                    0.4
+                                                                                                                                                  Normalizado RW
+                                                                                                                                                  Normalizado Sym
+                    0
+                     0        2        4    6      8    10   12      14   16   18   20                      0    2   4   6      8       10   12   14       16   18   20
+                                                Parámetro ajustado                                                           Parámetro ajustado
+
+                                           (a) ǫ-vecindario.                                                         (b) k-vecinos k = 10.
+
+                   0.9                                                                                     1
+
+                                                                                                          0.9
+                0.85
+                                                                                                          0.8
+                   0.8
+                                                                                                          0.7
+                0.75
+                                                                                               Rand IDX
+     Rand IDX
+
+
+
+
+                                                                                                          0.6
+                                                                                                                                                  No normalizado
+                   0.7                                                                                    0.5                                     Normalizado RW
+                                                                                                          0.4                                     Normalizado Sym
+                0.65
+                                                                                                          0.3
+                   0.6
+                                                                  No normalizado                          0.2
+                0.55                                              Normalizado RW                          0.1
+                                                                  Normalizado Sym
+                   0.5                                                                                     0
+                      0       2        4    6      8    10   12      14   16   18   20                      0    2   4   6      8       10   12   14       16   18   20
+                                                Parámetro ajustado                                                           Parámetro ajustado
+
+                              (c) k-vecinos mutuos k = 10.                                                 (d) Grafo completamente conectado.
+Figura 4: Desempeño de los algoritmos de conglomeramiento espectral para el conjunto
+          de datos artificiales con tres clases.
+
+
+                                   Parámetro ajustado                                                          Parámetro ajustado
+
+                              (a) ǫ-vecindario.                                                        (b) k-vecinos k = 10.
+
+                                   Parametro ajustado                                                          Parámetro ajustado
+
+                      (c) k-vecinos mutuos k = 10.                                            (d) Grafo completamente conectado.
+Figura 5: Desempeño de los algoritmos de conglomeramiento espectral para el conjunto
+          de datos no linealmente separables.
+
+
+    Aunque la selección de un modelo de conglomeramiento espectral particular
+sigue siendo un problema abierto, los resultados obtenidos con las muestras artifi-
+ciales sugieren utilizar:
+
+                    El grafo de k-vecinos, porque los índices de Rand obtenidos parecen insen-
+                    sibles a la variación del parámetro del kernel. Esto podría entenderse como
+                    la propiedad de los k-vecinos para establecer un vecindario cuyo radio es
+                    adaptativo, dependiendo del punto que se desee conectar al grafo.
+                    El grafo completamente conectado en conjunto con los laplacianos norma-
+                    lizados puede obtener muy buenos resultados si se logra una sintonización
+                    apropiada del parámetro por ajustar. Los cambios que experimenta el índice
+                    de Rand al variar, en este caso, el σ del kernel parecen más suaves; por tanto,
+                    algún criterio que logre establecer un valor cercano al de mejor desempeño
+                    podría funcionar relativamente bien.
+
+
+7. Alineamiento del kernel
+   Un criterio para sintonización de un kernel utilizado en el conglomeramiento
+espectral, que en un principio fue introducido dentro del contexto de aprendizaje
+supervisado, se presenta en Cristianini et al. (2001). La idea básica del aprendizaje
+consiste en establecer una relación directa entre la entrada que se tiene y la salida
+
+                                                                            Revista Colombiana de Estadística 31 (2008) 19–40
+
+32             Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+que se busca. Se espera encontrar observaciones asociadas como más cercanas entre
+sí, es decir, que tomen valores similares en sus medidas. Una forma de medir lo
+anterior es mediante la correlación existente entre lo que se mide y lo que se desea.
+En el caso particular, se desea medir la correlación entre los valores arrojados por
+la utilización de un kernel y utilizarlos como predictores de agrupaciones. En este
+trabajo el alineamiento consiste en conseguir un alto grado de correlación entre
+la matriz K, obtenida a través de la aplicación de un kernel, y las particiones
+obtenidas por los algoritmos de conglomeramiento presentados en la sección 5.
+Definición 1. Alineamiento: el alineamiento empírico de un kernel k1 con un
+kernel k2 , con respecto a una muestra S, está dado por la cantidad
+
+                        b k1 , k2 ) = p    hK1 , K2 iF
+                        A(S,                                                         (28)
+                                       hK1 , K1 iF hK2 , K2 iF
+donde Ki es la matriz kernel para la muestra S utilizando el kernel ki ; hK1 , K2 iF =
+P n
+  i,j=1 k1 (xi , xj )k2 (xi , xj ) (esta definición de producto interno induce la norma de
+Frobenius).
+                                                              Pn
+    Es de notar que las matrices K deben satisfacer i,j=1 k1 (xi , xj ) = 0; así se
+puede calcular la correlación entre k1 y k2 . Si se considera k1 como el kernel por
+ajustar y K2 una matriz que representa la partición hecha por el algoritmo de
+conglomeramiento construida de la siguiente forma,
+                                      (
+                                        1, si xi y xj están en Ca ∀a;
+                      k2 (xi , xj ) =                                                 (29)
+                                        0, si xi y xj no están en Ca ∀a.
+
+    En esta implementación del alineamiento de conglomerado no se pretende ajus-
+tar un umbral para una partición binaria, como se propone en Cristianini et al.
+(2002). La idea fundamental para el caso aquí propuesto consiste en ajustar los
+parámetros del kernel que mejor se ajusten a la partición obtenida por un algo-
+ritmo convencional como el k-medias, buscando el punto de mayor concordancia
+entre los valores que inducen la partición y la partición en sí.
+    La figura 6 presenta los valores de alineamiento obtenidos al variar el parámetro
+σ del kernel gaussiano para las mismas 10 iteraciones del algoritmo de conglome-
+ramiento espectral utilizando el grafo completamente conectado para los datos
+artificiales correspondientes a 3 clases, y el grafo de los k-vecinos más cercanos pa-
+ra los datos linealmente no separables. Note que los picos del alineamiento están
+localizados cerca de los puntos donde se obtienen los máximos índices de Rand
+sobre el rango de variación del parámetro a sintonizar.
+
+
+8. Bases de datos reales
+    En esta parte del trabajo se pretende indagar, de manera empírica, la efecti-
+vidad de aplicar ACP como etapa de preproceso a los algoritmos de conglomera-
+miento espectral. Para este fin se utilizan dos bases de datos reales disponibles en
+línea para la comparación de resultados (benchmarks data sets). A continuación
+se presenta una breve descripción de cada una de ellas.
+
+                                                          Ind de Rand, Laplaciano no normalizado
+                                                          Alineamiento, Laplaciano no normalizado
+                                                          Ind de Rand, Laplaciano normalizado RW
+                                                          Alineamiento, Laplaciano normalizado RW
+                                                          Ind de Rand, Laplaciano normalizado Sym
+                                                          Alineamiento, Laplaciano normalizado Sym
+
+
+              (a) Resultados para datos artificiales provenientes de 3 clases uti-
+              lizando el grafo completamente conectado.
+
+                                                          Ind de Rand, Laplaciano no normalizado
+                                                          Alineamiento, Laplaciano no normalizado
+                                                          Ind de Rand, Laplaciano normalizado RW
+                                                          Alineamiento, Laplaciano normalizado RW
+                                                          Ind de Rand, Laplaciano normalizado Sym
+                                                          Alineamiento, Laplaciano normalizado Sym
+                 Rand IDX / Alineamiento
+
+
+             (b) Resultados para datos artificiales no linealmente separables
+             utilizando el grafo de los k-vecinos k = 10.
+Figura 6: Alineamiento para sintonización del σ del kernel gaussiano en los datos arti-
+          ficiales.
+
+
+8.1. Lirios de Fisher
+    Esta base de datos fue introducida por Sir R. A. Fisher en 1936 para estudiar
+los métodos de análisis discriminante. Los datos corresponden a una muestra de
+150 observaciones con 3 clases que corresponden a Lirio setosa, Lirio virginica y
+Lirio versicolor (clases balanceadas). Cuatro variables (longitud del pétalo, ancho
+del pétalo, largo del sépalo, ancho del sépalo) describen cada observación.
+
+
+8.2. Dígitos manuscritos (MNIST Database)
+   Está formada por imágenes de números manuscritos segmentadas y escaladas a
+igual tamaño (LeCun & Cortés 2008). Originalmente, la base de datos se encuentra
+conformada por dos muestras independientes: la muestra de entrenamiento, con
+
+                                                                      Revista Colombiana de Estadística 31 (2008) 19–40
+
+34            Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+60000 observaciones repartidas en 10 clases que corresponden a los dígitos del 0
+al 9 (figura 7); la muestra de validación, que contiene 10000 observaciones de las
+10 clases. Como espacio de características se cuenta con las intensidades de grises
+de cada uno de las píxeles de las imágenes previamente filtradas con una máscara
+gaussiana de tamaño 9×9. Dado que las imágenes son de 28×28, píxeles el espacio
+de entrada consta de 784 dimensiones. Para efectos de facilitar la visualización de
+resultados, este trabajo considera 3 de las 10 clases para hacer el conglomerado.
+Las clases de interés son los dígitos 0, 1 y 4.
+
+
+
+
+       Figura 7: Algunos ejemplos de dígitos manuscritos (MNIST Database).
+
+
+
+
+9. Resultados y discusión
+    Los resultados por comparar corresponden a los índices de Rand obtenidos
+por los algoritmos de conglomeramiento sin aplicar, y luego de aplicar dos tipos de
+preproceso (el primero basado en ACP lineal y el segundo basado en ACP no lineal
+utilizando el kernel gaussiano). Los algoritmos de conglomeramiento empleados
+en la comparación son k-medias con distancia k · k2 y conglomerado espectral
+con grafo de los k-vecinos para k = 10, y el grafo completamente conectado,
+utilizando los dos laplacianos normalizados. La versión kernel del algoritmo de k-
+medias, que también se incluye en el análisis, es equivalente a evaluar este algoritmo
+utilizando todas las componentes principales no nulas extraídas por kernel ACP.
+Para considerar las variaciones de inicialización en el algoritmo de k-medias, este
+se corre con 10 inicializaciones aleatorias para cada conjunto de datos, escogiendo
+la partición con menor valor para SC. En el caso de los lirios, las pruebas se
+realizan una sola vez sobre todas las observaciones de la base de datos, mientras
+que los dígitos manuscritos requieren un tratamiento diferente debido a la cantidad
+de observaciones disponibles. En particular, los resultados de las pruebas sobre
+MNIST se obtienen al promediar los resultados de 30 corridas, escogiendo en cada
+una de ellas y de manera aleatoria 50 observaciones por clase.
+    Como se observa en la figura 8, los máximos valores de alineamiento para
+el KACP se obtienen con 2 componentes principales para σ = 1 y σ = 4 en
+los lirios y los dígitos, respectivamente. Para efectos de simplificar el ajuste de
+
+                                       Revista Colombiana de Estadística 31 (2008) 19–40
+
+Introducción a kernel ACP y otros métodos espectrales                                                                    35
+
+parámetros, estos valores obtenidos de sigma se utilizan en el preproceso con KACP
+indiferentemente del algoritmo de conglomeramiento que se aplique. Los algoritmos
+de conglomerados espectrales requieren la sintonización adicional del kernel que
+define la similitud en los grafos.
+
+                                                                                               σ del kernel Gaussiano
+
+                                                               (b) Dígitos 0, 1 y 4.
+Figura 8: Sintonización del σ para el kernel gaussiano en KACP utilizando el alinea-
+          miento con k-medias.
+
+
+
+
+    En la tabla 1 se observa un comportamiento muy particular en los índices de
+Rand obtenidos para los diferentes espacios de entrada considerando 1, 2, 3 y 4
+componentes. Los mejores resultados de conglomeramiento, incluso comparados
+contra los obtenidos al evaluar el espacio completo, se logran al considerar la pri-
+mera componente principal. Al hacer una inspección más detallada de cómo se
+encuentran distribuidas las clases en el espacio de características, se observa que
+las covarianzas de las clases problema (versicolor y virginica) son similares y el
+vector que une sus medias no se encuentra alineado con ninguna de las direcciones
+
+                                                                        Revista Colombiana de Estadística 31 (2008) 19–40
+
+36              Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+Tabla 1: Resultados de los diferentes algoritmos de conglomeramiento para los datos
+         de los lirios sin preprocesar el espacio inicial y preprocesados con ACP lineal.
+         Las componentes son escogidas en orden descendente de sus valores propios
+         asociados.
+                                          Algoritmo de conglomeramiento
+                                         Grafo completamente   Grafo de los k-vecinos,
+
+Tabla 2: Resultados de los diferentes algoritmos de conglomeramiento para los datos de
+         los lirios preprocesados con kernel ACP a través del kernel gaussiano siendo el
+         parámetro ajustado σ = 4. Las componentes son escogidas en orden descen-
+         dente de sus valores propios asociados. El total de componentes no nulas es
+         58.
+                                          Algoritmo de conglomeramiento
+                                         Grafo completamente   Grafo de los k-vecinos,
+
+principales de sus matrices de covarianza, lo cual explica la degradación en los
+resultados del conglomerado al agregar la segunda componente principal. Consi-
+derando el mapeo no lineal del espacio de características a través de KACP, se
+construyó la tabla 2. En general, para el algoritmo de k-medias, se logra el mejor
+rendimiento con 2 componentes principales, como se había predicho en el gráfico
+de alineamiento del kernel (figura 8(a)). También se observa que los algoritmos de
+conglomeramiento espectral alcanzan los mayores valores en los índices de Rand
+considerando conjuntos de CP no lineales más grandes. Esta situación puede de-
+berse a las particiones no lineales obtenidas con el conglomeramiento espectral2 .
+Básicamente los resultados obtenidos con ACP lineal y kernel ACP no difieren
+mucho para la muestra de lirios, dada la naturaleza de las clases, el introducir ma-
+peos no lineales en el problema no aporta poder discriminante a los procedimientos
+para la construcción de los conglomerados.
+   2 Desde el punto de vista del espacio de entrada al algoritmo de conglomeramiento. Por ejem-
+
+plo, el algoritmo de k-medias combinado con KACP puede lograr particiones no lineales del
+espacio inicial que fue transformado con KACP; sin embargo, si el espacio inicial es introducido
+directamente al algoritmo de conglomeramiento, este no puede conseguir particiones no lineales.
+
+
+Tabla 3: Resultados de los diferentes algoritmos de conglomeramiento para los dígitos
+         manuscritos del 0, 1, y 4 de la base de datos MNIST sin preprocesar el espacio
+         inicial y preprocesados con ACP lineal. Las componentes son escogidas en
+         orden descendente de sus valores propios asociados.
+                                       Algoritmo de conglomeramiento
+                                      Grafo completamente   Grafo de los k-vecinos,
+
+    Las pruebas hechas sobre la base de datos de dígitos manuscritos presentan un
+comportamiento diferente al expuesto por los lirios. Entre los factores a los que
+se les puede atribuir este comportamiento se encuentran la dimensión y la distri-
+bución de los conglomerados en el espacio. Al calcular la distancia euclídea entre
+las medias de cada una de las clases, se encuentra que estas no están alineadas
+como en el caso de la base de datos de lirios, ya que las distancias son similares.
+Los resultados obtenidos al aplicar ACP lineal (tabla 3) en general son asintóticos,
+porque agregan componentes; sin embargo, los efectos de supresión de ruido lucen
+similares a los obtenidos en Schölkopf et al. (1999), donde ACP tiene un efec-
+to benéfico de filtrado hasta cierto número de componentes considerado; cuando
+se agregan más componentes, el ruido aparece de nuevo. Aunque en el problema
+tratado en el presente trabajo no se contaminan las imágenes con perturbaciones
+comunes en imágenes como ruido sal y pimienta (perturbaciones de máximos o mí-
+nimos en el rango dinámico de la imagen) o el ruido gaussiano, puede considerarse
+que el modelo de una clase es distorsionado por los detalles que agrega cada uno
+de los participantes en la muestra. La sintonización del σ presentada en la figura
+8(b) da buenos resultados con el algoritmo de k-medias, y aunque al agregar más
+componentes aumenta el índice de Rand, el incremento no es tan notorio como
+en los algoritmos de conglomeramiento espectral. Los resultados obtenidos sí son
+superiores a los reportados con ACP lineal. En las pruebas realizadas (tablas 3 y
+4), KACP no ofrece un mejoramiento conjunto en los algoritmos de conglomera-
+miento espectral, puesto que los resultados siguen siendo altamente dependientes
+del laplaciano y el grafo empleados. Es posible que dicho resultado también se deba
+
+                                        Revista Colombiana de Estadística 31 (2008) 19–40
+
+38            Luis Gonzalo Sánchez, Germán Augusto Osorio & Julio Fernando Suárez
+
+Tabla 4: Resultados de los diferentes algoritmos de conglomeramiento para los dígitos
+         manuscritos del 0, 1, y 4 de la base de datos MNIST preprocesados con ker-
+         nel ACP a través del kernel gaussiano siendo el parámetro ajustado σ = 4.
+         Las componentes son escogidas en orden descendente de sus valores propios
+         asociados.
+                                       Algoritmo de conglomeramiento
+                                      Grafo completamente   Grafo de los k-vecinos,
+      Espacio de entrada   k-medias
+
+a la relación existente entre los métodos de conglomeramiento espectral y KACP,
+reportada en diferentes trabajos (Bengio et al. 2003, Bengio et al. 2004, Alzate
+& Suykens 2006), y al criterio con que fue sintonizado el parámetro de KACP
+(alineamiento sobre conglomerados por k-medias).
+    Como se había mencionado, uno de los procedimientos referentes a la búsqueda
+de estructura en los datos está asociado a la posibilidad de visualizar los puntos que
+confirman la muestra, de modo que dejen ver alguna estructura de agrupamiento.
+ACP y/o KACP son formas básicas de conseguirlo (figura 9).
+
+
+10. Conclusiones
+    Se presentaron las técnicas de KACP y conglomeramiento espectral, y cómo
+el uso de los kernels posibilita mapeos y particiones no lineales en ambos proce-
+dimientos. En los experimentos realizados con kernel ACP se encuentran ventajas
+principalmente al utilizar el algoritmo de k-medias ya que la generación de las
+particiones lineales sobre los mapeos no lineales introducidos por KACP gene-
+ra algoritmos de conglomeramiento con particiones no lineales en el espacio de
+entrada.
+   El alineamiento del kernel proporciona un buen criterio para sintonización de
+parámetros, como se observó al contrastar las curvas de alineamiento con los índices
+de Rand obtenidos.
+
+                                      (b) Mapeo con KACP, kernel gaussiano σ = 4.
+Figura 9: Mapeos de las imágenes de 28 × 28 píxeles a las primeras 2 componentes
+          principales lineales y no lineales.
+
+
+
+    Para los experimentos realizados, la combinación KACP-conglomeramiento es-
+pectral no presenta efectos muy claros de mejor desempeño comparados con ACP
+lineal. Los resultados muestran ser más dependientes del tipo de grafo y laplaciano
+empleados. Sin embargo, se pudo observar el efecto de eliminación de filtrado que
+tiene el aplicar ACP y KACP, sobre todo en las imágenes de dígitos manuscritos,
+donde un número moderado de componentes mejora los resultados notoriamente
+y el continuar agregando más componentes degrada el resultado.
+    Como se ha mostrado en otros trabajos que tratan aproximaciones similares,
+aplicar exitosamente ACP como una etapa de preproceso es altamente dependiente
+del problema, y poder catalogar todos los escenarios posibles donde ACP puede o
+no funcionar, no se ha resuelto todavía.
+Referencias
+Alzate, C. & Suykens, J. A. K. (2006), A Weighted Kernel PCA Formulation with Out-of-Sample Extensions for Spectral Clustering Methods, in ‘International Joint Conference on Neural Networks’, pp. 138–144.
+Bengio, Y., Delalleau, O., Roux, N. L., Paiement, J. F., Vincent, P. & Ouimet, M. (2004), ‘Learning eigenfunctions links spectral embedding and kernel PCA’, Neural Computation 16(10), 2197–2219.
+Bengio, Y., Vincent, P., Paiement, J. F., Delalleau, O., Ouimet, M. & Le Roux, N. (2003), Spectral Clustering and Kernel PCA are Learning Eigenfunctions, Technical report, Département d’Informatique et Recherche Opérationnelle Centre de Recherches Mathématiques, Université de Montréal.
+Chung, F. R. K. (1997), Spectral Graph Theory (CBMS Regional Conference Series in Mathematics, No. 92) (Cbms Regional Conference Series in Mathematics), American Mathematical Society.
+Cristianini, N., Elisseeff, A., Shawe-Taylor, J. & Kandola, J. (2001), On kernel target alignment, in ‘Proceedings Neural Information Processing Systems’.
+Cristianini, N., Shawe-Taylor, J. & Kandola, J. (2002), Spectral kernel methods for clustering, in ‘Proceedings Neural Information Processing Systems’.
+Jolliffe, I. T. (2002), Principal Component Analysis, Springer Series in Statistics, second edn, Springer.
+LeCun, Y. & Cortés, C. (2008), ‘The MNIST Database’. Tomado en octubre de 2007 de la página web. http://yann.lecun.com/exdb/mnist/
+Luxburg, U. V. (2006), A Tutorial on Spectral Clustering, Technical report, Max Planck-Institut für biologische Kybernetik.
+Peña, D. (2002), Análisis de datos multivariantes, McGraw-Hill.
+Schölkopf, B., Mika, S., Burges, C. J. C., Knirsch, P., Müller, K. R., Ratsch, G. & Smola, A. J. (1999), ‘Input Space vs. Feature Space in Kernel-Based Methods’, IEEE Transactions on Neural Networks 10(5), 1000–1017.
+Schölkopf, B. & Smola, A. (2002), Learning with Kernels Support Vector Machines, Regularization, Optimization and Beyond, MIT Press, Cambridge, United States.
+Schölkopf, B., Smola, A. & Müller, K. R. (1996), Nonlinear Component Analysis as a Kernel Eigenvalue Problem, Technical Report 44, Max-Planck-Institut für biologische Kybernetik.
+Yeung, K. Y. & Ruzzo, W. L. (2000), An empirical study on Principal Component Analysis for Clustering Gene Expression Data, Technical report, Department of Computer Science and Engineering, University of Washington.

@@ -1,0 +1,2089 @@
+Inuence Diagnostics for Correlated Binomial Regression Models: An Application to a Data Set on High-Cost Health Services Occurrence. Diagnósticos de inuencia para modelos de regresión binomial correlacionada: una aplicación a un conjunto de datos sobre la ocurrencia de servicios de salud de alto costo
+Federal University of São Carlos, São Carlos, Brazil. Federal University of Bahia, Salvador, Brazil
+Abstract
+This paper considers a frequentist perspective to deal with the class of correlated binomial regression models (Pires & Diniz, 2012), thus providing a new approach to analyze correlated binary response variables. Model parameters are estimated by direct maximization of the log-likelihood function. We also consider a diagnostic analysis under the correlated binomial regression model setup, which is performed considering residuals based on predictive values and deviance residuals (Cook & Weisberg, 1982) to check for model assumptions, and global inuence measure based on case-deletion (Cook, 1977) to detect inuential observations. Moreover, a sensitivity analysis is carried out to detect possible inuential observations that could aect the inferential results. This is done using local inuence metrics (Cook, 1986) with case-weight, response, and covariate perturbation schemes. A simulation study is conducted to assess the frequentist properties of model parameter estimates and check the performance of the considered diagnostic metrics under the correlated binomial regression model. A data set on high-cost claims made to a private health care provider in Brazil is analyzed to illustrate the proposed methodology.
+Key words : Generalized binomial distribution; Health care provider; Inuence; Overdispersion; Regression; Residuals.
+Resumen
+Este artículo considera una perspectiva frecuentista para tratar con la clase de modelos de regresión binomial correlacionada (Pires & Diniz, 2012), proporcionando así un nuevo enfoque para analizar variables de respuesta binaria correlacionadas. Los parámetros del modelo se estiman mediante la maximización directa de la función de log-verosimilitud. También consideramos un análisis de diagnóstico bajo la conguración del modelo de regresión binomial correlacionada, que se realiza considerando los residuos basados en valores predictivos y los residuos de desviación (Cook & Weisberg, 1982) para vericar los supuestos del modelo y la medida de inuencia global basada en la eliminación de casos (Cook, 1977) para detectar observaciones inuyentes. Además, se realiza un análisis de sensibilidad para detectar posibles observaciones inuyentes que podrían afectar los resultados inferenciales. Esto se hace utilizando métricas de inuencia local (Cook, 1986) con esquemas de perturbación de covariable, variable respuesta y ponderación de casos. Se realiza un estudio de simulación para evaluar las propiedades frecuentistas de los estimadores de parámetros del modelo y vericar el rendimiento de las métricas de diagnóstico consideradas bajo el modelo de regresión binomial correlacionada. Se analiza un conjunto de datos sobre un plan de salud de un operador brasileño para ilustrar la metodología propuesta.
+Palabras clave   : Distribución binomial generalizada; Plan de salud; Inuencia; Sobredispersión; Regresión; Residuos.
+
+
+
+1. Introduction
+      In real practical situations, the observed data may feature a response variable
+representing the sum of dependent Bernoulli random variables.                McCullagh &
+Nelder (1989, p. 125) argue that, unless there are good reasons for relying on the
+binomial assumption, a more prudent approach would be to assume overdispersion
+to be present in this type of data. Overdispersion is a phenomenon that occurs
+when a higher variability than that assigned to the usual binomial model is
+observed in the data and it can be attributed to several causes, such as correlation
+between the binary responses, absence of relevant explanatory variables, and
+others.
+
+      An   alternative   to   overcome   extra-binomial    variation   is   to   consider   a
+distribution that generalizes the usual binomial distribution. Among a number of
+distributions that have been proposed as alternatives to model binary data subject
+to overdispersion (e.g., the well-known beta-binomial distribution of Skellam
+(1948), the additive and multiplicative binomial distributions of Altham (1978),
+and the double-binomial distribution of Efron (1986), among others), we center
+our attention on the generalized binomial distribution proposed by Luceño (1995).
+For a detailed discussion on this distribution, see Diniz et al. (2010).
+
+      Pires & Diniz (2012) derived a new class of correlated binomial regression
+models based on the generalized binomial distribution (Luceño, 1995). The authors
+used a data augmentation scheme to overcome the complexity of the mixture
+
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                          255
+
+
+
+likelihood and a full Bayesian methodology was proposed for model parameter
+estimation, as well as for model diagnostics.
+
+   In this paper, we propose a frequentist model formulation as an alternative
+approach to the class of correlated binomial regression models with parameters
+estimated by direct maximization of the log-likelihood function. The methodology
+presented in this paper circumvents the latent variable setup of Pires & Diniz
+(2012). The frequentist formulation does not require specication or derivation of
+prior distribution. Therefore, inference and diagnostics can be performed by means
+of a well-known, easy-to-implement, and quickly computable optimal procedure
+when prior information is not available. Moreover, for the data set considered in
+this paper, if a statistical analysis were to be carried out to study the occurrence of
+high-cost health services claims by workers made to private health care providers,
+regulatory agencies would demand objective and standardized procedures where
+the eect of ones' opinion on the outcome is nonexistent, i.e., the analyst's prior
+(subjective) information on the matter would not be accepted.             In this setting,
+the results provided by the frequentist formulation are much more likely to be
+preferable, as it is both objective and optimal.
+
+   Besides, it is well known that statistical modeling procedures are usually based
+on initial model assumptions and can be misleading if the tted model is not
+plausible enough.    Therefore, this paper aims not only to propose a frequentist
+estimation method for the class of correlated binomial regression models, but also
+to consider frequentist metrics of model diagnostics. Specically, we use residuals
+based on predictive values and deviance residuals (Cook & Weisberg, 1982) to
+check model assumptions. Furthermore, case-deletion inuence diagnostic metrics
+(Cook, 1977; Cook & Weisberg, 1982), namely the Cook's generalized distance
+and the likelihood distance, are considered to detect inuential observations on
+parameter estimates.     We also perform a sensitivity study to detect inuential
+cases aecting the obtained inferential results by means of local inuence measures
+(Cook, 1986) based on case-weight, response, and covariate perturbation schemes.
+Two predictive model selection criteria, the Akaike's information criterion (AIC;
+Akaike 1974) and the Bayesian information criterion (BIC; Schwarz 1978), are
+used for model selection.
+
+   The remainder of the paper is organized as follows. In Section 2, we describe
+the real data set used in our work.           In Section 3,     we review the class of
+correlated binomial regression models proposed by Pires & Diniz (2012).                  In
+Section 3.1, we present a discussion on the link function considered for modeling
+the probability of success parameter and the dependence parameter, and we also
+discuss the inferential procedure used to conduct parameter estimation for the class
+of correlated binomial regression models. In Section 4, we develop some diagnostic
+methods, which consist of two types of residuals (Section 4.1), two metrics of
+global inuence based on case-deletion (Section 4.2), and a local inuence metric
+(Section 4.3). In Section 5, we present results based on simulated data sets to assess
+the frequentist properties of the estimation procedure and check the performance
+of the considered diagnostic metrics. Section 6 deals with the illustration of the
+proposed frequentist methodology for correlated binomial regression models, by
+
+
+
+                    Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+256                      Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+considering a data set from a private health care provider in Brazil. Finally, in
+Section 7, some conclusions are drawn.
+
+
+
+
+2. Health Care Provider Data Set
+      As a motivational example of overdispersed binomial data analysis using the
+correlated binomial regression model with parameter estimation and diagnostics
+both performed under the frequentist perspective, we consider a data set from
+a private health care provider in Brazil.         This data set comprises a portfolio of
+companies (clusters) for which the occurrence or not of high-cost health services
+- such as oncological surgery, prosthesis, chemotherapy and hemodialysis - is
+observed for each employee.   The data set is available at http://www.ufscar.
+br/~des/docente/carlos/Dados/Dados2.txt. Information on private health
+care providers in Brazil are available at http://www.ans.gov.br/, the site
+                                                                           1 of
+the Brazilian    Agência Nacional de Saúde Suplementar (ANS, freely translated
+as National Supplementary Health Agency),                   which is the regulatory agency
+responsible for the regulation and oversight of privately run health care providers
+in Brazil.
+
+      The available data for the i-th company with ni employees, i = 1, 2, . . . , 160,
+consist of Wi1 , Wi2 , . . . , Wini , each one assuming value 0 or 1, depending on the
+status of the employee (0 = not occurrence; 1 = occurrence). Thus, the response
+                                            Pni
+variable for the i-th company,       Yi =      j=1 Wij , assumes values in {0, 1, . . . , ni }
+according to the number of employees who have used high-cost health services. For
+this particular data set, a dependence structure between the Bernoulli variables
+inside the same company (cluster) could be assumed and explained by the fact that
+it is reasonable to consider employees within the same company to be exposed
+to the same environment conditions.           This data set also contains the following
+covariates: average number of medical appointments per employee; average cost
+of a medical test; occurrence of surgical procedure; number of therapies; number
+of emergency procedures; number of days between the beginning of the plan
+period and the rst high-cost health service occurrence per each employee; and
+specic information about the companies (size, number of employees, business
+activity). From the private health care provider's point of view, the main interest
+while analyzing this data set would be to t a regression model able to precisely
+determine the probability of a high-cost health service occurrence in a company,
+which would be taken into consideration at the time of renewing - or not - the
+contract with the company.
+
+
+
+
+3. Correlated Binomial Regression Model
+      Assume    Y1 , Y2 , . . . , Ym are independent random variables such that each Yi
+follows a correlated binomial distribution, denoted by          Yi ∼ CB(ni , pi , ρi ), for
+i = 1, 2, . . . , m. The correlated binomial distribution (Luceño, 1995) provides
+  1 The site is in Portuguese with no translation option.
+
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                                   257
+
+
+
+a suitable way to represent the distribution of sums of equicorrelated Bernoulli
+random variables. This distribution is given by the mixture of the distributions
+of two random variables, with one of them following a binomial distribution,
+B(ni , pi ), with a mixing probability              (1 − ρi ), and the other one following a
+modied Bernoulli distribution, MBern(pi ), taking values 0 or ni (Fu & Sproule,
+1995) (rather than the conventional values 0 or 1), with a mixing probability ρi .
+Taking this information into account, Yi , the number of successes in ni trials of
+Bernoulli, i = 1, 2, . . . , m, is the sum of equicorrelated binary responses with a
+constant probability of success pi and a common correlation coecient equal to
+                Pni
+ρi . Thus, Yi = j=1    Wij , where Wij is a binary (0, 1) variable with E (Wij ) = pi ,
+Var (Wis ) = Var (Wit ) = pi (1 − pi ) and Corr (Wis , Wit ) = ρi , for all s and t, s 6= t.
+The probability distribution of Yi , given ni , pi and ρi , is then given by
+
+                                         
+                                         ni yi         n −y
+           P (Yi = yi | ni , pi , ρi ) =    p (1 − pi ) i i (1 − ρi ) IA1i (yi )
+                                         yi i
+                                                  yi              ni −yi
+                                                  n
+                                              + pi i (1 − pi )      ni
+                                                                           ρi IA2i (yi ) ,
+
+where A1i = {0, 1, . . . , ni }, A2i = {0, ni }, ni ∈ N − {0}, 0 < pi < 1 and 0 ≤ ρi ≤ 1.
+
+    The mean and variance of                 Yi are ni pi and pi (1 − pi ) {ni + ρi ni (ni − 1)},
+respectively. Note that the binomial model is a particular case of the CB (ni , pi , ρi )
+model when ρi          = 0.   This distribution can be interpreted as a zero-ni inated
+distribution (Lambert, 1992). The zero and ni values, which occur with greater
+frequency than expected under the binomial distribution, are captured by the
+modied Bernoulli distribution. The occurrence of many zero and ni values can
+be explained by the positive correlation between the individuals inside the cluster.
+
+    We note that observations Y1 , Y2 , . . . , Ym are mutually independent and that
+correlation takes place among the                Wij 's, j = 1, 2, . . . , ni , inside the cluster i,
+i = 1, 2, . . . , m.
+
+
+3.1. Inference
+    Let y = (y1 , y2 , . . . , ym )> be a set of observed values of response variables
+Y = (Y1 , Y2 , . . . , Ym )> , and n = (n1 , n2 , . . . , nm )> a vector with the cluster
+                                                                        >
+sizes. Then, the likelihood function of p = (p1 , p2 , . . . , pm ) , the vector of
+                                                                         >
+success probabilities for each cluster, and ρ = (ρ1 , ρ2 , . . . , ρm ) , the vector of
+the correlation between any two individuals within the cluster, may be written as
+
+                              m
+                                    (                                                   !
+                              Y                        ni
+     L (p, ρ | m, n, y) =               ai   (1 − pi )      (1 − ρi ) + (1 − pi ) ρi
+                              i=1
+                                                                  !
+                              + bi      pni i (1 − ρi ) + pi ρi                                  (1)
+
+
+                                                                             !)
+                                                ni yi         ni −yi
+                              + (1 − ai − bi )     p (1 − pi )       (1 − ρi )   ,
+                                                yi i
+
+
+                        Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+258                         Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+where ai      = 1 if yi = 0, and ai = 0 otherwise; bi = 1 if yi = ni , and bi = 0
+otherwise. Note that ai and bi are known values, i = 1, 2, . . . , m.
+
+      In order to dene the class of correlated binomial regression models, the success
+probability, pi , and the correlation parameter, ρi , are jointly modeled using the
+sets of covariates available for the clusters and for the individuals inside the
+clusters.     Thus, the    pi 's are modeled using the link functions Qi 's specied in
+Table 1, where Φ (·) denotes the standard normal cumulative distribution function,
+               Pk
+and    ηi =      r=0 βr xir .   The coecients        β0 , β1 , . . . , βk are unknown regression
+parameters to be estimated; xi0 = 1, for all i; and xi1 , xi2 , . . . , xik represent the
+values of the k covariates for the i-th cluster.
+
+
+                       Table 1: Some link functions used to model pi .
+                        Link function                           Qi
+                        Logit                       exp {ηi } / (1 + exp {ηi })
+                        Log-log                         exp {− exp {−ηi }}
+                        Complementary log-log         1 − exp {− exp {ηi }}
+                        Probit                                Φ (ηi )
+
+
+      The correlation structure is parameterized considering a specic function of
+available covariates, which is able to relate the dependence between individuals
+inside the cluster. In general, the correlation structure can be written as
+
+
+                                     Ri = h (v (ri ) , γ) ,
+
+where h(v(ri ), γ) is a suitable nonlinear, monotonic and dierentiable function,
+representing the correlation between any two individuals inside the i-th cluster;
+v (ri ) is a function of the individual covariate values, assuming positive values;
+ri = (ri11 , . . . , ri1ni , ri21 , . . . , ri2ni , riq1 , . . . , riqni )> , with rilj representing the
+value of the l-th covariate for the j -th individual within the i-th cluster, i =
+1, 2, . . . , m, l = 1, 2, . . . , q and j = 1, 2, . . . , ni ; γ is the parameter determining the
+rate of decay of the correlation as a function of v (ri ) (Sherman, 2011). Using
+spatial ideas of correlation structures, the possible choices for v(ri ) can be made
+considering, for instance, continuous functions of some distance between position
+vectors or between other available vectors which enable us to characterize the
+relationship among the individuals within the cluster (Sherman, 2011).                         Hence,
+candidates for v (ri ), using only the covariates ri1 and ri2 , could be the Euclidean
+                                    qP        P P                       2
+distance measure,        dened as      l=1,2   s     s<t (rils − rilt ) ; the Manhattan
+                          P      P P
+distance, dened as        l=1,2  s  s<t |rils − rilt |; the maximum distance, dened
+as maxs,t |ri1s − ri1t |; and the minimum distance, dened as mins,t |ri2s − ri2t |,
+s, t = 1, 2, . . . , ni .
+      It is worth pointing out that the dependence between the Bernoulli trials is
+aggregated into the function of individual covariates of the correlation structure.
+In other words,        after determining a specic function which summarizes the
+dependence between the individuals, then the observations within the cluster are
+mutually independent.
+
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                                              259
+
+
+
+    Therefore, the likelihood for the correlated binomial regression model can be
+rewritten as a function of the regression coecients β0 , β1 , . . . , βk , associated with
+the covariates, and of the coecient γ , associated with the correlation structure.
+                                                                      >                                      >
+Let the observed data set be D = (m, n, y, x, r)                          , where n = (n1 , n2 , . . . , nm )    ,
+                             >                                      >                                        >
+y = (y1 , y2 , . . . , ym ) , x = (x1 , x2 , . . . , xm ) , xi = (xi0 , xi1 , xi2 , . . . , xik ) ,
+                           >
+r = (r1 , r2 , . . . , rm ) , ri = (ri11 , . . . , ri1ni , ri21 , . . . , ri2ni , riq1 , . . . , riqni )> . Using
+a link function Qi and a correlated structure Ri , the likelihood function (1) can
+                                                                       >
+be expressed as a function of θ = (β0 , β1 , . . . , βk , γ) . Thus,
+
+
+                           m
+                                 (                                                      !
+                           Y                          ni
+            L(θ | D) =               ai    (1 − Qi )       (1 − Ri ) + (1 − Qi ) Ri
+                           i=1
+                                                                  !
+                            + bi     Qni i (1 − Ri ) + Qi Ri                                                (2)
+
+
+                                                                             !)
+                                              ni  yi          ni −yi
+                            + (1 − ai − bi )     Qi (1 − Qi )        (1 − Ri )   ,
+                                              yi
+
+where ai     = 1 if yi = 0, and ai = 0 otherwise; bi = 1 if yi = ni , and bi = 0
+otherwise, with i = 1, 2, . . . , m. When Ri assumes zero value, we need to consider
+Ri = ζ , where ζ is a xed value very close to zero.
+    Maximum likelihood estimates (MLEs) can be obtained by direct maximization
+of the log-likelihood function               (`(θ | D) = log L(θ | D)) using, for instance, the
+Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm (Nocedal & Wright, 2006).
+The advantage of this procedure is that it runs easily from statistical packages
+such as R (R Development Core Team, 2007). The code implemented in R and
+used in this paper is available upon request or at http://www.ufscar.br/~des/
+docente/carlos/Dados/MRBC_EMV.txt.
+    Under some regularity conditions (Lehmann & Casella 1998, Theorem 5.1,
+                                           √
+p.463),    the asymptotic distribution of     n(θ̂ − θ) is a multivariate normal
+                       −1
+                             
+distribution Nk+2 θ, I    (θ) , where I (θ) is the Fisher information matrix which
+can be approximated by the (k + 2) × (k + 2) observed information matrix, J(θ̂),
+dened as
+
+                                                      ∂ 2 ` (θ | D)
+                                          J(θ̂) = −                             .                           (3)
+                                                          ∂θθ >
+                                                                         θ=θ̂
+
+
+    The rst-order partial derivatives (score functions) and the second-order partial
+derivatives (Hessian) of the log-likelihood function are given in the appendix.
+
+    The asymptotic condence interval (ACI), at a condence level 100 (1 − α) %,
+for the w -th component of the parameter vector θ , θw , w = 1, 2, . . . , k + 2, can be
+computed by
+
+                                                       q
+                                                            −1
+                                          θ̂w ± Zα/2       J(w) (θ̂) ,
+
+
+                         Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+260                          Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+where   Zα/2 is the (α/2)-th superior quantile value of the standard normal
+                   −1
+distribution and J
+                  (w) (θ̂) is the w -th element of the diagonal of the inverse of
+J(θ̂), which corresponds to the variance estimate of the w-th parameter estimate.
+
+
+4. Diagnostics
+      Diagnostic analysis in the correlated binomial regression model previously
+described shall be performed by considering two dierent types of residuals
+(the standardized residual and the deviance residual),                        two global inuence
+measures (the generalized Cook's distance and the likelihood distance), and
+local inuence measures based on three perturbation schemes (namely, the case-
+weight perturbation, the response perturbation and the covariate perturbation).
+Residual diagnostics are useful to check for model misspecication and for outlier
+observation.      Global and local inuence measures are tools designed to assess
+inuential observations.
+
+      To check the underlying model assumptions or, in other words, to verify if
+the response variables follow a correlated binomial distribution, CB (ni , pi , ρi ),
+with positive correlation between the Bernoulli variables in the cluster (that is,
+ρi > 0), the signicance of the correlation structure parameter γ is observed using
+condence intervals obtained in the inferential process. If γ = 0 or γ = 1, the
+usual binomial regression model can be considered in the analysis.
+
+
+
+4.1. Residuals
+      The standardized residual for the correlated binomial regression model is
+dened as
+
+                                    yi − ni p̂i
+                 ri = p                                      ,        i = 1, 2, . . . , m,           (4)
+                       p̂i (1 − p̂i ) {ni + ρ̂i ni (ni − 1)}
+and the deviance residual for the correlated binomial regression model is dened
+as
+                                  r                                   
+      rid = sign (yi − ni p̂i )     2` (yi | Di , γ̂) − 2` β̂ | Di , γ̂ ,     i = 1, 2, . . . , m.   (5)
+
+
+
+      For both (4) and (5), p̂i        = Q̂i , ρ̂i = R̂i and γ̂ and β̂ are the MLEs of the
+parameters γ and β , respectively.
+                                                                                                     >
+      In   expression   (5),      sign(·)   is   the   signal Di = (ni , yi , xi , ri ) ;
+                                                                function;
+` (yi | Di , γ̂) is the saturated log-likelihood function, with p̂i = yi/ni and the
+correlation structure parameter              γ replaced by the MLE γ̂ ; and ` β̂ | Di , γ̂            is
+
+the log-likelihood function evaluated at the MLE β̂ .
+
+      For a discussion on residuals for models under the generalized linear models
+framework, such as the correlated binomial regression model addressed in this
+paper, we refer the interested reader to (Agresti, 2015, Section 4.4.6).
+
+
+
+                        Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                                261
+
+
+
+4.2. Global Inuence
+    In order to assess the inuence of observations on parameter estimates of the
+correlated binomial regression model, we consider the generalized Cook's distance
+and the likelihood distance (Cook, 1977; Cook & Weisberg, 1982; Zhu et al., 2001).
+Both the generalized Cook's distance and the likelihood distance can be used to
+quantify the impact of the i-th observation on the MLE θ̂ of θ by measuring the
+distance between θ̂ and θ̂(−i) , where θ̂(−i) is the MLE of θ based on L(θ | D) with
+                                           >
+the i-th observation (ni , yi , xi , ri )      deleted from the data set.        However, these
+methodologies are only eective when there is a single outlier in the data set (She
+& Owen, 2011).
+
+    The generalized Cook's distance (Cook, 1977; Cook & Weisberg, 1982) is
+dened as
+                                         >               
+                          Ci = θ̂(−i) − θ̂ J(θ̂) θ̂(−i) − θ̂ ,                                (6)
+
+
+where J(θ̂) is the observed Fisher information matrix given by (3).
+
+    The likelihood distance (Zhu et al., 2001) is dened as
+                               n                    o
+                    LDi = 2 ` θ̂ | D − ` θ̂(−i) | D ,                         (7)
+
+                            
+where ` θ̂ | D and ` θ̂(−i) | D are the log-likelihood functions evaluated at the
+                                                                                      >
+usual MLE, θ̂ , and at the MLE with the i-th observation (ni , yi , xi , ri )             deleted,
+θ̂(−i) , respectively. Since ` (θ | D), for xed D, is maximized
+                                                              at θ = θ̂ , then, for
+whatever any other θ 6= θ̂ , ` (θ | D) will be less than `          θ̂ | D ; thus, expression (7)
+is always positive.
+
+    When the number of clusters, m, is large, Cook & Weisberg (1982) suggested
+the following approximation for θ̂(−i) in (6) and (7):
+                                                              
+                                θ̂(−i) = θ̂ + J −1 (θ̂)U θ̂(−i) ,
+
+where                                                     
+                                         ∂` θ | D(−i)
+                          U θ̂(−i)       =
+                                              ∂θ(−i)
+                                                              θ(−i) =θ̂(−i)
+
+is a (k + 2)-dimensional score vector of the log-likelihood function with the i-th
+observation deleted.
+
+    The   i-th observation is regarded as an inuential case if the value of its
+generalized Cook's distance or likelihood distance is large.                  This value can be
+compared to the critical points of the chi-square distribution with (k + 2) degrees
+               2
+of freedom, χk+2 .
+
+
+
+4.3. Local Inuence
+    Inuence diagnostics relying on case-deletion can be regarded as global
+measures of inuence since they are designed to measure global change over
+
+
+
+                      Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+262                        Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+the sample space.         However, as argued by Cook (1986), single case-deletion
+diagnostic metrics can experience a kind of masking.                   Therefore, local inuence
+diagnostic analysis should be conducted to minimize the incorrect inference about
+case inuences. Cook's local inuence metrics are designed to investigate model
+sensibility to minor perturbations in the data set.
+
+      Following Cook (1986),        let   ` (θ | D) be the log-likelihood function of the
+postulated model, and let ω be a k -dimensional perturbation vector belonging to
+                                    q
+the perturbation space Ω ⊂ < . Denote by ` (θ | D, ω) the log-likelihood function
+of the perturbed model, and assume ω0 ∈ Ω to be the non-perturbation vector
+such that ` (θ | D, ω0 ) = ` (θ | D).       Thus, the inuence of the perturbation ω on
+model parameter estimates may be evaluated through the likelihood displacement
+dened by
+                                    n                 o
+                          LD (ω) = 2 ` θ̂ | D − ` θ̂ω | D ,                                  (8)
+
+
+where θ̂ is the MLE of θ under ` (θ | D), and θ̂ω is the MLE of θ under ` (θ | D, ω).
+
+      As a means to assess local inuence, Cook (1986) suggested the study of LD (ω)
+in (8) around ω0 using the normal curvature of LD (ω0 + td), with t ∈ < and d a
+unit-norm direction, which is dened as
+
+
+
+                               Cd (θ) = 2 d> ∆> J −1 (θ̂)∆d ,
+
+where kdk      = 1, J(θ̂) is the observed information matrix, and ∆ =
+∂` (θ | D, ω) /∂θ∂ω > evaluated at θ̂ and ω0 . The direction dmax , which
+corresponds to the largest curvature, may be used to assess inuential observations
+by means of an index plot. The largest curvature, Cdmax , is given by the largest
+                  >
+eigenvalue of ∆       J −1 (θ̂)∆ and dmax corresponds to its eigenvector.
+      Under the correlated binomial regression model presented in Section 3, ∆ is a
+(k + 2) × q matrix of partial derivatives, which may be written as
+
+                                           ∂ 2 ` (θ | D, ω)
+                                                           
+                                    !
+                               ∆β         ∂β∂ω > 
+                       ∆=               =                  
+                                          ∂ 2 ` (θ | D, ω)             .                   (9)
+                               ∆γ
+                                                ∂γ∂ω >        θ=θ̂, ω=ω0
+
+
+      In this paper, we consider case-weight, response and covariate perturbation
+schemes. In case-weight perturbation, the log-likelihood function of the perturbed
+model is obtained from
+
+                                                m
+                                                X
+                               ` (θ | D, ω) =          ωi `i (θ | Di ) ,
+                                                 i=1
+
+                                                                                        >
+with    ω0 = 1m the vector of no perturbation, and Di = (ni , yi , xi , ri ) , i =
+1, 2, . . . , m.
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                                          263
+
+
+
+   In the response perturbation scheme, y is replaced by yω , where yωi = yi + ωi ,
+i = 1, 2, . . . , m, and ω0 = 0m . Then, the log-likelihood function is given by
+                                                       m
+                                                       X
+                                  ` (θ | D, ω) =             ` (θ | Dωi ) ,
+                                                       i=1
+
+with Dωi = (ni , yωi , xi , ri ), i = 1, 2, . . . , m.
+
+    Under case-weight and response perturbation schemes, the matrix ∆β in (9) is
+a (k + 1) × m matrix whose elements are
+
+
+                                  ∂2                   ∂ 2 ` (θ | D, ω) ∂Qi
+                     ∆βij =             ` (θ | D, ω) =                      ,
+                                ∂βj ∂ωi                     ∂Qi ∂ωi     ∂βj
+
+for j = 0, 1, . . . , k and i = 1, 2, . . . , m, and the matrix ∆γ in (9) is a 1 × m matrix
+with elements
+
+                                 ∂2                  ∂ 2 ` (θ | D, ω) ∂Qi
+                      ∆ γi =          ` (θ | D, ω) =                      ,
+                                ∂γ∂ωi                    ∂Ri ∂Qi      ∂ωi
+for i = 1, 2, . . . , m.
+
+   Covariate perturbation is obtained by dening xωi , where xωi k = xik + ωi ,
+i = 1, 2, . . . , m, and setting ω0 = 0m . The log-likelihood function is given by
+                                                       m
+                                                       X
+                                  ` (θ | D, ω) =             ` (θ | Dωi ) ,
+                                                       i=1
+
+with Dωi = (ni , yi , xωi , ri ), i = 1, 2, . . . , m.
+
+    In this case, the matrix ∆ in (9) has elements
+
+
+                              ∂ 2 ` (θ | D, ω) ∂Qi ∂Qi   ∂` (θ | D, ω) ∂ 2 Qi
+                   ∆βij =                              +
+                                   ∂Qi ∂ωi     ∂βj ∂ωi       ∂Qi      ∂βj ∂ωi
+and
+
+                                          ∂ 2 ` (θ | D, ω) ∂Qi ∂Ri
+                                 ∆ γi =                            ,
+                                              ∂Ri ∂Qi      ∂ωi ∂γ
+for j = 0, 1, . . . , k and i = 1, 2, . . . , m.
+
+    To   perform      local    inuence      diagnostics       for   a   partition      of   the   vector   of
+                                         >
+parameters, say β in θ = (β, γ)              , the normal curvature is written as
+                                                          
+                           Cd (β) = 2 d> ∆> J −1 (θ̂) − J22 ∆d ,
+                                 
+                   0   0                                     ∂2
+                                      and J (γ̂) = −
+with J22 =            −1
+                   0 J (γ)                                   ∂γ 2 ` (θ | D)          . Thus, the direction
+                                                                              β=β̂
+                                                                        
+dmax , that is, the eigenvector of ∆> J −1 (θ̂) − J22 ∆ evaluated at β̂ and w0 ,
+is used to asses inuential observations on β . Similarly, we can use this same
+procedure to assess local inuential observations on γ .
+
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+264                       Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+5. Simulation Results
+      In this section, we present results based on simulated data sets to assess the
+quality of MLEs of model parameters and check the performance of the considered
+diagnostic metrics under the correlated binomial regression model described in
+Section 3.
+
+      In order to verify the frequentist properties of MLEs under the correlated
+binomial regression model, 1000 samples/data sets were simulated assuming m =
+500 clusters with each response variable Yi following a CB (ni , pi , ρi ) distribution,
+i = 1, 2, . . . , m. The number of trials per cluster, ni , was generated from a
+B (45, 0.5) distribution.   We consider two covariates to be available, with xi1
+and xi2 drawn from N (0, 2) and N (0, 1) distributions, respectively, and v(ri )
+was simulated from a Uniform (0, 1) distribution. We assume the link functions
+of Table 1 for pi and the autoregressive (AR) correlation structure for ρi . The
+                                                 2
+parameter values of γ , β0 , β1 and β2 are shown in the third column of Table 2.
+
+
+                               Table 2: Simulation results.
+ Fitted model    Parameter    True value    Mean       Bias     MSE     Coverage probability
+                      γ           0.2       0.2012    0.0012   0.0008           0.95
+ CB-LOG-AR           β0           -2       -2.0023   -0.0023   0.0034           0.96
+                     β1           0.5       0.5013    0.0013   0.0006           0.95
+                     β2           -2       -2.0018   -0.0018   0.0043           0.94
+                      γ           0.1       0.1002    0.0002   0.0003           0.95
+  CB-LL-AR           β0            3        3.0051    0.0051   0.0043           0.95
+                     β1           0.1       0.1017    0.0017   0.0006           0.94
+                     β2           -0.5     -0.5009   -0.0009   0.0025           0.95
+                      γ           0.3       0.3019    0.0019   0.0010           0.95
+ CB-CLL-AR           β0           -1.5     -1.5023   -0.0023   0.0010           0.94
+                     β1           0.5       0.5014    0.0014   0.0002           0.95
+                     β2           0.5       0.5010    0.0010   0.0007           0.94
+                      γ          0.05       0.0477   -0.0023   0.0003           0.89
+ CB-PRO-AR           β0          0.01       0.0092   -0.0008   0.0007           0.94
+                     β1           0.8       0.7957   -0.0043   0.0006           0.93
+                     β2           -0.7     -0.6953    0.0047   0.0009           0.94
+
+
+      Simulation results are presented in Table 2, where the rst column indicates
+the regression model tted to the data sets. In this case, CB-LOG-AR denotes
+the correlated binomial regression model with logit link function for   pi and
+AR correlation structure for ρi , CB-LL-AR represents the correlated binomial
+regression model with log-log link function for pi and AR correlation structure
+for ρi , CB-CLL-AR denotes the correlated binomial regression model with
+
+   2 It is worth commenting here that we have also considered x
+                                                                      i1 ∼ Uniform(0, 1) and
+xi2 ∼ Uniform(0, 2), as well as dierent values of parameters γ , β0 , β1 and β2 , however, we
+didn't nd any signicant dierence in the results obtained (not presented here).
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                            265
+
+
+
+complementary log-log link function for pi and AR correlation structure for ρi ,
+and CB-PRO-AR is the correlated binomial regression model with probit link
+function for pi and AR correlation structure for ρi . The fourth column of Table 2
+provides the mean value of the obtained MLEs from each simulated data set, the
+fth column shows the mean value of the bias computed for each MLE from each
+data set, the sixth column provides the computed mean MSE of MLEs, and the
+seventh column gives the estimated coverage probability based on 95% ACIs.
+
+   To summarize, the results shown in Table 2 give evidence that MLEs of the
+considered correlated binomial regression models have good frequentist properties.
+It can be noticed that both the mean bias and mean MSE are small, and
+the coverage probability approaches the expected nominal one of 95% for all
+model parameters. However, it is worth mentioning that the estimated coverage
+probability for γ under CB-PRO-AR model is smaller than those observed for this
+same parameter in the other three models.
+
+   In order to assess if the diagnostic metrics are able to correctly detect outliers
+and/or inuential case, we simulated data sets assuming m = 100 clusters with
+Yi ∼ CB (ni , pi , ρi ), i = 1, 2, . . . , m, and the number of trials per cluster, ni ,
+was generated from a B (50, 0.3) distribution. We consider two covariates to be
+available, with xi1 ∼ N (0, 2) and xi2 ∼ N (0, 1), and v(ri ) was simulated from
+a Uniform (0, 1) distribution. For illustration purposes, we present the results
+obtained assuming the logit link function for pi and the AR correlation structure
+for ρi , with parameter values β0 = −1.5, β1 = 0.5, β2 = 0.5 and γ = 0.1. However,
+we note that similar results were obtained from the other link functions shown in
+Table 1.
+
+   Prior to generating the values of the response variable, case #7 was deliberately
+perturbed by transforming the observation of covariate              x2 of case #7 into an
+atypical one by adding 3 times the standard deviation of x2 to its original value,
+namely x7,2 = x7,2 +3∗sd(x2 ). After simulating the observed values of the response
+variable, case #40 of y was perturbed by the relation y40 = y40 + 2 ∗ sd(y); since
+y40 must be an integer, we take the rounded value of the transformation.
+   The model t summary is shown in Table 3. Although the 95% ACIs of model
+parameters β0 , β1 and β2 contain their true values, their MLEs are not as precise
+as it would be expected for a large sample size. On the other hand, the MLE of γ
+does not appear to be aected by the perturbation in the data set.
+
+
+Table 3: Model t summary for the simulated perturbed data set: MLEs and 95% ACIs
+           of the model parameters γ , β0 , β1 and β2 .
+       Parameter          γ                β0                β1               β2
+       True value        0.1               -1.5              0.5              0.5
+       MLE              0.108            -1.369             0.454            0.379
+       95% ACI      (0.027, 0.190)   (-1.573, -1.166)   (0.367, 0.540)   (0.238, 0.520)
+
+
+   Standardized residuals and deviance residuals are presented in Figure 1(a) and
+Figure 1(b), respectively. The standardized residuals do not indicate observation
+#40 as an outlier, but they indicate observations #22 and #46 as possible outliers.
+
+
+
+                    Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+266                                                                       Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+In Figure 1(b), the deviance residuals indicate only observation #40 as an outlier.
+We note that this behavior of the standardized residuals and deviance residuals
+was observed for other simulated samples as well, and, while the former ones tend
+to indicate non-outlier cases as possible outliers the latter ones seem to be a more
+robust choice for the correlated binomial regression model. From Figures 2(a) and
+2(b), we notice that both the Cook's generalized distance and likelihood distance
+show only case #40 as being inuential. Local inuence metrics are depicted in
+Figures 3 and 4, which reveal case #40 as being locally inuential only on β̂ , in
+addition to case #7 under the covariate x2 perturbation scheme (Figure 3(d)). We
+note that, if a case is locally inuential then it is globally inuential, however the
+inverse relation is not always true.
+
+
+
+
+                                  ●   46
+
+                                                                                                                                                                                           40
+
+
+
+
+                                                                                                                                                       5
+                5
+
+
+
+
+                                                                                                                                                                                       ●
+
+
+
+                                                           ●   22
+
+
+
+
+                                                                                                                                              Deviance residuals
+                                           ●          ●                                                                                                                        ●
+                                                                                                                                                                                                      ●    ●
+         Std. residuals
+
+
+
+
+                                                  ●    ●                                                                                                                                          ●    ●
+                                                      ●                                                                                                                                               ●                             ●
+                                                                                                                                                                                       ●●                      ●                                ●                    ●                     ●
+                                                                  ●                            ●                                                                       ●       ●   ●
+                                                                                                                                      ●                                                      ●●   ●●                   ● ●
+                              ●   ●        ●●                     ●                   ●                                                                                                                                                                                   ●
+                                      ●       ●● ●●                                                              ●                                                         ●                      ●                             ●
+                                                                                                                                                                                                                                ●       ●
+                                                                           ● ●   ●      ●                            ●                                                             ●        ●
+                                                                                                                                                                                            ●●                                                                   ●                ●
+
+
+
+                                                                                                                                                      0
+                              ●             ●      ● ●                           ●                           ●               ●
+                0
+
+
+
+
+                                       ●●    ●●                           ●              ●                                                                                          ●         ●                        ●                ●
+                           ● ● ● ● ●●●                 ●                                      ●                          ●                                                                       ●
+                                     ●●   ● ● ●●
+                                          ●                                                              ●                                                         ●     ● ● ●●  ●      ●
+                             ● ●●●
+                                 ●
+                                ● ●● ●●●●● ●● ● ●
+                                      ●
+                                                                                       ● ●           ●                           ●
+                                                                                                                                                                                ●● ●      ●                                                              ●                    ●
+                                   ●●    ●●
+                                               ●● ● ● ●               ●    ●
+                                                                           ●                                                                                           ●
+                                                                                                                                                                       ●         ●●      ●●●●                              ●                    ●    ●
+                                                     ● ●                                                                                                                   ●
+                                                                                                                                                                           ●          ●         ●                  ●
+                                                 ●                               ●                                                                                        ●
+                                                                                                                                                                         ●●   ● ●●● ● ● ●● ● ●
+                                                                                                                                                                             ●●                                            ●                                                          ●
+                                                                                       ●                                                                                       ●     ●                                              ●
+                                                                                                                                                                                     ●●          ●                              ●   ●
+                                                                                                                                                                                            ● ●
+                                                                                                                                                                                                                                            ●
+                                                                                                                                                       −5
+                −5
+
+
+
+
+                          0                2          4            6      8     10                                           12                                    0               2                   4           6      8     10                                                12
+                                                               Predicted values                                                                                                                                Predicted values
+
+                                                                           (a)                                                                                                                                         (b)
+Figure 1: Simulated perturbed data set: (a) standardized residuals versus predicted
+                          values; (b) deviance residuals versus predicted values.
+
+
+
+                                                                            ●   40                                                                                                                                     ●   40
+                                                                                                                                                      1.5
+                   1.5
+
+
+
+
+                                                                                                                                                      1.0
+          1.0
+
+
+
+
+                                                                                                                                             LDi
+          Ci
+
+
+
+
+                                                                                                                                                      0.5
+                   0.5
+
+
+
+
+                                                                                                             ●
+                                                                                                                                                                                                                                                             ●
+
+                                                          ●                                                                                                                                           ●
+                                                              ●                ● ●●                                                                                                              ●       ● ●●
+                                      ● ●          ●● ●
+                                                                                 ●               ●●              ●           ●                                        ●    ● ●          ●● ●
+                                                                                                                                                                                                            ●           ●●            ●
+                   0.0
+
+
+
+
+                                 ●                            ●●                                                                                                                                                                                  ●
+                                                                                                                                                      0.0
+
+
+
+
+                                                                                             ●                                                                                                             ● ● ● ● ● ● ● ●● ●●● ●
+                              ●●● ●●●● ●● ●●●●●●●●● ● ●● ● ● ● ●●●●● ●
+                                                                      ●              ●●●●●●●● ●●● ●●●●●●●●●●● ●●● ●●●●●●●●●●● ●●●●●●●●●●●●                                                         ●●
+                                                                                                                                                                   ●●● ●●●● ●● ●●●●●●●●● ● ●● ● ● ● ●●●●● ●
+                                                                                                                                                                                                                                         ●           ●     ●●
+                                                                                                                                                                                                              ●●●●●●       ● ●●● ● ●●● ●● ●●●●●●●● ●● ●●●●● ● ●
+
+
+
+                           0                    20                        40                   60                    80              100                           0                       20                      40                           60                       80               100
+                                                                                 Index                                                                                                                                         Index
+
+                                                                          (a)                                                                                                                                      (b)
+Figure 2: Simulated perturbed data set: (a) Cook's generalized distance; (b) likelihood
+                          distance.
+
+
+      In order to assess the sensitivity of MLEs when inuential observations are
+present in the data set, we also tted the correlated binomial regression model
+
+
+
+                                                     Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                                                                                                                                                                                                              267
+
+
+
+to the data set without case #7, case #40 and cases #7 and #40, which were
+identied as inuential for the MLE of β . Table 4 shows the relative dierence,
+|(θ̂w − θ̂w(−i) )/θ̂w | × 100%, between MLEs obtained using the perturbed data set
+and MLEs obtained using the simulated data set after removing the observations.
+In the rst scenario, when we remove only observation #7, the MLE of γ seems to
+become less precise and there is not a pronounced dierence in the MLE of β . In
+the second option, when we remove only case #40, we notice that the MLE of β2
+is greatly aected. Removing case #40 also has a small impact on the MLE of γ .
+Finally, the removal of both cases #7 and #40 only seems to have a pronounced
+eect in the MLE of β2 .
+              1.0
+
+
+
+
+                                                                                                                                   1.0
+                                                               ●   40
+              0.8
+
+
+
+
+                                                                                                                                   0.8
+              0.6
+
+
+
+
+                                                                                                                                   0.6
+       dmax
+
+
+
+
+                                                                                                                            dmax
+              0.4
+
+
+
+
+                                                                                                                                   0.4
+                                                                                                                                                                                                                           ●
+                                                                                                                                                  ●                                                                    ●                        ●
+                                                                                                                                                                                                                                    ●●
+              0.2
+
+
+
+
+                                                                                                                                   0.2
+                                                   ●                   ●                                                                                                                                      ●
+                                                                                                  ●                                                       ●●                                                                                ●                           ●
+                                                                                                                                                                   ●
+                                                                                                                                         ●                                                                    ●                                       ●           ● ●
+                                                                   ●
+                                                                                                                                                                                   ●                 ●                                       ●                         ●
+                                                                                                                                                          ●                              ● ●              ●                                                 ●
+                                                                                                                     ●
+                                     ●                     ●                                 ●            ●
+                                                                                                                                                                           ●           ●● ●                       ●      ●                          ●               ●
+                                                                                                                                                                                                                                                                        ●
+                                                                        ● ● ●           ●   ●                                                  ●                                                                                                     ●●● ●      ●     ●
+                            ● ●
+                                                    ●                  ● ● ●● ●                ● ●● ●                                                         ● ●● ●           ●●                                  ●      ●●        ●              ●             ●
+                         ● ●   ●●      ● ●●● ●                                        ●● ●
+                                                                                          ●                  ●     ● ● ●●                    ●● ●                         ● ●                           ●                      ●●        ●       ●
+                                   ●● ● ● ● ● ●● ●                                            ● ● ● ● ●                                                                                                                                                 ●
+              0.0
+
+
+
+
+                             ●
+                                                                                                                                   0.0
+
+
+
+
+                     ●●●● ●● ●
+                                                      ●                    ● ●                                ●●●● ●   ●                        ● ●●●                                            ●● ●●●
+                                 ●● ● ●        ● ● ● ●                              ●● ● ●● ●
+                                                                                                   ● ● ● ●●●●     ● ●●                   ●                     ●       ●●● ● ●    ●●       ●●      ●   ●           ●●●          ●       ●           ●     ●● ●●● ●●
+
+
+
+                    0                    20                    40                       60                80         100                 0                         20                       40                         60                               80           100
+                                                                       Index                                                                                                                          Index
+
+                                                               (a)                                                                                                                          (b)
+              1.0
+
+
+
+
+                                                                                                                                   1.0
+              0.8
+
+
+
+
+                                                                                                                                   0.8
+              0.6
+
+
+
+
+                                                                                                                                   0.6
+
+
+
+
+                                                                                                                                                                                                    40
+       dmax
+
+
+
+
+                                                                                                                            dmax
+
+
+
+
+                                                                                                                                                  ●   7                                         ●
+              0.4
+
+
+
+
+                                                                                                                                   0.4
+
+
+
+
+                                                               ●
+                                 ●
+
+
+                                                                                                 ●
+                                                                   ●                                                                                                                                                                         ●
+                                                       ●                   ●                          ●
+              0.2
+
+
+
+
+                                                                                                                                   0.2
+
+
+
+
+                             ●           ●                                                                                                                                                                                                          ●
+                                                       ●                                                              ●                                                                                                                                      ●
+                                               ●                                                                                                                                                      ●
+                     ●                                                                                         ●                                                               ●                          ●                     ●
+                                                                                        ●                                                                                              ●
+                                                               ●                    ●                                                                                                                        ●
+                         ●       ●                                             ●                          ●●                                                                                     ●                ●
+                                                                                                                                                                                                                            ●
+                                               ●                       ●                                                                 ●    ●                                                         ●           ●             ●
+                              ●                  ●
+                                                                               ●●
+                                                                                       ●            ●            ●                                        ● ● ●          ●                 ● ●                   ●●     ●
+                                                                                                                                                                                                                         ●
+                                                                                                                                                                                                                                               ● ●
+                                ●       ● ●● ●                       ●●              ● ● ●●    ● ●          ● ●● ●                           ●●             ●     ● ●● ●● ● ●                       ●
+                                                                                                                                                                                                      ●●    ●
+                                                                                                                                                                                                         ● ● ●●                            ●     ●
+                     ●●        ●●                                          ● ●●                    ● ●● ●                                                  ● ●                                                       ● ● ● ● ● ● ● ● ●● ● ● ● ● ● ●
+              0.0
+
+
+
+
+                                                                                                                                   0.0
+
+
+
+
+                                          ●                                           ●                                                                                      ● ●●
+                      ●   ●● ●    ● ●●●● ● ● ● ● ●●●               ●
+                                                                    ●   ● ● ● ● ● ●●●    ● ● ●●
+                                                                                                ●
+                                                                                                       ●●
+                                                                                                          ●● ●●●   ●                             ●●
+                                                                                                                                             ● ●●●
+                                                                                                                                                              ● ●●
+                                                                                                                                                                ● ●
+                                                                                                                                                                      ●
+                                                                                                                                                                           ●
+                                                                                                                                                                                                     ●
+                                                                                                                                                                                                          ● ●
+                                                                                                                                                                                                               ●      ●   ●   ● ● ●● ● ● ● ●
+                                                                                                                                                                                                                                       ●
+
+
+
+                    0                    20                    40                       60                80         100                 0                         20                       40                         60                               80           100
+                                                                       Index                                                                                                                             Index
+
+                                                               (c)                                                                                                                          (d)
+Figure 3: Simulated perturbed data set: index plot of |dmax | for β under: (a) case-
+                    weight perturbation; (b) response perturbation; (c) covariate x1 perturbation;
+                    (d) covariate x2 perturbation.
+
+
+
+
+                                              Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+268                                                        Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+
+Table 4: Simulated perturbed data set: MLEs of complete data set and data sets with
+                  case #7, case #40 and cases #7 and #40 deleted, and their relative changes.
+                                          Parameter                                                                        γ                            β0                                β1                      β2
+                                          True value                                                                0.1                          -1.5                                   0.5                  0.5
+                                          MLE                                                                      0.108                        -1.369                                0.454                 0.379
+                                          MLE (#7)                                                                 0.115                        -1.364                                0.452                 0.377
+                                          Relative change (%)                                                       6.48                         0.40                                  0.36                 0.48
+                                          MLE (#40)                                                                0.098                        -1.480                                0.467                 0.510
+                                          Relative change (%)                                                       9.84                         8.04                                  2.83                 34.77
+                                          MLE (#7, #40)                                                            0.105                        -1.476                                0.466                 0.508
+                                          Relative change (%)                                                       3.55                         7.80                                  2.63                 34.12
+                1.0
+
+
+
+
+                                                                                                                                           1.0
+                0.8
+
+
+
+
+                                                                                                                                           0.8
+                0.6
+
+
+
+
+                                                                                                                                           0.6
+         dmax
+
+
+
+
+                                                                                                                                    dmax
+                0.4
+
+
+
+
+                                                                                                                                           0.4
+                                                                                                                                                                ●                                                      ●
+                                                                                                                                                                                                                                    ●
+                                                                                                                                                                                                             ●              ●
+                                                                  ●                                                                                                     ●        ●
+                                               ●                                                                                                                                                                                ●                          ●
+                                                                                                                                                                    ●                                         ●
+                0.2
+
+
+
+
+                                                   ●
+                                                                                                                                           0.2
+
+                          ●
+                                                                                                                                                            ●
+                                   ●       ●                  ●          ●●                                                                                                                                                                        ●
+                              ●                                                                         ●                                                                                                                                              ●
+                                                  ●                              ●                                                                                      ●
+                                 ●                                                            ●      ●
+                        ●                           ●                                 ●                    ●
+                       ●        ● ● ●● ●                        ●         ●   ●         ●      ●          ● ●
+                                                   ●    ● ●●     ●     ●●   ●●     ●                   ●    ●                                                                                                                            ●          ●
+                         ●            ●                      ●        ●
+                             ●                        ●●           ● ● ● ● ● ●● ● ● ● ● ●● ●●
+                                                                                                ● ●      ●
+                                                                                                              ●●
+                                                                                                                 ●                                                                                                                                 ●
+                                        ●     ●● ●       ●    ●                                   ●            ●                                                                ●                                                             ●
+                              ●●                                               ●          ● ●    ● ●●                                                      ●                        ●                                    ●
+                                       ● ●                                          ●
+                0.0
+
+
+
+
+                                                                                                                                           0.0
+
+
+
+
+                                                          ●                                        ●                                                                                                                               ●
+                                          ●●●                       ●                                                                                             ●
+                                                     ●     ●                                                                                            ● ● ●●● ●●          ●●●● ●●● ●●●●●●●●●●●●●●●●●●●●●●●●●● ●●●●●●●●● ●●●● ●● ● ●●●●● ●●●● ●●●● ●●● ●●●
+
+
+
+                      0                 20                40               60                       80                  100                             0                     20                 40                60                   80             100
+                                                                  Index                                                                                                                                 Index
+
+                                                          (a)                                                                                                                                    (b)
+                                                                         1.0
+                                                                         0.8
+                                                                         0.6
+                                                                  dmax
+                                                                         0.4
+                                                                         0.2
+
+
+
+
+                                                                                                    ●      ● ●●            ●●    ● ●●       ●●              ●           ●        ●● ● ●    ●●
+                                                                                        ●       ●         ● ●                                ●
+                                                                                                            ●       ●
+                                                                                    ●                                                                   ●           ●
+                                                                                                                                                                             ●          ●
+                                                                                        ●                ●
+                                                                                             ●                    ●                                                                  ● ● ●
+                                                                                                                    ●
+                                                                                 ●          ●        ●             ●              ●●        ●    ● ●●   ● ●●       ●                        ●●● ●
+                                                                                   ●●             ●●●        ●●         ●●●● ●●●●    ● ●● ●       ●   ●● ●    ●● ●● ●                 ●        ●
+                                                                                  ●                                                                                                       ●
+                                                                         0.0
+
+
+
+
+                                                                                                 ●●                                       ●         ●                                            ●
+                                                                                            ●
+                                                                                                      ●
+                                                                                                                                         ●               ● ●●
+
+
+
+
+                                                                                0                       20                  40                   60                         80                  100
+                                                                                                                                   Index
+
+                                                                                                                            (c)
+Figure 4: Simulated perturbed data set: index plot of |dmax | for γ under: (a) case-
+                      weight perturbation; (b) response perturbation; (c) covariate d perturbation.
+
+
+
+6. Application
+      Next, we analyze the motivational example presented in Section 2 to illustrate
+the proposed methodology.                                                       We also compare the correlated binomial regression
+models with the beta-binomial regression model (Prentice, 1986), the negative
+
+
+
+                                               Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                                    269
+
+
+
+binomial regression model, the Poisson regression model and the usual binomial
+regression model.
+
+   The beta-binomial distribution (Skellam, 1948) is derived by regarding the
+probability of success parameter p to arise from the beta distribution, Beta(α1 , α2 ),
+α1 > 0 and α2 > 0. Thus, under the parameterization p = α1 /(α1 + α2 ) and
+ρ = 1/(α1 + α2 + 1), such that α1 = p/ζ and α2 = (1 − p)/ζ , where ζ = ρ/(1 − ρ),
+the beta-binomial distribution can be written as
+                                                                         −1
+                        y−1          n−y−1                 n−1
+                       n  Y             Y                     Y
+P (Y = y | n, p, ζ) =         (p + ζj)       ((1 − p) + ζj)      (1 + ζj) ,
+                       y j=0            j=0                   j=0
+
+         Qx
+where    j=0 cj = 0, for any x < 0, y = 0, 1, . . . , n, n ∈ N − {0}, 0 < p < 1
+and −1   ≤ ρ ≤ 1. The mean and variance of this model are E (Y ) = np and
+Var (Y ) = np (1 − p) {1 + (n − 1)ρ} (Prentice, 1986).
+
+   Let   y1 , y2 , . . . , ym be a set of observed values of Y1 , Y2 , . . . , Ym .        Then, the
+log-likelihood function is given by
+
+                                              yX i −1
+                            m
+                                  (
+                                             ni
+   `BB (p, ζ | m, n, y) =
+                            X
+                                      log       +       log (pi + ζi j)
+                            i=1
+                                             yi   j=0
+                                                                                                  (10)
+                                   Xi −1
+                                ni −y                                   i −1
+                                                                       nX
+                                                                                            )
+                            +               log ((1 − pi ) + ζi j) −           log (1 + ζi j) ,
+                                  j=0                                  j=0
+
+where pi = Qi and ρi = Ri . The MLEs for the beta-binomial regression model
+can be obtained by direct maximization of the log-likelihood function (10). We
+refer the reader to Prentice (1986) for a detailed description of the observed Fisher
+information matrix, as well as for the asymptotic results for parameter estimates
+in the beta-binomial regression model.
+
+   For the correlated binomial regression model, we considered the link functions
+of Table 1 for p and the AR correlation structure for ρ.                     For the beta-binomial
+regression model, we also considered the link functions of Table 1 for p and the AR
+correlation structure for ζ . The negative binomial and binomial regression models
+were tted using the link functions of Table 1 for p, and the Poisson regression
+model was tted with log link function for p.
+
+   To model the probability of success of the Bernoulli trials, two covariates are
+considered: the average number of medical appointments per employee, x1 , and
+the average cost of a medical test, x2 . The covariate: number of days between the
+beginning of the plan period and the rst high-cost health service occurrence per
+each employee, rij , is used to account for the dependence between the Bernoulli
+variables inside the company. In fact, we consider the variable mins,t |ris − rit |,
+that is, the minimum of days between the employee s and t, which assumes values
+between zero, when both employees use the service on the same day, and 365, when
+there is no use of the plan either by employee s or t. This variable is standardized in
+the interval [0, 1] using the transformation mins,t |ris − rit | = mins,t |ris − rit |/365.
+It is intuitive to assume that the greater the dierence between the times of using
+
+
+
+                     Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+270                        Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+the plan, the lower the relation between the use of the service. For this reason, the
+                                                                     mins,t |ris −rit |
+continuous AR correlation structure given by Ri = γ                        365          , i = 1, 2, . . . , m
+and s, t = 1, 2, . . . , ni , is considered in the analysis.
+
+      The obtained values of AIC and BIC for each model tted to the health
+care provider data set are shown in Table 5.                  From the AIC and BIC values
+of all models tted to the data set, it can be seen that the correlated binomial
+regression model with complementary log-log link function is identied as the best
+modeling choice. Therefore, in Table 6 we present the model t summary for the
+correlated binomial regression model with complementary log-log link function
+for p and AR correlation structure for ρ. From the 95% ACI of the correlation
+structure parameter, γ , presented in this table, it can be observed that the zero
+value is not contained in such an interval, thus providing evidence that the data
+is overdispersed and that the correlated binomial regression model can be used to
+analyze the health care provider data set.
+
+
+
+Table 5: Health care provider data set: AIC and BIC values for all regression models
+             tted with dierent link functions †.
+   Model                        Link function for p         AIC                      BIC
+   Correlated Binomial            Logit                    397.861                 410.161
+                                 Log-log                   398.390                 410.691
+                           Complementary log-log           397.811                 410.112
+                                 Probit                    398.143                 410.444
+   Beta-Binomial                  Logit                    440.544                 452.844
+                                 Log-log                   440.518                 452.819
+                           Complementary log-log           440.545                 452.846
+                                 Probit                    440.530                 452.830
+   Negative Binomial              Logit                    466.482                 478.783
+                                 Log-log                   466.661                 478.961
+                           Complementary log-log           466.431                 478.731
+                                 Probit                    466.561                 478.862
+   Binomial                       Logit                    538.471                 547.696
+                                 Log-log                   554.946                 564.172
+                           Complementary log-log           538.495                 547.720
+                                 Probit                    538.242                 547.468
+   Poisson                             Log                 668.343                 677.569
+   † Correlated binomial regression models were tted with AR correlation structure for ρ
+      and beta-binomial regression models were tted with AR correlation structure for ζ .
+
+
+
+Table 6: Model t summary for the health care provider data set: MLEs and 95% ACIs
+             of model parameters γ , β0 , β1 and β2 .
+        Parameter           γ                  β0                    β1                  β2
+           MLE            0.223              -3.833              0.206                0.322
+         95% ACI      (0.121, 0.325)    (-4.411, -3.254)     (0.032, 0.381)       (0.161, 0.484)
+
+
+
+                      Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                                                                                                                                                                                                                                               271
+
+
+
+   The assumption of independence and the presence of outliers may be observed
+by examining the residuals plotted in time order, if the order was available.
+Moreover, residuals can also be used to check for model misspecication and for
+outliers. This can be done by examining the residuals plotted against the predicted
+values. The standardized residuals based on the predicted values of Yi , and the
+deviance residuals based on the log-likelihood function, are presented in Figure 5.
+Both the standardized residuals, in Figure 5(a), and the deviance residuals, in
+Figure 5(b), indicate a good specication of the model.
+
+
+
+
+                                                                                                                                                          4
+               4
+
+
+
+
+                                                                                                                                                                                            ●
+
+
+
+                                                                                                                                                                                                                                            ●
+
+
+
+
+                                                                                                                                                                   2
+                                                                                                                                                                                                                                                            ●
+               2
+
+
+
+
+                                                                                                                                                                                            ●                       ●
+                                                                                                                                                                                ●
+
+
+
+
+                                                                                                                                                Deviance residuals
+                                                                                                                                                                            ●
+                                                                                                                                                                                            ●                                   ●
+                                                                                                                                                                                        ●
+        Std. residuals
+
+
+
+
+                                                                                                                                                                                                ●                                   ●
+                                                                                                                                                                                                                ●
+                                                 ●
+                                                                                                                                                                           ●                        ●
+                               ● ●                                                       ●                                                                                          ●●     ●
+                                                                                                                                                                                             ●
+                                                                                                                                                                                             ●                  ●●
+                                                 ●                                                                                                                           ●
+                                                                                                                                                                                               ●                                                                                    ●
+                              ●●           ●●
+                                             ●   ●●          ●●
+                                                                  ●            ● ●                     ●                                                                                         ●         ●
+                                           ●      ●●
+                                                  ●               ●                                                                                                                                 ●●
+
+
+
+
+                                                                                                                                                        0
+                                                 ● ●●         ●   ●●                                                    ●                                                                                       ●
+               0
+
+
+
+
+                                                         ●
+                             ●               ●● ● ● ● ● ● ● ●●●    ●●●               ●       ●   ●         ● ● ●                                                                            ●
+                                                                                                                                                                                            ●                                                   ●
+                           ●
+                          ●●
+                          ●●● ●●●
+                                ●●●●●●●
+                                      ●●  ●●
+                                        ●●● ●
+                                            ●     ● ●● ●● ●
+                                                       ●         ●●                                        ●●●
+                                                                                                                                                                                                         ●
+                          ●● ●
+                             ●
+                             ●●●●●
+                                 ●●
+                                  ●● ●      ●
+                                            ●●●●● ●●● ●
+                                                      ●
+                                                      ●
+                                                           ●●● ● ●
+                                                                 ●●                      ● ●      ●●           ● ●                                                     ●●● ●
+                                                                                                                                                                       ●●    ●                                     ●                    ●           ●
+                                                                                                                                                                                                                                                                ● ●
+                                 ●●● ● ●   ●●● ●●● ●● ● ●                                                                   ●
+                                                                                                                             ●                                         ●●● ●●●
+                                                                                                                                                                          ●●●●          ●        ●
+                                                                                                                                                                                                 ●
+                                                                                                                                                                                                 ●●    ●                                    ●
+                                                                                                                                         ●                               ●●   ● ● ● ●●●                 ●
+                                                                                                           ●                                                              ●●●      ●●        ● ● ● ●●          ● ●                                              ●               ●
+                                                                                                                                                                            ●●● ●● ●● ●
+                                                                                                                                                                              ●         ●●       ●● ● ●●                                        ●   ●
+                                                                                                                                                                             ●●  ●●
+                                                                                                                                                                                  ●     ●●             ●
+                                                                                                                                                                               ●               ●                                                                 ●
+                                                                                                                                                                               ●
+                                                                                                                                                                               ●  ●●   ● ●● ●●               ●                                          ●       ●
+                                                                                                                                                                                        ●
+                                                                                                                                                                                       ●●        ● ●             ●●
+                                                                                                                                                                                           ●     ●●                                                             ●           ●           ●
+                                                                                                                                                                                       ●●    ●
+                                                                                                                                                                                           ●    ●●             ●
+                                                                                                                                                                                                     ●                                                                  ●
+                                                                                                                                                                                                               ●                                                                        ●               ●
+
+
+
+
+                                                                                                                                              −2
+                                                                                                                                                                                                                 ●
+               −2
+
+
+
+
+                                                                                                                                                          −4
+               −4
+
+
+
+
+                         0                       2                   4        6                                         8                10                            0                    2                          4        6                                                   8                   10
+                                                                  Predicted values                                                                                                                                  Predicted values
+
+                                                                              (a)                                                                                                                                               (b)
+Figure 5: Health care provider data set: (a) standardized residuals versus predicted
+                         values; (b) deviance residuals versus predicted values.
+
+
+
+                                                                                     85      ●                                                                                                                                          85      ●
+                                                                                                                                                           0.5
+                1.0
+
+
+
+
+                                                                                                                                                           0.4
+                0.8
+
+
+
+
+                                                                                                                                               0.3
+        0.6
+
+
+
+
+                                                                                                                                              LDi
+        Ci
+
+
+
+
+                                                     ●   36                                                                                                                                         ●   36
+                                                                                                                                                           0.2
+                0.4
+
+
+
+
+                                                                                                                                     ●                                                                                                                                                              ●
+                                                             ●                                                                                                                                              ●
+
+                                                                                                                        ●                                                                                                                                                           ●
+                                                                                                                ●                                                                                                                                                       ●
+                                                                                                                                                           0.1
+                0.2
+
+
+
+
+                                       ●                                  ●                                                                                                         ●                                       ●
+
+
+
+                                            ●            ●                                                          ●            ●                                                      ●               ●                                                                       ●               ●
+                                   ●                                                                        ●                                                                   ●                                                                                   ●
+                                                                      ●                                                      ●                                                                                          ●                                                                   ●
+                                                ● ●                                                 ●             ● ●        ● ●                                                             ● ●                                                 ●             ● ●        ● ●
+                                    ●
+                0.0
+
+
+
+
+                                                               ●                                                                  ● ●●                                           ●                          ●                                                                  ● ●●
+                                                                                                                                                           0.0
+
+
+
+
+                            ● ●●                                  ●● ● ● ● ●●●● ● ●● ●●●● ●
+                                    ● ●        ●       ●                                               ●●● ● ● ●●     ● ●●● ●
+                          ●●●●●●●●●● ●● ●●●●●●●● ●●●● ●●●●●●●●●●●●● ●●●●●●●●●●●●● ●●●●●●●●● ●●●●●●●●●●● ●●●●●● ●●●●●●● ●●●●● ● ●●●●●●●
+                                                                                                                                                                         ● ●●
+                                                                                                                                                                                 ● ●        ●       ●          ●● ● ● ● ●●●● ● ●● ●●●● ●            ●●● ● ● ●●     ● ●●● ●
+                                                                                                                                                                       ●●●●●●●●●● ●● ●●●●●●●● ●●●● ●●●●●●●●●●●●● ●●●●●●●●●●●●● ●●●●●●●●● ●●●●●●●●●●● ●●●●●● ●●●●●●● ●●●●● ● ●●●●●●●
+
+
+
+                          0                                      50                               100                            150                                   0                                        50                                      100                                     150
+                                                                                 Index                                                                                                                                              Index
+
+                                                                              (a)                                                                                                                                               (b)
+Figure 6: Health care provider data set: (a) Cook's generalized distance; (b) likelihood
+                         distance.
+
+
+   The Cook's generalized distance and the likelihood distance are shown in
+Figure 6(a) and Figure 6(b), respectively. Both metrics indicate case #36 and case
+#85 as inuential. Local inuence metrics are depicted in Figure 7. Based on case-
+weight perturbation (Figure 7(a)), observation #85 appears as inuential. Under
+the response perturbation (Figure 7(b)), covariate x1 perturbation (Figure 7(c))
+
+
+
+                                                       Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+272                                                                 Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+and covariate x2 perturbation (Figure 7(d)) schemes, no observation is highlighted
+as inuential on                                 β̂ .                 Notice also, from Figure 8, that there is no inuential
+observation on γ̂ under any perturbation scheme.
+
+
+
+
+                                                                                                                                                       1.0
+                1.0
+
+
+
+
+                                                                                                                                                       0.8
+                0.8
+
+
+
+                                                                             85     ●
+
+
+
+
+                                                                                                                                                       0.6
+                0.6
+
+
+
+
+                                                                                                                                                dmax
+         dmax
+
+
+
+
+                                                                                                                                                       0.4
+                0.4
+
+
+
+
+                                                ●                                                                                     ●
+                                  ●
+                                                     ●
+                                                                                                                                                                                                ●
+
+
+
+
+                                                                                                                                                       0.2
+                0.2
+
+
+
+
+                                                                                                                                                                                                              ●                     ●      ●
+                                                                                                                                                                       ●                                  ●
+                                                                                                               ●
+                              ●                                                                                                                                    ●                       ●       ●               ●
+                                                                                                                                                                     ● ●  ●            ●                                                 ●      ●
+                                                                                                                                                                                ●                                              ●
+                                                                                                                                  ●                           ●●   ●                           ● ●● ● ●         ●                                  ●
+                                                                                                                          ●                                                             ● ●                   ●                               ●
+                                   ● ●             ●                                                    ●                                                       ● ● ●         ●
+                                                                                                                                                                              ●     ●    ● ●●        ● ●●      ●            ● ●● ● ● ●
+                                                               ●                                                                                                            ●                    ●                       ● ●             ●          ●
+                         ●                                                                  ●                        ●●                                       ●    ●         ● ●      ●          ● ● ● ● ●● ●●●●●                     ●●          ● ●
+                                                    ●
+                                                           ●● ●●                                                   ● ● ●●             ●                          ●
+                                                                                                                                                             ● ● ●● ●● ●●●● ● ● ●         ●                ●            ● ● ●●● ● ● ●
+                                                     ●                   ● ●● ● ● ●                                                  ● ●                                                          ●         ●                    ● ● ●●●
+
+
+
+
+                                                                                                                                                       0.0
+                            ●                                                                ●      ● ●● ●                                                                     ● ● ●● ●      ●●●                 ● ● ●● ● ● ● ● ●
+                0.0
+
+
+
+
+                                    ●●               ●    ●       ●                                                              ● ●●                          ● ● ● ● ● ●●●                             ● ●●                                ● ●●
+                       ●●●●●●●●●●●●●● ●●●●●●●●●●●●● ● ●●●●● ●●●●●●●●●●●●●●●● ●●●●●●●●●●●●●●●●●●●●●●●●●●●● ●●●●●●●●● ●●●●●● ●●●●●●●●● ●●●●●●●●                                    ● ● ● ●●● ● ●                      ●●●●   ●      ●   ●    ●●● ●●●
+
+
+
+
+                      0                                  50                                100                                  150                          0                                50                       100                            150
+                                                                           Index                                                                                                                         Index
+
+                                                                    (a)                                                                                                                            (b)
+                1.0
+
+
+
+
+                                                                                                                                                       1.0
+                0.8
+
+
+
+
+                                                                                                                                                       0.8
+                0.6
+
+
+
+
+                                                                                                                                                       0.6
+         dmax
+
+
+
+
+                                                                                                                                                dmax
+                0.4
+
+
+
+
+                                                                                                                                                       0.4
+
+
+
+
+                                                ●                                                                                                                                                                                 ●
+                                                                                                                                                                                          ●
+                                                     ●                                                                                                                                                                                                     ●
+                                                                                                                                      ●                                           ●
+                                                                                                                   ●
+                                  ●   ●                                             ●                                                                                                 ●
+                0.2
+
+
+
+
+                                                                ●
+                                                                                                                                                       0.2
+
+
+
+
+                                                                                                                                  ●
+                                                                                                                                                                           ●
+                                                  ●                                                            ●                                                         ●                                                                  ●
+                                                 ●                                                          ●●                                                                                                         ●
+                                                                                                                                                                                      ●                                               ●      ●     ●      ●
+                                                             ●
+                                                                                                                     ●                                                                                                          ●                  ●       ●● ●
+                                    ●                                                          ●●●     ● ●                                                           ●●                        ●                     ●      ●                           ●
+                                                                                       ●                                                                                                                    ●                                 ●●
+                                 ●       ●                 ●                                     ●      ●              ● ●                                       ●                      ●                                 ●
+                                                                               ● ●                                 ●                                                                               ●                     ● ●                            ●       ●
+                         ● ● ●                          ●●     ● ● ●
+                                                                        ●●●● ●● ●   ●●● ●       ● ●
+                                                                                                   ●      ●     ●●                                                ●   ●                           ●●                         ●         ●        ●
+                                                                                                                                                                                                                                                       ●
+                                                         ●                                                   ●                                                                                           ●      ●● ●●                    ●
+                0.0
+
+
+
+
+                           ●●                                               ●            ●                     ● ● ●    ●●                                     ● ●●                                           ●●                           ●
+                                                                                                                                                                                                                                           ●                   ●●
+                                                                                                                                                       0.0
+
+
+
+
+                        ●            ●        ●               ● ●     ●●          ●  ● ●             ● ●   ●                                                            ●                    ●● ●                                                   ●      ●
+                       ●● ●● ●●●● ●●● ●●●●●●●●●●● ●●●●●●● ●●●● ●●●●●●● ● ● ● ●● ●●●● ●●● ●●●●●●● ● ●●● ●●●● ●●●● ●● ●●●●●                                     ●               ● ●                                ●● ●          ●●           ● ● ●● ●
+                                                                                                                                                             ●● ●● ●●● ●● ●●●●●●●●●●●● ●●●●●●● ●●●● ●●●●●●●●●●● ● ●● ●●●●● ●●●● ●●●●●●●● ●● ●● ●●●● ●●●● ●● ●●●●●
+
+
+
+                       0                                 50                                100                                  150                          0                                50                       100                           150
+                                                                           Index                                                                                                                         Index
+
+                                                                    (c)                                                                                                                            (d)
+Figure 7: Health care provider data set: index plot of |dmax | for β under: (a) case-
+                      weight perturbation; (b) response perturbation; (c) covariate x1 perturbation;
+                      (d) covariate x2 perturbation.
+
+      In Table 7, we present the relative dierence between MLEs obtained using the
+complete data set and MLEs obtained using the data set without case #36, case
+#85 and cases #36 and #85, which were identied as inuential for the MLE of
+β . We notice that, when we remove only the globally inuential observation #36,
+there is a pronounced dierence in the MLE of β1 . When the locally inuential
+case #85 is removed, the MLE of β1 is greatly aected and the dierence in the
+MLE of β2 is also noticeable. If both cases #36 and #85 are removed, there is a
+moderate eect in the MLEs of β1 and β2 .
+
+      In Table 8, we show the model t summary for the correlated binomial
+regression models with complementary log-log link function for                                                             p and AR
+correlation structure for                                                          ρ tted to the data set without case #36, case #85
+and cases #36 and #85. It can be seen that removing case #36 does not aect
+which model parameters are statistically signicant at a 95% condence level. On
+
+
+
+                                                  Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                                                                                                                                                                                         273
+
+
+
+the other hand, removing case #85 or cases #36 and #85 makes the zero value to
+be contained in the 95% ACI of parameter β1 .
+
+
+
+
+                                                                                                                               1.0
+              1.0
+
+
+
+
+                                                                                                                               0.8
+              0.8
+
+
+
+
+                                                                                                                               0.6
+              0.6
+
+
+
+
+                                                                                                                        dmax
+       dmax
+
+
+
+
+                                                                                                                               0.4
+              0.4
+
+
+
+
+                                                                                                                               0.2
+                                                                                                                                                                                                                                 ●
+              0.2
+
+
+
+
+                                                                                                                                                                                                 ●
+                                                                                   ●                   ●                                                                             ●                                                           ●
+                                      ●                                                                                                   ●        ●●                ● ● ●●                                                                  ●
+                                                                                                                ●                                        ●                         ● ●                ●
+                                                                                                                                         ●                                                   ●             ●
+                         ●                                      ●●●             ●                        ●     ●                              ●    ●
+                                                                                                                                                                               ●
+                                                          ● ●                        ●                                                                           ●
+                          ●           ● ● ●                        ●    ●●                                                                                            ●            ● ● ●                                                 ●
+                           ●                                                  ●       ● ●         ● ●●                                                                                               ●                       ●       ●
+                      ● ●     ●● ● ●       ●●       ●●●●             ●
+                                                                                             ●
+                                                                                 ●● ● ● ●●● ●● ●● ●       ●●●
+                                                                                                                                                             ●                     ●● ●●         ●        ●●                                      ●
+                              ●        ● ●                    ●             ●        ● ●● ● ●       ● ● ●●                                                                                                                                ●
+                            ●● ● ●                            ● ●● ● ●●                                                                                                           ●                                        ●
+                                           ● ●● ● ●                 ●
+                                                                                         ●                 ● ●●                                             ●
+                                                                                                                                                                    ●
+                                                                                                                                                                             ●
+                                                                                                                                                                               ●●            ● ● ●
+                                                                                                                                                                                                ●                      ●●     ●
+                       ●    ●                   ●      ● ●  ●         ●     ●   ● ●          ●        ●                                               ●●●
+                        ●       ●●● ●
+                                            ●    ●
+                                               ●●●      ● ● ● ●      ● ●                   ●    ● ●●                                     ● ●● ● ●             ●                          ●                                   ●      ●       ● ●
+
+
+
+
+                                                                                                                               0.0
+                                                                                                                                                                                ●
+              0.0
+
+
+
+
+                                                           ●                 ●● ● ●     ● ●                ●                                   ●                                              ●              ●                  ●          ●
+                     ●●                                                                       ●● ●                                                        ●     ●    ●                                                             ●
+                        ● ●     ● ●● ● ●●●    ●    ●● ●●● ●
+                                                                       ● ●●    ●    ●           ●            ● ●                          ● ●●●●●●● ●●● ● ●●● ●●●●●●●● ●●●●●●● ● ●●          ● ● ●●●●●●●●●●●●●●●●●●●●●●● ●●●●●●● ●●● ●●●●●●● ●●●●●●
+
+
+
+
+                     0                         50                         100                         150                              0                             50                               100                                        150
+                                                             Index                                                                                                                    Index
+
+                                                       (a)                                                                                                                  (b)
+                                                                  1.0
+                                                                  0.8
+                                                                  0.6
+                                                           dmax
+                                                                  0.4
+                                                                  0.2
+
+
+
+
+                                                                                       ● ●●●      ●                                           ●            ●● ● ●
+                                                                                 ●●        ●    ●     ● ●● ● ●        ●
+                                                                                                                              ●     ● ●●●●       ●                  ●
+                                                                                                    ●                                                        ●     ● ●
+                                                                                         ●         ●         ●            ● ●                   ● ●               ● ●
+                                                                           ● ●           ● ●                         ● ● ●                       ● ●                   ●
+                                                                              ●                            ●         ● ●●            ●     ●               ● ● ●●     ●
+                                                                            ● ●●● ●●● ● ● ●    ●●●●●    ●● ● ● ●●
+                                                                                             ●● ● ● ●         ●    ●      ● ● ●●●●●●● ●● ●●●●●●● ●●●●●●● ●●       ●
+                                                                                                                                                               ● ● ●●●
+                                                                                ●● ●                          ● ●●                             ●            ●●
+                                                                  0.0
+
+
+
+
+                                                                                             ●            ● ●           ●   ●        ● ● ●
+                                                                           ●●●         ●              ●            ●               ●                   ●●●      ●
+                                                                                    ●●    ●          ● ●          ●●       ●
+
+
+
+
+                                                                          0                          50                         100                              150
+                                                                                                                     Index
+
+
+                                                                                                                    (c)
+Figure 8: Health care provider data set: index plot of |dmax | for γ under: (a) case-
+                    weight perturbation; (b) response perturbation; (c) covariate d perturbation.
+
+
+
+
+Table 7: Health care provider data set: MLEs of complete data set and data sets with
+               case #36, case #85 and cases #36 and #85 deleted, and their relative changes.
+                                     Parameter                                                                 γ                       β0                            β1                          β2
+                                     MLE                                                                 0.223                    -3.833                      0.206                      0.322
+                                     MLE (#36)                                                           0.222                    -4.031                      0.260                      0.317
+                                     Relative change (%)                                                  0.44                     5.19                       25.88                      1.58
+                                     MLE (#85)                                                           0.225                    -3.572                      0.117                      0.245
+                                     Relative change (%)                                                  0.96                     6.79                       43.18                      24.00
+                                     MLE (#36, #85)                                                      0.225                    -3.774                      0.173                      0.240
+                                     Relative change (%)                                                  0.67                     1.53                       16.40                      25.41
+
+
+
+
+                                         Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+274                        Carlos Diniz, Rubiane Pires, Carolina Paraíba & Paulo Ferreira
+
+
+Table 8: Model t summary for the health care provider data set: MLEs and 95% ACIs
+            of model parameters γ , β0 , β1 and β2 with inuential observations removed.
+ Removed cases Parameter     γ               β         0     β          1    β          2
+
+ (#36)           MLE       0.222           -4.031           0.260          0.317
+               95% ACI (0.120, 0.324) (-4.610, -3.453) (0.086, 0.434) (0.156, 0.478)
+ (#85)           MLE       0.225           -3.572           0.117          0.245
+               95% ACI (0.123, 0.328) (-4.151, -2.994) (-0.057, 0.291) (0.083, 0.406)
+ (#36, #85)      MLE       0.225           -3.774           0.173          0.240
+               95% ACI (0.123, 0.327) (-4.352, -3.196) (-0.002, 0.347) (0.079, 0.402)
+
+      Since we are dealing with a real data set, the removal of inuential cases
+(observations) should not be decided lightly.              We notice, for instance, that
+the collection of more data could reveal the pronounced cases as not being
+inuential.    On the other hand, the researcher needs to be made aware that
+his/her data set contains observations that have been indicated to have a more
+predominant inuence in model parameter estimates.                Therefore, based on the
+analysis conducted in this work and considering the complete data set, the decision
+regarding the renewal of contracts establishes that the probability of high-cost
+health service in the i-th company, for this real data set, is given by
+
+
+                   pˆi = 1 − exp {− exp {−3.833 + 0.206xi1 + 0.322xi2 }} ,
+
+with xi1 : average number of medical appointments per employee, and xi2 : average
+cost of medical tests.       The correlation between any two individuals within the
+i-th company, for this real data set, is given by ρˆi = 0.223v(ri ) , with v(ri ): the
+minimum of days between the employees / 365. We note that the choice of variables
+to model the probability of success p and the correlation ρ was made based on
+the covariates provided in the data set that were statistically signicant at a 95%
+condence level.
+
+
+
+
+7. Conclusions
+      In this paper, we presented a frequentist approach for the correlated binomial
+regression model, which is a useful tool to model binomial data subject to
+overdispersion. Model parameters were estimated by direct maximization of the
+log-likelihood function.      The class of correlated binomial regression models can
+simultaneously model the probability of success parameter p and the correlation
+parameter     ρ.     Therefore, we have considered dierent link functions for the
+regression structure of p and the AR correlation structure was assumed for ρ.
+
+      The results based on simulated data sets indicated good asymptotic properties
+of model parameter estimates. Sensitivity of MLEs under dierent perturbation
+schemes was assessed using simulated perturbed data sets and the considered
+regression diagnostic metrics were indicated to have a good performance under
+the correlated binomial regression framework.
+
+      A real data set on a health care provider in Brazil was analyzed to illustrate the
+proposed methodology. MLEs of model parameters were computed and diagnostic
+
+
+
+                       Revista Colombiana de Estadística - Applied Statistics 44 (2021) 253278
+
+Inuence Diagnostics for Correlated Binomial Regression Models                              275
+
+
+
+metrics were used to detect outlier observations as well as globally and locally
+inuential observations with a more pronounced eect in parameter estimation.
+For this application, the correlated binomial regression model was shown to be
+a good modeling choice.          Moreover, assuming the response variable to follow a
+correlated binomial distribution provides a more realistic approach to the data,
+since employees within the same company can be regarded as not necessarily
+independent.
+
+                   
+                    Received: March 2020  Accepted: March 2021
+References
+Agresti, A. (2015),     Foundations of Linear and Generalized Linear Models, Wiley Series in Probability and Statistics, rst edn, Wiley, New Jersey.
+Akaike, H. (1974), `A new look at the statistical model identication', IEEE Transactions on Automatic Control 19(6), 716723.
+Altham, P. M. E. (1978), `Two generalizations of the binomial distribution', Journal of the Royal Statistical Society. Series C 27(2), 162167.
+Cook, R. D. (1977), `Detection of inuential observations in linear regression', Technometrics 19(1), 15-18. Journal of the Royal Statistical
+Cook, R. D. (1986), `Assessment of local Society. Series B (Methodological) 48(2), 133-169.
+Cook, R. & Weisberg, S. (1982), Residuals and inuence in regression, Monographs on statistics and applied probability, Chapman and Hall, London.
+Diniz, C. A. R., Tutia, M. H. & Leite, J. G. (2010), `Bayesian analysis of a correlated binomial model', Brazilian Journal of Probability and Statistics 24(1), 6877.
+Efron, B. (1986), `Double exponential families and their use in generalized linear regression',   Journal of the American Statistical Association 81(395), 709721.
+Fu, J. & Sproule, R. (1995), `A generalization of the binomial distribution', Communications in Statistics - Theory and Methods 24(10), 26452658.
+Lambert, D. (1992), `Zero-inated poisson regression, with an application to defects in manufacturing', Technometrics 34(1), 114.
+Lehmann, E. L. & Casella, G. (1998),  Theory of point estimation, second edn, Springer, New York.
+Luceño, A. (1995), `A   family of partially correlated poisson models for overdispersion', Computational Statistics and Data Analysis 20(5), 511-520.
+McCullagh, P. & Nelder, J. A. (1989), Generalized Linear Models, second edn, Chapman and Hall, London.
+Nocedal, J. & Wright, S. J. (2006), Numerial Optimization, second edn, Springer-Verlag, New York.
+Pires, R. M. & Diniz, C. A. R. (2012), `Correlated binomial regression models', Computational Statistics and Data Analysis 56(8), 25132525.
+Prentice, R. L. (1986), `Binary regression using an extended beta-binomial distribution, with discussion of correlation induced by covariate measurement errors', Journal of the American Statistical Association 81(394), 321-327.
+R Development Core Team (2007), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3- 900051-07-0. http://www.R-project.org
+Schwarz, G. (1978), `Estimating the dimension of a model', Annals of Statistics 6(2), 461-464.
+She, Y. & Owen, A. B. (2011), `Outlier detection using nonconvex penalized regression', Journal of the American Statistical Association 106(494), 626-639.
+Sherman, M. (2011),   Spatial Statistics and Spatio-Temporal Data: Covariance Functions and Directional Properties, Wiley Series in Probability and Statistics, John Wiley and Sons.
+Skellam, J. G. (1948), `A probability distribution derived from the binomial distribution by regarding the probability of success as variable between the sets of trials',   Journal of the Royal Statistical Society, Series B 10(2), 257-261.
+Zhu, H., Lee, S.-Y., Wei, B.-C. & Zhou, J. (2001), `Case-deletion measures for models with incomplete data', Biometrika 88(3), 727-737.

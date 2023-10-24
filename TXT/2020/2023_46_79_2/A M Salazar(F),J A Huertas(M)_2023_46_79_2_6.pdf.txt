@@ -1,0 +1,860 @@
+A Joint Model of Competing Risks in Discrete Time with Longitudinal Information. Un modelo de riesgos en competencia en tiempo discreto con información longitudinal
+Universidad Nacional de Colombia, Bogotá, Colombia
+Abstract
+The survival competing risks model in discrete time based on multinomial logistic regression, proposed by Luo et al. (2016), models the non-linear and irregular shape of hazard functions by incorporating a time-dependent spline into the multinomial logistic regression. This model also directly includes longitudinal variables in the regression. Due to the issues arising from including both baseline and longitudinal covariates in the extended form as proposed, and considering that the latter may be subject to error, this article suggests an extension of the existing model. The proposed extension utilizes the concept of joint models for longitudinal and survival data, which is an eﬀective approach for integrating simultaneousness both baseline and time-dependent covariates into the survival model.
+Key words: Discrete time; Joint model; Longitudinal model; Logistic regression; Survival model.
+Resumen
+El modelo de supervivencia de riesgos en competencia en tiempo discreto basado en regresión logística multinomial sugerida por Luo et al. (2016), modela la forma no lineal e irregular de las funciones de riesgo, incorporando un spline dependiente del tiempo en la regresión logística multinomial. Dicho modelo también incluye variables longitudinales directamente en la regresión. Debido a los problemas derivados de la inclusión tanto de covariables basales como longitudinales en la forma ampliada que hace la propuesta, y considerando que estas últimas pueden estar sujetas a error, este artículo sugiere una ampliación del modelo existente. La extensión propuesta utiliza el concepto de modelos conjuntos para datos longitudinales y de supervivencia, que es un enfoque eﬁcaz para integrar simultáneamente en el modelo de supervivencia tanto las covariables basales como las dependientes del tiempo.
+Palabras clave: Modelo conjunto; Modelo de supervivencia; Modelo longitudinal; Regresión logística; Tiempo discreto.
+
+
+
+1. Introduction
+    Classiﬁcation models, such as logistic regression, are useful for estimating the
+probability of an event based on other variables. We can also analyze the time to
+such an event by including it as a covariate in the model. However, to properly
+model event times, it is preferable to use survival models, such as the Cox model
+(Cox, 1972). The widespread use of logistic regression to model survival times be-
+gan to be re-evaluated with the Cox model (Cox, 1972). An undoubtedly logical
+conclusion, since the logistic model does not consider the length of the follow-up
+time Myers et al. (1973). However, it wasn’t until the early 1980s that mathemati-
+cal comparisons emerged. Elandt-Johnson (1980) demonstrated how the likelihood
+of the logistic model approximates the partial likelihood of the Cox model when
+the event rate is low and follow-up time is not too long. Green & Symon (1983)
+showed that the estimation of the logistic regression model parameters is biased
+and loses precision as the follow-up time increases, and also concluded that: “In
+principle it would appear that the Cox model is superior to the logistic model
+since it utilizes time of response and hence incorporates more information." This
+discussion continued to evolve with studies such as Annesi et al. (1989), which
+reached similar conclusions as those already mentioned but generalizing to several
+qualitative and quantitative covariables.
+    When there are many tied survival times, the Cox model relies on approxi-
+mations to estimate parameters, which can be computationally intensive and yield
+subpar results. On the other hand, it is worth noting that when the probabilities
+of survival events are low, both the Cox model and the logistic regression models
+produce similar outcomes. Therefore, when the probabilities of survival events are
+low and there are tied survival times, logistic regression can be a useful alternative
+for modeling time-to-events. This conclusion can be extended to the analysis of
+competing risks using multinomial logistic regression models, i.e., discrete-time
+survival models. A model of this type was proposed by Begg & Gray (1984) based
+on time-dependent covariates.
+    Luo et al. (2016) extended the multinomial regression model proposed by Begg
+& Gray (1984) by incorporating a time-dependent spline, which provides ﬂexibility
+to the model when facing irregular risk behaviors and partially solves the loss of
+ﬁt problem caused by long follow-up times. The purpose of Luo et al. (2016) was
+to estimate the probability of loan default at diﬀerent time points, for credit risk
+assessment. The approach considers time-dependent covariates, treating each ob-
+served time point as a separate data line. The authors justiﬁed this data handling
+approach by noting that credit information is often recorded in this format. How-
+ever, in practice, longitudinal data may also be available intermittently for each
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+A Joint Model of Competing Risks in Discrete Time with Longitudinal Information 147
+
+
+subject and may be subject to errors. Furthermore, including both baseline covari-
+ates and longitudinal data in the model presents challenges because individuals
+with a longer credit history have a stronger inﬂuence on their baseline covariates
+than those who have recently started their credit, resulting in biased estimations.
+Because of this, we propose an extension to this model.
+    A useful method for integrating baseline and time-dependent covariates into
+the survival model is to jointly model longitudinal and survival data, where lon-
+gitudinal information is summarized and incorporated into the survival model. In
+the credit risk context addressed by Luo et al. (2016), where the database also
+includes baseline covariates, the problem can be treated using joint modeling of
+longitudinal and competing risks data. Several proposals have been made in this
+area, such as those by Elashoﬀ et al. (2007), Elashoﬀ et al. (2008), Williamson
+et al. (2007), Li et al. (2009), or Teixeira et al. (2019). Since these proposals use
+semiparametric survival models, they also face the tie problem mentioned earlier.
+Hence, it is also reasonable to consider using multinomial regression in such cases,
+particularly when the probabilities of the survival events are low.
+    In this paper, we extend the important model proposed by Luo et al. (2016)
+for modelling competing risks in discrete time based on longitudinal information.
+We do this through the concept of joint modeling to analyze situations where
+it is necessary to include both baseline and longitudinal variables in the model.
+We speciﬁcally illustrate its application using a credit database. The subsequent
+sections, provide a concise overview of survival data analysis using logistic regres-
+sion and the theory of joint modelling of longitudinal and survival data. Lastly,
+we present our proposal along with an application. This paper is based on the
+master’s thesis of Salazar (2021).
+
+
+2. Modeling Survival Data with Logistic Regres-
+   sion
+    After introducing the notation, we will provide a brief and clear explanation
+of the well-established relationship between the Cox model and logistic regres-
+sion. This relationship is crucial as it justiﬁes the use of logistic regression for
+survival analysis, and we will utilize it in our application. Next, we will introduce
+a multinomial regression model suitable for time-to-event analysis, for which we
+will provide an extension to enhance its capabilities.
+   Notation: In the multinomial model, we analyze a discrete time-to-event
+variable denoted as T , an event indicator δ, and a vector of independent covariates
+⃗ In the model proposed by Luo et al. (2016), the covariates are considered time-
+X.
+                                 ⃗
+dependent, hence the notation X(t).
+    The variable T represents the duration from the start date until the occu-
+rrence of an event, while δ indicates the diﬀerent outcomes. If there are more
+than two possible outcomes, it suggests a competing risks scenario. In the case
+of two outcomes, we assume that the time to event T can be right-censored non-
+informatively by a censoring time C. Here, the observed data for each subject
+i = 1, . . . , n is denoted as (Yi , δi ), where δi = I(Ti ≤ Ci ) indicates whether Yi is
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+148                                     Adriana Marcela Salazar & Jaime Abel Huertas
+
+
+an uncensored value of Ti , and Yi = min Ti , Ci .
+   To model the time-to-event variable T jointly with a longitudinal process, we
+denote the longitudinal variable that represents that process as Z.
+    Relationship Between Cox Model and Logistic Regression: In Green
+& Symon (1983) there is a simple illustration through hazard ratio (HR) and
+odds ratio (OR) to understand the relationship between the logistic regression
+model and the Cox model. For simplicity we assume that these models have a
+single binary covariate X, where X = 1 represents a characteristic of interest. For
+the Cox model, letting T the time to event and p = λ(t | X = x) = λ0 (t)exβ
+then HR = pp01 = λ(t|X=1)       β
+                    λ(t|X=0) = e . On the other hand, in the logistic regression
+model, the logit of π = Pr(X = 1) is deﬁned as the natural logarithm of the
+                                            π
+odds of the survival event of interest: ln 1−π = Xβ. The odds ratio is given by
+OR = ODDS|X=1           p/(1−p)|X=1     β
+        ODDS|X=0 = p/(1−p)|X=0 = e . Assuming that the probability of the
+survival event is very small (p → 0), then the ODDS = 1−p
+                                                       p
+                                                          → p and therefore:
+                                              p1
+                                   p1   1−p
+                              HR =    ≈ p0 1 = OR.
+                                   p0   1−p0
+
+
+Since the interpretation of the hazard ratio (HR) is more intuitive than that of
+the odds ratio (OR), the advantage of the logistic model becomes evident under
+the analyzed condition. However, the equivalence between Cox and multinomial
+models, when the event rate is low, is diminished when there are long follow-up
+times (Green & Symon, 1983).
+    The conditions for using logistic regression to model time-to-event data also ap-
+ply to the multinomial model used for competing risks analysis. Although compet-
+ing risks are characterized by univariate time, they are included in the multivariate
+survival analysis because there are multiple reasons for follow-up termination (see
+Houggard, 2000). This adds complexity to the models, further supporting the use
+of multinomial regression as an alternative for modeling competing risks.
+    Survival Model in Discrete Time: In order to incorporate the eﬀect of
+time into the multinomial model, Luo et al. (2016) introduced a spline regression
+as a covariate. The proposed model has the same structure as the classical multi-
+nomial regression model, where the link function is the generalized logit or natural
+logarithm of the ODDS for the event type δ:
+                         (                  )    (              )
+                            h(t, δ | ⃗x(t))
+                      ln                      = Θ t, ⃗x(t), ξ⃗δ                  (1)
+                           1 − h(t | ⃗x(t))
+
+                         ⃗ δ , β⃗δ ) = α1δ x1 (t) + · · · + αpδ xp (t) + S(t, β⃗δ ),
+             Θ(t, ⃗x(t), α
+       (             )                                                               ∑
+where Θ t, ⃗x(t), ξ⃗δ represents the predictive function, h(t | ⃗x(t)) = δ h(t, δ |
+⃗x(t)) the overall risk function and h(t, δ | ⃗x(t)) the conditional probability that
+ the δ-type event occurs at time t given covariates and that the event has not
+ yet occurred. Covariates have associated parameter vectors ξ⃗δ = {⃗     αδ , β⃗δ }, in-
+ dicating that each competing risk has its own model. The parameter vector
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+A Joint Model of Competing Risks in Discrete Time with Longitudinal Information 149
+
+
+⃗ δ = {α1δ , . . . , αpδ } is associated with the covariates ⃗x(t), while βδ is the pa-
+α
+rameter vector for a spline regression. The innovation of this proposal lies in the
+inclusion of a time-dependent cubic spline as a covariate, providing ﬂexibility to
+the model and capturing irregularities and peaks in the risk accurately. This also
+partially solves the loss of ﬁt caused by long follow-up times.
+                                                   (                  )
+                                                exp Θ(t, ⃗x(t), ξ⃗δ )
+                           h(t, δ | ⃗x(t)) =    ∑     (                  ).
+                                             1 + δ exp Θ(t, ⃗x(t), ξ⃗δ )
+
+For this model, the data must be in an expanded format, where each subject has a
+record for each observed time point. To estimate the parameters, we assume that
+there are n independent individuals and consider the following likelihood function,
+where δ = 0, 1, 2 and δ = 0 represents the reference event. If kit = δi ∗ I{t = ti },
+where I{·} is an indicator function, then:
+
+        ∏
+        n                                                                    i −1 (
+                                                                            t∏                               )
+   L=                    ⃗ i (ti ))I{δi =1} h(ti , 2 | X
+              h(ti , 1 | X                             ⃗ i (ti ))I{δi =2}             1 − h(t | X
+                                                                                                ⃗ i (ti ))
+        i=1                                                                 t=1
+                                                                  I{kit =1}
+              
+                                                                  
+                                                                   
+              
+                                                                  
+                                                                   
+              
+                        ( (                         ))            
+                                                                   
+        ∏∏
+        n t i                             ⃗ 1 , β⃗1
+                     exp Θ ti , ⃗xi (ti ), α                       
+                                                                   
+      =                   ( (                         ))
+                 1 + exp Θ t , ⃗x (t ), α                   
+        i=1 t=1                                             
+                                   i i ⃗ 1 , β1
+                                                   ⃗         
+                
+                           (
+                               i
+                               (                          )) 
+                                                             
+                
+                                                            
+                                                             
+                     + exp Θ ti , ⃗xi (ti ), α ⃗ 2 , β2 
+                                                      ⃗
+                                                             I{kit =2}
+                 
+                                                             
+                                                              
+                 
+                                                             
+                                                              
+                 
+                         (  (                        ))      
+                                                              
+                 
+                                           ⃗ 2 , β2
+                      exp Θ ti , ⃗xi (ti ), α      ⃗          
+                                                              
+               ∗           ( (                          ))
+                 
+                                            ⃗ 1 , β⃗1        
+                                                              
+                 
+                 
+                   1 + exp Θ ti , ⃗xi (ti ), α                
+                                                              
+                 
+                            (   (                         )) 
+                                                              
+                 
+                                                             
+                       + exp Θ ti , ⃗xi (ti ), α  ⃗ 2 , β2 
+                                                        ⃗
+                                                                   I{kit =0}
+                     
+                                                                   
+                                                                    
+                     
+                                                                   
+                                                                    
+                     
+                                                                   
+                                                                    
+                     
+                                                                   
+                                                                    
+                                         1
+                 ∗             ( (                             ))                      .
+                     
+                                                          ⃗        
+                                                                    
+                     
+                     
+                       1 + exp  Θ  t i , ⃗
+                                         x i (t i ), ⃗
+                                                     α 1 , β 1      
+                                                                    
+                     
+                                (   (                           )) 
+                                                                    
+                     
+                                                                   
+                           + exp Θ ti , ⃗xi (ti ), α    ⃗ 2 , β2 
+                                                               ⃗
+
+
+3. Survival and Longitudinal Data Joint Models
+    We have two general models: selection models and mixed models. In the
+selection model, the joint density function fZ,T is modeled as fT |Z fZ . In the mixed
+model, it is modeled as fZ|T fT . Both types of models are applicable to longitudinal
+and survival studies, but mixed models are commonly used for longitudinal studies
+
+                         Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+150                                        Adriana Marcela Salazar & Jaime Abel Huertas
+
+
+with informative dropouts, while selection models are used for survival studies
+where longitudinal information serves as an event marker. These two approaches
+can also be combined synergistically. Joint modeling beneﬁts both processes: the
+survival process helps correct biases in the longitudinal model due to informative
+dropouts, and appropriate longitudinal adjustments serve as markers for the event.
+Most studies have focused on models with normal random eﬀects for longitudinal
+data and proportional hazards models for the time-to-event, both linked with
+random eﬀects. In this paper, we are particularly interested in the competing risk
+survival model based on random eﬀects selection models.
+    The Model and its Maximum Likelihood Estimation: The following
+example represents a speciﬁc case of a joint model. In this case, we have a set
+of times for subject i = 1, . . . , n, denoted as t̃i = (ti1 , . . . , tini ). The longitudinal
+covariate for subject i is measured at these times t̃i , and the corresponding values
+can be represented as Zi = (Zij : tij ≤ Ti ), where j = 1, . . . , ni . It’s important to
+be careful and diﬀerentiate between the time to event for subject i, denoted as ti ,
+and the time for the longitudinal response at time j for subject i, denoted as tij .
+The covariates in the risk model are assumed to be ﬁxed over time.
+
+                              Zi (tij ) = b0i + b1i tij + ei (tij )
+
+                                          (                       )
+                                              ⃗ i + η(b0i + b1i t) .
+                       hi (t) = h0 (t) exp αT X
+
+Usually, it is assumed that the errors follow a normal distribution with mean 0
+and variance σe2 . The random eﬀects bi = (b0i , b1i )T are also assumed to follow
+a normal distribution with mean B and variance Σ. As a result, the density
+function fZ is a normal distribution with a mean of b0i + b1i tij and a variance of
+σe2 . Typically, a semiparametric model is used for T .
+    To simplify the longitudinal model, it is expressed without a ﬁxed component
+and only considers the random eﬀects b0i and b1i . The inclusion of these random
+eﬀects in the survival model it is assumes that, when considering the longitudinal
+history, the risk is inﬂuenced by the constant rate of change in the underlying
+smooth trend (Tsiatis & Davidian, 2004). If the random eﬀects are included as
+η1 b0i +η2 b1i +η3 (b0i +b1i t), the parameters η1 , η2 and η3 quantify the association of
+the longitudinal process with the time to event, induced through the intercept, the
+slope and the current value of the longitudinal covariate, respectively (Henderson
+et al., 2000). In the current value eﬀect, a linear trend is assumed for the longitu-
+dinal covariate. If Ω = {h0 (·), α, η, σe2 , B, Σ} represents the model parameter set,
+the likelihood for the observed data is:
+                                                                                          
+        ∏
+        n   ∫ ∏
+              ni
+ L(Ω) =    {                                       ⃗ i , bi ; h0 , α, η)fb (bi | B, Σ)dbi  .
+                 fZ (zij | bi ; σe2 )}fT (Yi , δi | X
+           i=1    bi j=1
+
+                                                                              (2)
+In the distribution function fT , right censoring is assumed according to the fol-
+lowing criteria based on the Cox model (see Lawless, 2003):
+
+                     Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+A Joint Model of Competing Risks in Discrete Time with Longitudinal Information 151
+                                        [                                       ]δ i
+  fT (Yi , δi | X
+                ⃗ i , bi ; h0 , α, η) = h0 (Yi ) exp(αT X ⃗ i + η(b0i + b1i t))
+                                          [ ∫                                         ]    (3)
+                                                Yi
+                                      exp −                     T ⃗
+                                                   h0 (u) exp(α Xi + η(b0i + b1i t))du .
+                                         0
+
+
+   According to Tsiatis & Davidian (2004), the main assumptions the likelihood
+has in (2) are: a) conditional on the random eﬀects, Z and T are independent, b)
+the censoring mechanism and the longitudinal calendar are noninformative, c) The
+longitudinal model does not consider the autocorrelation structure and focuses on
+the relationship between the smooth trend and the time to event, d) random eﬀects
+are independent of the covariates X,⃗ and e) the errors are mutually independent
+and independent of all other variables.
+    For the estimation of semiparametric joint models, Wulfsohn & Tsiatis (1997)
+introduced a method that maximizes the likelihood using an EM algorithm. This
+algorithm has been widely adopted in recent proposals for the estimation process.
+    A recommended approach for joint estimation involves starting with the well-
+known two-stage model, where the longitudinal and survival models are estimated
+separately. The random eﬀects obtained from the longitudinal model are then used
+to estimate the survival model. While the two-stage model can result in biased
+estimates for the joint model, the estimates obtained at this stage serve as a useful
+starting point for maximizing the likelihood of the joint model. This maximization
+can be achieved using EM algorithms, such as the one proposed by Wulfsohn &
+Tsiatis (1997).
+    Properties of the Estimators: Zeng & Cai (2005) provided rigorous proof,
+assuming normality of the random eﬀects, of the strong consistency of maximum
+likelihood estimators for joint models of repeated measurements and survival time.
+They also derived the asymptotic distributions of these estimators, which follow a
+multivariate normal distribution. The asymptotic results remain valid even if the
+random eﬀects exhibit slightly heavier tails than the normal density. Furthermore,
+maximizing the joint likelihood leads to unbiased estimates for joint models.
+    The likelihood maximization procedures for parameter estimation and property
+description are typically performed for semiparametric joint models, where the
+survival model is semiparametric. However, these results can also be extended to
+fully parametric joint models.
+
+
+4. Joint Model of Competitive Risks in Discrete
+   Time with Longitudinal Information
+   This paper proposes an extension to the model introduced by Luo et al. (2016)
+using a joint modeling approach. The data structure is illustrated in Table 1, which
+shows three diﬀerent event cases with the corresponding time-to-event, a baseline
+covariate X, and a longitudinal variable Z. The data structure is similar to the
+expanded framework proposed by Luo et al. (2016), but it is utilized diﬀerently
+in our model. In our likelihood equations (6)-(9), the longitudinal information
+
+                    Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+152                                             Adriana Marcela Salazar & Jaime Abel Huertas
+
+
+is not included in the multinomial model for each data line in the longitudinal
+calendar. Instead, it is summarized using random eﬀects, resulting in a single line
+of information per individual in the survival model.
+    The extension is easily achieved by replacing the Cox model with the multino-
+mial model in the joint model. We propose a dependency on random eﬀects for the
+longitudinal variable while ignoring ﬁxed eﬀects. When the goal is survival anal-
+ysis, including the ﬁxed part is not necessary. The speciﬁc choice of a quadratic
+trend for Z is made to illustrate the model in the next section.
+
+                          Zi (tij ) = b0i + b1i tij + b2i t2ij + ei (tij )                           (4)
+                        (                        )    (                              )
+                           hi (t, δ | ⃗xi , bi )
+                     ln                                              ⃗ δ , ⃗ηδ , β⃗δ
+                                                   = Θ t, ⃗xi , bi , α                               (5)
+                          1 − hi (t | ⃗xi , bi )
+
+
+                        ⃗ δ , ⃗ηδ , β⃗δ ) = α1δ x1i + · · · + αpδ xpi + B(bi , ⃗ηδ ) + S(t, β⃗δ ).
+        Θ(t, ⃗xi , bi , α
+
+                       Table 1: Format of the joint model database
+                       Case     Time      Event      Covariate      Longitudinal
+                        1         1         1          X1               Z11
+                        1         2         1          X1               Z12
+                        1         3         1          X1               Z13
+                        1         4         1          X1               Z14
+                        2         1         2          X2               Z21
+                        2         2         2          X2               Z22
+                        2         3         2          X2               Z23
+                        3         1         0          X3               Z31
+                        3         2         0          X3               Z32
+                        3         3         0          X3               Z33
+                        3         4         0          X3               Z34
+                        3         5         0          X3               Z35
+
+
+The term B(bi , ⃗ηδ ) captures the various combinations that the eﬀect of the longi-
+tudinal variable can have on the time to event through its random eﬀects. Here,
+all components of X  ⃗ are baseline covariates and may diﬀer for each competing risk
+category.
+   In equation (6) for L(Ω), both fZ and fb maintain the same normality structure
+as described in the previous section. However, fT now depends on the spline
+parameters and undergoes a signiﬁcant change. Speciﬁcally, takes the form of a
+multinomial distribution, which is illustrated in a particular case where δ = 0, 1, 2.
+
+  L(Ω) =
+                                                                                          
+    ∏n   ∫ ∏
+           ni
+        {                                       ⃗ i , bi ; h0 , α, η, β)fb (bi | B, Σ)dbi 
+              fZ (zij | bi ; σe2 )}fT (Yi , δi | X                                                   (6)
+      i=1   bi j=1
+
+
+
+            fb (bi | B, Σ) = (2π|Σ|)−1/2 exp{−0, 5(bi − B)T Σ−1 (bi − B)}                            (7)
+
+                      Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+A Joint Model of Competing Risks in Discrete Time with Longitudinal Information 153
+
+
+
+
+  fZ (zij | bi ; σe2 ) = (2πσe2 )−1/2 exp{−0, 5(zi (tij ) − b0i − b1i tij − b2i t2ij )2 /σe2 }   (8)
+
+
+                                                                                I{δi =1}
+                           
+                                                                                
+                                                                                 
+                           
+                                                                                
+                                                                                 
+                           
+                                   ( (                                     ))   
+                                                                                 
+                           
+                                                           ⃗ 1 , ⃗η1 , β⃗1
+                                exp Θ Yi , ⃗xi (t̃i ), bi , α                    
+                                                                                 
+      fT (Yi , δi | ΩT ) =           ( (                                     ))
+                           
+                                                            ⃗ 1 , ⃗η1 , β⃗1       
+                                                                                   
+                           
+                           
+                             1 + exp Θ Yi , ⃗xi (t̃i ), bi , α                     
+                                                                                   
+                           
+                                     (  (                                      )) 
+                                                                                   
+                           
+                                                                                  
+                                 + exp Θ Yi , ⃗xi (t̃i ), bi , α ⃗ 2 , ⃗η2 , β⃗2 
+                                                                                  I{δi =2}
+                               
+                                                                                  
+                                                                                   
+                               
+                                                                                  
+                                                                                   
+                               
+                                     ( (                                    ))    
+                                                                                   
+                               
+                                                            ⃗ 2 , ⃗η2 , β⃗2
+                                  exp Θ ti , ⃗xi (ti ), bi , α                     
+                                                                                   
+                           ∗           ( (                                    ))                 (9)
+                             
+                                                             ⃗ 1 , ⃗η1 , β⃗1       
+                                                                                    
+                             
+                             
+                               1 + exp Θ ti , ⃗xi (ti ), bi , α                     
+                             
+                                       ( (                                      )) 
+                                                                                    
+                                                                                    
+                             
+                                                                                   
+                                   + exp Θ ti , ⃗xi (ti ), bi , α ⃗ 2 , ⃗η2 , β⃗2 
+                                                                                  I{δi =0}
+                               
+                                                                                  
+                                                                                   
+                               
+                                                                                  
+                                                                                   
+                               
+                                                                                  
+                                                                                   
+                               
+                                                                                  
+                                                                                   
+                                                      1
+                           ∗            ( (                                     ))
+                               
+                                                               ⃗ 1 , ⃗η1 , β⃗1      
+                                                                                     
+                               
+                               
+                                 1 + exp Θ ti , ⃗xi (ti ), bi , α                    
+                               
+                                         ( (                                     )) 
+                                                                                     
+                                                                                     
+                               
+                                                                                    
+                                     + exp Θ ti , ⃗xi (ti ), bi , α⃗ 2 , ⃗η2 , β⃗2 
+
+where I{·} is an indicator function. Although equations (3) and (9) are diﬀerent,
+they share a similar essence. In (3), the contribution of each individual is included
+in the Cox model based on whether they have observed the event or not. In (9),
+the contribution of each individual is included based on the odds of the competing
+risk to which they belong.
+    There are various proposals for ﬁtting joint models using standard software,
+but the R packages FastJM (Li et al., 2022), JM, and JMbayes2 (Rizopoulos, 2010,
+2016), are the ones that allow modeling longitudinal and survival data with com-
+peting risks. However, these packages utilize a semiparametric model for compet-
+ing risk and cannot be used to ﬁt our fully parametric joint model. These packages
+are continuously evolving and expanding their capabilities for joint modeling. It
+is only a matter of time before other proposals, including ours, are incorporated
+into these packages. In the meantime, when ﬁtting models that are not directly
+supported by standard software, approaches such as the one proposed by Guo &
+Carlin (2004) can be utilized. One method from their proposal involves adapting
+the SAS NLMIXED procedure (SAS Institute, 2013) to ﬁt joint models. This
+adaptation is straightforward and can only be used with fully parametric survival
+models. In our case, we utilize this approach by adding the log-likelihood of a
+multinomial model to the log-likelihood of the longitudinal model with normal
+errors and normal random eﬀects.
+
+                     Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+154                                     Adriana Marcela Salazar & Jaime Abel Huertas
+
+
+    Joint models pose computational challenges as they involve estimating two
+processes simultaneously. While NLMIXED is a powerful tool for optimizing like-
+lihoods and estimating nonlinear mixed models, it may not provide immediate
+results for datasets with a large number of individuals, such as our application
+with 912 individuals (on Core i7 computers with 12 MB of RAM). Furthermore,
+the complexity of the likelihood function can result in diﬀerent outcomes depend-
+ing on the starting point used for numerical maximization. Estimation may require
+an iterative process to ﬁnd the optimal maximization point, which can be time-
+consuming. To mitigate computation time, we initially use the two-stage model
+mentioned earlier and then maximize the joint likelihood based on the outcomes
+obtained from it.
+
+
+5. Application
+    Although our model can be applied to any type of data, we will illustrate it
+using a similar example to the one used by Luo et al. (2016). The dataset consists
+of 912 individuals who took out a 36-month consumer loan. Each individual can
+terminate the credit for three reasons: maturity (δ = 0), default (δ = 1), or
+debt prepayment (δ = 2). The ﬁrst and third events represent the attrition risk,
+meaning that the customer pays oﬀ their balance. If the customer does not fall into
+any of these three categories, their credit remains open. To simplify the model,
+these individuals are included in the maturity group, assuming that they are all
+regular customers. The dataset includes variables such as the duration of the
+credit and the reason for its termination, baseline covariates like sex and age at
+the beginning of the credit, and a longitudinal variable representing the monthly
+balance of the customer’s main credit card.
+    The example involves a competing risks scenario, where the end of the loan
+represents the time to event, which can occur due to three diﬀerent causes. Al-
+though we can determine the probabilities for all three events, our analysis focuses
+on the default event. We model the time to loan termination using multinomial
+logistic regression along with a longitudinal variable. In joint models for survival
+analysis, a longitudinal variable is typically used as a marker for the event of inter-
+est. However, in this discrete time problem, we include the longitudinal variable
+to appropriately estimate the probability of default, assuming that it captures the
+potential variations in risk. To ensure smooth trends in these probabilities, we in-
+corporate smoothed longitudinal trajectories into the model using kernel regression
+techniques (refer to Bowman & Azzalini, 1997).
+    Before presenting the results of our proposed model, let’s ﬁrst discuss the
+results obtained from the Cox model and the model by Luo et al. (2016). In the
+Cox model, we treated prepayment and maturity times as censored data. Although
+it is not appropriate to ignore competing risks and the longitudinal variable, we
+did this to illustrate the outcomes of the most basic model. We included age as
+a covariate, and the baseline risk was estimated using the kernel estimator (refer
+to Klein & Moeschberger, 2005). The nonparametric nature of the baseline risk
+estimation allowed us to overlook the truncation eﬀect in the data. From the
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+A Joint Model of Competing Risks in Discrete Time with Longitudinal Information 155
+
+
+estimation results shown in Figure 1, three important ﬁndings can be highlighted.
+First, there is a typical hump-shaped trend in the default risk, indicating that
+the risk initially increases, reaches a peak, and then decreases over time. Second,
+there is an inverse relationship between age and default risk, meaning that younger
+individuals have a higher risk of default compared to older individuals. Finally,
+the estimated default risk aligns with the overall kernel estimation at the average
+age of 32 years.
+    On the other hand, when using a logistic model with age as the only covariate,
+we obtained an estimated parameter of 0.036, which is quite close to the value of
+0.032 obtained in the Cox model. The similarity in the estimates and the hazard
+ratio (HR) and odds ratio (OR) derived from them suggest that the logistic model
+is a suitable alternative for modeling the time to default.
+    According to the estimated Cox model, there are slight peaks at times 6 and 16
+(see Figure 1). However, when comparing an adjusted model that considers these
+peaks with another model that only includes the eﬀect of the spline associated
+with a single parameter β, the estimated probabilities are practically equal. To
+keep the model simple, we include the time eﬀect only with the spline, which
+can be interpreted as the eﬀect of elapsed time since the start of the credit. The
+predictive function for the model by Luo et al. (2016), deﬁned in Equation (1),
+with only the signiﬁcant covariates is as follows:
+                   ⃗ δ , βδ ) = α0δ + α1δ Age(t) + α2δ CreditCard(t) + βδ S(t).
+       Θ(t, ⃗x(t), α
+
+   In this model, similar to the joint model, S(t) represents a cubic spline of the
+event time.
+
+
+
+
+                  Figure 1: Cox regression model for default time
+
+
+   The parameter estimation for the Luo et al. (2016) model, focusing solely on
+the time to default, is presented in Table 2. It is worth noting that the estimation
+
+                  Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+156                                     Adriana Marcela Salazar & Jaime Abel Huertas
+
+
+of the parameter associated with age diﬀers when considering multiple lines of
+information per individual, as opposed to the joint model where the age eﬀect is
+measured only once per individual (Table 3).
+              Table 2: Luo et al. (2016) model for the time to default
+                    Parameter    Estimation    Standard Error     p-value
+                  Intercept α0    11,0382          1,1754        < 0,0001
+                       Age α1      -0,0306         0,0134         0,0226
+               Credit Card α2     -356,450         30,742        < 0,001
+                      Spline β     -0,0784         0,0130        < 0,001
+
+   The ﬁrst part of Figure 2 depicts the credit card balances for three individuals
+aged 32, while the second part illustrates the corresponding default risk. We select
+these people of that age because they are in the average risk trend to default. We
+observe an inverse relationship between the balance and the risk, where higher
+balances are associated with a lower risk of default. The most notable case is
+individual 2, who has been on credit for 27 months and experiences a zero esti-
+mated risk starting from the ninth month. Individual 3 exhibits a contradictory
+result, with the risk decreasing almost to zero and then increasing during periods
+without any default cases. Therefore, we can conclude that the estimated model
+has diﬃculties in accurately determining the default risk.
+
+
+
+
+Figure 2: Longitudinal variable trajectories and default risk under Luo et al. (2016)
+          model for 3 subjects
+
+   The inverse relationship between debt and default risk is intriguing as it appears
+to go against common intuition. According to the obtained relationship, even
+young individuals with high debt have low default risks, which seems contradictory.
+However, this can be attributed to the fact that the high balances reﬂect a high
+purchasing power of the customers included in the database. This aspect partially
+explains the unexpected result.
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+A Joint Model of Competing Risks in Discrete Time with Longitudinal Information 157
+
+
+    The joint model applied to this dataset corresponds to the one mentioned in
+equations (4)-(5). The signiﬁcant variables in the proposed survival model include
+baseline age, random eﬀects of the credit card balance incorporated as the current
+value, and a regression spline to adjust for irregular risk components (refer to Table
+3). Therefore, the predictive function of the model can be deﬁned as follows:
+
+                  ⃗ δ , ηδ , βδ ) = α0δ + α1δ Agei + ηδ (b0i + b1i tij + b2i t2ij ) + βδ Si (tij ).
+   Θ(t, xi , bi , α
+
+
+    Table 3: Joint model of the evolution of credit card balance and default time.
+                        Parameter      Estimation     Standard Error        p-value
+                 Longitudinal
+                               B0        0,057199         0,000710         < 0,0001
+                               B1       -0,000071         0,000032          0,0278
+                               B2       -0,000002         0,000001          0,0455
+                               σ11       0,023510         0,000056         < 0,0001
+                               σ12      -0,000624         0.000051         < 0,0001
+                               σ13       0,000052         0.000620          0,9332
+                               σ22       0,003073         0.000078         < 0,0001
+                               σ23      -0,000132         0.004766          0,9779
+                               σ33       0,000006         0.000002          0,0069
+                                σe2      0,000403         0.000168          0,0164
+                 Def ault T1
+                     Intercept α10        -1,000           0,52611          0,0574
+                          Age α11         -0,026           0,00458         < 0,0001
+                 Current Value η1          -48,0           13,3333          0,0003
+                         Spline β1        -0,059           0,01283         < 0,0001
+                 P repayment T2
+                     Intercept α20        -4,998           2,37619          0,0357
+                          Age α21          0,040           0,01250          0,0015
+                 Current Value η2         -0,372           0,10625          0,0005
+                         Spline β2         0,045           0,01030         < 0,0001
+
+
+    Based on the estimated joint model presented in Table 3, we observe an inverse
+relationship between the covariates and default risk. Although the individual
+trajectories of the card balance are not shown in the table due to space constraints,
+they were estimated using the empirical Bayesian estimator of the random eﬀects
+(refer to Verbeke & Molenberghs 2000, section 7.2). With these trajectories, we
+can estimate default probabilities, which are illustrated in Figure 3 using a similar
+approach as in Figure 2 and featuring the same individuals. Figure 3 provides
+insights into how the longitudinal variable inﬂuences the default risk trend and
+even modiﬁes its overall hump shape in certain cases.
+   Although we have observed diﬀerent individual estimates for the default risk in
+both models, they have a similar level of goodness of ﬁt. The Nagelkerke pseudo
+R2 (Nagelkerke, 1991) for the model by Luo et al. (2016) is 0.298, while for the joint
+model it is 0.322. This suggests that the longitudinal model is accurately capturing
+the underlying trend. Any loss of ﬁt caused by the variability that the model
+cannot capture is compensated by including the baseline variable appropriately,
+resulting in an overall satisfactory ﬁt.
+
+                      Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+158                                     Adriana Marcela Salazar & Jaime Abel Huertas
+
+
+
+
+Figure 3: Longitudinal variable trajectories and risk of default under a joint model for
+          three individuals
+
+
+   In conclusion, the covariates have an impact on the default risk as follows:
+The trend is determined by the longitudinal variable, which increases or decreases
+proportionally over time depending on the baseline age and duration of the debt.
+Generally, the projections obtained from the joint model are closer to the overall
+trend of the risk determined by the kernel estimator compared to the results from
+the model proposed by Luo et al. (2016). However, both models have quite similar
+goodness of ﬁt and limitations. They can generate probabilities greater than zero
+at the end of the credit period where no default cases were observed, and the
+probabilities can be high if the balance of the card is very low, although such cases
+are rare.
+    Default probabilities play a crucial role for ﬁnance companies in establishing
+reserves to address potential default issues among their clients. These probabilities
+are based on the time elapsed from the start of the debt to the maturity date. It’s
+important to note that individuals whose credits have already reached maturity
+are included in the model solely for estimation purposes, and no reserves are
+set aside for them. When using the classic Cox and logistic models to assign
+these probabilities, each person is assigned a unique probability based on the
+average trend of their covariates. However, alternative models such as our joint
+model proposal or the one proposed by Luo et al. (2016) can provide diﬀerent
+probabilities for each individual based on their projected outcomes. This allows
+for a more tailored and accurate assessment of default risk for each client.
+
+
+6. Discussion
+   When modeling competing risks with longitudinal information, the model pro-
+posed by Elashoﬀ et al. (2007) and similar ones are typically the ﬁrst alternatives
+
+                   Revista Colombiana de Estadística - Applied Statistics 46 (2023) 145–161
+
+A Joint Model of Competing Risks in Discrete Time with Longitudinal Information 159
+
+
+to consider. However, these models have some disadvantages when it comes to
+discrete time modeling, and they can be complex and not readily available in
+standard software. On the other hand, if the conditions are met to apply the lo-
+gistic model to the problem, the model proposed by Luo et al. (2016) can be used
+with standard software. However, it’s important to note that simultaneous inclu-
+sion of both baseline and longitudinal covariates is not suitable under this model
+when there are customers with ongoing credits. This can create an imbalance in
+the management of baseline covariates, aﬀecting the accuracy and interpretation
+of the results.
+   Joint models for survival data with longitudinal information oﬀer a solution for
+modeling competing risks by incorporating both longitudinal and baseline infor-
+mation. However, one drawback of these models is the complexity of the likelihood
+function, which can complicate the estimation process. If additional longitudinal
+variables are included as covariates to explain the risk, it will further increase the
+computational demand of the optimization process. Moreover, the inclusion of
+multiple longitudinal variables requires considering complex interactions between
+them, which are not discussed in this paper but can be found in other references
+such as Liu & Huang (2009) and Lin et al. (2022).
+                [                                                        ]
+                    Received: February 2023 — Accepted: June 2023
+
+
+References
+Annesi, I., Moreau, T. & Lellouch, J. (1989), ‘Eﬃciency of the logistic regression and Cox proportional hazards models in longitudinal studies’, Statistics in Medicine 8, 1515–1521.
+Begg, C. B. & Gray, R. (1984), ‘Calculation of polychotomous logistic regression parameters using individualized regressions’, Biometrika 71(1), 11–18.
+Bowman, A. W. & Azzalini, A. (1997), Applied Smoothing Techniques for Data Analysis. The Kernel Approach with S-Plus Illustrations, 1 edn, New York, Oxford University Press Inc.
+Cox, D. R. (1972), ‘Regression models and life tables (with discussion)’, of the Royal Statistical Society, Series B 34, 187–220.
+Elandt-Johnson, R. C. (1980), Time dependent logistic models in follow-up studies and clinical trials, I. Binary data, Technical report, Institute of Statistics Mimeo Series No 1309, University of North Carolina.
+Elashoﬀ, R. M., Li, G. & Li, N. (2007), ‘An approach to joint analysis of longitudinal measurements and competing risks failure time data’, Statistics in Medicine 26, 2813–2835.
+Elashoﬀ, R. M., Li, G. & Li, N. (2008), ‘Joint model for longitudinal measurements and survival data in the presence of multiple failure types’, Biometrics 64, 762–771.
+Green, M. S. & Symon, M. J. (1983), ‘A comparison of the logistic risk function and the proportional hazards model in prospective epidemiologic studies’, Journal of Clinical Epidemiology 36, 715–723.
+Guo, X. & Carlin, B. P. (2004), ‘Separate and joint modeling of longitudinal and event time data using standard computer packages’, The American Statistician 58, 16–24.
+Henderson, R., Diggle, P. & Dobson, A. (2000), ‘Joint modelling of longitudinal measurements and event time data’, Biostatistics 4, 465–480.
+Houggard, P. (2000), Analysis of Multivariate Survival Data, Springer-Verlag, New York.
+Klein, J. P. & Moeschberger, M. L. (2005), Survival Analysis: Techniques for Censored and Truncated Data, 3rd edn, Springer, New York.
+Lawless, J. F. (2003), Statistical Models and Methods for Lifetime Data, 2nd edn, Wiley, Hoboken.
+Li, N., Elashoﬀ, R. & Li, G. (2009), ‘Robust joint modeling of longitu-dinal measurements and competing risks failure time data’, Biometrical Journal 51, 19–30.
+Li, S., Li, N., Wang, H., Zhou, J., Zhou, H. & Li, G. (2022), ‘Eﬃcient algorithms and implementation of a semiparametric joint model for longitudinal and competing risk data: With applications to massive biobank data’, Computational and Mathematical Methods in Medicine 2022, 1–12.
+Lin, H., McCulloch, C. E. & Mayne, S. (2022), ‘Maximum likelihood estimation in the joint analysis of time-to-event and multiple longitudinal variables’, Statistics in Medicine 21(16).
+Liu, L. & Huang, X. (2009), ‘Joint analysis of correlated repeated measures and recurrent events processes in the presence of death, with application to a study on acquired immune deﬁciency syndrome’, Journal of the Royal Statistical Society 58, 65–81.
+Luo, S., Kong, X. & Nie, T. (2016), ‘Spline based survival model credit risk modeling’, European Journal of Operational Research 253, 869–879.
+Myers, M. H., Hankey, B. F. & Mantel, N. A. (1973), ‘A logistic-exponential model for use with response time data involving regession variables’, Biometrics 29, 257–296.
+Nagelkerke, N. (1991), ‘A note on a general deﬁnition of the coeﬃcient of determination’, Biometrika 78, 691–692.
+Rizopoulos, D. (2010), ‘JM: An R package for the joint modelling of longitudinal and time-to-event data’, Journal of Statistical Software 35, 1–33.
+Rizopoulos, D. (2016), ‘The R package JMbayes for ﬁtting joint models for longitudinal and time-to-event data using MCMC’, Journal of Statistical Software 72(7), 1–45.
+Salazar, A. M. (2021), Un modelo conjunto de riesgos competitivos en tiempo discreto con información longitudinal, Tesis de maestría, Universidad Nacionalde Colombia, Facultad de Ciencias. Departamento de Estadística, Bogotá.
+SAS Institute (2013), ‘Sas/stat 9.4’. Cary, North Carolina, United States, SAS Institute Inc.
+Teixeira, L., Sousa, I., Rodriguez, A. & Mendonça, D. (2019), ‘Joint modelling of longitudinal and competing risks data in clinical research’, REVSTAT-Statistical Journal 17(2), 245–264.
+Tsiatis, A. A. & Davidian, M. (2004), ‘Joint modeling of longitudinal and timetoevent data: An overview’, Statistica Sinica 14, 809–834.
+Verbeke, G. & Molenberghs, G. (2000), Linear Mixed Models for Longitudinal Data, 1 edn, Springer-Verlag, New York.
+Williamson, P. R., Kolamunnage-Dona, R., Philipson, P. & Marson, A. G. (2007), ‘Joint modelling of longitudinal and competing risks data’, Statistics in Medicine 27, 6426–6438.
+Wulfsohn, M. & Tsiatis, A. (1997), ‘A joint model for survival and longitudinal data measured with error’, Biometrics 53, 330–339.
+Zeng, D. & Cai, J. (2005), ‘Asymptotic results for maximum likelihood estimators in joint analysis of repeated measurements and survival time’, The Annals of Statistics 33, 2132–2163.

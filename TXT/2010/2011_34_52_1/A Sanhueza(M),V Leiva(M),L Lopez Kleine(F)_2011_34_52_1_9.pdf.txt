@@ -1,0 +1,906 @@
+On the Student-t Mixture Inverse Gaussian Model with an Application to Protein Production Sobre el modelo gaussiano inverso mezclado t-Student y una aplicación a producción de proteínas
+Universidad de La Frontera, Temuco, Chile.  Universidad de Valparaíso, Valparaíso, Chile. Universidad Nacional de Colombia, Bogotá, Colombia.
+Abstract
+In this article, we introduce a mixture inverse Gaussian (MIG) model based on the Student-t distribution and apply it to bacterium-based protein production for food industry. This model is mainly useful to describe that follow positively skewed distributions and accommodate atypical observations in a better way than its classical version. Specifically, we present a characterization of the MIG-t distribution. In addition, we carry out a hazard analysis of this distribution centered mainly on its hazard rate. Furthermore, we discuss the maximum likelihood method, which produces–in this case–robust parameter estimates. Moreover, to evaluate the potential influence of atypical observations, we produce a diagnostic analysis for the model. Finally, we apply the obtained results to novel bacterium-based protein production data and statistically compare two types of protein producers using the likelihood ratio test based on the MIG-t model as an alternative methodology to the procedures available until now. This fact is very important, since the evaluation of protein production using both constructions allows practitioners to choose the most productive one before the bacterial culture is scaled to an industrial level.
+Key words: Distribution mixture, Likelihood methods, Length-biased distributions, R computer language.
+Resumen
+En este artículo, introducimos un modelo Gaussiano inverso (MIG) mezclado basado en la distribución t-Student y lo aplicamos a la producción de proteínas basada en bacterias para la industria de alimentos. Este modelo es especialmente útil para describir datos que siguen una distribución con sesgo positivo ya que permite acomodar observaciones atípicas de mejor forma que su versión clásica. Específicamente, presentamos una caracterización de la distribución MIG-t y realizamos un análisis de confiabilidad de esta distribución centrado principalmente en la tasa de fallas. También, discutimos el método de verosimilitud máxima, el cual proporciona en este caso estimaciones robustas de los parámetros del modelo. Con el fin de evaluar la influencia potencial de observaciones atípicas, proponemos un análisis de diagnóstico para la distribución. Finalmente, aplicamos los resultados obtenidos al análisis de datos nuevos de producción de proteína basada en bacterias utilizada en la industria de alimentos y comparamos estadísticamente dos tipos de bacterias productoras usando la prueba de razón de verosimilitudes basada en el modelo MIG-t como una metodología alternativa a los procedimientos disponibles a la fecha. Este punto es muy importante, ya que la evaluación de producción de proteínas usando dos construcciones distintas permite a los investigadores escoger el tipo más productivo antes de proceder al cultivo industrial a gran escala.
+Palabras clave: distribuciones de largo sesgado, lenguaje de computación R, métodos de verosimilitud, mezcla de distribuciones.
+
+1. Introduction
+
+    The normal distribution has been a reference model in statistics for over one
+hundred years. Its attractive properties are well-known and widely used in sta-
+tistical theory and practice. However, inference upon normality is vulnerable to
+atypical data, which are found in several fields. Specifically, the parameter esti-
+mators of the normal model obtained with the maximum likelihood (ML) method
+are sensitive to atypical observations. Lange, Little & Taylor (1989) proposed to
+use the Student-t distribution for solving this problem of sensitivity, since it has
+greater kurtosis than the normal distribution. Thus, such atypical cases could
+be accommodated in a better way by using the t model than the normal model.
+Moreover, as it can be seen in Figure 1, the degree of kurtosis of the t model is
+flexible and then it can appropriately model different quantities and magnitudes
+of atypical data. For these reasons, the t model has been used as an alternative to
+the normal model to obtain qualitatively robust estimates, which is a first concept
+of robustness. See Lucas (1997) and Montgomery, Peck & Vining (2001, pp. 381-
+413). Specifically, robustness studies the sensitivity of the results of a statistical
+analysis to deviations in the assumptions that validate this analysis.
+    A random variable (r.v.) X following the t distribution with ν degrees of
+freedom, denoted by X ∼ t(ν), has probability density function (p.d.f.) and
+
+                                      Revista Colombiana de Estadística 34 (2011) 177–195
+
+An Inverse Gaussian Model with an Application to Protein Production                                       179
+
+         Figure 1: Coefficients of kurtosis of the normal and t distributions.
+
+
+cumulative distribution function (c.d.f.) respectively given by
+           Γ( ν+1 )
+                      h       i ν+1
+                             2 − 2                                    
+ φt (x) = √ν π Γ2 ν    1 + xν         and Φt (x) = 21 1 + Ir 12 , 12 ν , x ∈ R, ν > 0
+                 (2)
+                    Rx                     R1
+where Ir (a, b) = [ 0 ta−1 [1 − t]b−1 dt]/[ 0 ta−1 [1 − t]b−1 dt] is the beta incomplete
+function ratio, with r = x2 /[x2 + ν]. See Johnson, Kotz & Balakrishnan (1994,
+pp. 364). Special cases of the t distribution are the Cauchy distribution, when
+ν = 1, and the normal distribution, when ν → ∞. The normal and t models are
+symmetric distributions in the seto of real numbers. However, many phenomena
+present data whose distributions are asymmetrical, such as occurs frequently in
+biotechnology and industry data.
+    A very popular, positively skewed, asymmetric probability model is the inverse
+Gaussian (IG) distribution, which is also known as the first passage time distri-
+bution of the Brownian motion with positive drift. See Schrödinger (1915), Wald
+(1947) and Tweedie (1957). The inverse Gaussian (IG) and normal distributions
+are very similar, although these distributions describe different types of data. In
+fact, Folks (2007) provided a table that contains 42 analogies between these two
+distributions. The IG distribution has been widely studied. Several books devoted
+to this distribution have appeared within the last 30 years. See Jörgensen (1982),
+Chhikara & Folks (1989), Seshadri (1993, 1999) and Johnson et al. (1994, pp. 259-
+297). Specifically, the IG model is characterized by the mean (µ) and scale (λ)
+parameters, denoted by T ∼ IG(µ, λ). An r.v. T with IG distribution has p.d.f.
+and c.d.f. respectively given by
+                  √                               
+ fT (t) = φ (at ) √tλ3 and FT (t) = Φ (at ) + exp 2λ
+                                                  µ  Φ (−bt ) , t > 0, µ > 0, λ > 0
+
+where φ(·) and Φ(·) denotes the N(0,1) p.d.f. and c.d.f. respectively, and
+                                                      √                                    √
+                                                       λ[t−µ]                               λ[t+µ]
+                    at (µ, λ) =                          √
+                                                        µ t
+                                                                    and bt (µ, λ) =           √
+                                                                                             µ t
+                                                                                                          (1)
+
+   According to (1) and for simplicity, we sometimes use the notations at (µ, λ) =
+at and bt (µ, λ) = bt along the paper. However, when we need to emphasize the
+
+                                                           Revista Colombiana de Estadística 34 (2011) 177–195
+
+180                           Antonio Sanhueza, Víctor Leiva & Liliana López-Kleine
+
+dependence of the functions at and bt on µ and λ, we use the notations at (µ, λ)
+and bt (µ, λ). Some properties of the IG distribution are c T ∼ IG(c µ, c λ), with
+c > 0, and to be a member of the exponential family.
+    Length-biased distributions are particular cases of the weighted distributions
+and have interesting properties; see Gupta & Kirmani (1990), Patil (2002) and
+Leiva, Sanhueza & Angulo (2009). The length-biased inverse Gaussian (LBIG)
+distribution was presented by Gupta & Akman (1995). However, this result was
+previously postulated by Jörgensen, Seshadri & Whitmore (1991), although with
+a distinct denomination, since this was called the distribution of the complemen-
+tary reciprocal of the IG distribution. Specifically, if T ∼ IG(µ, λ), then the
+r.v. L = µ2 /T  √ has√a LBIG distribution. In this case, the p.d.f. is given by
+fL (l) = φ (al ) λ/[µ l], for l > 0, µ > 0 and λ > 0.
+    Mixture distributions provide powerful and popular tools for generating flexible
+distributions with attractive statistical and probabilistic properties. See McLach-
+lan & Peel (2000). Specifically, if 0 < p < 1 is a mixing parameter and fX1 (x)
+and fX2 (x) are the densities of the variates X1 and X2 , respectively, then the
+p.d.f. of the r.v. X expressed by the mixture between X1 and X2 is fX (x) =
+[1 − p] fX1 (x) + pfX2 (x), for x > 0. Thus, an r.v. M with mixture inverse Gaus-
+sian (MIG) distribution obtained from the mixture of the IG and LBIG models
+has p.d.f. given by
+                        √    h           i
+     fM (m) = φ (am ) √mλ3 1 − p + pµm , m > 0, µ > 0, λ > 0, 0 < p < 1          (2)
+
+    This is denoted by M ∼ MIG(µ, λ, p). For more details about the MIG dis-
+tribution and some extensions, see Gupta & Akman (1995), Balakrishnan, Leiva,
+Sanhueza & Cabrera (2009) and Kotz, Leiva & Sanhueza (2010). We note from
+(2) that the MIG model is related to the normal model. Thus, by using this re-
+lationship, we can define a MIG distribution based on the t model, which we call
+the MIG-t distribution and should be highly flexible admitting different degrees
+of kurtosis and asymmetry. In addition, this distribution has parameter estimates
+that are often non-sensitive to atypical data. Therefore, the MIG-t model can be
+considered in place of the classic MIG model to produce robust estimation such as
+occurs with the t and normal models. See Lange et al. (1989). This methodology
+avoids the use of robust estimation procedures in their classical way, such as San-
+hueza, Sen & Leiva (2009) and Leiva, Sanhueza, Sen & Araneda (2010) proposed,
+by the utilization of the t model in the construction of the MIG distribution.
+    The IG, LBIG, MIG distributions have been applied in diverse areas, such as
+actuarial science, agricultural, biotechnology, business and industry, demography,
+earth sciences, economy and finance, engineering sciences, internet, linguistics,
+medical sciences, and social and behavior sciences. For more details about these
+applications, see Chhikara & Folks (1989, pp. 159-184) and Seshadri (1999, pp.
+167-316). As mentioned, applications of the IG model in biotechnology and in-
+dustry have been considered. In this study, we propose a new application to these
+two fields, which considers bacterium-based protein production for food industry.
+In general, bacteria are used for the production of proteins with industrial pur-
+poses. Simões Barbosa, Abreu, Silva-Neto, Gruss & Langella (2004) and Le-Loir,
+
+                                    Revista Colombiana de Estadística 34 (2011) 177–195
+
+An Inverse Gaussian Model with an Application to Protein Production                 181
+
+Nouaille, Commissaire, Bretigny, Gruss & Langella (2001) investigated the poten-
+tial of a lactic acid bacteria called Lactococcus lactis, which is a microorganism
+primarily used in the dairy food industry to produce and secret proteins. Such
+bacteria can also be used for industrial processes such as meat, wine and dairy.
+Then, to characterize and compare protein production in different strains and con-
+structions is important by using appropriate statistical distributions and tests. We
+should explored this aspect because the evaluation of protein production by em-
+ploying several constructions allows practitioners to choose the most productive
+one before the bacterial culture is scaled to an industrial level.
+   The aims of this paper are: (i) to introduce the MIG-t distribution as a model
+that can fit data with high kurtosis, such as it could occur in biotechnology and
+industry, (ii) to carry out a hazard analysis for this distribution centered mainly on
+the hazard rate (h.r.) and (iii) to apply the obtained results to protein production
+data of Lactococcus lactis.
+    The rest of this article is organized as follows. In Section 2, we provide a
+probabilistic characterization of the MIG-t distribution and carry out an analysis
+of its h.r. In Section 3, we estimate the parameters of the MIG-t distribution
+and make inference about them by using the ML method. Also, in this section,
+we produce a diagnostic analysis for this distribution to evaluate the potential
+influence of atypical observations. In Section 4, we apply the obtained results
+to novel bacterium-based protein production data. In addition, in this section,
+we statistically compare two types of proteins using the MIG-t distribution by the
+likelihood ratio (LR) test as an alternative methodology to the classical techniques
+proposed so far. Finally, in Section 5, we drawn some conclusions.
+
+
+2. The MIG-t Distribution
+   In this section, we present and characterize the MIG-t probabilistic model.
+
+
+2.1. The Probabilistic Model
+   An r.v. T follows the MIG-t distribution with parameters µ > 0, λ > 0,
+0 < p < 1 and ν > 0 if and only if its p.d.f. is given by
+                               √
+                       Γ( ν+1 ) λ
+                                   h       i− ν+1 h           i
+                                        a2     2
+             fT (t) = √ν π Γ2 ν √t3 1 + νt         1 − p + pµt ,    t>0
+                             (2)
+The notation T ∼ MIG-t(µ, λ, p, ν) is used in this case. The following theorem
+presents some properties of this model.
+Theorem 1. Let T ∼ MIG-t(µ, λ, p, ν). Then,
+  (i) c T ∼ MIG-t(c µ, c λ, p, ν), with c > 0, i.e., the MIG-t distribution belongs to
+      the scale family.
+ (ii) 1/T ∼ MIG-t(1/µ, λ/µ2 , 1 − p, ν), i.e., the MIG-t distribution belongs to the
+      family closed under reciprocation.              R∞    p             
+(iii) The c.d.f. of T is FT (t) = Φt (at ) + [1 − 2p] bt φt   u2 − 4 λ/µ du.
+
+                                     Revista Colombiana de Estadística 34 (2011) 177–195
+
+182                                  Antonio Sanhueza, Víctor Leiva & Liliana López-Kleine
+            h           i
+(iv) U = µλ Tµ + Tµ − 2 ∼ F(1, ν), i.e., U follows a Fisher distribution with 1
+     and ν degrees of freedom.
+
+   The following theorems present the mode, denoted by tm , and the moments of
+the studied distribution.
+
+Theorem 2. Let T ∼ MIG-t(µ, λ, p, ν). Then, the mode of T is given by the
+solution to
+                   ν +1          µ2 tm [3(1 − p)µ + p tm ]
+               −       2    =                                 .
+                 [ν + atm ]   λ[t2m − µ2 ] [(1 − p)µ + p tm ]
+
+Theorem 3. Let T ∼ MIG-t(µ, λ, p, ν). Then, the first four non-central moments
+of T are given by
+                         2
+  (i) E[T ] = µ + p µλ [ν−2]
+                         ν
+                             ;
+                                 3              3        2
+ (ii) E[T 2 ] = µ2 + [1 + 2p] µλ [ν−2]
+                                   ν
+                                       + p µλ2 [ν−2][ν−4]
+                                                  3ν
+                                                          ;
+                                 4                       4       2       4          3
+(iii) E[T 3 ] = µ3 + 3[1 + p] µλ [ν−2]
+                                   ν
+                                       + [1 + 4p] λµ2 [ν−2][ν−4]
+                                                         3ν
+                                                                 + p µλ3 [ν−2][ν−4][ν−6]
+                                                                               15ν
+                                                                                         ;
+                                 5                   5       2               5          3
+(iv) E[T 4 ] = µ4 +2[3+2p] µλ [ν−2]
+                                ν
+                                    +5[1+2p] λµ2 [ν−2][ν−4]
+                                                    3ν
+                                                            +[1+6p] λµ3 [ν−2][ν−4][ν−6]
+                                                                              15ν
+                     5               4
+               + p λµ4 [ν−2][ν−4][ν−6][ν−8]
+                              105ν
+
+
+Note 1. Observe that if T ∼ MIG-t(µ, λ, p, ν) and p = 0, 0.5 and 1, then we have
+the IG, Birnbaum-Saunders (BS) and LBIG distributions obtained from the t(ν)
+model, respectively. In addition, as mentioned, recall that the standard normal
+model is obtained as a limiting distribution of the t(ν) model when ν → ∞.
+Thus, the mentioned particular cases correspond to the classical IG, BS and LBIG
+distributions when ν → ∞ and p = 0, 0.5 and 1, respectively.
+
+
+2.2. Hazard Analysis and Order Statistics
+    A hazard is a dangerous event that could conduct to an emergency or disaster.
+Thus, a hazard is a potential and not an actual possibility, i.e., it can be statis-
+tically evaluated, for example, by a useful descriptor known as the hazard rate.
+This rate for an r.v. T > 0 with p.d.f. fT (·) and c.d.f. FT (·), is given by
+
+                   P(t < T < ∆t|T > t)      fT (t)     d log(ST (t))
+      hT (t) = lim                       =         =−                , t > 0,    (3)
+              △t→0           ∆t             ST (t)          dt
+                                                                    R∞
+with 0 < ST (t) < 1, where ST (t) = P(T ≥ t) = 1 − FT (t) = t fT (u) du, for
+t > 0, is the survival function. In addition, another useful
+                                                           R∞descriptor is the mean
+residual, which is given by µ(x) = E[T |T > x] = x + [ x ST (t) dt]/ST (x), for
+x > 0 and ST (x) > 0, with µ(x) = µ = E[T ], when x = 0. For more details about
+these descriptors, see Johnson, Kotz & Balakrishnan (1995, pp. 640-650), Marshall
+& Olkin (2007) and Saunders (2007). Note from (3) and below this equation that
+
+                                          Revista Colombiana de Estadística 34 (2011) 177–195
+
+An Inverse Gaussian Model with an Application to Protein Production                              183
+
+all of these functions can be expressed by means of the h.r. Therefore, we carry
+out a hazard analysis based on this rate.
+    A h.r. function hT (t) can be increasing, decreasing or constant in t. In par-
+ticular, if hT (t) = λ > 0, for all t > 0, then we have that the r.v. T follows
+an exponential distribution with parameter λ. However, there are distributional
+families with non-monotone h.r. In this case, an important value for hazard anal-
+ysis is the change point of the h.r. of T . Within the class of distributions with a
+non-monotone h.r., we can identify concave or convex hazard rates, i.e., ∩-shaped
+or ∪-shaped h.r., respectively. Particularly, for the ∩-shaped case, we also have
+two cases, when the h.r. is initially increasing until its change point and then
+(i) it decreases to zero, as in the case of the lognormal distribution, or (ii) it de-
+creases until that becomes stabilized in a positive constant, as in the case of the
+IG and BS distributions. For this reason, when we study distributional families
+with non-monotone h.r., change point and limit behavior analyses are necessary.
+     The following theorems provide the MIG-t h.r., its change point, denoted by
+tc , and its limiting behavior.
+Theorem 4. Let T ∼ MIG-t(µ, λ, p, ν). Then, the h.r. of T is given by
+                         √                h            i
+                          λφt (at )       1 − p + pµt , t > 0
+          hT (t) = √ 3 
+                             t   Φt (−at )+(2p−1)J(bt )
+
+                 R∞         p
+where J(bt ) =     bt   φt ( u2 − 4λ/µ)du.
+
+Theorem 5. Let T ∼ MIG-t(µ, λ, p, ν). Then, the change point of the h.r. of T
+is obtained as the solution to
+                                         √             pt
+                                                           
+                                                          √ λ φt (atc ) 1−p+ µc
+                                                           t3
+              Φt (−atc ) + [2p − 1]J(btc ) =         ν+1     λ[t2    2
+                                                                c −µ ] + 3µ[1−p]+p tc
+                                                                                             .
+                                                        2
+                                                  2[ν+at ]     µ2 t2    2tc [µ(1−p)+p tc ]
+                                                         c         c
+
+
+Theorem 6. Let hT (t) be the h.r. of T ∼ MIG-t(µ, λ, p, ν), with ν known. Then,
+lim hT (t) = 0.
+t→∞
+
+    Order statistics are useful in several statistical procedures. Thus, if T1 , . . . , Tn
+are i.i.d. variates, associated order statistics are denoted by T(1) , . . . , T(j) , . . . , T(n) ,
+where T(1) , T(n) and T(j) denote the minimum, maximum and jth order statistic
+of the variates T1 , . . . , Tn , respectively. For more details about order statistics, see
+Arnold, Balakrishnan & Nagaraja (1992).
+    The following theorem provides the p.d.f. of order statistics for the MIG-t
+distribution.
+Theorem 7. Let T1 , . . . , Tn be i.i.d. variates, where Ti ∼ MIG-t(µ, λ, p, ν), for
+i = 1, . . . , n. Then, for the indicated order statistic, its p.d.f. is given by
+                             √ h             i                            n−1
+  (i) fT(1) (t) = n φt (at ) √tλ3 1 − p + pµt Φt (−at ) + (2p − 1) J(bt )       ,t>0
+                             √ h             i                         n−1
+ (ii) fT(n) (t) = n φt (at ) √tλ3 1 − p + pµt Φt (at ) + (1 − 2p) J(bt )     , t>0
+
+
+                                           Revista Colombiana de Estadística 34 (2011) 177–195
+
+184                                  Antonio Sanhueza, Víctor Leiva & Liliana López-Kleine
+
+                                √ h            i                         j−1
+                    n! φt (at )
+(iii) fT(j) (t) = (j−1)!(n−j)!  √λ 1 − p + p t   Φt (at ) + (1 − 2p)J(bt )
+                                 t3        µ
+                     × [Φt (−at ) + (2p − 1)J(bt )]n−j , t > 0
+
+
+3. Inference and Diagnostics in the MIG-t Model
+   In this section, we present estimation, inference and diagnostics useful to esti-
+mate the mean protein production and detect the potential influence of atypical
+data. In problems with this type of data, generally one has enough amount of
+them to apply asymptotic results. Inference in small samples is not direct, which
+presents a challenge for a further study.
+
+
+3.1. ML Estimation, Information Matrix and Inference
+    Before we find the ML estimators of the MIG-t model parameters, to discuss
+how one should handle the parameter ν of this model is important. The question
+is whether ν should be estimated. Several authors treated this topic for the t
+distribution and models associated with it. See Lange et al. (1989), Lucas (1997),
+Leiva, Riquelme, Balakrishnan & Sanhueza (2008) and references therein. These
+authors noticed problems of unbounded and local maximum in the likelihood func-
+tion, in addition to lack of robustness, when ν is estimated. For this reason, to fix
+ν is better and assume that it is a known value or, otherwise, acquire information
+for it from the data. Thus, once the optimum value of ν is found, the parameters
+µ, λ and p of the MIG-t distribution are estimated as described next.
+
+
+3.1.1. ML Estimation
+
+     The log-likelihood function for θ = (µ, λ, p)⊤ , based on a random sample
+T1 , . . . , Tn , where Ti ∼ MIG-t(µ, λ, p, ν), for i = 1, . . . , n, is expressed as ℓ(θ) =
+P  n
+   i=1 ℓi (θ), where
+
+                 n          [ν + 1]                                  
+      ℓi (θ) ∝     log(λ) −         log ν + a2ti + log µ[1 − p] + p ti − log(µ)           (4)
+                 2             2
+
+   The score vector of first derivatives of the log-likelihood function is given by
+
+                                 ∂ℓ(θ)
+                       ℓ̇(θ) =         = (ℓ̇θ1 ),   with θ1 = µ, λ, or p                  (5)
+                                  ∂θ
+where
+                            n           X     n                  
+                  λ[ν + 1] X     ti − µ                 1−p              n
+      ℓ̇µ   =                         2     +                         − ,
+                     µ3    i=1
+                                ν + ati        i=1
+                                                    µ[1 − p] + pti       µ
+                                n                              n                   
+                  n    [ν + 1] X        a2ti                    X         ti − µ
+      ℓ̇λ   =        −                             and   ℓ̇ p =
+                  2λ     2λ    i=1
+                                      ν + a2ti                  i=1
+                                                                      µ[1 − p] + p ti
+
+
+                                           Revista Colombiana de Estadística 34 (2011) 177–195
+
+An Inverse Gaussian Model with an Application to Protein Production                         185
+
+    The ML estimates of the parameters µ, λ and p are solutions to the equations
+ℓ̇µ = 0, ℓ̇λ = 0 and ℓ̇p = 0. However, these equations do not provide analytical
+solutions, so that an iterative numerical method is necessary to find the roots. As
+starting values for this iterative method, we propose considering the ML estimates
+of µ, λ and p of the MIG distribution. See Seshadri (1999, pp. 145).
+    To select the value of ν, we propose looking for the value that maximizes the
+likelihood function for ν ∈ [1, 100] using an optimal search of ν by means of the
+following algorithm:
+
+(A1) For ν = 1 to ν = 100 by 1:
+      (A1.1) Estimate the parameters µ, λ and p of the MIG-t model considering
+          the ML estimates of µ, λ and p of the MIG distribution starting values
+          for the numerical iterative procedure;
+      (A1.2) Compute the corresponding likelihood function;
+(A2) Choose the value of ν that maximizes this likelihood function and then
+    consider the ML estimates of µ, λ and p the result.
+
+Note 2. Based on the invariance property of the ML estimators, we can estimate
+different functions of the parameter θ. For example, the mean protein production
+can be estimated by using the mean of MIG-t distribution given in Theorem 3 (i).
+
+
+3.1.2. Information Matrix
+
+   The observed information matrix is obtained as J (θ) = −ℓ̈. Here, ℓ̈ is the
+Hessian matrix of second derivatives of the log-likelihood function given by
+
+                          ∂ 2 ℓ(θ)
+                ℓ̈(θ) =            = (ℓ̈θ1 θ2 ),   with θ1 , θ2 = µ, λ, or p                (6)
+                          ∂θ ∂θ⊤
+where
+                              n                               n            
+                  3λ[ν + 1] X ti − µ                λ[ν + 1] X           1
+    ℓ̈µµ    =   −                               −
+                      µ4     i=1
+                                    ν + a2ti            µ3     i=1
+                                                                     ν + a2ti
+                    √             n                  √  X      n                    2
+                  2 λ3 (ν + 1) X [ti − µ]ati ti                            1−p
+                −                                            −
+                       µ5        i=1
+                                           [ν + a2ti ]2         i=1
+                                                                      µ[1 − p] + p ti
+                          n                            n                
+                [ν + 1] X ti − µ              [ν + 1] X [ti − µ]a2ti
+    ℓ̈µλ    =                             −                                  , ℓ̈λp = 0
+                  µ3 i=1 ν + a2ti                µ3 i=1 [ν + a2ti ]2
+                   Xn                                     Xn                     2
+                                 ti                                    ti − µ
+     ℓ̈µp   =   −                              , ℓ̈pp = −
+                   i=1
+                         [µ[1 − p] + p ti ]2                i=1
+                                                                   µ[1 − p] + p ti
+                                     n                               n            
+                    n     ν[ν + 1] X             2
+                                                ati           [ν + 1] X        a2ti
+    ℓ̈λλ    =   − 2−                                       +
+                  2λ        2λ2 i=1 [ν + a2ti ]2                2λ2 i=1 ν + a2ti
+
+
+                                         Revista Colombiana de Estadística 34 (2011) 177–195
+
+186                                 Antonio Sanhueza, Víctor Leiva & Liliana López-Kleine
+
+3.1.3. Inference
+
+    Inference for θ can be based on the asymptotic behavior of the ML estimator
+b = (b
+θ        b pb)⊤ given by √n [θ
+      µ, λ,                  b − θ] →
+                                    d                       d
+                                      N3 (0, Σθb ), where “ →” means convergence in
+distribution. Here, θb is the ML estimator of θ and Σθb is the variance-covariance
+            b
+matrix of θ, which can be obtained from the expected information matrix, namely
+I(θ) = E[J (θ)] = −E[ ℓ̈], as Σθb = I(θ)−1 . Thus, the standard errors of the ML
+estimators can be computed by using the square roots of the diagonal elements of
+I(θ)−1 . Their estimated standard errors can be obtained by evaluating θ at its
+ML estimate θ. b
+Note 3. Instead of the expected information matrix, its observed version could
+be used to approximate the standard errors of the ML estimators. These errors
+can be computed by using the square roots of the diagonal elements of J −1 (θ).
+Once again, their estimated standard errors can be obtained by evaluating θ at
+                 b For more details about the use of the observed information
+its ML estimate θ.
+matrix instead of its expected value, see Efron & Hinkley (1978).
+    A confidence region for θ may be constructed by using the asymptotic normal
+                b above mentioned. Thus, an approximate (1 − α)100% confidence
+distribution of θ
+region for θ, with 0 < α < 1, is given by R = {θ ∈ R3 : (θ              b − θ) ≤
+                                                           b − θ)⊤ Σ−1 (θ
+                                                                     θb
+  2                2                                           2
+χ1−α (3)}, where χ1−α (3) denotes the (1−α)th quantile of the χ distribution with
+three degrees of freedom.
+
+
+3.2. Influence Diagnostics
+    Case deletion is a common way to assess the effect of an observation on the
+estimation procedure. This is a global influence analysis, since the effect of a case
+is evaluated by dropping it from the data set. Alternatively, local influence is based
+more on geometric differentiation than the elimination of observations. In this last
+case, a differential comparison of estimators is used before and after perturbing
+the data or the model. We implement the local influence method for evaluating
+possible atypical cases in the protein production data. As in Cook (1986), we use
+the likelihood displacement to evaluate the local influence. Next, we present global
+and local influence techniques that may be useful for detecting atypical protein
+production data and studying the suitability of the MIG-t model to such data.
+
+3.2.1. Global Influence
+
+    Cook’s distance is an interesting diagnostics technique of the global influence
+method. See Cook & Weisberg (1982). A generalization of this distance is ex-
+pressed as Di = [(θ     b−θ            b −1
+                               b(i) )⊤ Σ θ
+                                            b−θ
+                                         b (θ   b(i) )]/k, for i = 1, . . . , n, where k is the num-
+ber of parameters and Σ          b θb is an estimator of the covariance matrix of θ,        b which,
+as mentioned, can be approximated by −ℓ̈                  −1                     b
+                                                              evaluated at θ, such that Di =
+  b−θ
+[(θ   b(i) )⊤ (−ℓ̈)(θb−θ      b(i) )]/k. If we use an approximation of first order, we obtain
+b−θ
+θ    b(i) ≈ [ℓ̈(i) ]−1 ℓ̇(i) , with ℓ̇(i) being the score vector and ℓ̈(i) the Hessian matrix
+
+
+                                           Revista Colombiana de Estadística 34 (2011) 177–195
+
+An Inverse Gaussian Model with an Application to Protein Production                              187
+
+without considering the ith case. Thus, Di ≈ [(ℓ̇(i) )⊤ (ℓ̈(i) )−1 (−ℓ̈)−1 (ℓ̈(i) )−1 ℓ̇(i) ]/k,
+where a high value for Di indicates a high impact case on the ML estimator of
+θ. For the MIG-t model, in Di , k = 3 and ℓ̇(i) and ℓ̈(i) are analogously defined as
+those given in (5) and (6), respectively.
+
+
+
+3.2.2. Local Influence
+
+    From (4), we can note that the contributions ℓi (θ) are equally P  weighted. A
+                                                                         n
+perturbed log-likelihood function can be defined by ℓ(θ | ω) =           i=1 ωi ℓi (θ),
+                           ⊤
+with ω = (ω1 , . . . , ωn ) being the vector of weights of the contributions from
+each case to the likelihood function and ω0 = 1n = (1, . . . , 1)⊤ being the non-
+perturbed point, that is, ℓ(θ | ω 0 ) = ℓ(θ). This scheme of perturbation is useful
+for evaluating whether the contribution of cases representing to protein production
+data with different weights influence the ML estimator of θ. Specifically, let θ    bω
+be the ML estimator of θ obtained from the perturbed likelihood function. The
+influence of the perturbation ω on the ML estimator may be checked by means
+of the likelihood displacement given by LD(ω) = 2[ℓ(θ)   b − ℓ(θbω )]. Cook (1986)
+postulated studying the local behavior of LD(ω) around ω 0 employing the normal
+curvature Cl of LD(ω) at ω 0 and in the direction of some unitary vector l. He
+showed that Cl = 2 | l⊤ ∆⊤ ℓ̈−1 ∆l |, with klk = 1, where ℓ̈ is as defined in (6)
+and ∆ is a 3 × n perturbation matrix expressed as ∆ = [∆1 (θ), . . . , ∆n (θ)], both
+evaluated at θ = θb and ω 0 . For the MIG-t distribution, the elements of ∆ are
+
+                                                                                           ⊤
+                                                   ∂ 2 ℓ(µ | ω) ∂ 2 ℓ(λ | ω) ∂ 2 ℓ(p | ω)
+    ∆i (θ) = (∆i (µ), ∆i (λ), ∆i (p))⊤ =                       ,            ,
+                                                      ∂µ∂ωi        ∂λ∂ωi       ∂p ∂ωi
+
+for i = 1, . . . , n, where
+
+                              λ [ν + 1] [ti − µ]       1−p           1
+            ∆i (µ) =                             +                 −
+                                 µ3 [ν + a2ti ]    µ[1 − p] + p ti   µ
+                               1   [ν + 1] a2ti                          ti − µ
+            ∆i (λ)    =          −                  and ∆i (p) =
+                              2λ 2λ [ν + a2ti ]                      µ[1 − p] + p ti
+
+
+    Let lmax be the direction of the maximum normal curvature, which corre-
+sponds to the perturbation that reaches the greatest local change in θ.   b The most
+influential cases in the protein production data may be identified by their large
+components of the vector lmax . In addition, lmax is the eigenvector associated with
+the largest eigenvalue of B = ∆⊤ ℓ̈−1 ∆. Another interesting direction is l = ein ,
+which is the ith unitary vector of Rn . In this case, the normal curvature is given
+by Ci = 2|bii |, with bii being the ith diagonal element of B. Thus, Ci can be
+useful to detect the total local influencePof the ith case of protein production using
+                                            n
+as benchmark Ci > 2 C, where C = n1 i=1 Ci , for indicating whether such a case
+is potentially influential.
+
+                                           Revista Colombiana de Estadística 34 (2011) 177–195
+
+188                            Antonio Sanhueza, Víctor Leiva & Liliana López-Kleine
+
+4. Application to Real Data
+    In this section, for illustrative purposes, we apply some of the obtained results
+for the MIG-t distribution to novel data corresponding to the production of a se-
+creted protein by Lactococcus lactis, where initially just one data set is analyzed
+as follows. First, an implementation in R code of the MIG-t model is discussed.
+Second, the problem upon analysis is described. Third, the data set is provided.
+Fourth, an exploratory data analysis (EDA) of this set is produced. Fifth, the pa-
+rameters of the MIG-t distribution are estimated by using the ML method. Later,
+we carry out a brief diagnostic analysis in order to establish the potential influence
+of some protein production data. Then, goodness-of-fit is presented for studying
+the suitability of the MIG-t distribution to such data. Finally, we compare the
+production between two different constructions, one of them corresponding to the
+analyzed data set. The constructions are bacterial strains genetically engineered
+to produce and secret a protein of interest. In this concluding analysis, by using
+the invariance property of the ML estimators of the parameters of the MIG-t dis-
+tribution, we estimate the mean of two populations (constructions) and conducted
+a statistical comparison between these mean values by using the LR test.
+
+
+4.1. Implementation in R Code
+    R language is an open-source software package for statistical computing and
+graphics that can be obtained from http://www.R-project.org; see R Develop-
+ment Core Team (2009). Several R packages for analyzing data from different dis-
+tributions are available and can be downloaded from http://CRAN.R-project.org.
+We have developed an R code to analyze data from the MIG-t model. This code
+contains diverse indicators of the MIG-t distribution and allows us to compute ML
+estimates of its parameters.
+
+
+4.2. The Problem upon Analysis
+    Lactococcus lactis is a lactic acid microorganism corresponding to a well-charac-
+terized gram-positive bacterium that can be used for food industry. This microor-
+ganism can be genetically modified to allow the production of proteins and secre-
+tion of proteins into the culture media. These proteins can be purified and used
+for several purposes in food industry. Depending on the success of the genetic
+construction, the yield protein will vary among constructs. For this reason, once
+genetic constructions are finished, Lactococcus lactis is reproduced by experiments
+in vitro at a laboratory before produce it at an industrial scale. At this stage,
+protein production is measured to study its feasibility and stability, and compare
+production levels among different constructs. Once the production of proteins from
+this bacterium has reached a level with a small variation among essays, i.e., it has
+been stabilized, then such proteins can be produced at big scale in a fermenter
+where cultures of several liters are produced. Lactococcus lactis may yield many
+types of proteins (see Simões Barbosa et al. 2004), although this bacterium does
+
+                                     Revista Colombiana de Estadística 34 (2011) 177–195
+
+An Inverse Gaussian Model with an Application to Protein Production                 189
+
+not secret an important amount of proteins. Therefore, genetical constructs allow-
+ing the production and secretion of proteins of industrial interest in this bacterium
+have been a major research point. All secreted proteins carry a signal peptide that
+directs them to the extracellular culture media. Best results have been obtained
+when a native peptide (belonging to Lactococcus lactis) is used even when the
+produced protein does not belong to this bacterium. See Le-Loir et al. (2001).
+Specifically, the authors postulated a model for protein secretion based on Lacto-
+coccus lactis using the staphylococcal nuclease (NucB), a non native protein, and
+replacing the signal peptide by a native signal peptide (from USp45). The protein
+production is higher using the Lactococcus lactis signal peptides than other pep-
+tides, particularly for Usp45 with classical tests for which protein production data
+do not meet the assumptions. The question that arises here is whether this level of
+production is transferable to other signal peptides from secreted proteins as YvjB
+and how this could be addressed with an adequate distribution and an appropriate
+test for the data. In the application that we make in this study, we analyze data on
+protein production from secreted NucB possessing the YvjB signal peptide (called
+“Group 2”) and the native signal peptide (called “Group 1”). After analyzing the
+first data set by the MIG-t distribution, we statistically compare both groups by
+using this distribution, which may be useful for modeling this kind of protein pro-
+duction data as an alternative procedure to the traditional ones. As mentioned,
+this fact is very important to determinate the most productive construction before
+the bacterial culture is scaled to an industrial level.
+
+
+4.3. The Data Set
+   As mentioned, the data set corresponds to protein production data (expressed
+in ng/ml) from Lactococcus lactis, which are: 165, 123, 123, 128, 129, 135, 156,
+165, 169, 178, 178, 198, 206, 207, 208, 213, 115, 119, 225, 236, 236, 156, 287, 189,
+295, 296, 302, 324, 356, 389, and that we simply call lactis.
+
+
+4.4. Exploratory Data Analysis
+   Table 1 presents a descriptive summary of lactis, while Figure 3 (left) shows
+the histogram and boxplot of these data. An EDA of lactis based on Table 1
+and Figure 3 shows a positively skewed distribution with an atypical data. We
+propose the MIG-t model for describing these data.
+
+                 Table 1: Descriptive statistics for lactis (in ng/ml)
+ Median     Mean     SD        CV         CS       CK       Range Min.     Max.     n
+  193.5    206.867 74.796 36.156% 0.741 2.542                 274    115   389      30
+
+
+
+4.5. Estimation and Model Checking
+  To estimate the parameters µ, λ, p and ν of the MIG-t distribution, we use the
+ML method described in Subsection 3.1.1. As mentioned there, we suggest to fix ν
+
+                                     Revista Colombiana de Estadística 34 (2011) 177–195
+
+190                               Antonio Sanhueza, Víctor Leiva & Liliana López-Kleine
+
+and assume that it is a known value or, otherwise, get information for it from the
+data. Thus, to estimate µ, λ and p of the MIG-tν model, we fix integer values for ν
+from 1 to 100 by 1, choosing the value of ν that maximizes the likelihood function.
+The command mleMIGt() has been implemented in the software R to carry out
+the procedure described in Subsection 3.1.1. The instruction mleMIGt(lactis)
+automatically chooses the value of ν that maximizes the likelihood function and
+computes the ML estimates of µ, λ and p of the MIG-t model according to (A1)-
+(A2). The function optim is used to solve the corresponding iterative numerical
+procedure, which is available in the software R.
+Note 4. The function optim employs the L-BFGS-B method developed by Byrd,
+Lu, Nocedal & Zhu (1995) to carry out the corresponding numerical optimization.
+This method allows having a “box constraint” and so each variable of the opti-
+mization procedure can have a lower or upper bound. The L-BFGS-B method uses
+a limited-memory modification of the quasi-Newton method.
+
+    Based on lactis, the obtained results for these estimates are µ b = 204.109,
+b = 1692.646 and pb = 0.090, with −ℓ(θ)
+λ                                      b = 168.523 being the negative value of the
+log-likelihood function evaluated at these estimates.
+    Next, we detect the effect of potentially influential observations on the ML
+estimates for lactis. These observations are chosen by using the local influence
+method described in Subsection 3.2.2 by means of the total local influence in-
+dex plot (Figure 2). From this figure (left), we can note a potential influence of
+the cases #29 and #30 on the ML estimates of the classical MIG distribution.
+However, as expected, this potential influence is less pronounced for the MIG-t
+distribution (see Figure 2, right).
+
+      1.0                                              1.0
+
+      0.8                                              0.8
+                                             30
+      0.6                                              0.6
+                                                  Ci
+ Ci
+
+
+
+
+      0.4                                   29         0.4
+
+      0.2                                              0.2
+
+      0.0                                              0.0
+
+            0   5   10   15      20   25     30              0   5   10   15      20   25   30
+
+                         Index                                            Index
+Figure 2: Total local influence index plot for the MIG (left) and MIG-t (right) models.
+
+
+Note 5. Since the purpose of this article is to illustrate the use of the MIG-t
+model in the context of protein production data and not to conduct an influence
+analysis, the information provided by the model checking is sufficient for us. In
+future studies, a more deeper analysis should be carried out on these atypical cases.
+Also, comparison of the obtained results in this application with other distributions
+
+                                           Revista Colombiana de Estadística 34 (2011) 177–195
+
+An Inverse Gaussian Model with an Application to Protein Production                                           191
+
+usually employed in hazard analysis, as well as the analysis of lifetime data by this
+model, will be addressed in future studies.
+    Once the MIG-t model parameters have been estimated and the influence anal-
+ysis conducted, a natural question that arises is how good the fit of the model to
+lactis is. For this purpose, we can calculate the Kolmogorov-Smirnov (KS) dis-
+tance between the empirical c.d.f. Fn (·), and the MIG-t c.d.f., FT (·), given by
+
+                            KSDi = |Fn (t) − FT (t)|,           i = 1, . . . , n
+
+    To compute this distance, we replace the parameters in the MIG-t c.d.f. by
+their respective ML estimates. Once all the n KS distances are calculated, we de-
+termine the maximum value of such distances and then compare it to the (1 − α)th
+quantile of the KS distribution to evaluate the suitability of the MIG-t model to
+lactis. The p-value of the KS test is 0.910, which strongly supports the hypoth-
+esis that the MIG-t distribution fit lactis in a very good way. To visually verify
+this fact, we use the invariance property of the ML estimators for determining the
+MIG-t p.d.f. and c.d.f., which are shown in Figure 3 on the histogram and em-
+pirical c.d.f. of the data, respectively. These graphs show the excellent agreement
+between the MIG-t model and lactis. Other goodness-of-fit tests, such as the
+Anderson-Darling test or those for normality as the Lillieford and Shapiro-Wilk
+test adapted to lactis could be also applied, but we consider the information
+provided by the KS test concluding.
+
+             0.006
+             0.005                                              1.0
+ Frequency
+
+
+
+
+             0.004
+                                                                0.8
+             0.003
+             0.002                                              0.6
+                                                          cdf
+
+
+
+
+             0.001                                              0.4
+             0.000
+                                                                0.2
+                     100     200       300       400
+                                                                0.0
+
+                           Protein production                         100   150    200   250   300     350   400
+
+                                                                                  Protein production
+Figure 3: Histogram and boxplot with estimated MIG-t p.d.f. (left) and empirical c.d.f.
+          versus estimated MIG-t c.d.f. (right) for lactis.
+
+
+
+
+4.6. A Comparative Analysis
+   Once the MIG-t distribution has been chosen for fitting lactis, we can esti-
+mate the mean of this distribution. To do this, we use the ML estimates of µ, λ
+and p, the optimum value for ν, the invariance property of these estimators and
+Theorem 3(i). We estimate the mean E[T ] = µ + [p µ2 ν]/[λ (ν − 2)] to detect
+
+                                                Revista Colombiana de Estadística 34 (2011) 177–195
+
+192                                  Antonio Sanhueza, Víctor Leiva & Liliana López-Kleine
+
+the protein production based on the MIG-t distribution using lactis, which is
+ d] = 206.370 ng/ml.
+E[T
+    As mentioned, for practitioners, to compare two constructs is important. Let
+us to denote these constructs as distributions F and G. On the basis of two
+independent samples Ti1 , . . . , Tini , for i = 1, 2, each one randomly extracted from
+its respective population, we assume that Tij ∼ MIG-t(µi , λ, p, ν), for i = 1, 2.
+We want to test H0 : E[T1 ] = E[T2 ] against H1 : E[T1 ] 6= E[T2 ], where E[Ti ] is the
+mean of the ith population. For testing H0 against H1 , we use the LR test, whose
+statistic is given by
+                       "                          #− ν+1    "                      # ν+1
+                 n1
+                 Y         1 + ν1 a2t1j (b  b
+                                         µ, λ)        2  n2
+                                                         Y    1 + ν1 a2t2j (b  b − 2
+                                                                            µ, λ)
+          LR =                                                                             (7)
+                           1 + 1 a2 (c       b
+                                        µ1 , λ)               1 + 1 a2 (c       b
+                                                                           µ1 , λ)
+                 j=1            ν t1j                    j=1        ν t2j
+
+
+    By using the LR statistic defined in (7), we compare the protein production
+from Lactococcus lactis based on the MIG-t distribution for two groups: NucB
+(Group 1) and PSYvjB (Group 2), which estimated mean values are E[T        b 1] =
+                    b
+206.370 ng/ml and E[T2 ] = 262.167 ng/ml. The p-value for the LR test is < 0.001,
+which provides enough evidence for rejecting the hypothesis of equality of means,
+so that PSYvjB statistically produces a greater amount of proteins than NucB.
+Therefore, we recommend it as microorganism for producing proteins at big scale
+in the dairy food industry. The found results agree with those obtained in previous
+studies, where the native peptide allows providing higher amounts of protein.
+
+
+5. Concluding Remarks
+    In this article, we have derived a mixture inverse Gaussian model based on the
+Student-t distribution and applied it to bacterium-based protein production for
+food industry. This model is very flexible in kurtosis and skewness, and has a kur-
+tosis levels greater than that of its usual version. The mixture inverse Gaussian-t
+model is mainly useful to describe data that follow positively skewed distributions
+and accommodate atypical observations in a better way than its usual version.
+We have provided several statistical, hazard, probabilistic and computational as-
+pects of the mixture inverse Gaussian-t distribution. Specifically, for this distri-
+bution, we have carried out a hazard analysis based on the hazard rate, discussed
+maximum likelihood estimation and evaluated the potential influence of atypical
+observations by a diagnostic analysis. Thus, we have introduced a statistical dis-
+tribution that can be useful for modeling different types of data and, particularly,
+those of protein production from a lactic acid bacterium called Lactococcus lac-
+tis, which is a microorganism used primarily in dairy food industry. In problems
+of bacterium-based protein production, generally one has enough amount of data
+to apply asymptotic results. Inference in small samples for the mixture inverse
+Gaussian-t model is not direct so that this presents a challenge for a future study.
+We have applied the obtained results to novel bacterium-based protein production
+data and statistically compared two types of protein producers using the proposed
+
+                                            Revista Colombiana de Estadística 34 (2011) 177–195
+
+An Inverse Gaussian Model with an Application to Protein Production                 193
+
+distribution by the likelihood ratio test as an alternative methodology to the pro-
+cedures available so far. This application showed the utility of the mixture inverse
+Gaussian-t distribution.
+
+
+Acknowledgements
+    The authors wish to thank the editors Leonardo Trujillo, Ph.D. and Piedad
+Urdinola, Ph.D., and anonymous referees for their constructive comments on an
+earlier version of this manuscript which resulted in this improved version. This
+study was partially supported by FONDECYT 1090265 grant from Chile.
+                                                                       
+                 Recibido: octubre de 2010 — Aceptado: marzo de 2011
+
+
+References
+Arnold, B. C., Balakrishnan, N. & Nagaraja, H. N. (1992), A First Course in Order Statistics, John Wiley and Sons, New York.
+Balakrishnan, N., Leiva, V., Sanhueza, A. & Cabrera, E. (2009), ‘Mixture inverse Gaussian distribution and its transformations, moments and applications’, Statistics 43, 91–104.
+Byrd, R. H., Lu, P., Nocedal, J. & Zhu, C. (1995), ‘A limited memory algorithm for bound constrained optimization’, SIAM Journal on Scientific Computing 16, 1190–1208.
+Chhikara, R. S. & Folks, J. L. (1989), The Inverse Gaussian Distribution, Marcel Dekker, New York.
+Cook, R. D. (1986), ‘Assessment of local influence (with discussion)’, Journal of The Royal Statistical Society Series B–Statistical Methodology 48, 133–169.
+Cook, R. D. & Weisberg, S. (1982), Residuals and Influence in Regression, Chapman & Hall, London.
+Efron, B. & Hinkley, D. (1978), ‘Assessing the accuracy of the maximum likelihood estimator: Observed vs. expected Fisher information’, Biometrika 65, 57–487.
+Folks, J. L. (2007), Inverse Gaussian distribution, in S. Kotz, C. B. Read, N. Balakrishnan & B. Vidakovic, eds, ‘The Encyclopedia of Statistical Sciences’,Vol. 6, John Wiley & Sons, New York, pp. 3681–3682.
+Gupta, R. C. & Akman, H. O. (1995), ‘On the reliability studies of the weighted inverse Gaussian model’, Journal of Statistical Planning and Inference 48, 69–83.
+Gupta, R. C. & Kirmani, S. (1990), ‘The role of weighted distributions in stochastic modeling’, Communications in Statistics: Theory and Methods 19, 3147–3162.
+Johnson, N. L., Kotz, S. & Balakrishnan, N. (1994), Continuous Univariate Distributions, Vol. 1, John Wiley and Sons, New York.
+Johnson, N. L., Kotz, S. & Balakrishnan, N. (1995), Continuous Univariate Distributions, Vol. 2, John Wiley and Sons, New York.
+Jörgensen, B. (1982), Statistical Properties of the Generalized Inverse Gaussian Distribution, Springer, Heidelberg.
+Jörgensen, B., Seshadri, V. & Whitmore, G. (1991), ‘On the mixture of the inverse Gaussian distribution with its complementary reciprocal’, Scandinavian Journal of Statistics 18, 77–89.
+Kotz, S., Leiva, V. & Sanhueza, A. (2010), ‘Two new mixture models related to the inverse Gaussian distribution’, Methodology and Computing in Applied Probability 12, 199–212.
+Lange, K. L., Little, J. A. & Taylor, M. G. J. (1989), ‘Robust statistical modeling using the t distribution’, Journal of the American Statistical Association 84, 881–896.
+Le-Loir, Y., Nouaille, S., Commissaire, J., Bretigny, L., Gruss, A. & Langella, P. (2001), ‘Signal peptide and propeptide optimization for heterologous protein secretion in lactococcus lactis’, Applied and Environmental Microbiology 67, 4119–2127.
+Leiva, V., Riquelme, M., Balakrishnan, N. & Sanhueza, A. (2008), ‘Lifetime analysis based on the generalized Birnbaum-Saunders distribution’, Computational Statistics and Data Analysis 21, 2079–2097.
+Leiva, V., Sanhueza, A. & Angulo, J. M. (2009), ‘A length-biased version of the Birnbaum-Saunders distribution with application in water quality’, Stochastic Environmental Research and Risk Assessment 23, 299–307.
+Leiva, V., Sanhueza, A., Sen, P. K. & Araneda, N. (2010), ‘M-procedures in the general multivariate nonlinear regression model’, Pakistan Journal of Statistics 26, 1–13.
+Lucas, A. (1997), ‘Robustness of the student t based m-estimator’, Communications in Statistics: Theory and Methods 26, 1165–1182.
+Marshall, A. W. & Olkin, I. (2007), Life Distributions, Springer Verlag, New York.
+McLachlan, G. J. & Peel, D. (2000), Finite Mixture Models, John Wiley and Sons, New York.
+Montgomery, D. C., Peck, E. A. & Vining, G. G. (2001), Introduction to Linear Regression Analysis, third edn, John Wiley and Sons, New York.
+Patil, G. P. (2002), Weighted distributions, in A. H. El-Shaarawi & W. W. Piegorsch, eds, ‘Encyclopedia of Environmetrics’, Vol. 4, John Wiley & Sons, Chichester, pp. 2369–2377.
+R Development Core Team (2009), R: A language and environment for statistical computing, R Foundation for Statistical Computing, Vienna, Austria. *http://www.R-project.org
+Sanhueza, A., Sen, P. K. & Leiva, V. (2009), ‘A robust procedure in nonlinear models for repeated measurements’, Communications in Statistics: Theory and Methods 38, 138–155.
+Saunders, S. C. (2007), Reliability, Life Testing and Prediction of Services Springer, New York.
+Schrödinger, E. (1915), ‘Zur theorie der fall-und steigversucheand teilchen mit brownscher bewegung’, Physikalische Zeitschrift 16, 289–95.
+Seshadri, V. (1993), The Inverse Gaussian Distribution: A Case Study in Exponential Families, Clarendon Press, New York.
+Seshadri, V. (1999), The Inverse Gaussian Distribution: Statistical Theory and Applications, Springer, New York.
+Simões Barbosa, A., Abreu, H., Silva-Neto, A., Gruss, A. & Langella, P. (2004), ‘A food-grade delivery system for lactococcus lactis and evaluation of inducible gene expression’, Applied Microbiology and Biotechnology 65, 61–67.
+Tweedie, M. C. K. (1957), ‘Statistical properties of the inverse Gaussian distribution - I’, Annals of Mathematics Statistical 28, 362–377.
+Wald, A. (1947), Sequential Analysis, John Wiley and Sons, New York.

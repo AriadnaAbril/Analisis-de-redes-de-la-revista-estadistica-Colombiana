@@ -1,0 +1,904 @@
+A Bayesian Approach to Mixed Gamma Regression Models. Un enfoque bayesiano para modelos mixtos de regresión Gamma
+Universidad Sergio Arboleda, Bogotá, Colombia. Universidad Nacional de Colombia, Bogotá, Colombia
+Abstract
+Gamma regression models are a suitable choice to model continuous variables that take positive real values. This paper presents a gamma regression model with mixed eﬀects from a Bayesian approach. We use the parametrisation of the gamma distribution in terms of the mean and the shape parameter, both of which are modelled through regression structures that may involve fixed and random eﬀects. A computational implementation via Gibbs sampling is provided and illustrative examples (simulated and real data) are presented.
+Key words: Bayesian analysis; Gamma distribution; Gamma regression; Mixed models.
+Resumen
+Los modelos de regresión gamma son una opción adecuada para modelar variables continuas que toman valores reales positivos. Este artículo presenta un modelo de regresión gamma con efectos mixtos desde un enfoque bayesiano. Utilizamos la parametrización de la distribución gamma en términos de la media y el parámetro de forma, los cuales se modelan a través de estructuras de regresión que pueden involucrar efectos fijos y aleatorios. Se proporciona una implementación computacional a través del muestreo de Gibbs y se presentan ejemplos ilustrativos (datos simulados y reales).
+Palabras clave: Análisis bayesiano; Distribución Gamma; Regresión Gamma; Modelos mixtos.
+
+
+1. Introduction
+    Mixed models are used in a wide variety of disciplines: physical, biological
+and social sciences, among others. These models have been particularly useful to
+represent clustered and, therefore, dependent data, arising for example when data
+are collected hierarchically, when observations are taken about related individuals,
+or when data are gathered over time regarding the same individuals (Ronquist
+& Huelsenbeck 2003, Vonesh 2006, Brown & Prescott 2014, Demidenko 2013).
+The study of hierarchical data has been largely framed for variables with normal
+distribution or at least symmetric distributions. However, models may not be
+appropriate when the response variable takes only positive values, such as, in
+the process of rate setting in the framework of heterogeneous insurance portfolios
+(vehicles, personal injury, etc.) (De Jong, Heller et al. 2008), where one possibility
+is to use a gamma regression model.
+    The substantial advantage of considering a gamma model is due to their flexi-
+bility compared to other models, such as exponential and Poisson, among others.
+Thus, gamma regression models allow for monotone models with no constant haz-
+ard in survival.
+   McCullagh & Nelder (1989) presented a gamma regression model where the
+coeﬃcient of variation is assumed constant for all observations. Cepeda (2001)
+and Cepeda & Gamerman (2005) proposed an extension of the gamma regression
+models, assuming regression structures for both mean and dispersion parameters,
+and presented a Bayesian method to fit regression models in the two-parameter
+exponential family of distributions. Specifically for gamma observations, they
+modeled the mean and shape or variance parameters.
+   Following Cepeda (2001), our proposed model uses a parameterization of the
+gamma distribution in terms of the mean and the shape parameters. In this paper,
+we model the mean and the shape of a gamma distribution taking into account
+that, in this model, the variance is a function of the mean and shape parameters
+and that the mean and shape parameters are orthogonal in the Box-Cox sense
+(Cox & Reid 1987, Cepeda 2001). This property is not satisfied by the mean and
+variance.
+   The mean of the response variable is linked to a mixed-eﬀects regression struc-
+ture by the log and identity functions. An extended version of this model is also
+considered, assuming the shape parameter is not constant over the observations,
+but rather is related to a mixed-eﬀects regression through the log link, similar to
+the mean.
+    This paper proposes a Bayesian method to fit gamma regression models, that
+include fixed and random eﬀects in the mean and in the shape parameters. This
+paper is organized as follows: after an introduction, Section 2 present the Bayesian
+mixed gamma regression. In Section 3 a Bayesian method to fit the proposed mod-
+els is presented. Section 4 show results of simulation studies. Section 5 include one
+aplication to real data set. Finally, in section 6 some conclutions are formulated.
+The outline of the OpenBUGS software (Thomas 2006) used, is presented in an
+appendice.
+
+                                       Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                                          83
+
+2. Bayesian mixed gamma regression models
+    Due of its flexibility and other characteristics, the gamma distribution is fre-
+quently used to model continuous data taking only positive values. The probability
+density function of a variable y that follows a gamma distribution, parameterized
+in terms of its mean µ (µ > 0) and shape parameter α (α > 0), is given by:
+                                          (        )α            ( )
+                                    1         αy                  1
+                    f (y|µ, α) =                        e−αy/µ       I(0,∞) (y)              (1)
+                                   Γ(α)       µ                   y
+where α > 0 and Γ(.) is the gamma function (Cepeda-Cuervo, 2001). In this case,
+                         2
+E(y) = µ and Var(y) = µα . If y has density function (1), we write y ∼ G(µ, α).
+   Now, let y1 , . . . yn be independent random variables such that yi ∼ G(µi , α).
+The gamma regression model is defined assuming that
+
+                                      ηi = g(µi ) = x′i β
+
+where β = (β1 , . . . , βp )′ is a vector of unknown regression parameters (p < n),
+xi = (xi1 , . . . , xip )′ is a vector of covariates of the i-th observation and ηi is a
+linear predictor. Usually xi1 = 1 for all i, so that the model has a mean intercept.
+    From generalized linear models, the canonical link function g(.) : (0, ∞) → R,
+is the inverse function g(µ) = 1/µ. However, the usual link functions in the
+gamma regression models are g(µ) = log(µ) and g(µ) = µ, due to the underlying
+constraints in the canonical link .
+    In the gamma regression model presented by Cepeda (2001), the shape param-
+eter is not constant for every observation and it is modeled like the mean. Here, we
+assume n independent random variables, yi ∼ G(µi , αi ), i = 1, . . . , n, with mean
+and shape parameters given by
+
+                          ηi = g(µi ) = x′i β       τi = h(αi ) = wi′ δ
+
+where β = (β1 , . . . , βp )′ and δ = (δ1 , . . . , δk )′ , p + k < n, are the sets of regression
+parameters, xi and wi are observed values of the covariates, and ηi and τi are the
+linear predictors at the i-th observation.
+    Since the shape parameter is strictly positive, the log link function is a natural
+choice for h. It is then assumed that log(αi ) = wi′ δ where wi is a vector of
+covariates and δ denotes a vector of unknown regression coeﬃcients. Again, it
+is convenient to take the first component of the wi vector as 1 to allow for an
+intercept in the shape regression structure. There is no restriction on whether or
+not the wi ′ s contain the same predictor variables as the xi ′ s.
+    The gamma regression model described above does not involve random ef-
+fects. To extend work in Bayesian generalized linear models and specifically in
+Bayesian gamma regression (Cepeda 2001, Cepeda & Gamerman 2004, Cepeda-
+Cuervo, Migon, Garrido & Achcar 2014), in this paper we propose two gamma
+mixed regression models, the first assuming that the shape parameter is constant
+for all observations and the second involving a mixed-eﬀects model for the shape
+parameter.
+
+                                              Revista Colombiana de Estadstica 42 (2019) 81–99
+
+84                                Martha Lucía Corrales-Bossio & Edilberto Cepeda-Cuervo
+
+
+     Let y1 , . . . , ym be independent continuous random vectors, where
+
+                                       yi = (yi1 , . . . , yini )′
+
+represents a vector of responses observed (with ni measurements) for a sample unit
+i (in chronological order) and for which each of its components yij , j = 1, . . . ni
+takes positive real number values.
+     Also consider a regression model with the following structure:
+
+                                  G[E(yi |bi )] = Xi β + Zi bi ,                               (2)
+with i = 1, . . . , m, where G(.) is a vector-function, linking the response vector of
+the conditional mean with the mixed linear model
+
+                                        ηi = Xi β + Zi bi
+
+where Xi is the ni × p design matrix, β = (β1 , . . . , βp )′ are regression coeﬃcients
+or fixed eﬀects, and Zi is the ni × q design matrix associated with the vector of
+random eﬀects bi = (bi1 , . . . , biq )′ .
+     For the identity link function, the j-th component of (2) is
+
+                                                         ′
+                                   µij = ηij = x′ij β + zij bi                                 (3)
+where µij = E(yij |bi ), xij = (xij1 , . . . , xijp )′ and zij = (zij1 , . . . , zijq )′ .
+     For the log link function, the j-th component of (2) is:
+
+                                                            ′
+                                log(µij ) = ηij = x′ij β + zij bi
+where µij = E[yij |bi ], xij = (xij1 , . . . , xijp )′ and zij = (zij1 , . . . , zijq )′ , which is
+equivalent to
+
+                             µij = exp(ηij ) = exp(x′ij β + zij
+                                                             ′
+                                                                bi )                           (4)
+
+     In this paper, we first assume that conditional on bi , β and α, that yij , i =
+1, . . . , m; j = 1, . . . , ni , are independent and have probability density function
+
+                                                   ind
+                                    yij |bi , β, α ∼ G(µij , α)
+given by (1) with µ replaced by µij (specified by (3) or (4) ), depending on a set of
+explanatory variables through the selected link. In this formulation, α represents
+a constant shape parameter.
+   In mixed models, the random eﬀects, b1 , . . . , bm , are typically assumed to be
+independent and normally distributed:
+                                      ind
+                              bi |Σb ∼ Nq (0, Σb ), i = 1, . . . , m,
+
+where Σb is a q × q positive-definite matrix. The normality assumption may be
+questionable in some practical situations when there are outliers, when the data
+
+
+                                                Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                                     85
+
+exhibit fat tails or the behavior of the data turns out to be asymmetric. An
+alternative is to consider other types of distributions such as the multivariate t-
+distribution with νb > 0 degrees of freedom, location vector µb ∈ Rq and positive-
+definite dispersion matrix Σb to model the random eﬀects bi ′ s, i.e., bi |νb , Σb ∼
+                                                                                     ind
+
+tq (νb , 0, Σb ), i = 1, . . . , m (Figueroa-Zúñiga, Arellano-Valle & Ferrari 2013).
+   For a more general formulation of this model, we consider a diﬀerent shape
+parameter, αij , for each response yij . Let us now assume a mixed model for the
+logarithm of αij . This is
+                                                ′
+                             log(αij ) = τij = wij δ + h′ij di                          (5)
+
+where wij = (wij1 , . . . , wijp∗ )′ is the design vector corresponding to the vector p∗ ×
+1, δ, of fixed eﬀects, and hij = (hij1 , . . . , hijq∗ )′ is the design vector corresponding
+to the vector, di , of random eﬀects. It may be noted that the matrices Wi =
+(wi1 , . . . , wini ) and Hi = (hi1 , . . . , hini ) can contain the same covariate matrices
+Xi = (xi1 , . . . , xini ) and Zi = (zi1 , . . . , zini ), but this is not required.
+                                            ind
+   Here it can be assumed that di |Σb ∼ Nq (0, Σb ), i = 1, . . . , m, where Σd is a
+                                                                         ind
+positive-definite matrix. Alternatively, we can assume that di |Σd ∼ tq (νd , 0, Σb ), i =
+1, . . . , m.
+   In order to apply Bayesian methods to fit the gamma Bayesian mixed model,
+we assume multivariate normal prior distributions for the fixed eﬀects, that is
+
+                                    β ∼ Np (µβ , Σβ )
+
+    Vague priors are specified by taking large values for the prior variances. An
+alternative strategy is to consider a multivariate t-distribution, i.e.,
+
+                                   β ∼ tp (νβ , µβ , Σβ )
+and to specify an appropriate value for νβ , the degrees of freedom parameter. If
+the vector of random eﬀects is assumed to follow a multivariate t-distribution, i.e.,
+bi |νb , µb , Σb ∼ tq (νb , 0, Σb ), then the prior distribution for the degrees of freedom
+can be discrete as in Albert & Chib (1993) and Besag, Green, Higdon & Mengersen
+(1995), or continuous as in Geweke (1992). We have chosen the latter alternative.
+More specifically, we consider an exponential prior distribution with mean 1/a,
+for the degrees of freedom, which we denote ε(a). The prior distribution for the
+scale matrix of random eﬀects Σb is chosen, mainly for computational simplicity,
+to be an inverted Wishart distribution as in Fong, Rue & Wakefield (2010), i.e.,
+Σb ∼ IWq (Ψ, c).
+   In summary, in this paper we study two gamma mixed regression models,
+where:
+
+   1. Model 1: The mean follows a mixed regression structure given by equation
+      (2) modeled as in (3) or (4) (Model 1A and Model 1B, respectively) and
+      both have a constant shape parameter α.
+
+                                          Revista Colombiana de Estadstica 42 (2019) 81–99
+
+86                                  Martha Lucía Corrales-Bossio & Edilberto Cepeda-Cuervo
+
+
+     2. Model 2: The mean follows a mixed regression structures given by (2) and
+        the shape follows a regression structures given by (5).
+
+
+3. Fitting Bayesian Mixed Gamma Regression Mod-
+   els
+     Let y = (y ′1 , . . . , y ′m )′ where y i = (yi1 , . . . , yini )′ , and η = (η ′1 , . . . , η ′m )′ ,
+where η i = (ηi1 , . . . , ηini )′ . By assumption, conditionally on β, Σb and νb , the ηi ′ s
+are independents and have density function f (ηi |β, Σb , νb ) ∝ f (bi |β, Σb , νb ), i =
+1, . . . , m.
+
+
+3.1. Model 1
+   Assuming that the parameters Σb , νb , α and β are independents, the joint
+posterior distribution is given by:
+
+                             [m n                          ][ m                          ]
+                              ∏∏ i                           ∏
+ f (β, Σb , νb , α, η|y) ∝              f (yij |ηij , α)           f (ηij |β, Σb , νb ) f (Σb )f (νb )f (α)f (β)
+                              i=1 j=1                        i=1
+
+
+   Thus, samples of f (β, Σb , νb , α, η|y) are obtained by an iterative process from
+the full conditional distributions:
+
+              f (Σb |νb , β, α, η, y), f (νb |Σb , β, α, η, y), f (β|Σb , νb , α, η, y)
+
+          f (α|νb , β, Σb , η, y), f (ηi |ηk , Σb , β, α, νb , y), i, k = 1, . . . , m, i ̸= k
+
+    The algorithm can be implemented using OpenBUGS and this software can
+also be used to obtain posterior parameter inferences.
+
+
+3.2. Model 2
+    Defining τ = (τ ′1 , . . . , τ ′m )′ , where τ i = (τi1 , . . . , τini )′ , and assuming (con-
+ditional independence of yij ) δ, Σd and νd , the τ ′i s are independent and have
+density function f (τi |δ, Σd , νd ) ∝ f (di |δ, Σd , νd ), i = 1, . . . , m, and assuming in-
+dependent prior distribution for Σb , νb , Σd , νd , δ and β, the posterior distribution
+of (β, Σb , νb , δ, Σd , νd ) is given by:
+
+                                            [m n                             ][ m                          ]
+                                             ∏∏  i                             ∏
+  f (β, Σb , νb , δ, Σd , νd , η, τ |y) ∝              f (yij |ηij , τij )           f (ηi |β, Σb , νb )
+                                             i=1 j=1                           i=1
+                                            [m                        ]
+                                             ∏
+                                        ×         f (τi |δ, Σd , νd ) f (Σb )f (νb )f (δ)f (Σd )f (νd )f (β)
+                                            i=1
+
+
+
+                                                     Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                                                     87
+
+    Thus, a Gibbs sampling algorithm also can be used to generate samples from:
+                                  f (β, Σb , νb , δ, Σd , νd , η, τ |y)
+through iteratively sampling from the following full conditional distributions:
+              f (β|Σb , νb , δ, Σd , νd , η, τ, y), f (Σb |β, νb , δ, Σd , νd , η, τ , y)
+              f (νb |β, Σb , δ, Σd , νd , η, τ , y), f (δ|β, Σb , νb , Σd , νd , η, τ, y)
+              f (Σd |β, Σb , νb , δ, νd , η, τ, y), f (νd |β, Σb , νb , δ, Σd , η, τ, y)
+      f (ηi |ηk , τk , β, Σb , νb , δ, Σd , νd , yi ), f (τi |τk , ηk , β, Σb , νb , δ, Σd , νd , yi )
+for i, k = 1, . . . , m, and i ̸= k. The algorithm for this model can also be imple-
+mented in OpenBUGS, and posterior inferences for the parameters can be made
+with this software.
+
+
+4. Simulation studies
+   We conducted a simulation study to examine how similar the estimates of the
+parameters of the models are, compared with the true values of the parameters.
+
+
+4.1. Model type 1
+    In this section we consider two classes of models:
+Model 1A. In this section, we assume the model:
+                  yij |bi , α, β ∼ G(µij , α), i = 1, . . . , n, and j = 1, . . . , 5,
+where β = (β1 , β2 , β3 )′ , bi = (bi1 , bi2 )′ ,
+
+                      ηij = µij = β1 + β2 xij2 + β3 xij3 + bi1 + bi2 zij2 ,
+and bi |νb , Σb ∼ t2 (νb , 0, Σb ), assuming as link function the inverse of the canonical
+link.
+    For n = 50, 100 and 150, values of the explanatory variables X2 , X3 and Z2
+were generated from uniform distributions U[0,30], U[0,15] and U[10,20] respec-
+tively, and we set νb = 5, α = 13, β = (1.5, 2.0, 3.0)′ and
+                                      [             ]
+                                         1 0.1
+                                Σb =                  .
+                                        0.1 0.3
+
+   The following prior specifications were adopted: νb ∼ ε(0.1), Σb ∼ IW2 (Ψ, c),
+and β = (β1 , β2 , β3 )′ ∼ t3 (νβ , µβ , Σβ ) with c = 5, and α ∼ IG(ϵ, ϵ), with ϵ =
+0.001,
+                                                                             
+         [             ]                                         10 0 0
+            20 0
+     Ψ=                  , νβ = 5, µβ = (0, 0, 0)′ ,      Σβ =  0 10 0 
+             0 20
+                                                                  0 0 10
+
+                                                  Revista Colombiana de Estadstica 42 (2019) 81–99
+
+88                            Martha Lucía Corrales-Bossio & Edilberto Cepeda-Cuervo
+
+
+    The true values of the parameters and their estimations and standard devi-
+ations are presented in Table 1. In this model we consider 100,000 iterations,
+discarding the first 10,000 iterations as burn-in. The parameter estimates improve
+and standard deviations decline as sample size increases.
+
+Table 1: True and estimated parameter values, and standard deviations for model 1A.
+                               β1     β2      β3       α     νb    Σb11    Σb12    Σb13
+      n    True              1.50   2.00    3.00   13.00   5.00    1.00    0.10    0.30
+      50   Estimated s.d.    1.23   2.10    3.13   17.77   4.92    0.93    0.12    0.27
+                             0.53   0.05    0.10    2.03   1.72    0.11    0.02    0.06
+     100   Estimated s.d.    1.39   2.07    3.15   15.25   5.19    1.03    0.11    0.29
+                             0.33   0.05    0.09    2.13   1.62    0.12    0.02    0.07
+     150   Estimated s.d.    1.53   2.05    3.11   15.37   4.95    1.03    0.10    0.31
+                             0.31   0.04    0.09    2.10   1.61    0.11    0.02    0.05
+
+
+    To monitor the chains’ global convergence, we calculated the potential scale
+reduction factor(psrf) proposed by Brooks & Gelman (1998) (the psrf is an esti-
+mated factor by which the scale of the current distribution for the target distri-
+bution might be reduced if the simulations were continued for an infinite number
+of iterations). When the psrf is high (perhaps greater than 1.1 or 1.2), then we
+should run our chains longer to improve convergence to the stationary distribution.
+We obtained psrf = 0.995, 0.996 and 0.99 for n = 50, 100 and 150, respectively.
+The tests indicated that the Markov chain converged to its stationary distribution.
+Also, jumps were performed every 5 iterations to remove eﬀects of autocorrelations
+in each chain.
+   The study of the convergence of the individual chains was performed using
+the CODA package (Plummer, Best, Cowles & Vines 2006), in the R software (R
+Core Team 2017). This package provides diﬀerent diagnostic methods to check
+convergence: Gelman and Rubin’s diagnostic (Geweke 1992), Geweke’s diagnostic
+(Geweke 1992), Heidelberg and Welch’s diagnostic (Heidelberger & Welch 1981)
+and Lewisťs diagnostic (Raﬀery & Lewis 1992).
+   Table 2 shows, for n = 50, the posterior correlations between the posterior
+parameters chains. Small correlations can be seen between them, with values
+between −0.11 and 0.15. Note that the correlations between βi and α are near
+zero. The correlations considering the other two sample sizes were similar to those
+shown in Table 2.
+
+                     Table 2: Posterior correlations, model 1A.
+                      β1      β2     β3       α      νb    Σb11    Σb12    Σb13
+             β1     1.00
+             β2    -0.03     1.00
+             β3    -0.05    -0.07   1.00
+             α     -0.03     0.00   0.00    1.00
+             νb    -0.01     0.01   0.01    0.01    1.00
+            Σb11    0.06    -0.06   0.03   -0.07   -0.01    1.00
+            Σb12   -0.06     0.03   0.02   -0.01   -0.03   -0.05    1.00
+            Σb13    0.00    -0.01   0.00   -0.11   -0.08    0.02    0.15    1.00
+
+
+
+                                           Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                                               89
+
+Model 1B. We assume the model:
+
+                 yij |bi , α, β ∼ G(µij , α), i = 1, . . . , n, and j = 1, . . . , 5,
+
+where β = (β1 , β2 , β3 )′ , bi = (bi1 , bi2 )′ ,
+
+                  ηij = log(µij ) = β1 + β2 xij2 + β3 xij3 + bi1 + bi2 zij2 ,
+
+and bi |νb , Σb ∼ t2 (νb , 0, Σb ).
+For n = 50, 100 and 150, values of the explanatory variables X2 , X3 and Z2
+were generated, again, from uniform distributions U[0,30], U[0,15] and U[10,20],
+respectively, and we set νb = 5, α = 13, β = (1, 0.2, −0.03)′ , and
+                                              [                ]
+                                                    0.8 0.4
+                                       Σb =                        .
+                                                    0.4 2
+Prior distributions for the parameters νb , Σb , β and α are the same as those pro-
+posed for model 1A.
+   The parameter estimations and standard deviations are given in Table 3. We
+consider 100,000 iterations, discarding the first 10,000 iterations as burn-in, like in
+the above model. Again we analyze the convergence of the chains with the above
+mentioned criteria. These diagnostic tests suggest good multivariate (psrf = 1.02)
+and individual behavior of the chains.
+         Table 3: True parameter values and standard deviations for model 1B.
+                                β1      β2       β3        α             νb   Σb11   Σb12   Σb13
+         n      True          1.00    0.20    -0.03    13.00           5.00   0.80   0.40   2.00
+         50     Estimated     0.95    0.17    -0.03    19.33           4.72   0.93   0.32   1.77
+                s.d.          0.37    0.09     0.01     2.03           0.67   0.11   0.10   0.76
+        100     Estimated     0.95    0.18    -0.03    17.75           5.19   1.03   0.41   1.89
+                s.d.          0.33    0.08     0.01     2.01           0.62   0.12   0.10   0.67
+        150     Estimated     0.97    0.18    -0.03    15.37           4.95   1.03   0.41   1.91
+                s.d.          0.31    0.09     0.01     2.10           0.61   0.11   0.09   0.65
+
+
+    Table 4 shows for n = 50, posterior correlations between the estimated param-
+eters. As above, small correlations can be seen, with values between -0.13 and
+0.16. Note, again, that the correlation between samples of β2 , β3 and α is equal
+to zero. The correlations considering the other two sample sizes were similar to
+those shown in Table 4.
+
+
+4.2. Model 2
+    In this section we assume the model
+
+              yij |bi , δ, β, di ∼ G(µij , αij ), i = 1, . . . , n, and j = 1, . . . , 5,
+
+where β = (β1 , β2 , β3 )′ , bi = (bi1 , bi2 )′ , δ = (δ1 , δ2 , δ3 )′ , di = (di1 , di2 )′ , and mean
+and shape structures given by
+
+                                                Revista Colombiana de Estadstica 42 (2019) 81–99
+
+90                              Martha Lucía Corrales-Bossio & Edilberto Cepeda-Cuervo
+
+                         Table 4: Posterior correlations, model 1B.
+                         β1      β2    β3          α     νb    Σb11    Σb12   Σb13
+               β1      1.00
+               β2     -0.02    1.00
+               β3     -0.01   -0.03   1.00
+               α      -0.06    0.00   0.00    1.00
+               νb     -0.02    0.02   0.03    0.03      1.00
+              Σb11     0.07   -0.06   0.03   -0.07     -0.01    1.00
+              Σb12    -0.09    0.06   0.04   -0.01     -0.04   -0.07   1.00
+              Σb13     0.03   -0.01   0.06   -0.13     -0.10    0.07   0.16   1.00
+
+
+
+
+                     ηij = µij = β1 + β2 xij2 + β3 xij3 + bi1 + bi2 zij2
+                  τij = log(αij ) = δ1 + δ2 xij2 + δ3 xij3 + di1 + di2 zij2 ,
+and bi |νb , Σb ∼ t2 (νb , 0, Σb ).
+     We set νb = 5, β = (0.5, 1.5, 2.5)′ , δ = (0.5, 0.2, 0.01)′ and
+                                               [               ]
+                                                   0.8 0.4
+                                 Σb = Σd =                         .
+                                                   0.4 2
+For n = 50, 100 and 150, values of the explanatory variables X 2 , X 3 and Z 2 , were
+generated from the uniform distributions defined in model 1A.
+   Prior distributions for the parameters νb , Σb and β are the same as those
+proposed for model 1A. Prior distribution for the parameter δ is the same as the
+parameter β: t3 (νβ , µβ , Σβ ). Also, for model specifications that include random
+eﬀects for the shape parameter, we assume that the shape random eﬀects di have
+the same distribution as the location random eﬀects bi : t2 (νb , 0, Σb ).
+    In this model, we again considered 100,000 Monte Carlo iterations and the
+estimates were obtained using the samples obtained in the last 90,000 iterations.
+Testing the chains indicated very good convergence behavior. Table 6 shows, for
+n = 50, posterior correlations between posterior samples of the parameters. There
+are small correlations between them, with values between -0.15 and 0.17. Here,
+the correlations between posterior samples of β2 , β3 , and δ1 , δ2 , δ3 are equal to
+zero. The correlations considering the other two sample sizes were similar to those
+shown in Table 6. The parameter estimates are given in Table 5.
+   We considered diﬀerent values for νb = 3, 7, 10 for the models 1A, 1B and 2.
+The results obtained were good enough.
+   According to the results obtained in the above simulated models, the estimates
+obtained are reliable.
+
+
+
+
+                                             Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                                                     91
+
+Table 5: True and estimated parameter values, and standard deviations for model 2.
+                        β1      β2     β3      δ1          δ2          δ3          νb   Σb11   Σb12   Σb13
+  n      True         0.50    1.50   2.50    0.50        0.20        0.01        5.00   0.80   0.40   2.00
+  50     Estimated    0.65    1.27   2.36    0.41        0.25        0.01        6.32   1.31   0.73   2.33
+         s.d.         0.25    0.41   0.57    0.17        0.15        0.00        1.33   0.71   0.41   0.77
+ 100     Estimated    0.61    1.29   2.41    0.43        0.21        0.01        6.09   0.93   0.68   2.11
+         s.d.         0.15    0.35   0.52    0.13        0.11        0.00        1.22   0.53   0.39   0.75
+ 150     Estimated    0.57    1.37   2.43    0.47        0.21        0.01        6.01   0.73   0.61   2.07
+         s.d.         0.13    0.24   0.43    0.13        0.10        0.00        1.19   0.39   0.37   0.75
+
+
+                         Table 6: Posterior correlations, model 2.
+                 β1     β2      β3      δ1          δ2          δ3          νb      Σb11   Σb12   Σb13
+        β1     1.00
+        β2    -0.01    1.00
+        β3    -0.09   -0.03   1.00
+        δ1    -0.04    0.00   0.00    1.00
+        δ2    -0.06    0.00   0.00    0.00     1.00
+        δ3    -0.03    0.00   0.00    0.00     0.00         1.00
+        νb    -0.01   -0.02   0.03    0.03     0.00         0.00        1.00
+       Σb11   -0.07   -0.09   0.08    0.03     0.02         0.01        0.01        1.00
+       Σb12   -0.03    0.08   0.05   -0.03    -0.03        -0.07        0.00        0.00   1.00
+       Σb13   -0.08    0.09   0.06   -0.15    -0.10         0.07        0.17        0.04   0.05   1.00
+
+
+
+
+5. Application
+   Life insurance is a form of personal insurance that covers the risk of death of
+the insured, the occurrence of a serious illness or an unforeseen event that causes
+total and permanent disability of the insured.
+   The insurance data correspond to life insurance premiums (The values are pre-
+miums corresponding to contracts perfected or extended in the year, whose receipts
+have been issued in the corresponding period), in millions of Colombian pesos, of
+19 insurance companies which operate the branches of life and person according
+to the Superintendence of Colombia from 2004 to 2015 (Source: Federation of
+Insurers of Colombia: FASECOLDA).
+    The data set is illustrated in Figure 1. This figure shows incresing behavior
+of the mean over time and that, conditional on the time, the data set presents a
+skewness like in a gamma distribution. Thus, giving the positivity of the data, it
+is assumed that the average life insurance premiums data can be modeled using a
+gamma distribution, with an appropriate link function.
+
+
+5.1. Models with Constant Shape Parameter
+   Here, a mixed gamma regression model with a constant shape parameter is
+considered (Model 1), assuming location regression structure given by: µij =
+β1 + β2 t + bi1 + bi2 t (Model 1A and Model 1B) or µij = β1 + β2 t + β3 t2 + bi1 +
+
+                                             Revista Colombiana de Estadstica 42 (2019) 81–99
+
+92                                    Martha Lucía Corrales-Bossio & Edilberto Cepeda-Cuervo
+
+
+bi2 t + bi3 t2 (Model 1C and Model 1D) t = 1, 2, . . . , 12, i = 1, 2, . . . , 19. For the
+shape parameter α, an inverse gamma distribution α ∼ IG(ϵ, ϵ), with ϵ = 0.001 is
+assumed.
+
+
+
+
+                               4000
+                               3000
+                     premium
+
+                               2000
+                               1000
+                               0
+
+
+
+
+                                        2       4      6           8         10        12
+
+                                                       time
+
+Figure 1: Premiums data. The darker line represents the fitted posterior mean. Model
+          1C
+
+
+
+     • Model 1A:
+       In this model, the following prior distributions were considered: β = (β1 , β2 )′ ∼
+       N2 (µβ , Σβ ) and bi = (bi1 , bi2 )′ ∼ N2 (µb , Σb ), with
+
+                                            [                      ]
+                                                1000  0
+                          Σβ = Σb =                                    ,   µb = µβ = (0, 0)′ .
+                                                  0  1000
+
+     • Model 1B:
+       In this model, the following prior specification was assumed: β = (β1 , β2 )′ ∼
+       t2 (νβ , µβ , Σβ ), bi = (bi1 , bi2 )′ ∼ t2 (νb , µb , Σb ), νb ∼ ε(a0 ) and Σb ∼ IW( Ψ, c),
+       with a0 = 0.1, c = 5,
+
+                                        [                  ]                 [                 ]
+                                            1000     0                            20    0
+                                 Σβ =                          ,       Ψ=                  ,
+                                              0     1000                           0    20
+       and
+                                                 µb = µβ = (0, 0)′ .
+
+     • Model 1C:
+       In this model, the following prior distributions were assumed: β = (β1 , β2 , β3 )′ ∼
+       N3 (µβ , Σβ ) and bi = (bi1 , bi2 , bi3 )′ ∼ N3 (µb , Σb ), with
+
+                                                    Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                                       93
+
+
+                                              
+                       1000  0             0
+            Σβ = Σb =  0   1000            0 ,        and       µb = µβ = (0, 0, 0)′ .
+                         0    0           1000
+
+   • Model 1D:
+     In this model, the following prior distributions were assumed: β = (β1 , β2 , β3 )′ ∼
+     t3 (νβ , µβ , Σβ ), bi = (bi1 , bi2 , bi3 )′ ∼ t3 (νb , µb , Σb ), νb ∼ ε(a0 ) and Σb ∼
+     IW( Ψ, c), with a0 = 0.1, c = 5,
+                                                                             
+                       1000  0             0               20         0     0
+                Σβ =    0  1000            0 ,      Ψ=   0         20     0 ,
+                         0   0            1000              0         0     20
+      and
+                                     µb = µβ = (0, 0, 0)′ .
+
+Table 7: Estimated posterior medians and means, 95% credibility intervals (CI) for the
+         parameters in Model 1C.
+                                         Posterior inference
+                 Parameter
+                             Mean      MC error Median            95%CI
+                 β1          85.33        1.526     86.52    (62.7,110.0)
+                 β2          50.70        1.831     47.06    (26.5,75.14)
+                 β3           5.33        0.016       0.32   (0.38,12.19)
+                 α            1.85        0.021       1.83    (1.35,2.49)
+
+
+
+   These models were fitted using the OpenBugs program given in the Appendix.
+The correspondign DIC values for the fitted models are given by: for Model 1A,
+DIC=2305; for Model 1B, DIC=2376; for Model 1C, DIC=2286 and, for Model
+1D, DIC=2293. Table 7 shows the posterior parameter estimates of Model 1C,
+which provide the least DIC value.
+   For the posterior samples of Model 1C (Figure 2), the multivariate version of
+Gelman and Rubin’s convergence diagnostic (Brooks and Gelman, 1998) indicates
+chain convergence (psrf = 0.98 < 1.2).
+
+
+5.2. Models with Non-Constant Shape Parameter
+   Here a mixed gamma regression model is considered, assuming that α is not
+constant through the observations and that its behavior can be explained by a
+time quadratic or a lineal relation. In this section, we consider four diﬀerent prior
+specifications for the parameters of models: 2A, 2B, 2C and 2D: Cepeda
+
+   • Model 2A
+     In this model, we assume that mean and shape have regression structures
+     are given by
+
+                                         Revista Colombiana de Estadstica 42 (2019) 81–99
+
+94                              Martha Lucía Corrales-Bossio & Edilberto Cepeda-Cuervo
+
+
+
+                                    µij = β1 + β2 t + bi1 + bi2 t                                 (6)
+                                  log(αij ) = δ1 + δ2 t + di1 + di2 t                             (7)
+                                                                                      ′
+       with the following prior specifications: β = (β1 , β2 ) ∼ N2 (µβ , Σβ ), bi =
+       (bi1 , bi2 )′ ∼ N2 (µb , Σb ), with
+                                     [                      ]
+                                         1000    0
+                       Σβ = Σb =                                ,           µb = µβ = (0, 0)′
+                                           0    1000
+       and δ = (δ1 , δ2 )′ ∼ N2 (µδ , Σδ ), di = (di1 , di2 )′ ∼ N2 (µd , Σd ), with
+                                         [                          ]
+                                             1000  0
+                          Σδ = Σd =                                     ,        µδ = (0, 0)′ .
+                                               0  1000
+
+
+
+
+                    Figure 2: Behavior of the sample path. Model 1C.
+
+
+     • Model 2B
+       In this model we assume the mean and shape regression structures given
+       by (6) and (7), and the following prior distributions: β = (β1 , β2 )′ ∼
+       t2 (νβ , µβ , Σβ ), bi = (bi1 , bi2 )′ ∼ t2 (νb , µb , Σb ), νb ∼ ε(a0 ), Σb ∼ IW2 (Ψ, c),
+       with a0 = 0.1, c = 5, νβ = 10, and
+                                [                   ]                        [             ]
+                                    1000      0                                   20 0
+                         Σβ =                           ,   Ψ=
+                                      0      1000                                 0 20
+
+       and µb = µβ = (0, 0)′ , δ = (δ1 , δ2 )′ ∼ t2 (νδ , µδ , Σδ ), di = (di1 , di2 )′ ∼
+       t2 (νd , µd , Σd ), νd ∼ ε(a0 ), Σd ∼ IW2 (Ψ1 , c), with a0 = 0.1, c = 5, νδ =
+
+                                              Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                                           95
+
+     10, and
+                    [                  ]              [             ]
+                        1000    0                         20   0
+            Σδ =                           ,   Ψ1 =                       µd = µδ = (0, 0)′
+                          0    1000                        0   20
+
+   • Model 2C
+     In this model, we assume the following regression structures:
+
+                           µij = β1 + β2 t + β3 t2 + bi1 + bi2 t + bi3 t2                     (8)
+
+
+                        log(αij ) = δ1 + δ2 t + δ3 t2 + di1 + di2 t + di3 t2                  (9)
+     and the following prior dsitributions: β = (β1 , β2 , β3 )′ ∼ N3 (µβ , Σβ ), bi =
+     (bi1 , bi2 , bi3 )′ ∼ N3 (µb , Σb ), with
+                                                        
+                           1000  0                   0
+               Σβ = Σb =    0  1000                  0 ,          µb = µβ = (0, 0, 0)′
+                             0    0                 1000
+     and δ = (δ1 , δ2 , δ3 )′ ∼ N3 (µδ , Σδ ), di = (di1 , di2 , di3 )′ ∼ N3 (µd , Σd ), with
+                                                              
+                             1000               0          0
+                  Σδ = Σd =  0                1000         0 ,        µδ = (0, 0, 0)′ .
+                               0                0         1000
+
+   • Model 2D
+     In this model we assume the mean and shape regression structures given
+     by (8) and (9), and the following prior distributions: β = (β1 , β2 , β3 )′ ∼
+     t3 (νβ , µβ , Σβ ), bi = (bi1 , bi2 , bi3 )′ ∼ t3 (νb , µb , Σb ), νb ∼ ε(a0 ), Σb ∼ IW3 (Ψ, c),
+     with a0 = 0.1, c = 5, νβ = 10, and
+                                                                                  
+                         1000  0                  0            20 0                0
+                   Σβ =  0   1000                 0  , Ψ =  0 20                0 
+                           0    0                1000           0 0               20
+
+     and µb = µβ = (0, 0, 0)′ , δ = (δ1 , δ2 , δ3 )′ ∼ t3 (νδ , µδ , Σδ ), di = (di1 , di2 , di3 )′
+     t3 (νd , µd , Σd ), νd ∼ ε(a0 ), Σd ∼ IW3 (Ψ1 , c), with a0 = 0.1, c = 5, νδ =
+     10, and
+                                                                        
+             1000  0    0              20 0                             0
+      Σδ =    0  1000   0   , Ψ1 =  0 20                              0  µd = µδ = (0, 0, 0)′
+               0    0  1000            0 0                              20
+
+   These models were fitted using the OpenBugs program given in the Appendix.
+The correspondign DIC values for the fitted models are given by: for Model 2A,
+DIC = 3744; for Model 2B, DIC = 3520; for Model 2C, DIC = 3815 and, for
+
+                                               Revista Colombiana de Estadstica 42 (2019) 81–99
+
+96                          Martha Lucía Corrales-Bossio & Edilberto Cepeda-Cuervo
+
+
+Model 2D, DIC = 3855. Table 8 gives the posterior estimates of the parameters
+associated with model 2B, which provide the least DIC value.
+    We considered 20000 Monte Carlo iterations (to secure convergence) and our
+results were obtained with the posterior samples obtained from last 17000 itera-
+tions. Additionally, we performed the diagnostic tests reported for the simulated
+data, all of which suggested suitable behavior of the chains. For Model 2B, similar
+diagnostic evidences werw obtained (psrf = 1.07).
+
+Table 8: Estimated posterior medians and means, 95% credibility intervals (CI) for the
+         parameters in model 2B.
+                                       Posterior inference
+               Parameter
+                           Mean    MC error Median                95%CI
+               β1          228.3      0.104     228.5    (203.04,278.61)
+               β2           8.60      0.152        5.7      (7.73,15.22)
+               β3            1.5      0.189        1.4       (0.92,2.04)
+               β4            0.5      0.137        0.4       (0.21,0.93)
+
+
+   Figure 1 shows the posterior mean estimation µ̂ through the time and the esti-
+mated trajectory of each of the premiums. The results suggest that the premiums
+average tends to increase over time, in non-linear form, as obtained in the model
+through a quadratic polynomial time. The Figure 1 shows that the variances are
+not homogeneous and tend to increase over time and that this variance can be
+modeled by a quadratic or cubic time polynomial. Between the constant shape
+model (Model 1C) and the variable shape model (Model 2B), the DIC values
+suggest that the first model is the best.
+
+
+6. Conclusions and Extensions
+    The implementation of the mixed gamma regression model for random eﬀects
+that are normally distributed and non-normally distributed is very challenging.
+In this sense, this approach is more flexible that others, because one can easily
+implement it when the distribution of the random eﬀects follows the Student-t,
+skew normal or another distribution, by using simple and accessible software such
+as OpenBUGS. Another advantage of this approach is the easy implementation
+for the imputation of missing values, a common situation in longitudinal data for
+which a classic approach is much more complicated.
+   In the application we choose the identity link for the mean parameter. We did
+not have problem with this selection. However, other options, like the log link, are
+possible.
+    We selected the exponential distribution for the prior of the degrees of fredom
+of the multivariate t distribution, but other distributions may be used. A posterior
+study using diﬀerent distributions can be implemented, such as that proposed by
+Fonseca, Ferreira & Migon (2008), and a comparison can be made. In general, a
+study of sensitivity to the choice of priors can be done, selecting diﬀerent types of
+distributions, such as hierarchical distributions, among others.
+
+                                       Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                               97
+
+    It also possible to perform the study by modeling the mean and variance,
+instead of modeling the mean and shape, and comparing the obtained results.
+            [                                                  ]
+             Received: December 2017 — Accepted: November 2018
+
+
+References
+Albert, J. H. & Chib, S. (1993), ‘Bayesian analysis of binary and polychotomous response data’, Journal of the American statistical Association 88(422), 669–679.
+Besag, J., Green, P., Higdon, D. & Mengersen, K. (1995), ‘Bayesian computation and stochastic systems’, Statistical science pp. 3–41.
+Brooks, S. P. & Gelman, A. (1998), ‘General methods for monitoring convergence of iterative simulations’, Journal of computational and graphical statistics 7(4), 434–455.
+Brown, H. & Prescott, R. (2014), Applied mixed models in medicine, John Wiley & Sons.
+Cepeda-Cuervo, E., Migon, H. S., Garrido, L. & Achcar, J. A. (2014), ‘Generalized linear models with random eﬀects in the two-parameter exponential family’, Journal of Statistical Computation and Simulation 84(3), 513–525.
+Cepeda, E. (2001), Modelagem da variabilidade em modelos lineares generalizados, Ph.D. tesis, Universidade Federal do Rio do Janeiro.
+Cepeda, E. C. & Gamerman, D. (2004), ‘Bayesian modeling of joint regressions for the mean and covariance matrix’, Biometrical journal 46(4), 430–440.
+Cepeda, E. & Gamerman, D. (2005), ‘Bayesian methodology for modeling parameters in the two parameter exponential family’, Revista Estadistica 57(168-169), 93–105.
+Cox, D. R. & Reid, N. (1987), ‘Parameter orthogonality and approximate conditional inference’, Journal of the Royal Statistical Society. Series B (Methodological) pp. 1–39.
+De Jong, P., Heller, G. Z. et al. (2008), Generalized linear models for insurance data, Vol. 10, Cambridge University Press Cambridge.
+Demidenko, E. (2013), Mixed models: theory and applications with R, John Wiley & Sons.
+Figueroa-Zúñiga, J. I., Arellano-Valle, R. B. & Ferrari, S. L. (2013), ‘Mixed beta regression: A bayesian perspective’, Computational Statistics & Data Analysis 61, 137–147.
+Fong, Y., Rue, H. & Wakefield, J. (2010), ‘Bayesian inference for generalized linear mixed models’, Biostatistics 11(3), 397–412.
+Fonseca, T. C., Ferreira, M. A. & Migon, H. S. (2008), ‘Objective Bayesian analysis for the Student-t regression model’, Biometrika 95(2), 325–333.
+Geweke, J. (1992), ‘Evaluating the accuracy of sampling-based approaches to calculation of moments (with discussion)’, Bayesian Statistics 4, 169–193.
+Heidelberger, P. & Welch, P. D. (1981), ‘A spectral method for confidence interval generation and run length control in simulations’, Communications of the ACM 24(4), 233–245.
+McCullagh, P. & Nelder, J. A. (1989), Generalized Linear Models, Chapman & Hall.
+Plummer, M., Best, N., Cowles, K. & Vines, K. (2006), ‘CODA: convergence diagnosis and output analysis for MCMC’, R news 6(1), 7–11.
+R Core Team (2017), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria.
+Raﬀery, A. & Lewis, S. (1992), ‘One long run with diagnostics: Implementation strategies for markov chain monte carlo’, Statist. Sci 7, 493–497.
+Ronquist, F. & Huelsenbeck, J. P. (2003), ‘Mrbayes 3: Bayesian phylogenetic inference under mixed models’, Bioinformatics 19(12), 1572–1574.
+Thomas, A. (2006), ‘Making bugs open’, R news 6, 12–17.
+Vonesh, E. F. (2006), ‘Mixed models: Theory and applications’.
+
+Appendix A. Appendix: BUGS Codes for the Mixed
+            Gamma Regression
+   This appendix presents the various pieces of BUGS code used for fitting the
+mixed gamma regression in the simulated data example.
+
+
+Model 1A
+model
+{
+for( i in 1 : m ) {
+for( j in 1 : n ) {
+Y[i , j] ~ dgamma(a1[i,j] ,a2[i,j])
+a1[i,j] <- phi
+a2[i,j] <- phi/mu[i , j]
+mu[i , j] <- inprod(x[i, j, ], beta[ ])+inprod(z[i, j, ], b[i,1,])
+}
+b[i,1,1:q ] ~ dmt(cerovec [ ] ,psi[ , ],gl1)
+
+
+                                      Revista Colombiana de Estadstica 42 (2019) 81–99
+
+A Bayesian Approach to Mixed Gamma Regression Models                               99
+
+}
+gl1~dexp(a0)
+beta[1:p] ~ dmt(alpha[ ] , V1[ , ],gl2)
+V1[1:p ,1:p] <- inverse(V[ , ])
+psi[1:q,1:q] ~ dwish(R0[ , ], c0)
+psiinv[1:q,1:q]<-inverse(psi[1:q,1:q])
+phiinv ~ dgamma(a00,a00)
+phi<-1/phiinv
+}
+
+
+
+Model 1B
+model
+{
+for( i in 1 : m ) {
+for( j in 1 : n ) {
+Y[i , j] ~ dgamma(a1[i,j] ,a2[i,j])
+a1[i,j] <- phi
+a2[i,j] <- phi/mu[i , j]
+log(mu[i , j]) <- inprod(x[i, j, ], beta[ ])+inprod(z[i, j, ], b[i,1,])
+}
+b[i,1,1:q ] ~ dmt(cerovec [ ] ,psi[ , ],gl1)
+}
+gl1~dexp(a0)
+beta[1:p] ~ dmt(alpha[ ] , V1[ , ],gl2)
+V1[1:p ,1:p] <- inverse(V[ , ])
+psi[1:q,1:q] ~ dwish(R0[ , ], c0)
+psiinv[1:q,1:q]<-inverse(psi[1:q,1:q])
+phiinv ~ dgamma(a00,a00)
+phi<-1/phiinv
+}
+
+
+
+Model 2
+model
+{
+for( i in 1 : m ) {
+for( j in 1 : n ) {
+Y[i , j] ~ dgamma(a1[i,j] ,a2[i,j])
+a1[i,j] <- phi[i,j]
+a2[i,j] <- phi[i,j]/mu[i , j]
+log(phi[i,j])<-inprod(x[i, j, ], delta[ ])+inprod(z[i, j, ], gama[i,1,])
+mu[i , j] <- inprod(x[i, j, ], beta[ ])+inprod(z[i, j, ], b[i,1,])
+}
+b[i,1,1:q ] ~ dmt(cerovec [ ] ,psi[ , ],gl1)
+gama[i,1,1:q ] ~ dmt(cerovec [ ] ,psi[ , ],gl1)
+}
+gl1~dexp(a0)
+beta[1:p] ~ dmt(alpha[ ] , V1[ , ],gl2)
+delta[1:p] ~ dmt(alpha[ ] , V1[ , ],gl2)
+V1[1:p ,1:p] <- inverse(V[ , ])
+psi[1:q,1:q] ~ dwish(R0[ , ], c0)
+psiinv[1:q,1:q]<-inverse(psi[1:q,1:q])
+}
+
+
+
+                                      Revista Colombiana de Estadstica 42 (2019) 81–99
+
