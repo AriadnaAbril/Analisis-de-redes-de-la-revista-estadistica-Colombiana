@@ -1,5 +1,5 @@
-Análisis bayesiano para la distribución lognormal generalizada aplicada a modelos de falla con censura. Bayesian Analysis for the Generalized Lognormal Distribution Applied to Failure Time Analysis
-Universidad de São Paulo, Brasil, Universidad de Antioquia, Colombia
+Análisis bayesiano para la distribución lognormal generalizada aplicada a modelos de falla con censura
+Universidad de São Paulo;Universidad de Antioquia
 Resumen
 Existen varias versiones de la distribución lognormal en la literatura estadística y una de ellas está basada en la transformación exponencial de la distribución normal generalizada (NG). En el presente artículo se presenta el análisis Bayesiano para la distribución lognormal generalizada (logNG) considerando distribuciones a priori de Jeffreys independientes para los parámetros; así como el procedimiento para implementar el muestreador de Gibbs que permite obtener las distribuciones a posteriori de los parámetros. Los resultados obtenidos son usados para analizar modelos de tiempo de falla con datos no censurados y censurados a derecha Tipo I. El procedimiento propuesto es ilustrado usando una base de datos real relacionada con tiempos de falla de computadores.
 Palabras clave: análisis de tiempo de falla, censura a derecha, distribución lognormal generalizada, inferencia bayesiana, muestreador de Gibbs.
@@ -706,159 +706,28 @@ propuesto por Bernardo (1979) mediante simulaciones.
 Agradecimientos
    Agradecemos a los revisores anónimos por sus comentarios que permitieron
 mejorar el presente trabajo.
-             £                                                     ¤
-              Recibido: agosto de 2010 — Aceptado: febrero de 2011
-
-
 Referencias
-Adam, J. (1962), ‘Failure time distribution estimation’, Semiconductor Reliability 2, 41–52.
-Aitchison, J. & Brown, J. (1957), The Lognormal Distribution, Cambridge University Press, United Kingdom.
-Barrera, C. & Correa, J. (2008), ‘Distribución predictiva bayesiana para modelos de pruebas de vida vía MCMC’, Revista Colombiana de Estadística 31(2), 145–155.
-Berger, J. (1985), Statistical Decision Theory and Bayesian Analysis, Springer, New York.
-Bernardo, J. (1979), ‘Expected information as expected utility’, Annals of Statistics 7(3), 686–690.
-Chen, G. (1995), ‘Generalized log-normal distributions with reliability application’, Computational Statistics and Data Analysis 19(3), 309–319.
-Chen, K. & Papadopoulos, A. (1997), ‘Shortest Bayes credibility intervals for the lognormal failure model’, Microelectron Reliability 37(12), 1859–1863.
-Gamerman, D. & Lopes, H. (2006), Markov Chain Monte Carlo Stocastic Simulation for Bayesian Inference, Chapman and Hall/CRC, Boca Raton.
-Gelman, A., Stern, J. & Rubin, H. (2004), Bayesian Data Analysis, Chapman & Hall-CRC.
-Gupta, R. & Lvin, S. (2005), ‘Reliability functions of generalized log-normal model’, Mathematical and Computer Modelling 42, 939–946.
-Hoff, P. (2009), A First Course in Bayesian Statistical Methods, Springer, New York.
-Howard, B. & Dodson, G. (1961), ‘High stress aging to failure of semiconductor devices’, Proc. Seventh National Symposium on Reliability and Quality Control pp. 201–207.
-Klein, J. & Moeschberger, M. (2003), Survival Analysis: Techniques for Censored and Truncated Data, Springer-Verlag, New York.
-Lawless, J. F. (1982), Statistical Models and Methods for Lifetime Data, Wiley, New York.
-Martín, J. & Pérez, C. (2009), ‘Bayesian analysis of a generalized lognormal distribution’, Computational Statistics and Data Analysis 53, 1377–1387.
-Nadarajah, S. (2005), ‘A generalized normal distribution’, Journal of Applied Statistics 37(7), 685–694.
-Padgett, W. & Johnson, M. (1983), ‘Lower bounds on reliability in the lognormal distribution’, The Canadian Journal of Statistics - La Reveu Canadienne de Statistique 11(2), 137–147.
-Portela, J. & Gómez-Villegas, M. (2004), ‘Implementation of a robust Bayesian method’, Journal of Statistical Computation and Simulation 74(4), 235–248.
-R Development Core Team (2010), R: A Language and Environment for Statistical Computing, R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0. *http://www.R-project.org
-Robert, C. (2001), The Bayesian Choice, second edn, Springer, New York. 
-Spiegelhalter, D., Best, N., Carlin, B. & van der Linde, A. (2002), ‘Bayesian measures of model complexity and fit’, Journal of The Royal Statistical Society 64, 583–639.
-Upadhyay, S. & Peshwani, M. (2001), ‘Full posterior analysis of three parameter Lognormal distribution using Gibbs sampler’, Journal of Statistical Computation and Simulation 71(3), 215–230.
-Upadhyay, S. & Peshwani, M. (2003), ‘Choice between Weibull and lognormal models: A simulation based Bayesian study’, Communications in Statistics Theory and Methods 32(2), 381–405.
-Upadhyay, S. & Peshwani, M. (2008), ‘Posterior analysis of lognormal regressions models using the Gibbs sampler’, Statistical Papers 49, 59–85.
-
-Apéndice
-   A continuación se presenta el código usado en R Development Core Team
-(2010) para la implementación del muestreador de Gibbs.
-#!---------------------------- LIBRERIAS REQUERIDAS ----------------------------
-require(hbmem)
-require(Runuran)
-require(VGAM)
-require(hdrcde)
-#!--------------------------   FUNCIONES    -------------------------------------
-#! fdp para la lognormal generalizada con los parametros mu sigma e s
-flog=function(x,mu,sigma,s) s*exp(-abs((log(x)-mu)/sigma)^s)/(2*x*sigma*gamma(1/s))
-#!------- Generador de observaciones aleatoria logGN truncadas ----------------
-rlogGN = function(n,MU,SIGMA,S,minimo=0,center=50) {
-flog = function(x,mu,sigma,s) s*exp(-abs((log(x)-mu)/sigma)^s)/(2*x*sigma*gamma(1/s))
-logflog = function(x,mu,sigma,s) log(s/(2*x*sigma*gamma(1/s)))+-abs((log(x)-mu)/sigma)^s
-a = function(x) flog(x,mu=MU,sigma=SIGMA,s=S)       # f(x)
-b = function(x) logflog(x,mu=MU,sigma=SIGMA,s=S)    # log f(x)
-generador = pinv.new(pdf=a,lb=minimo, ub=Inf, islog=FALSE, center=center)
-ur(generador,n) }
-#!------------------------------------------------------------------------------
-rexp.trunc=function(n=1,rate,mini) {
-x = urexp(n=n, rate=1/rate, lb=mini, ub=Inf)
-x }
-#!---------- Funciones para muestrear de las a posteriori, caso logNG ----------
-rpost.mu=function(sigma,s,u,x) {        # u y x son vectores
-l.inf = max(log(x)-sigma*u^(1/s))
-l.sup = min(log(x)+sigma*u^(1/s))
-if (l.inf<=l.sup) {
-                    rmu=runif(n=1,min=l.inf,max=l.sup)
-                  }
-else rmu=runif(n=1,min=l.sup,max=l.inf)
-rmu }
-#!------------------------------------------------------------------------------
-rpost.sigma=function(mu,s,u,x) {                 # u y x son vectores
-n=length(x)
-minimo = max(abs(mu-log(x))/u^(1/s))
-rpareto(n=1, shape=n, location=minimo) }
-#!------------------------------------------------------------------------------
-rpost.u = function(x,mu,sigma,s) {
-mini = (abs(log(x)-mu)/sigma)^s
-n=length(x)
-muestra=NULL
-for (i in 1:n) muestra[i]=urexp(n=1,rate=1,lb=mini[i],ub=Inf)
-muestra }
-#!------------------------------------------------------------------------------
-rpost.s = function(sigma,mu,u,x) {   # u y x son vectores
-N = length(x)
-limite = log(u)/log(abs(mu-log(x))/sigma) # calcula los limites para s
-s.1 = which(limite>=1)           # obtiene los índices donde el limite es >=1
-mini = min(c(1,s.1))
-maxi = max(s.1)
-pdf.s = function(x,n=N) { x^(n-1)/(gamma(x))^n }
-gen.s = tdr.new(pdf=pdf.s,n=N,lb=1,ub=10)
-ur(gen.s,n=1) }
-#!---------- Funciones para muestrear de las a posteriori, caso lognormal ------
-rpost.mu.l=function(sigma,u,x) {        # u y x son vectores
-l.inf = max(log(x)-sigma*(2*u)^(1/2))
-l.sup = min(log(x)+sigma*(2*u)^(1/2))
-if (l.inf<=l.sup) {
-                    rmu=runif(n=1,min=l.inf,max=l.sup)
-                  }
-else rmu=runif(n=1,min=l.sup,max=l.inf)
-rmu }
-#!------------------------------------------------------------------------------
-rpost.sigma.l=function(mu,u,x) {                 # u y x son vectores
-n=length(x)
-
-
-
-                                          Revista Colombiana de Estadística 34 (2011) 95–109
-
-Análisis bayesiano en la distribución lognormal generalizada                            109
-
-minimo = max(abs(mu-log(x))/(2*u)^(1/2))
-rpareto(n=1, shape=n, location=minimo) }
-#!------------------------------------------------------------------------------
-rpost.u.l = function(x,mu,sigma) {
-mini = (abs(log(x)-mu)/(sqrt(2)*sigma))^2
-n=length(x)
-muestra=NULL
-for (i in 1:n) muestra[i]=urexp(n=1,rate=1,lb=mini[i],ub=Inf)
-muestra }
-#!------------------------------------------------------------------------------
-#!------------ Análisis de los datos con censura considerando logNG -----------
-#!------------------------------------------------------------------------------
-dsc=c(14.07, 17.80, 19.43, 21.33, 24.60, 28.97, 29.63, 33.73, 37.60, 37.67,
-        40.87, 52.40, 53.97, 60.57, 64.27, 65.43, 65.43)
-dcc=rep(x=66,times=55) ; datos = c(dsc,dcc)
-#! -----------------------------------------------------------------------------
-#! Definiendo los valores iniciales de los parametros
-n=length(dsc) ; n.censu=length(dcc)
-mu0=3.5 ; sigma0=1 ; s0=20 ; x=datos
-Mu=Sigma=S=NULL ; Mu[1]=mu0 ; Sigma[1]=sigma0 ; S[1]=s0
-#!------------------------------------------------------------------------------
-for (i in 2:10000) {
-x[18:72] =rlogGN(n=n.censu,MU=Mu[i-1],SIGMA=Sigma[i-1],S=S[i-1],minimo=66,center=80)
-u.temporal=rpost.u(x=x,mu=Mu[i-1],sigma=Sigma[i-1],s=S[i-1])
-Mu[i]     =rpost.mu(sigma=Sigma[i-1],s=S[i-1],u=u.temporal,x=x)
-Sigma[i] =rpost.sigma(mu=Mu[i],s=S[i-1],u=u.temporal,x=x)
-S[i]      =rpost.s(sigma=Sigma[i],mu=Mu[i],u=u.temporal,x=x) }
-#!------------------------------------------------------------------------------
-parametros_logNG = data.frame( Mu=Mu[-(1:50)] , Sigma=Sigma[-(1:50)] , S=S[-(1:50)] )
-#!------------------------------------------------------------------------------
-#!------------ Análisis de los datos con censura considerando logN ------------
-#!------------------------------------------------------------------------------
-#! Definiendo los valores iniciales de los parametros
-Mu=Sigma=NULL ; Mu[1]=mu0 ; Sigma[1]=sigma0
-#!------------------------------------------------------------------------------
-for (i in 2:10000) {
-x[18:72] =urlnorm(n=n.censu , meanlog=Mu[i-1] , sdlog=Sigma[i-1] , lb=66 , ub=Inf)
-u.temporal=rpost.u.l(x=x,mu=Mu[i-1],sigma=Sigma[i-1])
-Mu[i]     =rpost.mu.l(sigma=Sigma[i-1],u=u.temporal,x=x)
-Sigma[i] =rpost.sigma.l(mu=Mu[i],u=u.temporal,x=x)    }
-#!------------------------------------------------------------------------------
-parametros_logN = data.frame( Mu=Mu[-(1:50)] , Sigma=Sigma[-(1:50)] )
-#!------------------------------------------------------------------------------
-Titulo = c(’Mu’,’Sigma’,’S’) ; par(mfrow=c(2,3))
-for (i in 1:3) hdr.den(parametros_logNG[,i],xlab=Titulo[i],main=’logNG’,prob=90)
-for (i in 1:2) hdr.den(parametros_logN[,i] ,xlab=Titulo[i],main=’logN’ ,prob=90)
-#!------------------------------------------------------------------------------
-
-
-
-
-                                          Revista Colombiana de Estadística 34 (2011) 95–109
-
+Adam J. Failure time distribution estimation. (1962). Semiconductor Reliability.
+Aitchison J,Brown J. The Lognormal Distribution. (1957). Cambridge University Press.
+Barrera C,Correa J. Distribución predictiva bayesiana para modelos de pruebas de vida vía MCMC. (2008). Revista Colombiana de Estadística.
+Berger J.Statistical Decision Theory and Bayesian Analysis. (1985). Springer.
+Bernardo J.Expected information as expected utility. (1979). Annals of Statistics.
+Chen G.Generalized log-normal distributions with reliability application. (1995). Computational Statistics and Data Analysis.
+Chen K,Papadopoulos A. Shortest Bayes credibility intervals for the lognormal failure model. (1997). Microelectron Reliability.
+Gamerman D,Lopes H. Markov Chain Monte Carlo Stocastic Simulation for Bayesian Inference. (2006). Chapman and Hall/CRC.
+Gelman A, Stern J,Rubin H. Bayesian Data Analysis. (2004). Chapman & Hall-CRC.
+Gupta R,Lvin S. Reliability functions of generalized log-normal model.(2005). Mathematical and Computer Modelling.
+Hoff P. A First Course in Bayesian Statistical Methods. (2009). Springer.
+Howard B,Dodson G. High stress aging to failure of semiconductor devices.(1961).National Symposium on Reliability and Quality Control.
+Klein J,Moeschberger M. Survival Analysis: Techniques for Censored and Truncated Data.(2003). Springer-Verlag.
+Lawless J F. Statistical Models and Methods for Lifetime Data. (1982). Wiley.
+Martín J,Pérez C. Bayesian analysis of a generalized lognormal distribution. (2009). Computational Statistics and Data Analysis.
+Nadarajah S. A generalized normal distribution. (2005). Journal of Applied Statistics.
+Padgett W,Johnson M. Lower bounds on reliability in the lognormal distribution. (1983). The Canadian Journal of Statistics.
+Portela J,Gómez-Villegas M. Implementation of a robust Bayesian method. (2004). Journal of Statistical Computation and Simulation.
+R Development Core Team. R: A Language and Environment for Statistical Computing.(2010).R Foundation for Statistical Computing.
+Robert C. The Bayesian Choice.(2001). Springer. 
+Spiegelhalter D, Best, N, Carlin B, & van der Linde A.Bayesian measures of model complexity and fit.(2002).Journal of The Royal Statistical Society.
+Upadhyay S,Peshwani M. Full posterior analysis of three parameter Lognormal distribution using Gibbs sampler.(2001).Journal of Statistical Computation and Simulation.
+Upadhyay S,Peshwani M. Choice between Weibull and lognormal models: A simulation based Bayesian study. (2003). Communications in Statistics Theory and Methods.
+Upadhyay S,Peshwani M. Posterior analysis of lognormal regressions models using the Gibbs sampler.(2008). Statistical Papers.
